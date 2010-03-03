@@ -30,6 +30,13 @@ class MultiPoint extends Geometry {
     }
 
     /**
+     * Create a MultiPoint from a List of List of Points
+     */
+    MultiPoint(List points) {
+        this(create(points))
+    }
+
+    /**
      * Add a Point to this MultiPoint
      */
     public MultiPoint plus(Point point) {
@@ -51,9 +58,9 @@ class MultiPoint extends Geometry {
     /**
      * Create a MultiPoint from a List of Points
      */
-    private static create(List<Point> points) {
+    private static create(List points) {
         Geometry.factory.createMultiPoint(points.collect{
-                pt -> pt.g
+                pt -> (pt instanceof Point) ? pt.g : new Point(pt[0], pt[1]).g
             }.toArray() as JtsPoint[])
     }
 

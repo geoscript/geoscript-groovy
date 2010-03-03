@@ -11,6 +11,15 @@ class MultiPointTestCase {
 		
         def m2 = new MultiPoint(new Point(1,2),new Point(3,4))
         assertEquals "MULTIPOINT (1 2, 3 4)", m2.wkt
+
+        def pts = [new Point(1,2),new Point(3,4)]
+        def m3 = new MultiPoint(pts)
+        assertEquals "MULTIPOINT (1 2, 3 4)", m3.wkt
+
+        def doubles = [[1,2],[3,4]]
+        def m4 = new MultiPoint(doubles)
+        assertEquals "MULTIPOINT (1 2, 3 4)", m4.wkt
+
     }
 
     @Test void plus() {
