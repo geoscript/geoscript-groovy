@@ -1,16 +1,1 @@
-A Groovy implementation of GeoScript.
-
-Translated from the Python.
-
-To experiment:
-mvn groovy:console
-
-Run a single Test:
-mvn -Dtest=TestCircle test
-
-Create the jar (wihtout running tests) and move it to the lib directory
-mvn package -Dmaven.test.skip=true && cp target/geoscript-groovy-1.0-SNAPSHOT.jar lib/
-
-TODO:
-1.  Maven assembly
-2.  Windows bat commands
+A Groovy implementation of GeoScript (http://geoscript.org/).
