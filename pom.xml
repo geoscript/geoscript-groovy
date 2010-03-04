@@ -4,7 +4,7 @@
     <groupId>geoscript</groupId>
     <artifactId>geoscript-groovy</artifactId>
     <packaging>jar</packaging>
-    <version>1.0-SNAPSHOT</version>
+    <version>0.5-SNAPSHOT</version>
     <repositories>
         <repository>
             <id>opengeo</id>
@@ -76,26 +76,6 @@
             <artifactId>gt-xsd-wfs</artifactId>
             <version>${gt.version}</version>
         </dependency>
-        <!--<dependency>
-      <groupId>org.geotools</groupId>
-      <artifactId>gt-cql</artifactId>
-      <version>${gt.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.geotools</groupId>
-      <artifactId>gt-geojson</artifactId>
-      <version>${gt.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.geotools</groupId>
-      <artifactId>gt-geotiff</artifactId>
-      <version>${gt.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.geotools</groupId>
-      <artifactId>gt-swing</artifactId>
-      <version>${gt.version}</version>
-    </dependency>-->
         <dependency>
             <groupId>org.codehaus.groovy</groupId>
             <artifactId>groovy</artifactId>
@@ -133,22 +113,24 @@
                         <artifactId>gmaven-runtime-1.7</artifactId>
                         <version>1.2</version>
                     </dependency>
-                    <!--<dependency>
-                        <groupId>org.codehaus.groovy</groupId>
-                        <artifactId>groovy</artifactId>
-                        <version>1.7.0</version>
-                  </dependency>-->
                 </dependencies>
                 <executions>
                     <execution>
                         <goals>
-                            <!--<goal>generateStubs</goal>-->
                             <goal>compile</goal>
-                            <!--<goal>generateTestStubs</goal>-->
                             <goal>testCompile</goal>
                         </goals>
                     </execution>
                 </executions>
+            </plugin>
+            <plugin>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <version>2.2-beta-5</version>
+                <configuration>
+                    <descriptors>
+                        <descriptor>assembly.xml</descriptor>
+                    </descriptors>
+                </configuration>
             </plugin>
         </plugins>
     </build>
