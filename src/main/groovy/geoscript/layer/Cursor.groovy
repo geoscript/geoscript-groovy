@@ -1,7 +1,7 @@
 package geoscript.layer
 
 import geoscript.feature.Feature
-import geoscript.Filter
+import geoscript.filter.Filter
 import org.geotools.feature.FeatureIterator
 import org.geotools.data.FeatureReader
 import org.opengis.feature.simple.SimpleFeature

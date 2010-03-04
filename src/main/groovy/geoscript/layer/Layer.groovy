@@ -5,7 +5,7 @@ import geoscript.geom.*
 import geoscript.proj.Projection
 import geoscript.feature.*
 import geoscript.workspace.*
-import geoscript.Filter
+import geoscript.filter.Filter
 import org.geotools.data.FeatureSource
 import org.geotools.data.DefaultQuery
 import org.geotools.data.Query
