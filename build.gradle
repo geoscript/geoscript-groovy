@@ -1,26 +1,24 @@
 usePlugin 'groovy'
 
 sourceCompatibility=1.5
-version='1.0.0-SNAPSHOT'
+version='0.5'
 jar.baseName='geoscript-groovy'
-
-test {
-	options.fork(forkMode: ForkMode.ONCE, jvmArgs: ["-ea", '-Xms128m', '-Xmx1g', '-XX:MaxPermSize=128m', '-XX:+HeapDumpOnOutOfMemoryError'])
-}
-
 
 repositories {
 	mavenCentral()
+        mavenRepo name: 'osgeo', urls: 'http://download.osgeo.org/webdav/geotools'
 	mavenRepo name: 'opengeo', urls: 'http://repo.opengeo.org'
-	mavenRepo name: 'osgeo', urls: 'http://download.osgeo.org/webdav/geotools'
 }
 
 geotools_version = '2.7-SNAPSHOT'
 
+configurations {
+    groovy.exclude module: 'xml-apis-xerces'
+}
+
 dependencies {
-	groovy fileTree(dir:'lib', includes:['*.jar'])
 	groovy group: 'org.codehaus.groovy', name: 'groovy', version: '1.7.0'
-	/*groovy group: 'org.geotools', name: 'gt-main', version: geotools_version
+	groovy group: 'org.geotools', name: 'gt-main', version: geotools_version
 	groovy group: 'org.geotools', name: 'gt-epsg-hsql', version: geotools_version
 	groovy group: 'org.geotools', name: 'gt-render', version: geotools_version
 	groovy group: 'org.geotools', name: 'gt-shapefile', version: geotools_version
@@ -29,6 +27,6 @@ dependencies {
 	groovy group: 'org.geotools.jdbc', name: 'gt-jdbc-mysql', version: geotools_version
 	groovy group: 'org.geotools.jdbc', name: 'gt-jdbc-spatialite', version: geotools_version
 	groovy group: 'org.geotools', name: 'gt-directory', version: geotools_version
-	groovy group: 'org.geotools.xsd', name: 'gt-xsd-wfs', version: geotools_version*/
+	groovy group: 'org.geotools.xsd', name: 'gt-xsd-wfs', version: geotools_version
 	testCompile group: 'junit', name: 'junit', version: '4.7'
 }
