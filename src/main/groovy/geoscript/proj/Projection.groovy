@@ -65,6 +65,13 @@ class Projection {
     }
 
     /**
+     * Transform the Geometry to another Projection
+     */
+    Geometry transform(Geometry geom, String prj) {
+        transform(geom, new Projection(prj))
+    }
+
+    /**
      * The string representation
      */
     String toString() {
