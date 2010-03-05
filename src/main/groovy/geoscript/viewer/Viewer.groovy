@@ -38,7 +38,6 @@ class Viewer {
         def g = geom.collect{
             it.g
         }.toArray() as JtsGeometry[]
-        println(g)
 
         JtsGeometry gc = Geometry.factory.createGeometryCollection(g)
         Envelope e = gc.envelopeInternal
@@ -47,7 +46,7 @@ class Viewer {
         scale = (e.height > 0) ? Math.min(scale, size[1] / e.height) : new Double(1).doubleValue()
 
         double tx = -e.minX
-        double ty = -e.minY
+        double ty = -e.maxY
 
         AffineTransform at = new AffineTransform()
         // Scale to size of canvas (inverting the y axis)
@@ -58,7 +57,7 @@ class Viewer {
         at.translate(0, -(size[1] / scale))
         // buffer
         at.translate(buf/scale, -buf/scale)
-        
+
         Panel panel = new Panel(geom, at)
         Dimension dim = new Dimension((int) (size[0] + 2 * buf), (int) (size[1] + 2 * buf))
         panel.preferredSize = dim
