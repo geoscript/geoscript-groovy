@@ -39,6 +39,10 @@ class Field {
         if (proj != null) this.proj = new Projection(proj)
     }
 
+    /**
+     * Create a Field from a List of parts.  The first item is the name.  The
+     * second part of the type. The optional third item is the Projection
+     */
     Field(List parts) {
         this.name = parts[0]
         this.typ = parts[1]
@@ -47,6 +51,9 @@ class Field {
         }
     }
 
+    /**
+     * Create a Field from a Map. The keys are name, type, proj.
+     */
     Field(Map parts) {
         this.name = parts['name']
         this.typ = parts['type']
