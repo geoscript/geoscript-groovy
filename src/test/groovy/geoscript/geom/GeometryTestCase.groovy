@@ -22,9 +22,9 @@ class GeometryTestCase {
 		assertEquals pt.buffer(5.0).toString(), p.toString()
 	}	
 	
-	@Test void wkt() {
+	@Test void getWkt() {
 		Geometry g = new Geometry(Geometry.factory.createPoint(new Coordinate(111,-47)))
-		assertEquals "POINT (111 -47)", g.wkt()
+		assertEquals "POINT (111 -47)", g.wkt
 	}
 	
 	@Test void string() {

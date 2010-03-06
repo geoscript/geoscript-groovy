@@ -201,13 +201,6 @@ class Geometry {
     /**
      * Get the WKT of the Geometry
      */
-    String wkt() {
-        return g.toText()
-    }
-
-    /**
-     * Get the WKT of the Geometry
-     */
     String getWkt() {
         g.toText()
     }
