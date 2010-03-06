@@ -88,7 +88,12 @@ class Schema {
         new Feature(values, id, this)
     }
 
-    // @TODO Map of values
+    /**
+     * Create a Feature from this Schema with a Map of values and the id
+     */
+    Feature feature(Map values, String id = "feature") {
+        new Feature(values, id, this)
+    }
 
     /**
      * Reproject the Schema

@@ -52,6 +52,10 @@ class SchemaTestCase {
         Feature f1 = s1.feature([new Point(111,-47), "House", 12.5],"house1")
         assertNotNull(f1)
         assertEquals "houses.house1 geom: POINT (111 -47), name: House, price: 12.5", f1.toString()
+
+        Feature f2 = s1.feature(["geom": new Point(111,-47), "name": "House", "price": 12.5],"house1")
+        assertNotNull(f2)
+        assertEquals "houses.house1 geom: POINT (111 -47), name: House, price: 12.5", f2.toString()
     }
 
     @Test void toStringTest() {
