@@ -2,6 +2,7 @@ package geoscript.geom
 
 import com.vividsolutions.jts.geom.Geometry as JtsGeometry
 import com.vividsolutions.jts.geom.GeometryFactory
+import com.vividsolutions.jts.geom.prep.PreparedGeometryFactory
 import com.vividsolutions.jts.io.WKTReader
 import com.vividsolutions.jts.io.WKBReader
 import com.vividsolutions.jts.io.WKBWriter
@@ -22,7 +23,12 @@ class Geometry {
      * The JTS GeometryFactory used to create JTS Geometry
      */
     static GeometryFactory factory = new GeometryFactory()
-	
+
+    /**
+     * The JTS PreparedGeometryFactory used to create prepared JTS Geometry
+     */
+    static PreparedGeometryFactory preparedFactory = new PreparedGeometryFactory()
+
     /**
      * The JTS WKTReader
      */
@@ -219,7 +225,14 @@ class Geometry {
     String toString() {
         return wkt
     }
-	
+
+    /**
+     * Get a PreparedGeometry for this Geometry
+     */
+    PreparedGeometry prepare() {
+        new PreparedGeometry(this)
+    }
+
     /**
      * Wrap a JTS Geometry in a geoscript.geom.Geometry
      */
@@ -262,5 +275,12 @@ class Geometry {
      */
     static Geometry fromWKB(byte[] wkb) {
         wrap(wkbReader.read(wkb))
+    }
+
+    /**
+     * Get a PreparedGeometry for the given Geometry
+     */
+    static PreparedGeometry prepare(Geometry g) {
+        new PreparedGeometry(g)
     }
 }
