@@ -17,6 +17,7 @@ class MultiPoint extends Geometry {
 
     /**
      * Create a MultiPoint from a List of Points
+     * <p>def m = new MultiPoint(new Point(1,2),new Point(3,4))</p>
      */
     MultiPoint(Point... points) {
         this(create(points))
@@ -24,6 +25,7 @@ class MultiPoint extends Geometry {
 
     /**
      * Create a MultiPoint from a List of List of Doubles
+     * <p>def m = new MultiPoint([1,2],[3,4])</p>
      */
     MultiPoint(List<Double>... points) {
         this(create(points))
@@ -31,13 +33,15 @@ class MultiPoint extends Geometry {
 
     /**
      * Create a MultiPoint from a List of List of Points
+     * <p>def m = new MultiPoint([new Point(1,2),new Point(3,4)])</p>
+     * <p>def m = new MultiPoint([[1,2],[3,4]])</p>
      */
     MultiPoint(List points) {
         this(create(points))
     }
 
     /**
-     * Add a Point to this MultiPoint
+     * Add a Point to this MultiPoint to create another MultiPoint
      */
     public MultiPoint plus(Point point) {
         List<Point> points = []

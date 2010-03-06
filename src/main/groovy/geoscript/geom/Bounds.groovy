@@ -43,28 +43,28 @@ class Bounds {
      * Get the left most coordinate (minX)
      */
     def double getL() {
-        return env.minX()
+        env.minX()
     }
 	
     /**
      * Get the right most coordinate (maxX)
      */
     def double getR() {
-        return env.maxX()
+        env.maxX()
     }
 	
     /**
      * Get the bottom most coordinate (minY)
      */
     def double getB() {
-        return env.minY()
+        env.minY()
     }
 	
     /**
      * Get the top most coordinate (maxY)
      */
     def double getT() {
-        return env.maxY()
+        env.maxY()
     }
 	
     /**
@@ -81,6 +81,6 @@ class Bounds {
      * The string representation
      */
     def String toString() {
-        return "(${l},${b},${r},${t}${if (proj != null){',' + proj.id } else {''}})"
+        "(${l},${b},${r},${t}${if (proj != null){',' + proj.id } else {''}})"
     }
 }

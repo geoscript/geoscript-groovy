@@ -33,6 +33,14 @@ class LinearRing extends Geometry {
     }
 
     /**
+     * Create a new LinearRing with a repetaed List Points.
+     * <p>LinearRing ring = new LinearRing(new Point(1,2), new Point(3,4), new Point(4,5))</p>
+     */
+    LinearRing(Point... points) {
+        this(create(points))
+    }
+
+    /**
      * Create a new LinearRing with a List of List of Doubles.
      * <p>LinearRing ring = new LinearRing([[1,2],[3,4],[4,5]])</p>
      */
@@ -48,6 +56,14 @@ class LinearRing extends Geometry {
      */
     private static JtsLinearRing create(List<Double>... coordinates) {
         Geometry.factory.createLinearRing(coordinates.collect{new Coordinate(it[0], it[1])}.toArray() as Coordinate[])
+    }
+
+    /**
+     * Create a new LinearRing with a repetaed List Points.
+     * <p>LinearRing ring = new LinearRing(new Point(1,2), new Point(3,4), new Point(4,5))</p>
+     */
+    private static JtsLinearRing create(Point... points) {
+        Geometry.factory.createLinearRing(points.collect{it.g.coordinate}.toArray() as Coordinate[])
     }
 	
 }

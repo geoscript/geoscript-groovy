@@ -41,30 +41,30 @@ class Polygon extends Geometry {
     }
 
     /**
-     * Create a new Polygon with an exterion ring as a List of List of Doubles
-     * <p>Polygon p = new Polygon([[1,2],[3,4],[5,6],[1,2]])</p>
-     */
-    /*Polygon(List<List<Double>>... rings) {
-    this(create(rings))
-    }*/
-	
-    /**
-     * Create a new Polygon from a List of a List of a List of Doubles. The
+     * Create a new Polygon from a List of a List of a List of Doubles or LinearRings. The
      * first List of List of Doubles is the exterion ring.  Others are holes.
+     * <p>Polygon p = new Polygon([[[1,2],[3,4],[5,6],[1,2]]])</p>
      */
-    Polygon(List<List<List<Double>>> rings) {
+    Polygon(List rings) {
         this(create(rings))
     }
-	
+
+    /**
+     * Add this Polygon with another to create a MultiPolygon
+     */
+    MultiPolygon plus(Polygon poly) {
+        new MultiPolygon([this, poly])
+    }
+
     /**
      * Create a JTS Polygon from a List of List of List of Doubles
      */
-    private static JtsPolygon create(List<List<List<Double>>> rings) {
-        JtsLinearRing shell =  new LinearRing(rings[0]).g
+    private static JtsPolygon create(List rings) {
+        JtsLinearRing shell =  (rings[0] instanceof LinearRing) ? rings[0].g : new LinearRing(rings[0]).g
         JtsLinearRing[] holes = [];
         if (rings.size() > 1) {
-            holes = rings[1..-1].collect{
-                ring -> new LinearRing(ring).g
+            holes = rings[1..-1].collect{ring ->
+                (ring instanceof LinearRing) ? ring.g : new LinearRing(ring).g
             }
         }
         Geometry.factory.createPolygon(shell, holes)
