@@ -6,6 +6,7 @@ import org.geotools.feature.FeatureIterator
 import org.geotools.data.FeatureReader
 import org.opengis.feature.simple.SimpleFeature
 import org.opengis.feature.simple.SimpleFeatureType
+
 /**
  * A Cursor is a Iterator over a Feature objects
  */
