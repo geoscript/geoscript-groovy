@@ -179,7 +179,6 @@ class Layer {
      * Get a List of Features
      */
     List<Feature> getFeatures(def filter = null, Closure transform = null) {
-        // Closure.call(1,2,3)
         List<Feature> features = []
         Cursor c = getCursor(filter)
         while(c.hasNext()) {
