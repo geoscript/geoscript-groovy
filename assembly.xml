@@ -8,7 +8,7 @@
   </formats>
   <dependencySets>
       <dependencySet>
-          <outputDirectory>/bin/lib</outputDirectory>
+          <outputDirectory>/lib</outputDirectory>
           <unpack>false</unpack>
           <scope>runtime</scope>
           <useProjectArtifact>true</useProjectArtifact>
