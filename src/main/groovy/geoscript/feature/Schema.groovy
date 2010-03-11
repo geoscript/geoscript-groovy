@@ -69,6 +69,13 @@ class Schema {
     }
 
     /**
+     * Get a Field by name
+     */
+    Field get(String name) {
+        field(name)
+    }
+
+    /**
      * Get the List of Fields
      */
     List<Field> getFields() {

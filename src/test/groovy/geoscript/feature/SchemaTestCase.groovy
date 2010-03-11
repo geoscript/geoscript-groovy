@@ -38,6 +38,13 @@ class SchemaTestCase {
         assertEquals "price: Float", s1.field("price").toString()
     }
 
+    @Test void get() {
+        Schema s1 = new Schema("widgets", [new Field("geom","Point"), new Field("name","string"), new Field("price","float")])
+        assertEquals "geom: Point", s1.get("geom").toString()
+        assertEquals "name: String", s1.get("name").toString()
+        assertEquals "price: Float", s1.get("price").toString()
+    }
+
     @Test void getFields() {
         Schema s1 = new Schema("widgets", [new Field("geom","Point"), new Field("name","string"), new Field("price","float")])
         List<Field> fields = s1.fields
