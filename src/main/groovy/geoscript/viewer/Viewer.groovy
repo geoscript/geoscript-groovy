@@ -11,6 +11,7 @@ import java.awt.AlphaComposite
 import java.awt.BorderLayout
 import javax.swing.JFrame
 import javax.swing.JPanel
+import javax.swing.WindowConstants
 import java.awt.geom.AffineTransform
 import com.vividsolutions.jts.geom.Geometry as JtsGeometry
 import com.vividsolutions.jts.geom.Polygon as JtsPolygon
@@ -63,7 +64,12 @@ class Viewer {
         panel.preferredSize = dim
         panel.minimumSize = dim
         JFrame frame = new JFrame("Geoescript Viewer")
-        frame.defaultCloseOperation = JFrame.EXIT_ON_CLOSE
+        try {
+            frame.defaultCloseOperation = JFrame.EXIT_ON_CLOSE
+        }
+        catch(SecurityException ex) {
+            frame.defaultCloseOperation = WindowConstants.DISPOSE_ON_CLOSE
+        }
         frame.layout = new BorderLayout()
         frame.add(panel, BorderLayout.CENTER)
         frame.pack()
