@@ -5,8 +5,6 @@ GeoScript Groovy
     :hidden:
 
     quickstart
-    using
-    api/index
 
 GeoScript Groovy is a Groovy implementation of GeoScript.
 
@@ -19,5 +17,5 @@ GeoScript Groovy is a Groovy implementation of GeoScript.
     `Examples <../examples>`_
      A library of examples and howto's
 
-    :ref:`API <api/index>`
+    `API <api>`_
       The GeoScript API reference
