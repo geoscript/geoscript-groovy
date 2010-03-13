@@ -39,7 +39,7 @@ Install GeoScript
 
      export PATH=geoscript-groovy0.6\bin:$PATH
 
-That's it. GeoScript Groovy should now be installed on the system. To verify the install execute the :command:`geoscript` command::
+That's it. GeoScript Groovy should now be installed on the system. To verify the install execute the :command:`geoscript-groovysh` command::
 
       % geoscript-groovysh
       Groovy Shell (1.7.0, JVM: 1.6.0_17)
