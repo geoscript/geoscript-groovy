@@ -15,9 +15,6 @@ GeoScript Groovy is a Groovy implementation of GeoScript.
     :ref:`Usage <usage>`
       Learn how to use the various GeoScript Groovy commands
 
-    `Usage <usage.html>`_
-      Learn how to use the various GeoScript Groovy commands
-
     `Learning <../learning>`_
      A tour of the GeoScript library
 
