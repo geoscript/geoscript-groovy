@@ -144,7 +144,7 @@
                                         <path refid="maven.compile.classpath" />
                                     </classpath>
                                 </taskdef>
-                                <Groovydoc destdir="target/groovydoc" sourcepath="src/main/groovy" packagenames="**.*" use="true" windowtitle="Groovydoc" private="false" />
+                                <Groovydoc destdir="target/groovydoc" sourcepath="src/main/groovy" packagenames="**.*" use="true" windowtitle="GeoScript Groovy API" private="false" />
                             </tasks>
                         </configuration>
                         <goals>
