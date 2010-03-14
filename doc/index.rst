@@ -12,7 +12,10 @@ GeoScript Groovy is a Groovy implementation of GeoScript.
     :ref:`Quickstart <quickstart>`
       Get up and running with GeoScript
 
-    `Usage <usage>`_
+    :ref:`Usage <usage>`
+      Learn how to use the various GeoScript Groovy commands
+
+    `Usage <usage.html>`_
       Learn how to use the various GeoScript Groovy commands
 
     `Learning <../learning>`_
