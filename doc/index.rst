@@ -5,11 +5,15 @@ GeoScript Groovy
     :hidden:
 
     quickstart
+    usage
 
 GeoScript Groovy is a Groovy implementation of GeoScript.
 
     :ref:`Quickstart <quickstart>`
       Get up and running with GeoScript
+
+    :ref:`Usage <usage>`
+      Learn how to use the various GeoScript Groovy commands
 
     `Learning <../learning>`_
      A tour of the GeoScript library
