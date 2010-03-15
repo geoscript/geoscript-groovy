@@ -27,6 +27,30 @@ class FieldTestCase {
         assertEquals "geom", f3.name
         assertEquals "Point", f3.typ
         assertEquals "EPSG:2927", f3.proj.toString()
+
+        // Create a Field from a List of Parts
+        Field f4 = new Field(["name","String"])
+        assertEquals "name: String", f4.toString()
+        assertEquals "name", f4.name
+        assertEquals "String", f4.typ
+
+        Field f5 = new Field(["geom","Point", new Projection("EPSG:2927")])
+        assertEquals "geom: Point(EPSG:2927)", f5.toString()
+        assertEquals "geom", f5.name
+        assertEquals "Point", f5.typ
+        assertEquals "EPSG:2927", f5.proj.toString()
+
+        // Create a Field from a Map
+        Field f6 = new Field(["name": "name", "type": "String"])
+        assertEquals "name: String", f6.toString()
+        assertEquals "name", f6.name
+        assertEquals "String", f6.typ
+
+        Field f7 = new Field(["name": "geom", "type": "Point", "proj": new Projection("EPSG:2927")])
+        assertEquals "geom: Point(EPSG:2927)", f7.toString()
+        assertEquals "geom", f7.name
+        assertEquals "Point", f7.typ
+        assertEquals "EPSG:2927", f7.proj.toString()
     }
 
     @Test void isGeometry() {
