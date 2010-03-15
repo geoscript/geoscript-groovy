@@ -13,9 +13,9 @@ class FilterTestCase {
         assertEquals "[ name = foobar ]", f2.toString()
     }
     
-    @Test void cql() {
+    @Test void getCql() {
         Filter f = new Filter("name='foobar'")
-        assertEquals "name = 'foobar'", f.cql()
+        assertEquals "name = 'foobar'", f.cql
     }
     
     @Test void stringRepresentation() {
@@ -23,10 +23,9 @@ class FilterTestCase {
         assertEquals "[ name = foobar ]", f.toString()
     }
 
-
-    @Test void xml() {
+    @Test void getXml() {
         Filter f = new Filter("name='foobar'")
-        String actual = f.xml()
+        String actual = f.xml
         String expected = """<ogc:Filter xmlns:ogc="http://www.opengis.net/ogc" xmlns:gml="http://www.opengis.net/gml">
     <ogc:PropertyIsEqualTo>
         <ogc:PropertyName>name</ogc:PropertyName>
