@@ -10,7 +10,20 @@ import geoscript.geom.*
 import geoscript.proj.Projection
 
 /**
- * A Schema
+ * A Schema describes the structure of a Feature.  It is contains a name, and
+ * a set of Fields.
+ * <p> You can create a Schema from a name and a List of Fields</p>
+ * <code>
+ * Schema s1 = new Schema("widgets", [new Field("geom","Point"), new Field("name","string"), new Field("price","float")])
+ * </code>
+ * <p> You can create a Schema from a name and a List of Lists which contain a name and type</p>
+ * <code>
+ * Schema s2 = new Schema("widgets", [["geom","Point"], ["name","string"], ["price","float"]])
+ * </code>
+ * <p> You can create a Schema from a name and a List of Maps containing name, type, and optionally proj keys</p>
+ * <code>
+ * Schema s3 = new Schema("widgets", [[name: "geom",type: "Point"], [name: "name", type: "string"], [name: "price", type: "float"]])
+ * </code>
  */
 class Schema {
 
@@ -21,6 +34,7 @@ class Schema {
 
     /**
      * Create a new Schema wrapping a GeoTools SimpleFeatureType
+     * @param The wrapped GeoTools SimpleFeatureType
      */
     Schema(SimpleFeatureType featureType) {
         this.featureType = featureType
@@ -28,9 +42,17 @@ class Schema {
 
     /**
      * Create a new Schema with a name and a List of Fields.
-     * <p>Schema s1 = new Schema("widgets", [new Field("geom","Point"), new Field("name","string"), new Field("price","float")])</p>
-     * <p>Schema s2 = new Schema("widgets", [["geom","Point"], ["name","string"], ["price","float"]])</p>
-     * <p>Schema s3 = new Schema("widgets", [[name: "geom",type: "Point"], [name: "name", type: "string"], [name: "price", type: "float"]])</p>
+     * <p><code>
+     * Schema s1 = new Schema("widgets", [new Field("geom","Point"), new Field("name","string"), new Field("price","float")])
+     * </code></p>
+     * <p><code>
+     * Schema s2 = new Schema("widgets", [["geom","Point"], ["name","string"], ["price","float"]])
+     * </code></p>
+     * <p><code>
+     * Schema s3 = new Schema("widgets", [[name: "geom",type: "Point"], [name: "name", type: "string"], [name: "price", type: "float"]])
+     * </code></p>
+     * @param name The Schema's name
+     * @param fields A List of Fields, a List of Lists, or a List of Maps
      */
     Schema(String name, def fields) {
         this(buildFeatureType(name, fields))
@@ -38,6 +60,7 @@ class Schema {
 
     /**
      * Get the Schema's name
+     * @return The of the Schema
      */
     String getName() {
         featureType.name.localPart
@@ -45,6 +68,7 @@ class Schema {
 
     /**
      * Get the Schema's geometry Field
+     * @return The Schema's Geometry Field
      */
     Field getGeom() {
         field(featureType.geometryDescriptor.localName)
@@ -52,6 +76,8 @@ class Schema {
 
     /**
      * Get a Field by name
+     * @param name The name of the Field
+     * @return The Field
      */
     Field field(String name) {
         AttributeDescriptor ad = featureType.getDescriptor(name)
@@ -70,6 +96,8 @@ class Schema {
 
     /**
      * Get a Field by name
+     * @param The name of the Field
+     * @return The Field
      */
     Field get(String name) {
         field(name)
@@ -77,6 +105,7 @@ class Schema {
 
     /**
      * Get the List of Fields
+     * @return The List of Fields
      */
     List<Field> getFields() {
         List<Field> fields = []
@@ -89,21 +118,29 @@ class Schema {
     }
 
     /**
-     * Create a Feature from this Schema with a List of values and the id
+     * Create a Feature from this Schema with a List of values and the id.
+     * @param The List of values
+     * @param id The Feature ID (defaults to feature)
+     * @return A new Feature
      */
     Feature feature(List values, String id = "feature") {
         new Feature(values, id, this)
     }
 
     /**
-     * Create a Feature from this Schema with a Map of values and the id
+     * Create a Feature from this Schema with a Map of values and the id.
+     * @param The Map of key value pairs
+     * @param id The Feature ID (defaults to feature)
+     * @return A new Feature
      */
     Feature feature(Map values, String id = "feature") {
         new Feature(values, id, this)
     }
 
     /**
-     * Reproject the Schema
+     * Reproject the Schema.
+     * @param prj A Projection or a String
+     * @return The reprojected Schema
      */
     Schema reproject(def prj) {
         reproject(prj, name)
@@ -111,6 +148,9 @@ class Schema {
 
     /**
      * Reproject the schema with a new name
+     * @param prj A Projection or a String
+     * @param name The new name of the reprojected Schema
+     * @return The reprojected Schema
      */
     Schema reproject(def prj, String name) {
         Projection proj = new Projection(prj)
@@ -123,13 +163,17 @@ class Schema {
 
     /**
      * The string reprentation
+     * @return The string representation
      */
     String toString() {
         "${name} ${fields.join(', ')}"
     }
 
     /**
-     * Look up the alias of a GeoTools binding
+     * Look up the alias of a GeoTools binding.
+     * For example: "com.vividsolutions.jts.geom.LinearRing" => "LinearRing"
+     * @param The Class name
+     * @return The alias
      */
     static String lookUpAlias(String binding) {
         Map map = [
@@ -150,7 +194,10 @@ class Schema {
     }
 
     /**
-     * Look up a GeoTools binding for the alias
+     * Look up a GeoTools binding for the alias.
+     * For example: "geoscript.geom.LinearRing" => "com.vividsolutions.jts.geom.LinearRing"
+     * @param alias The alias
+     * @return The GeoTools binding class name
      */
     static lookUpBinding(String alias) {
         Map map = [

@@ -3,7 +3,14 @@ package geoscript.feature
 import geoscript.proj.Projection
 
 /**
- * A Field is composed of a name and a type
+ * A Field is composed of a name and a type.  A Field with a Geometry type
+ * can also contain a Projection.
+ * <p><code>
+ * Field f1 = new Field("name","String")
+ * </code></p>
+ * <p><code>
+ * Field f2 = new Field("geom","Point", "EPSG:2927")
+ * </code></p>
  */
 class Field {
     
@@ -23,7 +30,12 @@ class Field {
     Projection proj
 
     /**
-     * Create a new Field with a name and type
+     * Create a new Field with a name and type.
+     * <p><code>
+     * Field f = new Field("name","String")
+     * </code></p>
+     * @param name The name of the Field
+     * @param type The type of the Field
      */
     Field(String name, String type){
         this.name = name
@@ -31,7 +43,13 @@ class Field {
     }
 
     /**
-     * Create a new Field with a name, type, and Projection
+     * Create a new Field with a name, type, and Projection.
+     * <p><code>
+     * Field f = new Field("geom","Point", "EPSG:2927")
+     * </code></p>
+     * @param name The name of the Field
+     * @param type The type of the Field
+     * @param proj The Projection can either be a Projection object or a String
      */
     Field(String name, String type, def proj){
         this.name = name
@@ -41,7 +59,11 @@ class Field {
 
     /**
      * Create a Field from a List of parts.  The first item is the name.  The
-     * second part of the type. The optional third item is the Projection
+     * second part of the type. The optional third item is the Projection.
+     * <p><code>
+     * Field f = new Field(["geom","Point", "EPSG:2927"])
+     * </code></p>
+     * @param parts The List of parts
      */
     Field(List parts) {
         this.name = parts[0]
@@ -53,6 +75,10 @@ class Field {
 
     /**
      * Create a Field from a Map. The keys are name, type, proj.
+     * <p><code>
+     * Field f = new Field(["name": "geom", "type": "Point", "proj": new Projection("EPSG:2927")])
+     * </code></p>
+     * @param parts A Map with name, type, and optionally proj keys.
      */
     Field(Map parts) {
         this.name = parts['name']
@@ -64,6 +90,7 @@ class Field {
 
     /**
      * Is the Field spatial?
+     * @return Is the Field spatial?
      */
     boolean isGeometry() {
 	List geometryNames = ["point","linestring","polygon","linearring"]
@@ -72,6 +99,7 @@ class Field {
 
     /**
      * The string representation
+     * @return The string representation
      */
     String toString() {
         "${name}: ${typ}${(proj!=null?'(' + proj + ')' : '')}".toString()
