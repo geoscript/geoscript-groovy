@@ -10,7 +10,15 @@ import org.geotools.filter.v1_1.OGCConfiguration as OGCConfiguration11
 import org.geotools.filter.v1_1.OGC as OGC11 
 
 /**
- * A Filter
+ * A Filter is a predicate or constraint used to match or filter Feature objects
+ * <p>You can create Filters from CQL:</p>
+ * <code>
+ * Filter f = new Filter("name='foobar')
+ * </code>
+ * <p>Or you can create Filters from XML:</p>
+ * <code>
+ * Filter f = new Filter('&lt;Filter&gt;&lt;PropertyIsEqualTo&gt;&lt;PropertyName&gt;name&lt;/PropertyName&gt;&lt;Literal&gt;foobar&lt;/Literal&gt;&lt;/PropertyIsEqualTo&gt;&lt;/Filter&gt;')
+ * </code>
  */
 class Filter {
     
@@ -21,13 +29,23 @@ class Filter {
     
     /**
      * Create a new Filter wrapping a GeoTools Filter
+     * @param filter The org.opengis.filter.Filter
      */
     Filter(GTFilter filter) {
         this.filter = filter
     }
     
     /**
-     * Create a new Filter from a String (CQL or XML)
+     * Create a new Filter from a String (CQL or XML).
+     * @param str The String CQL or XML
+     * <p>Creating a Filter with CQL:</p>
+     * <code>
+     * Filter f = new Filter("name='foobar')
+     * </code>
+     * <p>Creating a Filter with XML:</p>
+     * <code>
+     * Filter f = new Filter('&lt;Filter&gt;&lt;PropertyIsEqualTo&gt;&lt;PropertyName&gt;name&lt;/PropertyName&gt;&lt;Literal&gt;foobar&lt;/Literal&gt;&lt;/PropertyIsEqualTo&gt;&lt;/Filter&gt;')
+     * </code>
      */
     Filter(String str) {
         this(create(str))
@@ -51,16 +69,20 @@ class Filter {
     }
     
     /**
-     * Get the CQL string from the Filter
+     * Get the CQL string from the Filter.
+     * @return The Filter as CQL
      */
-    String cql() {
+    String getCql() {
         CQL.toCQL(filter)
     }
     
     /**
-     * Get the XML string from the Filter
+     * Get the XML string from the Filter.
+     * @param pretty Whether the XML is pretty printed (defaults to true)
+     * @param version The version (defaults to 1.0)
+     * @return The Filter as XML
      */
-    String xml(boolean pretty = true, double version = 1.0) {
+    String getXml(boolean pretty = true, double version = 1.0) {
         Encoder e 
         if (version == 1.0) {
             e = new Encoder(new OGCConfiguration10())
@@ -82,6 +104,7 @@ class Filter {
    
     /**
      * The string representation
+     * @return The string representation
      */
     String toString() {
         filter.toString()
