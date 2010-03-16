@@ -4,28 +4,39 @@ import com.vividsolutions.jts.geom.MultiLineString as JtsMultiLineString
 import com.vividsolutions.jts.geom.LineString as JtsLineString
 
 /**
- * A MultiLineString
+ * A MultiLineString Geometry.
+ * <p>You can create a MultiLineString from a variable List of LineString:</p>
+ * <code>MultiLineString m = new MultiLineString(new LineString([1,2],[3,4]), new LineString([5,6],[7,8]))</code>
+ * <p>Or from a variable List of List of Doubles:</p>
+ * <code>MultiLineString m = new MultiLineString([[1,2],[3,4]], [[5,6],[7,8]])</code>
+ * <p>Or from a List of LineStrings:</p>
+ * <code>MultiLineString m = new MultiLineString([new LineString([1,2],[3,4]), new LineString([5,6],[7,8])])</code>
+ * <p>Or from a List of List of List of Doubles:</p>
+ * <code>MultiLineString m = new MultiLineString([[[1,2],[3,4]], [[5,6],[7,8]]])</code>
  */
 class MultiLineString extends Geometry {
 
     /**
      * Create a MultiLineString that wraps a JTS MultiLineString
+     * @param multiLineString The JTS MultiLineString
      */
     MultiLineString(JtsMultiLineString multiLineString) {
         super(multiLineString)
     }
 
     /**
-     * Create a MultiLineString from a List of LineStrings
-     * <p>MultiLineString m = new MultiLineString(new LineString([1,2],[3,4]), new LineString([5,6],[7,8]))</p>
+     * Create a MultiLineString from a variable List of LineStrings
+     * <p><code>MultiLineString m = new MultiLineString(new LineString([1,2],[3,4]), new LineString([5,6],[7,8]))</code></p>
+     * @param lineString A variable List of LineStrings
      */
     MultiLineString(LineString... lineStrings) {
         this(create(lineStrings))
     }
 
     /**
-     * Create a MultiLineString from a List of List of Doubles
-     * <p>MultiLineString m = new MultiLineString([[1,2],[3,4]], [[5,6],[7,8]])</p>
+     * Create a MultiLineString from a variable List of List of Doubles
+     * <p><code>MultiLineString m = new MultiLineString([[1,2],[3,4]], [[5,6],[7,8]])</code></p>
+     * @param lineString A variable List of List of Doubles
      */
     MultiLineString(List<List<Double>>... lineStrings) {
         this(create(lineStrings))
@@ -33,8 +44,9 @@ class MultiLineString extends Geometry {
 
     /**
      * Create a MultiLineString from a List of LineString or a List of List of Doubles
-     * <p>MultiLineString m = new MultiLineString([new LineString([1,2],[3,4]), new LineString([5,6],[7,8])])</p>
-     * <p>MultiLineString m = new MultiLineString([[[1,2],[3,4]], [[5,6],[7,8]]])</p>
+     * <p><code>MultiLineString m = new MultiLineString([new LineString([1,2],[3,4]), new LineString([5,6],[7,8])])</code></p>
+     * <p><code>MultiLineString m = new MultiLineString([[[1,2],[3,4]], [[5,6],[7,8]]])</code></p>
+     * @param lineString Either a List of List of Doubles or a List of LineStrings
      */
     MultiLineString(List lineStrings) {
         this(create(lineStrings))
@@ -42,9 +54,11 @@ class MultiLineString extends Geometry {
 
     /**
      * Add a LineString to this MultiLineString to create another MultiLineString
-     * <p>def m1 = new MultiLineString(new LineString([1,2],[3,4]), new LineString([5,6],[7,8]))</p>
-     * <p>def m2 = m1 + new LineString([11,12],[13,14])</p>
-     * <p>MULTILINESTRING ((1 2, 3 4), (5 6, 7 8), (11 12, 13 14))</p>
+     * <p><code>def m1 = new MultiLineString(new LineString([1,2],[3,4]), new LineString([5,6],[7,8]))</code></p>
+     * <p><code>def m2 = m1 + new LineString([11,12],[13,14])</code></p>
+     * <p><code>MULTILINESTRING ((1 2, 3 4), (5 6, 7 8), (11 12, 13 14))</code></p>
+     * @param line A LineString
+     * @return A new MultiLineString with this LineString and the other
      */
     MultiLineString plus(LineString line) {
         List<LineString> lines = []
@@ -78,6 +92,6 @@ class MultiLineString extends Geometry {
     private static JtsMultiLineString create(List lineStrings) {
         Geometry.factory.createMultiLineString(lineStrings.collect{l ->
                 (l instanceof LineString) ? l.g : new LineString(l).g
-        }.toArray() as JtsLineString[])
+            }.toArray() as JtsLineString[])
     }
 }

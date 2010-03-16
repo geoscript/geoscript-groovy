@@ -4,7 +4,10 @@ import org.geotools.geometry.jts.ReferencedEnvelope
 import geoscript.proj.Projection
 
 /**
- * A Bounds is an Envelope with a Projection
+ * A Bounds is an Envelope with a Projection.
+ * <p><code>
+ * Bounds b = new Bounds(1,2,3,4, new Projection("EPSG:2927"))
+ * </p></code>
  */
 class Bounds {
 	
@@ -15,8 +18,9 @@ class Bounds {
 	
     /**
      * Create a new Bounds wrapping a ReferencedEnvelope.
-     * <p>ReferencedEnvelope e = new ReferencedEnvelope(1,3,2,4,null)</p>
-     * <p>Bounds b = new Bounds(e)</p>
+     * <p><code>ReferencedEnvelope e = new ReferencedEnvelope(1,3,2,4,null)</code></p>
+     * <p><code>Bounds b = new Bounds(e)</code></p>
+     * @param env The ReferencedEnvelope
      */
     Bounds(ReferencedEnvelope env) {
         this.env = env
@@ -24,7 +28,11 @@ class Bounds {
 	
     /**
      * Create a new Bounds with left, bottom, right, and top coordinates.
-     * <p>Bounds b = new Bounds(1,2,3,4)</p>
+     * <p><code>Bounds b = new Bounds(1,2,3,4)</code></p>
+     * @param l The left most coordinate (minX)
+     * @param b the bottom most coordinate (minY)
+     * @param r The right most coordinate (maxX)
+     * @param t The top most coordinate (maxY)
      */
     Bounds(double l, double b, double r, double t) {
         this(new ReferencedEnvelope(l, r, b, t, null))
@@ -33,44 +41,55 @@ class Bounds {
     /**
      * Create a new Bounds with left, bottom, right, and top coordinates
      * and a Projection.
-     * <p>Bounds b = new Bounds(1,2,3,4, new Projection("EPSG:2927"))</p>
+     * <p><code>Bounds b = new Bounds(1,2,3,4, new Projection("EPSG:2927"))</code></p>
+     * <p><code>Bounds b = new Bounds(1,2,3,4, "EPSG:2927")</code></p>
+     * @param l The left most coordinate (minX)
+     * @param b the bottom most coordinate (minY)
+     * @param r The right most coordinate (maxX)
+     * @param t The top most coordinate (maxY)
+     * @param proj The Projection can either be a Projection or a String
      */
-    Bounds(double l, double b, double r, double t, Projection proj) {
-        this(new ReferencedEnvelope(l, r, b, t, proj.crs))
+    Bounds(double l, double b, double r, double t, def proj) {
+        this(new ReferencedEnvelope(l, r, b, t, new Projection(proj).crs))
     }
 	
     /**
      * Get the left most coordinate (minX)
+     * @return The left most coordinate (minX)
      */
-    def double getL() {
+    double getL() {
         env.minX()
     }
 	
     /**
      * Get the right most coordinate (maxX)
+     * @return The right most coordinate (maxX)
      */
-    def double getR() {
+    double getR() {
         env.maxX()
     }
 	
     /**
      * Get the bottom most coordinate (minY)
+     * @return The bottom most coordinate (minY)
      */
-    def double getB() {
+    double getB() {
         env.minY()
     }
 	
     /**
      * Get the top most coordinate (maxY)
+     * @return The top most coordinate (maxY)
      */
-    def double getT() {
+    double getT() {
         env.maxY()
     }
 	
     /**
      * Get the Projection (if any) or null
+     * @return The Projection (if any) or null
      */
-    def Projection getProj() {
+    Projection getProj() {
         if (env.coordinateReferenceSystem)
             return new Projection(env.coordinateReferenceSystem)
         else
@@ -79,8 +98,9 @@ class Bounds {
 	
     /**
      * The string representation
+     * @return The string representation
      */
-    def String toString() {
+    String toString() {
         "(${l},${b},${r},${t}${if (proj != null){',' + proj.id } else {''}})"
     }
 }

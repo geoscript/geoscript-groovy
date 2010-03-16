@@ -20,6 +20,9 @@ class BoundsTestCase {
 		
         Bounds b3 = new Bounds(1,2,3,4)
         assertEquals "(1.0,2.0,3.0,4.0)", b3.toString()
+
+        Bounds b4 = new Bounds(1,2,3,4, "EPSG:2927")
+        assertEquals "(1.0,2.0,3.0,4.0,EPSG:2927)", b4.toString()
     }
 	
     @Test void l() {

@@ -10,7 +10,7 @@ import com.vividsolutions.jts.geom.Envelope
 import com.vividsolutions.jts.geom.IntersectionMatrix
 
 /**
- * The base class for other Geomtries
+ * The base class for other Geomtries.
  */
 class Geometry {
 	
@@ -46,12 +46,12 @@ class Geometry {
 
     /**
      * Create a new Geometry wrapping a JTS Geometry
+     * @param g The JTS Geometry
      */
     Geometry (JtsGeometry g) {
         this.g = g
     }
 	
-
     /**
      * Round Buffer cap style
      */
@@ -68,14 +68,20 @@ class Geometry {
     static final int CAP_SQUARE = com.vividsolutions.jts.operation.buffer.BufferOp.CAP_SQUARE
 
     /**
-     * Buffer the Geometry by some distance
+     * Buffer the Geometry by some distance.
+     * @param distance The buffer distance 
+     * @param quadrantSegments The number of quadrant segments (the default is 8)
+     * @param endCapStyle The end cap style (CAP_ROUND is default, also CAP_BUTT, or CAP_SQUARE)
+     *
      */
     Geometry buffer(double distance, int quadrantSegments = 8, int endCapStyle = CAP_ROUND) {
         wrap(g.buffer(distance, quadrantSegments, endCapStyle))
     }
 
     /**
-     * Whether this Geometry contains the other Geometry
+     * Whether this Geometry contains the other Geometry.
+     * @param other The other Geometry
+     * @return Whether this Geometry contains the other Geometry
      */
     boolean contains(Geometry other) {
         this.g.contains(other.g)
@@ -83,6 +89,7 @@ class Geometry {
 
     /**
      * Calculate the convex hull of this Geometry
+     * @return The convex hull of this Geometry
      */
     Geometry convexHull() {
         wrap(g.convexHull())
@@ -90,6 +97,8 @@ class Geometry {
 
     /**
      * Whether this Geometry is covered by the other Geometry
+     * @param The other Geometry
+     * @return Whether this Geometry is covered by the other Geometry
      */
     boolean coveredBy(Geometry other) {
         this.g.coveredBy(other.g)
@@ -97,6 +106,8 @@ class Geometry {
 
     /**
      * Whether this Geometry covers the other Geometry
+     * @param The other Geometry
+     * @return Whether this Geometry covers the other Geometry
      */
     boolean covers(Geometry other) {
         this.g.covers(other.g)
@@ -104,6 +115,8 @@ class Geometry {
 
     /**
      * Whether this Geometry crosses the other Geometry
+     * @param The other Geometry
+     * @return Whether this Geometry crosses the other Geometry
      */
     boolean crosses(Geometry other) {
         this.g.crosses(other.g)
@@ -111,6 +124,8 @@ class Geometry {
 
     /**
      * Calculate the difference between this Geometry and the other Geometry
+     * @param The other Geometry
+     * @return The difference between this Geometry and the other Geometry
      */
     Geometry difference(Geometry other) {
         wrap(this.g.difference(other.g))
@@ -118,6 +133,8 @@ class Geometry {
 
     /**
      * Whether this Geometry is disjoint from the other Geometry
+     * @param The other Geometry
+     * @return Whether this Geometry is disjoint from the other Geometry
      */
     boolean disjoint(Geometry other) {
         this.g.disjoin(other.g)
@@ -125,6 +142,8 @@ class Geometry {
 
     /**
      * Calculate the distance between this Geometry and other Geometry
+     * @param The other Geometry
+     * @return The distance between this Geometry and other Geometry
      */
     double distance(Geometry other) {
         this.g.distance(other.g)
@@ -132,6 +151,7 @@ class Geometry {
 
     /**
      * Get the area of this Geometry
+     * @return The area of this Geometry
      */
     double getArea() {
         this.g.area
@@ -139,13 +159,15 @@ class Geometry {
 
     /**
      * Get the boundary of this Geometry
+     * @return The boundary of this Geometry
      */
     double getBoundary() {
         this.g.boundary
     }
 
     /**
-     * Calculate the centroid of this Geometry
+     * Calculate the centroid of this Geometry.
+     * @return The centroid as a Point of this Geometry
      */
     Point getCentroid() {
         wrap(this.g.centroid)
@@ -153,6 +175,7 @@ class Geometry {
 
     /**
      * Calculate the envelope of this Geometry
+     * @return The Envelope of this Geometry
      */
     Envelope getEnvelope() {
         this.g.envelope
@@ -160,6 +183,7 @@ class Geometry {
 
     /**
      * Calculate the internal Envelope of this Geometry
+     * @return The internal Envelope of this Geometry
      */
     Envelope getEnvelopeInternal() {
         this.g.envelopeInternal
@@ -167,6 +191,8 @@ class Geometry {
 
     /**
      * Get the nth Geometry in this Geometry
+     * @param n The index of the Geometry
+     * @return The nth Geometry
      */
     Geometry getGeometryN(int n) {
         wrap(this.g.getGeometryN(n))
@@ -174,6 +200,7 @@ class Geometry {
 
     /**
      * Get the interior Point of this Geometry
+     * @return The interior Point of this Geometry
      */
     Point getInteriorPoint() {
         wrap(this.g.getInteriorPoint())
@@ -181,6 +208,7 @@ class Geometry {
 
     /**
      * Get the length of this Geometry
+     * @return The length of this Geometry
      */
     double getLength() {
         this.g.length
@@ -188,6 +216,7 @@ class Geometry {
 
     /**
      * Get the number of Geometries in this Geometry
+     * @return The number of Geometries in this Geometry
      */
     int getNumGeometries() {
         this.g.numGeometries
@@ -195,6 +224,7 @@ class Geometry {
 
     /**
      * Get the number of Points in this Geometry
+     * @return The number of Points in this Geometry
      */
     int getNumPoints () {
         this.g.numPoints
@@ -202,6 +232,8 @@ class Geometry {
 
     /**
      * Calculate the intersection between this Geometry and the other Geometry
+     * @param The other Geometry
+     * @return The intersection between this Geometry and the other Geometry
      */
     Geometry intersection(Geometry other) {
         wrap(this.g.intersection(other.g))
@@ -209,6 +241,8 @@ class Geometry {
 
     /**
      * Whether this Geometry intersects the other Geometry
+     * @param The other Geometry
+     * @return Whether this Geometry intersects the other Geometry
      */
     boolean intersects(Geometry other) {
         this.g.intersects(other.g)
@@ -216,6 +250,7 @@ class Geometry {
 
     /**
      * Whether this Geometry is empty
+     * @return Whether this Geometry is empty
      */
     boolean isEmpty() {
         this.g.isEmpty()
@@ -223,6 +258,7 @@ class Geometry {
 
     /**
      * Whether this Geometry is rectangular
+     * @return Whether this Geometry is rectangular
      */
     boolean isRectangle() {
         this.g.isRectangle()
@@ -230,6 +266,7 @@ class Geometry {
 
     /**
      * Whether this Geometry is simple
+     * @return Whether this Geometry is simple
      */
     boolean isSimple() {
         this.g.isSimple()
@@ -237,6 +274,7 @@ class Geometry {
 
     /**
      * Whether this Geometry is valid
+     * @return Whether this Geometry is valid
      */
     boolean isValid() {
         this.g.isValid()
@@ -244,6 +282,9 @@ class Geometry {
 
     /**
      * Whether this Geometry is within the given distance of the other Geometry
+     * @param geom The other Geometry
+     * @param distance The distance
+     * @return Whether this Geometry is within the given distance of the other Geometry
      */
     boolean isWithinDistance(Geometry geom, double distance) {
         this.g.isWithinDistance(geom.g, distance)
@@ -251,6 +292,8 @@ class Geometry {
 
     /**
      * Whether this Geometry overlaps the other Geometry
+     * @param other The other Geometry
+     * @return Whether this Geometry overlaps the other Geometry
      */
     boolean overlaps(Geometry other) {
         this.g.overlaps(other.g)
@@ -258,7 +301,9 @@ class Geometry {
 
     /**
      * Calculate the D9 Intersection Matrix of this Geometry with the other
-     * Geometry
+     * Geometry.
+     * @param other The other Geometry
+     * @return The IntersectionMatrix of this Geometry with another Geometry
      */
     IntersectionMatrix relate(Geometry other) {
         this.g.relate(other.g)
@@ -266,7 +311,11 @@ class Geometry {
 
     /**
      * Whether this Geometry relates with the other Geometry given a D9 intesection
-     * matrix pattern
+     * matrix pattern.
+     * @param other The other Geometry
+     * @param intersectionPattern The intersection pattern
+     * @return Whether this Geometry relates with the other Geometry given a D9 intesection
+     * matrix pattern.
      */
     boolean relate(Geometry other, String intersectionPattern) {
         this.g.relate(other.g, intersectionPattern)
@@ -275,6 +324,8 @@ class Geometry {
     /**
      * Calculate the symmetric difference between this Geometry and the other
      * Geometry
+     * @param other The other Geometry
+     * @return The the symmetric difference between this Geometry and the other Geometry
      */
     Geometry symDifference(Geometry other) {
         wrap(this.g.symDifference(other.g))
@@ -282,6 +333,8 @@ class Geometry {
 
     /**
      * Whether this Geometry touches the other Geometry
+     * @param other The other Geometry
+     * @return Whether this Geometry touches the other Geometry
      */
     boolean touches(Geometry other) {
         this.g.touches(other.g)
@@ -289,6 +342,7 @@ class Geometry {
 
     /**
      * Calculate the union of this Geometry
+     * @return The union of this Geometry
      */
     Geometry union() {
         wrap(this.g.union())
@@ -296,6 +350,8 @@ class Geometry {
 
     /**
      * Calculate the union of this Geometry with the other Geometry
+     * @param other The other Geometry
+     * @return The union of this Geometry with the other Geometry
      */
     Geometry union(Geometry other) {
         wrap(this.g.union(other.g))
@@ -303,6 +359,8 @@ class Geometry {
 
     /**
      * Whether this Geometry is within the other Geometry
+     * @param other The other Geometry
+     * @return Whether this Geometry is within the other Geometry
      */
     boolean within(Geometry other) {
         this.g.within(other.g)
@@ -310,6 +368,7 @@ class Geometry {
 
     /**
      * Get the WKT of the Geometry
+     * @return The WKT of this Geometry
      */
     String getWkt() {
         g.toText()
@@ -317,6 +376,7 @@ class Geometry {
     
     /**
      * Get the WKB of the Geometry
+     * @return The WKB of this Geometry
      */
     byte[] getWkb() {
         wkbWriter.write(g)
@@ -324,13 +384,15 @@ class Geometry {
 
     /**
      * The string reprensentation
+     * @return The string reprensentation
      */
     String toString() {
         return wkt
     }
 
     /**
-     * Get a PreparedGeometry for this Geometry
+     * Get a PreparedGeometry for this Geometry.
+     * @return A PreparedGeometry for this Geometry
      */
     PreparedGeometry prepare() {
         new PreparedGeometry(this)
@@ -338,6 +400,8 @@ class Geometry {
 
     /**
      * Wrap a JTS Geometry in a geoscript.geom.Geometry
+     * @param A JTS Geometry
+     * @return A GeoScript Geometry
      */
     static Geometry wrap(JtsGeometry jts) {
         if (jts instanceof com.vividsolutions.jts.geom.Point) {
@@ -368,6 +432,8 @@ class Geometry {
 	
     /**
      * Get a Geometry from WKT
+     * @param wkt A WKT String
+     * @return A Geometry
      */
     static Geometry fromWKT(String wkt) {
         wrap(wktReader.read(wkt))
@@ -375,6 +441,8 @@ class Geometry {
 
     /**
      * Get a Geometry from WKB
+     * @param wkb The WKB
+     * @return A Geometry
      */
     static Geometry fromWKB(byte[] wkb) {
         wrap(wkbReader.read(wkb))
@@ -382,6 +450,8 @@ class Geometry {
 
     /**
      * Get a PreparedGeometry for the given Geometry
+     * @param g The Geometry
+     * @return A PreparedGeometry
      */
     static PreparedGeometry prepare(Geometry g) {
         new PreparedGeometry(g)

@@ -42,6 +42,18 @@ class PolygonTestCase {
         // Create a Polygon from a repeated List of Doubles with no holes
         def p6 = new Polygon([1,2],[3,4],[5,6],[1,2])
         assertEquals "POLYGON ((1 2, 3 4, 5 6, 1 2))", p6.wkt
+
+        // Create a Polygon from a List of LinearRings
+        def p7 = new Polygon(
+            [
+                new LinearRing([1,1], [10,1], [10,10], [1,10], [1,1]),
+                new LinearRing([2,2], [4,2], [4,4], [2,4], [2,2]),
+                new LinearRing([5,5], [6,5], [6,6], [5,6], [5,5])
+            ]
+        )
+        assertEquals "POLYGON ((1 1, 10 1, 10 10, 1 10, 1 1), (2 2, 4 2, 4 4, 2 4, 2 2), (5 5, 6 5, 6 6, 5 6, 5 5))", p4.wkt
+
+
     }
 
     @Test void plus() {
