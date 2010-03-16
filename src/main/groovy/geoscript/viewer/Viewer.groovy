@@ -47,17 +47,27 @@ class Viewer {
         scale = (e.height > 0) ? Math.min(scale, size[1] / e.height) : new Double(1).doubleValue()
 
         double tx = -e.minX
-        double ty = -e.maxY
+        double ty = -e.minY
 
         AffineTransform at = new AffineTransform()
         // Scale to size of canvas (inverting the y axis)
         at.scale(scale, -scale)
-        // transolate to the origin
-        at.translate(tx, ty) //ok
+        // translate to the origin
+        //at.translate(tx, ty)
         // translate to account for invert
-        at.translate(0, -(size[1] / scale))
+        //at.translate(0, (-size[1]/ scale))
         // buffer
-        at.translate(buf/scale, -buf/scale)
+        //at.translate(buf/scale, -buf/scale)
+        at.translate(
+            (buf/scale) - e.minX + (((size[0] / scale) - e.width) / 2),
+            (-buf/scale) - e.maxY - (((size[1] / scale) - e.height) / 2))
+        
+
+        //double scaleX = size[0] / e.width
+        //double scaleY = size[1] / e.height
+        //double tx = -e.minX * scaleX
+        //double ty = (e.minY * scaleY) + size[1]
+        //AffineTransform at = new AffineTransform(scaleX, 0.0, 0.0, -scaleY, tx, ty)
 
         Panel panel = new Panel(geom, at)
         Dimension dim = new Dimension((int) (size[0] + 2 * buf), (int) (size[1] + 2 * buf))
@@ -111,11 +121,5 @@ class Panel extends JPanel {
             g2d.color = Color.BLACK
             g2d.draw(shp)
         }
-
     }
-
 }
-
-
-
-
