@@ -8,14 +8,15 @@ Install Grails
 
 You can download Grails from their `web site <http://www.grails.org/>`_
 
-Create a Web Application
+Getting Started
 ------------------------
 
-:
+Create a new Grails Application::
+
     grails create-app geoscript
 
-Copy Libraries
---------------
+Install GeoScript
+-----------------
 
 Copy all jar files from the GeoScript Groovy installation::
 
@@ -29,14 +30,13 @@ directory of your Grails application::
 Create a Controller
 -------------------
 
-:
+Create a Controller to buffer a WKT Geometry::
+
     grails create-controller geoscript.Buffer
 
-Edit Controller Code
---------------------
+Edit Controller Code::
 
-
-grails-app/controllers/geoscript/BufferController.groovy
+    grails-app/controllers/geoscript/BufferController.groovy
 
 .. code-block:: java
 
