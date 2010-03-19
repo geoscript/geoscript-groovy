@@ -21,12 +21,30 @@ import org.geotools.geometry.jts.LiteShape
 import geoscript.geom.*
 
 /**
- * A Viewer
+ * A Viewer can be used to visualize Geometry.
+ * <code><pre>
+ * import geoscript.geom.Point
+ * import geoscript.viewer.Viewer
+ * Point p = new Point(10,10)
+ * Viewer.open(p.buffer(100))
+ * </pre></code>
  */
 class Viewer {
 
     /**
      * Draw a Geometry (or Geometries) onto a Canvas
+     * @param geom The Geomtry to List of Geometries to draw
+     * @param A List containing the size of the viewer (defaults to 500 by 500)
+     */
+    static void open(def geom, List size=[500,500]) {
+        Viewer v = new Viewer()
+        v.draw(geom, size)
+    }
+
+    /**
+     * Draw a Geometry (or Geometries) onto a Canvas
+     * @param geom The Geomtry to List of Geometries to draw
+     * @param A List containing the size of the viewer (defaults to 500 by 500)
      */
     void draw(def geom, List size=[500,500]) {
         
@@ -88,12 +106,27 @@ class Viewer {
 
 }
 
-class Panel extends JPanel {
-    
+/**
+ * The JPanel used to draw Geometry
+ */
+private class Panel extends JPanel {
+
+    /**
+     * The List of Geometries to draw
+     */
     List<Geometry> geoms
 
+    /**
+     * The AffineTransform that converts between mapping and screen coordinates
+     */
     AffineTransform atx
 
+    /**
+     * Create a new Panel with the List of Geometries to draw and the
+     * AffineTransform that converts between mapping and screen coordinates
+     * @param geoms The List of Geometries to draw
+     * @param atx The AffineTransform that converts between mapping and screen coordinates
+     */
     Panel(List<Geometry> geoms, AffineTransform atx) {
         super()
         background = Color.WHITE
@@ -102,6 +135,10 @@ class Panel extends JPanel {
         this.atx = atx
     }
 
+    /**
+     * Override the paintComponent method to draw the Geometries
+     * @param gr The Graphics context
+     */
     void paintComponent(Graphics gr) {
         super.paintComponent(gr)
         Graphics2D g2d = (Graphics2D)gr
