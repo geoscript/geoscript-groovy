@@ -3,16 +3,15 @@ package geoscript.index
 import org.junit.Test
 import static org.junit.Assert.*
 import geoscript.geom.*
-import com.vividsolutions.jts.index.strtree.STRtree as JtsSTRtree
 
 /**
- * The SpatialIndexTestCase
+ * The STRtreeTestCase
  */
-class SpatialIndexTestCase {
+class STRtreeTestCase {
 
     @Test void index() {
 
-        def spatialIndex = new SpatialIndex(new JtsSTRtree())
+        def spatialIndex = new STRtree()
         spatialIndex.insert(new Bounds(0,0,10,10), new Point(5,5))
         spatialIndex.insert(new Bounds(2,2,6,6), new Point(4,4))
         spatialIndex.insert(new Bounds(20,20,60,60), new Point(30,30))

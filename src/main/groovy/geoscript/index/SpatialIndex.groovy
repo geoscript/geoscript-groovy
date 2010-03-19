@@ -1,11 +1,10 @@
-package geoscript.geom
+package geoscript.index
 
 import com.vividsolutions.jts.index.SpatialIndex as JtsSpatialIndex
-import com.vividsolutions.jts.index.strtree.STRtree
 import geoscript.geom.Bounds
 
 /**
- * A SpatialIndex
+ * A SpatialIndex base class.
  */
 class SpatialIndex {
 
@@ -22,10 +21,19 @@ class SpatialIndex {
     }
 
     /**
-     * Create a new SpatialIndex
+     * Create a STR Tree SpatialIndex
+     * @return a SpatialIndex using the STR Tree algorithm
      */
-    SpatialIndex() {
-        this(new STRtree())
+    static SpatialIndex createSTRtree() {
+        new STRtree()
+    }
+
+    /**
+     * Create a Quad Tree SpatialIndex
+     * @return a SpatialIndex using the Quad Tree algorithm
+     */
+    static SpatialIndex createQuadtree() {
+        new Quadtree()
     }
 
     /**
@@ -48,5 +56,6 @@ class SpatialIndex {
     List query(Bounds bounds) {
         index.query(bounds.env)
     }
+
 }
 
