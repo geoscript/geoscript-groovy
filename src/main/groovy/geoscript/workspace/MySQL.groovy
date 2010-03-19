@@ -4,12 +4,17 @@ import org.geotools.data.DataStore
 import org.geotools.data.mysql.MySQLDataStoreFactory
 
 /**
- * A MySQL Workspace
+ * A MySQL Workspace connects to a MySQL database.
  */
 class MySQL extends Workspace {
 
     /**
      * Create a new MySQL Workspace with a name, host, port, user, and passowrd
+     * @param name The name of the database
+     * @param host The host name
+     * @param port The port
+     * @param user The user name
+     * @param password The password
      */
     MySQL(String name, String host, String port, String user, String password) {
         super(createDataStore(name, host, port, user, password))
@@ -29,6 +34,4 @@ class MySQL extends Workspace {
         MySQLDataStoreFactory f = new MySQLDataStoreFactory()
         f.createDataStore(params)
     }
-
-
 }

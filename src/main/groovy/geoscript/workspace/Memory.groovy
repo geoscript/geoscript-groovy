@@ -3,7 +3,7 @@ package geoscript.workspace
 import org.geotools.data.memory.MemoryDataStore
 
 /**
- * A Memory Workspace
+ * A Memory Workspace stores it's Layers in memory
  */
 class Memory extends Workspace {
 

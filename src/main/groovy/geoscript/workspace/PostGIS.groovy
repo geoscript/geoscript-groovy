@@ -4,12 +4,18 @@ import org.geotools.data.DataStore
 import org.geotools.data.postgis.PostgisNGDataStoreFactory
 
 /**
- * A PostGIS Workspace
+ * A PostGIS Workspace connects to a PostGIS database.
  */
 class PostGIS extends Workspace {
 
     /**
-     * Create a new PostGIS Workspace with a name, host, port, schema user, and passowrd
+     * Create a new PostGIS Workspace with a name, host, port, schema user, and password
+     * @param name The database name
+     * @param host The host name
+     * @param port The port
+     * @param schema The database schema
+     * @param user The user name
+     * @param password The password
      */
     PostGIS (String name, String host, String port, String schema, String user, String password) {
         super(createDataStore(name, host, port, schema, user, password))
@@ -30,6 +36,4 @@ class PostGIS extends Workspace {
         PostgisNGDataStoreFactory f = new PostgisNGDataStoreFactory()
         f.createDataStore(params)
     }
-
-
 }

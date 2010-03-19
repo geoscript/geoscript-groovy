@@ -5,12 +5,14 @@ import org.geotools.data.DataStore
 import org.geotools.data.spatialite.SpatiaLiteDataStoreFactory
 
 /**
- * A SpatiaLite Workspace
+ * A SpatiaLite Workspace connects to a SpatiaLite database.
  */
 class SpatiaLite extends Workspace {
 
     /**
      * Create a new SpatiaLite Workspace from a name and directory
+     * @param name The name of the database
+     * @param dir The File directory containing the database
      */
     SpatiaLite(String name, File dir) {
         super(createDataStore(name, dir))
@@ -18,6 +20,8 @@ class SpatiaLite extends Workspace {
 
     /**
      * Create a new SpatiaLite Workspace from a name and directory
+     * @param name The name of the database
+     * @param dir The directory name containing the database
      */
     SpatiaLite(String name, String dir) {
         this(name, new File(dir).absolutePath)
@@ -33,6 +37,4 @@ class SpatiaLite extends Workspace {
         SpatiaLiteDataStoreFactory f = new SpatiaLiteDataStoreFactory()
         f.createDataStore(params)
     }
-
-
 }
