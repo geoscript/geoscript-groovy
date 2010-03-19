@@ -4,7 +4,7 @@
     <groupId>geoscript</groupId>
     <artifactId>geoscript-groovy</artifactId>
     <packaging>jar</packaging>
-    <version>0.5-SNAPSHOT</version>
+    <version>0.6-SNAPSHOT</version>
     <repositories>
         <repository>
             <id>opengeo</id>
@@ -128,7 +128,8 @@
                 <version>2.2-beta-5</version>
                 <configuration>
                     <descriptors>
-                        <descriptor>assembly.xml</descriptor>
+                        <descriptor>src/assembly/dir.xml</descriptor>
+                        <descriptor>src/assembly/zip.xml</descriptor>
                     </descriptors>
                 </configuration>
             </plugin>
