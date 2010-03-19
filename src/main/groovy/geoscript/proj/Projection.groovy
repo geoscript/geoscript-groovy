@@ -7,7 +7,11 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem
 import org.opengis.referencing.operation.MathTransform
 
 /**
- * A Projection
+ * A Projection is a cartographic projection or coordinate reference system.
+ * <p>You can create a Projection with an EPSG Code:</p>
+ * <code>Projection p = new Projection("EPSG:4326")</code>
+ * <p>Or with WKT:</p>
+ * <code>Projection p = new Projection("""GEOGCS["GCS_WGS_1984",DATUM["D_WGS_1984",SPHEROID["WGS_1984",6378137,298.257223563]],PRIMEM["Greenwich",0],UNIT["Degree",0.017453292519943295]]""")</cod>
  */
 class Projection {
 
@@ -19,6 +23,7 @@ class Projection {
     /**
      * Create a new Projection wrapping a GeoTools
      * CoordinateReferenceSystem
+     * @param crs The GeoTools CoordinateReferenceSystem
      */
     Projection(CoordinateReferenceSystem crs) {
         this.crs = crs
@@ -26,6 +31,7 @@ class Projection {
 
     /**
      * Create a new Projection from an existing Projection
+     * @param p An existing Projection
      */
     Projection(Projection p) {
         this(p.crs)
@@ -33,6 +39,7 @@ class Projection {
 
     /**
      * Create a new Projection from a String
+     * @param str A EPSG ID or WTK
      */
     Projection(String str) {
         this(parse(str))
@@ -40,6 +47,7 @@ class Projection {
 
     /**
      * Get the Identifier
+     * @return The CRS Lookup Identifier
      */
     String getId() {
         return CRS.lookupIdentifier(crs, true)
@@ -47,6 +55,7 @@ class Projection {
 
     /**
      * Get the well known text
+     * @return The well known texts
      */
     String getWkt() {
         return crs.toString()
@@ -54,6 +63,9 @@ class Projection {
 
     /**
      * Transform the Geometry to another Projection
+     * @param geom The Geometry
+     * @param dest The destination Projection
+     * @return A new Geometry reprojected from this Projection to the destination Projection
      */
     Geometry transform(Geometry geom, Projection dest) {
         CoordinateReferenceSystem fromCrs = crs
@@ -66,6 +78,9 @@ class Projection {
 
     /**
      * Transform the Geometry to another Projection
+     * @param geom The Geometry
+     * @param dest The destination Projection string
+     * @return A new Geometry reprojected from this Projection to the destination Projection
      */
     Geometry transform(Geometry geom, String prj) {
         transform(geom, new Projection(prj))
@@ -73,6 +88,7 @@ class Projection {
 
     /**
      * The string representation
+     * @return The string representation
      */
     String toString() {
         return id
@@ -80,6 +96,7 @@ class Projection {
 
     /**
      * Does this Projection equal the other?
+     * @return Whether this Projection equal the other?
      */
     boolean equals(Object other) {
         if (!(other instanceof Projection))
@@ -109,6 +126,10 @@ class Projection {
     /**
      * Reproject the Geometry from the source Projection to the destintation
      * Projection
+     * @param geom The Geometry
+     * @param src The Projection source/from
+     * @param dest The Projection destination/to
+     * @return A new Geometry
      */
     static Geometry transform(Geometry geom, Projection src, Projection dest) {
         return src.transform(geom, dest)
@@ -117,6 +138,10 @@ class Projection {
     /**
      * Reproject the Geometry from the source Projection to the destintation
      * Projection
+     * @param geom The Geometry
+     * @param src The Projection String source/from
+     * @param dest The Projection String destination/to
+     * @return A new Geometry
      */
     static Geometry transform(Geometry geom, String src, String dest) {
         return new Projection(src).transform(geom, new Projection(dest))
@@ -124,7 +149,9 @@ class Projection {
 
 
     /**
-     * Get a List of all supported Projections
+     * Get a List of all supported Projections.
+     * This is currently reallllllly slow...
+     * @return A List of all Projections
      */
     static List<Projection> projections() {
         List<Projection> projections = []
