@@ -41,6 +41,7 @@ Edit Controller Code
 grails-app/controllers/geoscript/BufferController.groovy
 
 .. code-block:: java
+
     package geoscript
 
     import geoscript.geom.Geometry
