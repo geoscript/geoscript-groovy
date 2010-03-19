@@ -6,6 +6,7 @@ GeoScript Groovy
 
     quickstart
     usage
+    grails
 
 GeoScript Groovy is a Groovy implementation of GeoScript.
 
@@ -14,6 +15,9 @@ GeoScript Groovy is a Groovy implementation of GeoScript.
 
     :ref:`Usage <usage>`
       Learn how to use the various GeoScript Groovy commands
+
+    :ref:`Grails <grails>`
+      Use Geoscript Groovy to create GeoSpatial Grails Web Applications
 
     `Learning <../learning>`_
      A tour of the GeoScript library
