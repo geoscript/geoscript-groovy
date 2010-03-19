@@ -25,7 +25,7 @@ import org.geotools.xml.Encoder
 //import org.geotools.geojson.GeoJSONWriter
 
 /**
- * A Layer
+ * A Layer is a source of spatial data
  */
 class Layer {
 
@@ -61,6 +61,7 @@ class Layer {
 
     /**
      * Create a new Layer from an existing Layer
+     * @param layer Another Layer
      */
     Layer(Layer layer) {
         this.name = layer.name
@@ -72,6 +73,10 @@ class Layer {
 
     /**
      * Create a new Layer from a name, Workspace, FeatureSource, and Schema
+     * @param name The Layer's name
+     * @param workspace The Workspace
+     * @param fs The GeoTools FeatureSource
+     * @param schema The GeoScript Schema
      */
     Layer(String name, Workspace workspace, FeatureSource<SimpleFeatureType, SimpleFeature> fs, Schema schema) {
         this.name = name
@@ -82,6 +87,8 @@ class Layer {
 
     /**
      * Create a new Layer from a Workspace and FeatureSource
+     * @param workspace The Workspace
+     * @param fs The GeoTools FeatureSource
      */
     Layer(Workspace workspace, FeatureSource<SimpleFeatureType, SimpleFeature> fs) {
         this(fs.name.localPart, workspace, fs, new Schema(fs.schema))
@@ -89,6 +96,8 @@ class Layer {
 
     /**
      * Create a new Layer from a name and Workspace
+     * @param name The Layer's name
+     * @param workspace The Workspace
      */
     Layer(String name, Workspace workspace) {
         Layer layer = workspace.get(name)
@@ -100,6 +109,9 @@ class Layer {
 
     /**
      * Create a new Layer with a name
+     * @param name The Layer's name
+     * @param schema The Schema
+
      */
     Layer(String name, Schema schema) {
         this.workspace = new Memory()
@@ -110,7 +122,7 @@ class Layer {
     }
 
     /**
-     * Create a new Layer
+     * Create a new Layer with a default name, Schema, and Memory Workspace
      */
     Layer() {
         this(newname(), new Schema("features", [new Field("geom","Geometry")]))
@@ -118,6 +130,7 @@ class Layer {
 
     /**
      * Get the Workspace format
+     * @return The format identifying the workspace
      */
     String getFormat() {
         workspace.format
@@ -125,6 +138,7 @@ class Layer {
 
     /**
      * Get the Layer's name
+     * @return The Layer's name
      */
     String getName() {
         fs.name.localPart
@@ -132,6 +146,7 @@ class Layer {
 
     /**
      * Get the Layer's Projection
+     * @return The Layer's Projection 
      */
     Projection getProj() {
         if (proj != null) {
@@ -153,6 +168,8 @@ class Layer {
 
     /**
      * Count the number of Features in the layer
+     * @param filer The Filter or Filter String to limit the number of Features counted.  Defaults to null.
+     * @return The number of Features in the Layer
      */
     int count(def filter = null) {
         Filter f = (filter == null) ? Filter.PASS : new Filter(filter)
@@ -167,7 +184,9 @@ class Layer {
     }
 
     /**
-     * Get the Bounds of the Feature in the Layer
+     * Get the Bounds of the Features in the Layer
+     * @param filer The Filter or Filter String to limit the Features used to construct the bounds. Defaults to null.
+     * @return The Bounds of the Features in the Layer
      */
     Bounds bounds(def filter = null) {
         Filter f = (filter == null) ? Filter.PASS : new Filter(filter)
@@ -177,6 +196,9 @@ class Layer {
 
     /**
      * Get a List of Features
+     * @param filer The Filter or Filter String to limit the Features used to construct the bounds. Defaults to null.
+     * @param transform The Closure used to modify the Features.  Defaults to null.
+     * @return A List of Features
      */
     List<Feature> getFeatures(def filter = null, Closure transform = null) {
         List<Feature> features = []
@@ -199,7 +221,10 @@ class Layer {
     }
 
     /**
-     * Get a Cursor over the Feature of the Layer
+     * Get a Cursor over the Features of the Layer.
+     * @param filer The Filter or Filter String to limit the Features. Defaults to null.
+     * @return A Cursor
+     *
      */
     Cursor getCursor(def filter = null) {
         Filter f = (filter == null) ? Filter.PASS : new Filter(filter)
@@ -213,6 +238,7 @@ class Layer {
 
     /**
      * Delete Features from the Layer
+     * @param filer The Filter or Filter String to limit the Features to delete. Defaults to null.
      */
     void delete(def filter = null) {
         Filter f = (filter == null) ? Filter.PASS : new Filter(filter)
@@ -221,6 +247,7 @@ class Layer {
 
     /**
      * Add a Feature to the Layer
+     * @param o The Feature or List/Map of values
      */
     void add(def o) {
         Feature f
@@ -240,6 +267,9 @@ class Layer {
 
     /**
      * Reproject the Layer
+     * @param prj The Projection
+     * @param newName The new name (defaults to a default new name)
+     * @return The reprojected Layer
      */
     Layer reproject(Projection prj, String newName = newname()) {
         Projection p = new Projection(prj)
@@ -261,7 +291,10 @@ class Layer {
     }
 
     /**
-     * Filer the layer
+     * Filer the Layer.
+     * @param filter A Filter or Filter String used to limit the number of Features returned in the new Layer
+     * @param newName The name of the new Layer (defaults to a default new name)
+     * @return A new Layer in the same workspace
      */
     Layer filter(def filter = null, String newName = newname()) {
         Filter f = (filter == null) ? Filter.PASS : new Filter(filter)
@@ -280,6 +313,7 @@ class Layer {
 
     /**
      * Write the Layer as GML to an Outputstream
+     * @param out The OutputStream (defaults to System.out)
      */
     void toGML(OutputStream out = System.out) {
         FeatureCollection features = fs.features
@@ -296,6 +330,7 @@ class Layer {
 
     /**
      * Write the Layer as GeoJSON to an OutputStream
+     * @param out The OutputStream (defaults to System.out)
      */
     void toJSON(OutputStream out = System.out) {
         FeatureCollection features = fs.features
@@ -305,6 +340,7 @@ class Layer {
 
     /**
      * Generate a new name
+     * @return A new Layer name
      */
     static String newname() {
         id += 1

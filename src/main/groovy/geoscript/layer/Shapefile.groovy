@@ -3,12 +3,15 @@ package geoscript.layer
 import geoscript.workspace.Directory
 
 /**
- * A Shapefile Layer
+ * A Shapefile Layer.
+ * <p>You can create a Shapefile Layer by passing the .shp file:</p>
+ * <code>Shapefile shp = new Shapefile('states.shp')</code>
  */
 class Shapefile extends Layer {
 
     /**
      * Create a Shapefile Layer from a File
+     * @param file The Shapefile file (*.shp)
      */
     Shapefile(File file) {
         super(create(file.absoluteFile))
@@ -16,6 +19,7 @@ class Shapefile extends Layer {
 
     /**
      * Create a Shapefile Layer from a File
+     * @param file The Shapefile file (*.shp)
      */
     Shapefile(String file) {
         this(new File(file))
@@ -23,6 +27,7 @@ class Shapefile extends Layer {
 
     /**
      * Get the Shapefile's File
+     * @return The Shapefile's File
      */
     File getFile() {
         new File(fs.dataStore.info.source.toURL().file)
