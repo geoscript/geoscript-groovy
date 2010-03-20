@@ -38,7 +38,7 @@ Edit Controller Code::
 
     grails-app/controllers/geoscript/BufferController.groovy
 
-.. code-block:: java
+.. code-block:: groovy
 
     package geoscript
 
