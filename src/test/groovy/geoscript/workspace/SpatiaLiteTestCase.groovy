@@ -15,7 +15,7 @@ class SpatiaLiteTestCase {
     @Test void constructrors() {
 
         //println("java.library.path = " + System.getProperty("java.library.path"))
-        /*File file = new File(getClass().getClassLoader().getResource("110m-admin-0-countries.shp").toURI()).parentFile
+        /*File file = new File(getClass().getClassLoader().getResource("states.shp").toURI()).parentFile
         assertNotNull(file)
 
         SpatiaLite spatialite = new SpatiaLite("db.splite", file)

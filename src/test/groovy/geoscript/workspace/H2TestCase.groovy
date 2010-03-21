@@ -35,7 +35,7 @@ class H2TestCase {
             boolean deleted = f.deleteDir()
         }
 
-        File file = new File(getClass().getClassLoader().getResource("110m-admin-0-countries.shp").toURI())
+        File file = new File(getClass().getClassLoader().getResource("states.shp").toURI())
         Shapefile shp = new Shapefile(file)
         
         H2 h2 = new H2("acme", "target/h2")

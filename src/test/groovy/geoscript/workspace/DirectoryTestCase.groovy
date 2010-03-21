@@ -13,7 +13,7 @@ class DirectoryTestCase {
 
     @Test void constructors() {
 
-        File file = new File(getClass().getClassLoader().getResource("110m-admin-0-countries.shp").toURI()).parentFile
+        File file = new File(getClass().getClassLoader().getResource("states.shp").toURI()).parentFile
         assertNotNull(file)
 
         Directory dir = new Directory(file)
@@ -29,23 +29,23 @@ class DirectoryTestCase {
     }
 
     @Test void getLayers() {
-        File file = new File(getClass().getClassLoader().getResource("110m-admin-0-countries.shp").toURI()).parentFile
+        File file = new File(getClass().getClassLoader().getResource("states.shp").toURI()).parentFile
         assertNotNull(file)
         Directory dir = new Directory(file)
         assertNotNull(dir)
         assertEquals 1, dir.layers.size()
-        assertEquals "[110m-admin-0-countries]", dir.layers.toString()
+        assertEquals "[states]", dir.layers.toString()
     }
 
     @Test void get() {
-        File file = new File(getClass().getClassLoader().getResource("110m-admin-0-countries.shp").toURI()).parentFile
+        File file = new File(getClass().getClassLoader().getResource("states.shp").toURI()).parentFile
         assertNotNull(file)
         Directory dir = new Directory(file)
         assertNotNull(dir)
 
-        Layer layer = dir.get("110m-admin-0-countries")
+        Layer layer = dir.get("states")
         assertNotNull(layer)
-        assertEquals "110m-admin-0-countries", layer.name
+        assertEquals "states", layer.name
     }
 
     @Test void create() {
@@ -62,9 +62,9 @@ class DirectoryTestCase {
 
     @Test void add() {
 
-        File file1 = new File(getClass().getClassLoader().getResource("110m-admin-0-countries.shp").toURI()).parentFile
+        File file1 = new File(getClass().getClassLoader().getResource("states.shp").toURI()).parentFile
         Directory dir1 = new Directory(file1)
-        Layer layer1 = dir1.get("110m-admin-0-countries")
+        Layer layer1 = dir1.get("states")
 
         File file2 = new File(System.getProperty("java.io.tmpdir"))
         Directory dir2 = new Directory(file2)
@@ -73,7 +73,7 @@ class DirectoryTestCase {
         assertTrue(new File(file2,"countries.shp").exists())
 
         dir2.add(layer1)
-        assertTrue(new File(file2,"110m-admin-0-countries.shp").exists())
+        assertTrue(new File(file2,"states.shp").exists())
 
     }
 

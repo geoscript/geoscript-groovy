@@ -10,7 +10,7 @@ class ShapefileTestCase {
 
     @Test void constructors() {
 
-        File file = new File(getClass().getClassLoader().getResource("110m-admin-0-countries.shp").toURI())
+        File file = new File(getClass().getClassLoader().getResource("states.shp").toURI())
         assertNotNull(file)
 
         Shapefile shp = new Shapefile(file)
@@ -19,8 +19,8 @@ class ShapefileTestCase {
 
         println("Number of Features: ${shp.count()}")
         println("Bounds: ${shp.bounds()}")
-        assertEquals 268, shp.count()
-        assertEquals "(-180.00004106353606,-89.99889902136007,180.00000044181036,83.64512726514185,EPSG:4326)", shp.bounds().toString()
+        assertEquals 49, shp.count()
+        assertEquals "(-124.73142200000001,24.955967,-66.969849,49.371735,EPSG:4326)", shp.bounds().toString()
     }
 
 }

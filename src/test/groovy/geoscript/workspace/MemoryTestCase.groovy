@@ -22,7 +22,7 @@ class MemoryTestCase {
     }
 
     @Test void add() {
-        File file = new File(getClass().getClassLoader().getResource("110m-admin-0-countries.shp").toURI())
+        File file = new File(getClass().getClassLoader().getResource("states.shp").toURI())
         Shapefile shp = new Shapefile(file)
 
         Memory mem = new Memory()

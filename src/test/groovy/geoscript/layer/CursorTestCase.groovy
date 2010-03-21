@@ -11,7 +11,7 @@ class CursorTestCase {
 
     @Test void constructors() {
 
-        File file = new File(getClass().getClassLoader().getResource("110m-admin-0-countries.shp").toURI())
+        File file = new File(getClass().getClassLoader().getResource("states.shp").toURI())
         assertNotNull(file)
 
         Shapefile shp = new Shapefile(file)
