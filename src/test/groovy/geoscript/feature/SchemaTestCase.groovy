@@ -18,6 +18,9 @@ class SchemaTestCase {
 
         Schema s3 = new Schema("widgets", [[name: "geom",type: "Point"], [name: "name", type: "string"], [name: "price", type: "float"]])
         assertEquals "widgets geom: Point, name: String, price: Float", s3.toString()
+
+        Schema s4 = new Schema("widgets", "geom:Point:srid=4326,name:String,price:float")
+        assertEquals "widgets geom: Point(EPSG:4326), name: String, price: Float", s4.toString()
     }
 
     @Test void getName() {

@@ -5,6 +5,7 @@ import org.opengis.feature.type.AttributeDescriptor
 import org.opengis.feature.type.GeometryDescriptor
 import org.geotools.feature.NameImpl
 import org.geotools.feature.simple.SimpleFeatureTypeBuilder
+import org.geotools.data.DataUtilities
 import com.vividsolutions.jts.geom.Geometry as JtsGeometry
 import geoscript.geom.*
 import geoscript.proj.Projection
@@ -24,6 +25,10 @@ import geoscript.proj.Projection
  * <code>
  * Schema s3 = new Schema("widgets", [[name: "geom",type: "Point"], [name: "name", type: "string"], [name: "price", type: "float"]])
  * </code>
+ * <p> You can create a Schema from a name and a type spec:</p>
+ * <code>
+ * Schema s4 = new Schema("widgets","geom:Point:srid=4326,name:String,price:float")
+ * </code>
  */
 class Schema {
 
@@ -38,6 +43,19 @@ class Schema {
      */
     Schema(SimpleFeatureType featureType) {
         this.featureType = featureType
+    }
+
+    /**
+     * Create a new Schema with a name and a String containing a comma delimited
+     * list of fields.
+     * <p><code>
+     * Schema s = new Schema("widgets","geom:Point:srid=4326,name:String,price:float")
+     * </code></p>
+     * @param name The Schema name
+     * @param typeSpec The Schema String.
+     */
+    Schema(String name, String typeSpec) {
+        this(DataUtilities.createType(name, typeSpec))
     }
 
     /**
