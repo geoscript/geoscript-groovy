@@ -177,7 +177,7 @@ class Layer {
         if (count == -1) {
             count = 0
             // count manually
-            features.each{count++}
+            getFeatures(f).each{count++}
         }
         return count
 

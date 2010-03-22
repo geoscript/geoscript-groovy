@@ -6,6 +6,7 @@ import geoscript.feature.Schema
 import geoscript.feature.Field
 import geoscript.feature.Feature
 import geoscript.proj.Projection
+import geoscript.filter.Filter
 import geoscript.geom.*
 
 /**
@@ -32,6 +33,12 @@ class LayerTestCase {
         assertEquals 0, layer1.count()
         layer1.add(new Feature([new Point(111,-47), "House", 12.5], "house1", s1))
         assertEquals 1, layer1.count()
+
+        Layer layer2 = new Shapefile(new File(getClass().getClassLoader().getResource("states.shp").toURI()))
+        assertEquals 49, layer2.count()
+        assertEquals 1, layer2.count(new Filter("STATE_NAME='Washington'"))
+        assertEquals 1, layer2.count("STATE_NAME='Washington'")
+        assertEquals 0, layer2.count(new Filter("STATE_NAME='BAD_STATE_NAME'"))
     }
 
     @Test void add() {

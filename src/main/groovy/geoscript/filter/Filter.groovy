@@ -36,6 +36,14 @@ class Filter {
     }
     
     /**
+     * Create a new Filter from an existing Filter
+     * @param filter The exiting Filter
+     */
+    Filter(Filter filter) {
+        this.filter = filter.filter
+    }
+
+    /**
      * Create a new Filter from a String (CQL or XML).
      * @param str The String CQL or XML
      * <p>Creating a Filter with CQL:</p>

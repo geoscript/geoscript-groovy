@@ -11,6 +11,9 @@ class FilterTestCase {
 
         Filter f2 = new Filter("<filter><PropertyIsEqualTo><PropertyName>name</PropertyName><Literal>foobar</Literal></PropertyIsEqualTo></filter>")
         assertEquals "[ name = foobar ]", f2.toString()
+
+        Filter f3 = new Filter(f1)
+        assertEquals f1.toString(), f3.toString()
     }
     
     @Test void getCql() {
