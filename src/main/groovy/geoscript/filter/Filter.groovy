@@ -1,5 +1,7 @@
 package geoscript.filter
 
+import geoscript.geom.Bounds
+import geoscript.geom.Geometry
 import org.opengis.filter.Filter as GTFilter
 import org.geotools.filter.text.cql2.CQL
 import org.geotools.xml.Parser
@@ -127,6 +129,58 @@ class Filter {
      * The FAIL Filter wrapps the GeoTools EXCLUDE Filter
      */
     static Filter FAIL = new Filter(GTFilter.EXCLUDE)
+
+    /**
+     * Create a Spatial Bounding Box Filter
+     * @param fieldName The geometry field name (defaults to the_geom)
+     * @param bounds The Bounds
+     * @return A Filter
+     */
+    static Filter bbox(String fieldName = "the_geom", Bounds bounds) {
+        new Filter("BBOX(${fieldName}, ${bounds.l},${bounds.b},${bounds.r},${bounds.t})")
+    }
+
+    /**
+     * Create a Spatial Filter that contains the given Geometry
+     * @param fieldName The geometry field name (defaults to the_geom)
+     * @param geoemtry The Geometry
+     * @return A Filter
+     */
+    static Filter contains(String fieldName = "the_geom", Geometry geometry) {
+        new Filter("CONTAINS(${fieldName}, ${geometry.wkt})")
+    }
+
+    /**
+     * Create a Spatial Filter that is within a certain distance of the given Geometry
+     * @param fieldName The geometry field name (defaults to the_geom)
+     * @param geometry The Geometry
+     * @param distance The distance
+     * @param units The units (kilometers, meters, feet, ect...)
+     * @return A Filter
+     */
+    static Filter dwithin(String fieldName = "the_geom", Geometry geometry, double distance, String units) {
+        new Filter("DWITHIN(${fieldName}, ${geometry.wkt}, ${distance}, ${units})")
+    }
+
+    /**
+     * Create a Spatial Filter that crosses the given Geometry
+     * @param fieldName The geometry field name (defaults to the_geom)
+     * @param geometry The Geometry
+     * @return A Filter
+     */
+    static Filter cross(String fieldName = "the_geom", Geometry geometry) {
+        new Filter("CROSS(${fieldName}, ${geometry.wkt})")
+    }
+
+    /**
+     * Create a Spatial Filter that intersects the given Geometry
+     * @param fieldName The geometry field name (defaults to the_geom)
+     * @param bounds The Bounds
+     * @return A Filter
+     */
+    static Filter intersect(String fieldName = "the_geom", Geometry geometry) {
+        new Filter("INTERSECT(${fieldName}, ${geometry.wkt})")
+    }
 
     /**
      * Create a GeoTools Filter from a CQL String
