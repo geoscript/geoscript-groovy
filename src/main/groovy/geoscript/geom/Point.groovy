@@ -29,6 +29,22 @@ class Point extends Geometry {
     }
 
     /**
+     * Get the X coordinate
+     * @return The X coordinate
+     */
+    double getX() {
+        return g.x
+    }
+
+    /**
+     * Get the Y coordinate
+     * @return The Y coordinate
+     */
+    double getY() {
+        return g.y
+    }
+
+    /**
      * Add this Point with another to create a MultiPoint
      * <p><code>def p = new Point(1,2)<code></p>
      * <p><code>def m = p + new Point(3,4)</code></p>

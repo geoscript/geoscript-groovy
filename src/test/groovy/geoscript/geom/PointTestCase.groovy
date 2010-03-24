@@ -16,4 +16,10 @@ class PointTestCase {
         assertEquals "MULTIPOINT ((1 2), (3 4))", m1.wkt
     }
 
+    @Test void getXY() {
+        def p1 = new Point(111,-47)
+        assertEquals(111, p1.x, 0.0)
+        assertEquals(-47, p1.y, 0.0)
+    }
+
 }
