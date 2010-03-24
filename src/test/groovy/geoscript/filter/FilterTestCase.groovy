@@ -44,10 +44,10 @@ class FilterTestCase {
     @Test void bbox() {
 
         Filter f1 = Filter.bbox(new Bounds(10,20,30,40))
-        //assertEquals "BBOX(the_geom, 10.0,20.0,30.0,40.0)", f1.cql
+        assertEquals "BBOX(the_geom, 10.0,20.0,30.0,40.0)", f1.cql
 
         Filter f2 = Filter.bbox(new Bounds(-102, 43.5, -100, 47.5))
-        //assertEquals "BBOX(the_geom, -102, 43.5, -100, 47.5)", f2.cql
+        assertEquals "BBOX(the_geom, -102.0,43.5,-100.0,47.5)", f2.cql
 
         Layer layer = new Shapefile(new File(getClass().getClassLoader().getResource("states.shp").toURI()))
         def features = layer.getFeatures(f2)
