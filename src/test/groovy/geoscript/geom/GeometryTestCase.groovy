@@ -44,4 +44,12 @@ class GeometryTestCase {
         Geometry g = Geometry.fromWKT("POINT (111 -47)")
         assertEquals "POINT (111 -47)", g.toString()
     }
+
+    @Test void getCoordinates() {
+        Geometry g = Geometry.fromWKT("POINT (111 -47)")
+        def coordinates = g.coordinates
+        assertEquals 1, coordinates.length
+        assertEquals(111, coordinates[0].x, 0.0)
+        assertEquals(-47, coordinates[0].y, 0.0)
+    }
 }

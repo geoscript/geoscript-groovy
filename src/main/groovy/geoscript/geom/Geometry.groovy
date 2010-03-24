@@ -2,6 +2,7 @@ package geoscript.geom
 
 import com.vividsolutions.jts.geom.Geometry as JtsGeometry
 import com.vividsolutions.jts.geom.GeometryFactory
+import com.vividsolutions.jts.geom.Coordinate
 import com.vividsolutions.jts.geom.prep.PreparedGeometryFactory
 import com.vividsolutions.jts.io.WKTReader
 import com.vividsolutions.jts.io.WKBReader
@@ -171,6 +172,14 @@ class Geometry {
      */
     Point getCentroid() {
         wrap(this.g.centroid)
+    }
+
+    /**
+     * Get the Array of Coordinates
+     * @return The Array of Coordinates
+     */
+    Coordinate[] getCoordinates() {
+        this.g.coordinates
     }
 
     /**
