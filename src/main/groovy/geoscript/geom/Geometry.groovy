@@ -232,6 +232,18 @@ class Geometry {
     }
 
     /**
+     * Get a List of all Geometries
+     * @return A List of all Geometries
+     */
+    List<Geometry> getGeometries() {
+        List<Geometry> geoms = []
+        (0..numGeometries-1).each{index ->
+            geoms.add(getGeometryN(index))
+        }
+        geoms
+    }
+
+    /**
      * Get the number of Points in this Geometry
      * @return The number of Points in this Geometry
      */
