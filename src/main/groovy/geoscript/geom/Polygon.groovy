@@ -75,6 +75,45 @@ class Polygon extends Geometry {
     }
 
     /**
+     * Get the exterior ring or shell 
+     * @return The exterion ring or shell
+     */
+    LineString getExteriorRing() {
+        Geometry.wrap(g.exteriorRing)
+    }
+
+    /**
+     * Get the number of interior rings or holes
+     * @return The number of interior rings or holes
+     */
+    int getNumInteriorRing() {
+        g.numInteriorRing
+    }
+
+    /**
+     * Get the nth interior ring or hole
+     * @param n The index of a interior ring or hole
+     * @return The nth interior ring or hole
+     */
+    LineString getInteriorRingN(int n) {
+        Geometry.wrap(g.getInteriorRingN(n))
+    }
+
+    /**
+     * Get a List of all interior rings
+     * @return A List of all interior rings
+     */
+    List<LineString> getInteriorRings() {
+        List<LineString> lines = []
+        if (numInteriorRing > 0) {
+            (0..numInteriorRing-1).each{index ->
+                lines.add(getInteriorRingN(index))
+            }
+        }
+        lines
+    }
+
+    /**
      * Add this Polygon with another to create a MultiPolygon.
      * @param poly The other Polygon
      * @return A new MultiPolygon containing this Polygon and the other Polygon
