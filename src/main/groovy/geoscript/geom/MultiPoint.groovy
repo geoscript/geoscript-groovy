@@ -26,7 +26,7 @@ class MultiPoint extends Geometry {
 
     /**
      * Create a MultiPoint from a List of Points
-     * <p>def m = new MultiPoint(new Point(1,2),new Point(3,4))</p>
+     * <p><code>def m = new MultiPoint(new Point(1,2),new Point(3,4))</code></p>
      * @param points A variable List of Points
      */
     MultiPoint(Point... points) {
@@ -35,7 +35,7 @@ class MultiPoint extends Geometry {
 
     /**
      * Create a MultiPoint from a List of List of Doubles
-     * <p>def m = new MultiPoint([1,2],[3,4])</p>
+     * <p><code>def m = new MultiPoint([1,2],[3,4])</code></p>
      * @param points A variable List of List of Doubles
      */
     MultiPoint(List<Double>... points) {
@@ -44,8 +44,8 @@ class MultiPoint extends Geometry {
 
     /**
      * Create a MultiPoint from a List of List of Doble or a List of Points
-     * <p>def m = new MultiPoint([new Point(1,2),new Point(3,4)])</p>
-     * <p>def m = new MultiPoint([[1,2],[3,4]])</p>
+     * <p><code>def m = new MultiPoint([new Point(1,2),new Point(3,4)])</code></p>
+     * <p><code>def m = new MultiPoint([[1,2],[3,4]])</code></p>
      * @param points Either a List of List of Doubles of a List of Points
      */
     MultiPoint(List points) {
