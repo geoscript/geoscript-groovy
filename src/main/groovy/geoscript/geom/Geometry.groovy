@@ -446,6 +446,9 @@ class Geometry {
         else if (jts instanceof com.vividsolutions.jts.geom.MultiPolygon) {
             return new MultiPolygon(jts)
         }
+        else if (jts instanceof com.vividsolutions.jts.geom.GeometryCollection) {
+            return new GeometryCollection(jts)
+        }
         else {
             return new Geometry(jts)
         }
