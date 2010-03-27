@@ -14,7 +14,7 @@ import com.vividsolutions.jts.geom.LineString as JtsLineString
  * <p>Or from a List of List of List of Doubles:</p>
  * <code>MultiLineString m = new MultiLineString([[[1,2],[3,4]], [[5,6],[7,8]]])</code>
  */
-class MultiLineString extends Geometry {
+class MultiLineString extends GeometryCollection {
 
     /**
      * Create a MultiLineString that wraps a JTS MultiLineString

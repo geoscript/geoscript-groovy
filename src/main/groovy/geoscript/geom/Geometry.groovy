@@ -312,6 +312,13 @@ class Geometry {
     }
 
     /**
+     * Normalize this Geometry
+     */
+    void normalize() {
+        g.normalize()
+    }
+
+    /**
      * Whether this Geometry overlaps the other Geometry
      * @param other The other Geometry
      * @return Whether this Geometry overlaps the other Geometry
@@ -385,6 +392,35 @@ class Geometry {
      */
     boolean within(Geometry other) {
         this.g.within(other.g)
+    }
+
+    /**
+     * Get the Minimum Bounding Circle
+     * @return The minimum bouding circle as a Geometry
+     */
+    Geometry getMinimumBoundingCircle() {
+        def circle = new com.vividsolutions.jts.algorithm.MinimumBoundingCircle(g)
+        Geometry.wrap(circle.getCircle())
+    }
+
+    /**
+     * Get Delaunay Triangle Diagram for this Geometry
+     * @return A Delaunay Triangle Diagram Geometry
+     */
+    Geometry getDelaunayTriangleDiagram() {
+        def builder = new com.vividsolutions.jts.triangulate.DelaunayTriangulationBuilder()
+        builder.setSites(g)
+        Geometry.wrap(builder.getTriangles(Geometry.factory))
+    }
+
+    /**
+     * Get Delaunay Triangle Diagram for this Geometry
+     * @return A Delaunay Triangle Diagram Geometry
+     */
+    Geometry getVoronoiDiagram() {
+        def builder = new com.vividsolutions.jts.triangulate.VoronoiDiagramBuilder()
+        builder.setSites(g)
+        Geometry.wrap(builder.getDiagram(Geometry.factory))
     }
 
     /**

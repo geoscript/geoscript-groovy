@@ -14,7 +14,7 @@ import com.vividsolutions.jts.geom.Polygon as JtsPolygon
  * <p>Or form a List of List of List of Doubles:</p>
  * <code>MultiPolygon mp = new MultiPolygon([[[[1,2],[3,4],[5,6],[1,2]]], [[[7,8],[9,10],[11,12],[7,8]]]])</code>
  */ 
-class MultiPolygon extends Geometry {
+class MultiPolygon extends GeometryCollection {
 	
     /**
      * Create a MultiPolygon that wraps a JTS MultiPolygon

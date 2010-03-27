@@ -14,7 +14,7 @@ import com.vividsolutions.jts.geom.Coordinate
  * <p>Or you can create a LinearRing with a repated List of Points:</p>
  * <code>LinearRing l = new LinearRing(new Point(111.0, -47), new Point(123.0, -48), new Point(110.0, -47), new Point(111.0, -47))</code>
  */
-class LinearRing extends Geometry { 
+class LinearRing extends LineString {
 	
     /**
      * Create a LinearRing by wrapping a JTS LinearRing

@@ -14,7 +14,7 @@ import com.vividsolutions.jts.geom.Point as JtsPoint
  * <p>Or from a List of List of Doubles:</p>
  * <code>MultiPoint m = new MultiPoint([[1,2],[3,4]])</code>
  */
-class MultiPoint extends Geometry {
+class MultiPoint extends GeometryCollection {
 
     /**
      * Create a MultiPoint that wraps a JTS MultiPoint

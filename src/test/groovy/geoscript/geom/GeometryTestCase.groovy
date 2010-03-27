@@ -52,4 +52,43 @@ class GeometryTestCase {
         assertEquals(111, coordinates[0].x, 0.0)
         assertEquals(-47, coordinates[0].y, 0.0)
     }
+
+    @Test void getMinimumBoundingCircle() {
+        Geometry g = new GeometryCollection([
+            new Point(-122.394276, 46.970863),
+            new Point(-121.927567, 46.929644),
+            new Point(-122.533838, 47.284403),
+            new Point(-122.079196, 47.187141)
+        ])
+        Geometry circle = g.minimumBoundingCircle
+        // println("Minimum Bounding Circle: ${circle}")
+        assertNotNull(circle)
+        assertTrue(circle instanceof Polygon)
+    }
+
+    @Test void getDelaunayTriangleDiagram() {
+        Geometry g = new GeometryCollection([
+            new Point(-122.394276, 46.970863),
+            new Point(-121.927567, 46.929644),
+            new Point(-122.533838, 47.284403),
+            new Point(-122.079196, 47.187141)
+        ])
+        Geometry triangles = g.delaunayTriangleDiagram
+        // println("Delaunay Triangles: ${triangles}")
+        assertNotNull(triangles)
+        assertTrue(triangles instanceof GeometryCollection)
+    }
+
+    @Test void getVoronoiDiagram() {
+        Geometry g = new GeometryCollection([
+            new Point(-122.394276, 46.970863),
+            new Point(-121.927567, 46.929644),
+            new Point(-122.533838, 47.284403),
+            new Point(-122.079196, 47.187141)
+        ])
+        Geometry diagram = g.voronoiDiagram
+        // println("Voronoi Diagram: ${diagram}")
+        assertNotNull(diagram)
+        assertTrue(diagram instanceof GeometryCollection)
+    }
 }

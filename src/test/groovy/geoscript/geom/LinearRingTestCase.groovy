@@ -1,7 +1,7 @@
 package geoscript.geom
 
 import org.junit.Test
-import static org.junit.Assert.assertEquals
+import static org.junit.Assert.*
 
 /**
  * The LinearRing unit test
@@ -21,5 +21,15 @@ class LinearRingTestCase {
 
         def l4 = new LinearRing(new Point(111.0, -47), new Point(123.0, -48), new Point(110.0, -47), new Point(111.0, -47))
         assertEquals "LINEARRING (111 -47, 123 -48, 110 -47, 111 -47)", l4.wkt
+    }
+
+    @Test void isClosed() {
+        def ring = new LinearRing([[111.0, -47],[123.0, -48],[110.0, -47], [111.0, -47]])
+        assertTrue(ring.isClosed())
+    }
+
+    @Test void isRing() {
+        def ring = new LinearRing([[111.0, -47],[123.0, -48],[110.0, -47], [111.0, -47]])
+        assertTrue(ring.isRing())
     }
 }

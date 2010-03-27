@@ -53,6 +53,46 @@ class LineString extends Geometry {
     }
 
     /**
+     * Get the start Point
+     * @return The start Point
+     */
+    Point getStartPoint() {
+        Geometry.wrap(g.startPoint)
+    }
+
+    /**
+     * Get the end Point
+     * @return The end Point
+     */
+    Point getEndPoint() {
+        Geometry.wrap(g.endPoint)
+    }
+
+    /**
+     * Is this LineString closed?
+     * @return Whether this LineString is closed
+     */
+    boolean isClosed() {
+        g.isClosed()
+    }
+
+    /**
+     * Is this LineString a ring?
+     * @return Whether this LineString is a ring
+     */
+    boolean isRing() {
+        g.isRing()
+    }
+
+    /**
+     * Create a new LineString where the coordinates are in reverse order
+     * @return A LineString
+     */
+    LineString reverse() {
+        Geometry.wrap(g.reverse())
+    }
+
+    /**
      * Add this LineString with another to create a MultiLineString
      * @param line Another LineString
      * @return A new MultiLineString
