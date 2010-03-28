@@ -9,10 +9,13 @@ import java.awt.BasicStroke
 import java.awt.RenderingHints
 import java.awt.AlphaComposite
 import java.awt.BorderLayout
+import java.awt.Rectangle
 import javax.swing.JFrame
 import javax.swing.JPanel
 import javax.swing.WindowConstants
 import java.awt.geom.AffineTransform
+import javax.imageio.ImageIO
+import java.awt.image.BufferedImage
 import com.vividsolutions.jts.geom.Geometry as JtsGeometry
 import com.vividsolutions.jts.geom.Polygon as JtsPolygon
 import com.vividsolutions.jts.geom.Envelope
@@ -46,10 +49,35 @@ class Viewer {
      * @param geom The Geomtry to List of Geometries to draw
      * @param A List containing the size of the viewer (defaults to 500 by 500)
      */
-    void draw(def geom, List size=[500,500]) {
-        
-        double buf = 50.0
-        
+    void draw(def geom, List size=[500,500], double buf = 50) {
+        if (!(geom instanceof List)) {
+            geom = [geom]
+        }
+        Panel panel = new Panel(geom, worldToScreen(geom, size, buf))
+        Dimension dim = new Dimension((int) (size[0] + 2 * buf), (int) (size[1] + 2 * buf))
+        panel.preferredSize = dim
+        panel.minimumSize = dim
+        JFrame frame = new JFrame("Geoescript Viewer")
+        try {
+            frame.defaultCloseOperation = JFrame.EXIT_ON_CLOSE
+        }
+        catch(SecurityException ex) {
+            frame.defaultCloseOperation = WindowConstants.HIDE_ON_CLOSE
+        }
+        frame.layout = new BorderLayout()
+        frame.add(panel, BorderLayout.CENTER)
+        frame.pack()
+        frame.visible = true
+    }
+
+
+
+    /**
+     * Create an AffineTransform that transforms coordinates from world
+     * to the screen
+     */
+    static AffineTransform worldToScreen(def geom, List size=[500,500], double buf = 50) {
+
         if (!(geom instanceof List)) {
             geom = [geom]
         }
@@ -67,19 +95,22 @@ class Viewer {
         double tx = -e.minX
         double ty = -e.minY
 
-        AffineTransform at = new AffineTransform()
+        //AffineTransform at = new AffineTransform()
         // Scale to size of canvas (inverting the y axis)
-        at.scale(scale, -scale)
+        //at.scale(scale, -scale)
         // translate to the origin
         //at.translate(tx, ty)
         // translate to account for invert
         //at.translate(0, (-size[1]/ scale))
         // buffer
         //at.translate(buf/scale, -buf/scale)
+
+        AffineTransform at = new AffineTransform()
+        at.scale(scale, -scale)
         at.translate(
             (buf/scale) - e.minX + (((size[0] / scale) - e.width) / 2),
             (-buf/scale) - e.maxY - (((size[1] / scale) - e.height) / 2))
-        
+
 
         //double scaleX = size[0] / e.width
         //double scaleY = size[1] / e.height
@@ -87,21 +118,48 @@ class Viewer {
         //double ty = (e.minY * scaleY) + size[1]
         //AffineTransform at = new AffineTransform(scaleX, 0.0, 0.0, -scaleY, tx, ty)
 
-        Panel panel = new Panel(geom, at)
-        Dimension dim = new Dimension((int) (size[0] + 2 * buf), (int) (size[1] + 2 * buf))
-        panel.preferredSize = dim
-        panel.minimumSize = dim
-        JFrame frame = new JFrame("Geoescript Viewer")
-        try {
-            frame.defaultCloseOperation = JFrame.EXIT_ON_CLOSE
+        //org.geotools.renderer.lite.RendererUtilities.worldToScreenTransform(
+        //  new Bounds(e.minX, e.minY, e.maxX, e.maxY).env, new
+        //  Rectangle(size[0], size[1]))
+
+        return at
+    }
+
+    static BufferedImage createImage(def geom, List size=[500,500]) {
+        BufferedImage image = new BufferedImage(size[0], size[1], BufferedImage.TYPE_INT_ARGB)
+        Graphics2D g2d = image.createGraphics()
+        drawToGraphics(g2d, worldToScreen(geom, size), geom, size)
+        g2d.dispose()
+        image
+    }
+
+    static void save(File file, def geom, List size=[500,500], String formatName = "png") {
+        FileOutputStream out = new FileOutputStream(file)
+        ImageIO.write(drawToImage(geom,size), formatName, out)
+        out.close()
+    }
+
+    static void drawToGraphics(Graphics2D g2d, AffineTransform atx, def geom, List size=[500,500]) {
+        g2d.color = Color.BLACK
+        Composite c = g2d.composite
+        g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON)
+        g2d.stroke = new BasicStroke(2)
+
+        if (!(geom instanceof List)) {
+            geom = [geom]
         }
-        catch(SecurityException ex) {
-            frame.defaultCloseOperation = WindowConstants.DISPOSE_ON_CLOSE
+
+        geom.each{g ->
+            LiteShape shp = new LiteShape(g.g, atx, false)
+            if (g instanceof Polygon || g instanceof MultiPolygon) {
+                g2d.color = Color.WHITE
+                g2d.composite = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, new Float(0.5).floatValue())
+                g2d.fill(shp)
+            }
+            g2d.composite = c
+            g2d.color = Color.BLACK
+            g2d.draw(shp)
         }
-        frame.layout = new BorderLayout()
-        frame.add(panel, BorderLayout.CENTER)
-        frame.pack()
-        frame.visible = true
     }
 
 }
@@ -142,21 +200,6 @@ private class Panel extends JPanel {
     void paintComponent(Graphics gr) {
         super.paintComponent(gr)
         Graphics2D g2d = (Graphics2D)gr
-        g2d.color = Color.BLACK
-        Composite c = g2d.composite
-        g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON)
-        g2d.stroke = new BasicStroke(2)
-
-        geoms.each{g ->
-            LiteShape shp = new LiteShape(g.g, this.atx, false)
-            if (g instanceof Polygon || g instanceof MultiPolygon) {
-                g2d.color = Color.WHITE
-                g2d.composite = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, new Float(0.5).floatValue())
-                g2d.fill(shp)
-            }
-            g2d.composite = c
-            g2d.color = Color.BLACK
-            g2d.draw(shp)
-        }
+        Viewer.drawToGraphics(g2d, atx, geoms)
     }
 }
