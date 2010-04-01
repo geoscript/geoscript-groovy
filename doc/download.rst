@@ -17,6 +17,6 @@ Experimental
 
    The latest development release of GeoScript Groovy is 0.6.
 
-   * `Full <http://github.com/downloads/jericks/geoscript-groovy/geoscript-groovy-0.6.zip>`
+   `GeoScript Groovy 0.6 <http://github.com/downloads/jericks/geoscript-groovy/geoscript-groovy-0.6.zip>`_
 
 
