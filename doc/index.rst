@@ -7,6 +7,7 @@ GeoScript Groovy
     quickstart
     usage
     grails
+    download
 
 GeoScript Groovy is a Groovy implementation of GeoScript.
 
@@ -26,4 +27,4 @@ GeoScript Groovy is a Groovy implementation of GeoScript.
      A library of examples and howto's
 
     `API <api>`_
-      The GeoScript API reference
+     The GeoScript API reference
