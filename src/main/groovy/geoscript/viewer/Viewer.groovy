@@ -128,18 +128,20 @@ class Viewer {
     static BufferedImage createImage(def geom, List size=[500,500]) {
         BufferedImage image = new BufferedImage(size[0], size[1], BufferedImage.TYPE_INT_ARGB)
         Graphics2D g2d = image.createGraphics()
-        drawToGraphics(g2d, worldToScreen(geom, size), geom, size)
+        g2d.color = Color.WHITE
+        g2d.fillRect(0,0,size[0],size[1])
+        drawToGraphics(g2d, worldToScreen(geom, size), geom)
         g2d.dispose()
         image
     }
 
     static void save(File file, def geom, List size=[500,500], String formatName = "png") {
         FileOutputStream out = new FileOutputStream(file)
-        ImageIO.write(drawToImage(geom,size), formatName, out)
+        ImageIO.write(createImage(geom,size), formatName, out)
         out.close()
     }
 
-    static void drawToGraphics(Graphics2D g2d, AffineTransform atx, def geom, List size=[500,500]) {
+    static void drawToGraphics(Graphics2D g2d, AffineTransform atx, def geom) {
         g2d.color = Color.BLACK
         Composite c = g2d.composite
         g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON)
