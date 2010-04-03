@@ -102,8 +102,15 @@ class Schema {
         if (ad != null) {
             if (ad instanceof GeometryDescriptor) {
                 GeometryDescriptor gd = (GeometryDescriptor) ad
-                Projection p = (gd.coordinateReferenceSystem != null) ? new Projection(gd.coordinateReferenceSystem) : null
-                return new Field(gd.localName, Schema.lookUpAlias(gd.type.binding.name), p)
+                Projection p = null
+                if (gd.coordinateReferenceSystem != null) {
+                    p = new Projection(gd.coordinateReferenceSystem)
+                }
+                else if (featureType.coordinateReferenceSystem != null) {
+                    p = new Projection(featureType.coordinateReferenceSystem)
+                }
+                Field fld = new Field(gd.localName, Schema.lookUpAlias(gd.type.binding.name), p)
+                return fld
             }
             else {
                 return new Field(ad.localName, Schema.lookUpAlias(ad.type.binding.name))
@@ -257,7 +264,7 @@ class Schema {
                 field = new Field(field)
             }
             Class c = Class.forName(lookUpBinding(field.typ))
-            if (field.proj != null) {
+            if (field.proj != null && field.proj.crs != null) {
                 builder.setCRS(field.proj.crs)
                 builder.add(field.name, c, field.proj.crs)
             }

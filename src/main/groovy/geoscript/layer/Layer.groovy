@@ -52,7 +52,7 @@ class Layer {
     /**
      * The Projection
      */
-    Projection proj
+    private Projection projection
 
     /**
      * The internal counter for new Layer names
@@ -68,7 +68,7 @@ class Layer {
         this.workspace = layer.workspace
         this.fs = layer.fs
         this.schema = layer.schema
-        this.proj = layer.proj
+        this.projection = new Projection(fs.schema.coordinateReferenceSystem)
     }
 
     /**
@@ -83,6 +83,7 @@ class Layer {
         this.workspace = workspace
         this.fs = fs
         this.schema = schema
+        this.projection = new Projection(fs.schema.coordinateReferenceSystem)
     }
 
     /**
@@ -105,6 +106,7 @@ class Layer {
         this.workspace = workspace
         this.fs = layer.fs
         this.schema = new Schema(layer.fs.schema)
+        this.projection = new Projection(fs.schema.coordinateReferenceSystem)
     }
 
     /**
@@ -119,6 +121,7 @@ class Layer {
         this.name = name
         this.fs = layer.fs
         this.schema = new Schema(layer.fs.schema)
+        this.projection = new Projection(fs.schema.coordinateReferenceSystem)
     }
 
     /**
@@ -149,13 +152,13 @@ class Layer {
      * @return The Layer's Projection 
      */
     Projection getProj() {
-        if (proj != null) {
-            return proj
-        }
-        else {
+        if (this.projection == null || this.projection.crs == null) {
             CoordinateReferenceSystem crs = fs.schema.coordinateReferenceSystem
-            return new Projection(crs)
+            if (crs != null) {
+                this.projection = new Projection(crs)
+            }
         }
+        this.projection
     }
 
     /**
@@ -163,7 +166,15 @@ class Layer {
      * @param value The value can either be a Projection or a String
      */
     void setProj(def value) {
-        proj = new Projection(value)
+        if (value instanceof String) {
+            this.projection = new Projection(value as String)
+        }
+        else if (value instanceof Projection) {
+            this.projection = new Projection(value as Projection)
+        }
+        else if (value instanceof CoordinateReferenceSystem) {
+            this.projection = new Projection(value as CoordinateReferenceSystem)
+        }
     }
 
     /**
@@ -267,19 +278,18 @@ class Layer {
 
     /**
      * Reproject the Layer
-     * @param prj The Projection
+     * @param p The Projection
      * @param newName The new name (defaults to a default new name)
      * @return The reprojected Layer
      */
-    Layer reproject(Projection prj, String newName = newname()) {
-        Projection p = new Projection(prj)
+    Layer reproject(Projection p, String newName = newname()) {
         Schema s = schema.reproject(p, newName)
         Layer l = workspace.create(s)
         DefaultQuery q = new DefaultQuery(getName(), Filter.PASS.filter)
         if (getProj() != null) {
             q.coordinateSystem = getProj().crs
         }
-        q.coordinateSystemReproject = prj.crs
+        q.coordinateSystemReproject = p.crs
         FeatureCollection fc = fs.getFeatures(q)
         FeatureIterator i = fc.features()
         while(i.hasNext()) {

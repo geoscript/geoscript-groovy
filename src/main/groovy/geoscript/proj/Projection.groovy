@@ -50,6 +50,7 @@ class Projection {
      * @return The CRS Lookup Identifier
      */
     String getId() {
+        // Sometimes CRS.lookupIdentifier returns null
         return CRS.lookupIdentifier(crs, true)
     }
 
@@ -91,7 +92,8 @@ class Projection {
      * @return The string representation
      */
     String toString() {
-        return id
+        String projId = id
+        return projId != null ? projId : wkt
     }
 
     /**
