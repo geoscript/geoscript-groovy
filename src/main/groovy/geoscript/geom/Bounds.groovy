@@ -97,6 +97,14 @@ class Bounds {
     }
 	
     /**
+     * Convert this Bounds into a Geometry object
+     * @return A Geometry
+     */
+    Geometry getGeometry() {
+        Geometry.wrap(Geometry.factory.toGeometry(env))
+    }
+
+    /**
      * The string representation
      * @return The string representation
      */

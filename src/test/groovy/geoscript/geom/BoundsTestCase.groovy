@@ -44,6 +44,12 @@ class BoundsTestCase {
         Bounds b = new Bounds(1,2,3,4)
         assertEquals 4.0, b.t, 0.0
     }
+
+    @Test void getGeometry() {
+        Bounds b = new Bounds(1,2,3,4)
+        Geometry g = b.geometry
+        assertEquals "POLYGON ((1 2, 1 4, 3 4, 3 2, 1 2))", g.wkt
+    }
 	
     @Test void string() {
         ReferencedEnvelope e = new ReferencedEnvelope(1,3,2,4,null)
