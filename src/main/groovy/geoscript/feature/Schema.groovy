@@ -187,6 +187,25 @@ class Schema {
     }
 
     /**
+     * Create a new Schema with the same fields as this Schema but with a different
+     * Geometry type
+     * @param geometryType The new type of Geometry
+     * @param name The new Schema name
+     */
+    Schema changeGeometryType(String geometryType, String name) {
+        List flds = []
+        fields.each{fld ->
+            if (fld.isGeometry()) {
+                flds.add(new Field(fld.name, geometryType, fld.proj))
+            }
+            else {
+                flds.add(new Field(fld.name, fld.typ))
+            }
+        }
+        new Schema(name, flds)
+    }
+
+    /**
      * The string reprentation
      * @return The string representation
      */

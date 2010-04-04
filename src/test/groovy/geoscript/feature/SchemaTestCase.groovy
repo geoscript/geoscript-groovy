@@ -78,7 +78,13 @@ class SchemaTestCase {
         assertEquals "houses geom: Point(EPSG:2927), name: String, price: Float", s1.toString()
         Schema s2 = s1.reproject("EPSG:4326","houses in lat/lon")
         assertEquals "houses in lat/lon geom: Point(EPSG:4326), name: String, price: Float", s2.toString()
+    }
 
+    @Test void changeGeometryType() {
+        Schema s1 = new Schema("houses", [new Field("geom","Polygon", "EPSG:2927"), new Field("name","string"), new Field("price","float")])
+        assertEquals "houses geom: Polygon(EPSG:2927), name: String, price: Float", s1.toString()
+        Schema s2 = s1.changeGeometryType("Polygon","houses buffered")
+        assertEquals "houses buffered geom: Polygon(EPSG:2927), name: String, price: Float", s2.toString()
     }
 
 }
