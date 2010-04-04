@@ -3,6 +3,7 @@ package geoscript.feature
 import org.junit.Test
 import static org.junit.Assert.*
 import geoscript.geom.*
+import com.vividsolutions.jts.geom.Geometry as JtsGeometry
 
 /**
  * The Feature UnitTest
@@ -17,16 +18,21 @@ class FeatureTestCase {
         // Create a Feature from a List of values
         Feature f1 = new Feature([new Point(111,-47), "House", 12.5], "house1", s1)
         assertEquals "houses.house1 geom: POINT (111 -47), name: House, price: 12.5", f1.toString()
+        assertTrue(f1.geom instanceof Geometry)
+        assertTrue(f1.f.defaultGeometry instanceof JtsGeometry)
 
         // Create a Feature from a Map of values
         Feature f2 = new Feature(["geom": new Point(111,-47), "name": "House", "price": 12.5], "house1", s1)
         assertEquals "houses.house1 geom: POINT (111 -47), name: House, price: 12.5", f2.toString()
+        assertTrue(f2.geom instanceof Geometry)
+        assertTrue(f2.f.defaultGeometry instanceof JtsGeometry)
 
         // Create a Feature from a Map of values with no Schema
         Feature f3 = new Feature(["geom": new Point(111,-47), "name": "House", "price": 12.5], "house1")
         assertEquals "feature.house1 geom: POINT (111 -47), name: House, price: 12.5", f3.toString()
         assertEquals "feature geom: Point, name: String, price: java.math.BigDecimal", f3.schema.toString()
-
+        assertTrue(f3.geom instanceof Geometry)
+        assertTrue(f3.f.defaultGeometry instanceof JtsGeometry)
     }
 
     @Test void getId() {
@@ -39,6 +45,7 @@ class FeatureTestCase {
         Schema s1 = new Schema("houses", [new Field("geom","Point"), new Field("name","string"), new Field("price","float")])
         Feature f1 = new Feature([new Point(111,-47), "House", 12.5], "house1", s1)
         assertEquals "POINT (111 -47)", f1.geom.toString()
+        assertTrue(f1.geom instanceof Geometry)
     }
 
     @Test void setGeom() {

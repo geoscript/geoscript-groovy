@@ -166,7 +166,7 @@ class Feature {
     private static SimpleFeature buildFeature(Map attributes, String id, Schema schema) {
         SimpleFeatureBuilder featureBuilder = new SimpleFeatureBuilder(schema.featureType)
         attributes.each{
-            if (it instanceof Geometry) {
+            if (it.value instanceof Geometry) {
                 featureBuilder.set(it.key, it.value.g)
             }
             else {
@@ -205,7 +205,11 @@ class Feature {
         }
         Schema schema = new Schema("feature", fields)
         SimpleFeatureBuilder featureBuilder = new SimpleFeatureBuilder(schema.featureType)
-        attributes.each{at -> featureBuilder.set(at.key.toString(), (at.value instanceof Geometry) ? ((Geometry)at.value).g : at.value)}
+        attributes.each{at -> 
+            String name = at.key.toString()
+            Object value = (at.value instanceof Geometry) ? ((Geometry)at.value).g : at.value
+            featureBuilder.set(name, value)
+        }
         featureBuilder.buildFeature(id)
     }
 
