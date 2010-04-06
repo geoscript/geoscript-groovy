@@ -191,6 +191,15 @@ class Geometry {
     }
 
     /**
+     * Get the Bounds of this Geometry
+     * @return The Bounds of this Geometry
+     */
+    Bounds getBounds() {
+        Envelope e = getEnvelopeInternal()
+        new Bounds(e.minX, e.minY, e.maxX, e.maxY)
+    }
+
+    /**
      * Calculate the internal Envelope of this Geometry
      * @return The internal Envelope of this Geometry
      */

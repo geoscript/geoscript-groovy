@@ -91,4 +91,17 @@ class GeometryTestCase {
         assertNotNull(diagram)
         assertTrue(diagram instanceof GeometryCollection)
     }
+
+    @Test void getBounds() {
+        Geometry g = new GeometryCollection([
+            new Point(-122.394276, 46.970863),
+            new Point(-121.927567, 46.929644),
+            new Point(-122.533838, 47.284403),
+            new Point(-122.079196, 47.187141)
+        ])
+        Bounds b = g.bounds
+        assertEquals "(-122.533838,46.929644,-121.927567,47.284403)", b.toString()
+
+    }
+
 }
