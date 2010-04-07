@@ -433,6 +433,24 @@ class Geometry {
     }
 
     /**
+     * Simplify this Geometry using the Douglas Peucker Simplifier.
+     * @param tolerance The distance tolerance
+     * @return A simplified Geometry
+     */
+    Geometry simplify(double tolerance) {
+        Geometry.wrap(com.vividsolutions.jts.simplify.DouglasPeuckerSimplifier.simplify(this.g, tolerance))
+    }
+
+    /**
+     * Simplify this Geometry preserving topology.
+     * @param tolerance The distance tolerance
+     * @return A simplified Geometry
+     */
+    Geometry simplifyPreservingTopology(double tolerance) {
+        Geometry.wrap(com.vividsolutions.jts.simplify.TopologyPreservingSimplifier.simplify(this.g, tolerance))
+    }
+
+    /**
      * Get the WKT of the Geometry
      * @return The WKT of this Geometry
      */
