@@ -92,7 +92,7 @@ class Geometry {
      * Calculate the convex hull of this Geometry
      * @return The convex hull of this Geometry
      */
-    Geometry convexHull() {
+    Geometry getConvexHull() {
         wrap(g.convexHull())
     }
 
