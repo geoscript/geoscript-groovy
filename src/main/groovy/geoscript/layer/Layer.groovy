@@ -10,14 +10,17 @@ import org.geotools.data.FeatureSource
 import org.geotools.data.DefaultQuery
 import org.geotools.data.Query
 import org.geotools.data.Transaction
+import org.geotools.data.FeatureStore
+import org.geotools.data.FeatureReader
+import org.geotools.data.DefaultTransaction
 import org.geotools.feature.FeatureCollections
+import org.geotools.feature.FeatureCollection
+import org.geotools.feature.FeatureIterator
 import org.opengis.feature.simple.SimpleFeatureType
 import org.opengis.feature.simple.SimpleFeature
 import org.opengis.referencing.crs.CoordinateReferenceSystem
+import org.opengis.feature.type.AttributeDescriptor
 import com.vividsolutions.jts.geom.Envelope
-import org.geotools.data.FeatureReader
-import org.geotools.feature.FeatureCollection
-import org.geotools.feature.FeatureIterator
 import net.opengis.wfs.WfsFactory
 import org.geotools.wfs.v1_1.WFS
 import org.geotools.wfs.v1_1.WFSConfiguration
@@ -254,6 +257,40 @@ class Layer {
     void delete(def filter = null) {
         Filter f = (filter == null) ? Filter.PASS : new Filter(filter)
         fs.removeFeatures(f.filter)
+    }
+
+    /**
+     * Calculate or modify the values of a Field
+     */
+    void calculate(Field fld, def value, def filter = null) {
+        Filter f = (filter == null) ? Filter.PASS : new Filter(filter)
+        Transaction t = new DefaultTransaction("calculateTransaction")
+        try {
+            FeatureStore<SimpleFeatureType, SimpleFeature> store = (FeatureStore)fs
+            store.transaction = t
+            AttributeDescriptor ad = schema.featureType.getDescriptor(fld.name)
+            if (value instanceof Closure) {
+                Cursor c = getCursor(f)
+                while(c.hasNext()) {
+                    Feature feature = c.next()
+                    def filterFactory = org.geotools.factory.CommonFactoryFinder.getFilterFactory2(org.geotools.factory.GeoTools.getDefaultHints())
+                    def idFilter = filterFactory.id(java.util.Collections.singleton(feature.f.identifier))
+                    store.modifyFeatures(ad, value.call(feature), idFilter)
+                }
+            }
+            else {
+                store.modifyFeatures(ad, value, f.filter)
+            }
+            
+            t.commit()
+        }
+        catch (Exception e) {
+            e.printStackTrace()
+            t.rollback()
+        }
+        finally {
+            t.close()
+        }
     }
 
     /**

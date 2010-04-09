@@ -115,7 +115,6 @@ class LayerTestCase {
 
 
     @Test void constructors() {
-
         Schema s1 = new Schema("facilities", [new Field("geom","Point", "EPSG:2927"), new Field("name","string"), new Field("price","float")])
         Layer layer1 = new Layer("facilities", s1)
         assertNotNull(layer1)
@@ -129,6 +128,44 @@ class LayerTestCase {
         assertEquals 2, layer2.count()
     }
 
+    @Test void calculate() {
+        Schema s = new Schema("facilities", [new Field("geom","Point", "EPSG:2927"), new Field("name","string"), new Field("price","float")])
+        Layer layer = new Layer("facilities", s)
+        layer.add(new Feature([new Point(111,-47), "House 1", 12.5], "house1", s))
+        layer.add(new Feature([new Point(112,-46), "House 2", 13.5], "house2", s))
+        layer.add(new Feature([new Point(113,-45), "House 3", 14.5], "house3", s))
+
+        def features = layer.features
+        assertEquals "House 1", features[0].get('name')
+        assertEquals "House 2", features[1].get('name')
+        assertEquals "House 3", features[2].get('name')
+
+        layer.calculate(s.get('name'), 'Building')
+
+        features = layer.features
+        assertEquals "Building", features[0].get('name')
+        assertEquals "Building", features[1].get('name')
+        assertEquals "Building", features[2].get('name')
+
+        layer.calculate(s.get('name'), 'Building 1', new Filter('price = 12.5'))
+        layer.calculate(s.get('name'), 'Building 2', new Filter('price = 13.5'))
+        layer.calculate(s.get('name'), 'Building 3', new Filter('price = 14.5'))
+
+        features = layer.features
+        assertEquals "Building 1", features[0].get('name')
+        assertEquals "Building 2", features[1].get('name')
+        assertEquals "Building 3", features[2].get('name')
+
+        layer.calculate(s.get('price'), {f ->
+            f.get('price') * 2
+        })
+
+        features = layer.features
+        features.each{println(it)}
+        assertEquals 12.5 * 2, features[0].get('price'), 0.01
+        assertEquals 13.5 * 2, features[1].get('price'), 0.01
+        assertEquals 14.5 * 2, features[2].get('price'), 0.01
+    }
 
 }
 
