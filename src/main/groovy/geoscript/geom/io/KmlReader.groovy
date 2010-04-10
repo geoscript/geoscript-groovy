@@ -21,7 +21,6 @@ class KmlReader {
      * @return A Geometry
      */
     Geometry read(String str) {
-
         SAXBuilder builder = new SAXBuilder()
         Document document = builder.build(new StringReader(str))
         Element root = document.rootElement
