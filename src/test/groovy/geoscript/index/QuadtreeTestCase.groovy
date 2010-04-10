@@ -33,6 +33,11 @@ class QuadtreeTestCase {
 
         List all = spatialIndex.queryAll()
         assertEquals 4, all.size()
+
+        // Remove an item
+        assertTrue(spatialIndex.remove(all[3].bounds, all[3]))
+        all = spatialIndex.queryAll()
+        assertEquals 3, all.size()
     }
 }
 

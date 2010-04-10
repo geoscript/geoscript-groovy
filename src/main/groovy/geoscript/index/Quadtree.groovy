@@ -1,6 +1,7 @@
 package geoscript.index
 
 import com.vividsolutions.jts.index.quadtree.Quadtree as JtsQuadtree
+import geoscript.geom.Bounds
 
 /**
  * Create a SpatialIndex using the Quad Tree spatial index.
@@ -20,6 +21,16 @@ class Quadtree extends SpatialIndex {
      */
     List queryAll() {
         index.queryAll()
+    }
+
+    /**
+     * Remove an item from the index
+     * @param bounds The Bounds
+     * @param item The Object
+     * @return Whether an item was removed or not
+     */
+    boolean remove(Bounds bounds, Object item) {
+        index.remove(bounds.env, item)
     }
 }
 
