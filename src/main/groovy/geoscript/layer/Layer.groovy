@@ -260,9 +260,13 @@ class Layer {
     }
 
     /**
-     * Calculate or modify the values of a Field
+     * Update the values of a Field
+     * @param fld The Field whose values will be udpated
+     * @param value Either a static value or a Closure that takes
+     * a Feature and return an Object
+     * @param filter The Filter to limit the Features that will be updated
      */
-    void calculate(Field fld, def value, def filter = null) {
+    void update(Field fld, def value, def filter = null) {
         Filter f = (filter == null) ? Filter.PASS : new Filter(filter)
         Transaction t = new DefaultTransaction("calculateTransaction")
         try {
@@ -277,6 +281,7 @@ class Layer {
                     def idFilter = filterFactory.id(java.util.Collections.singleton(feature.f.identifier))
                     store.modifyFeatures(ad, value.call(feature), idFilter)
                 }
+                c.close()
             }
             else {
                 store.modifyFeatures(ad, value, f.filter)

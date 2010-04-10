@@ -128,7 +128,7 @@ class LayerTestCase {
         assertEquals 2, layer2.count()
     }
 
-    @Test void calculate() {
+    @Test void update() {
         Schema s = new Schema("facilities", [new Field("geom","Point", "EPSG:2927"), new Field("name","string"), new Field("price","float")])
         Layer layer = new Layer("facilities", s)
         layer.add(new Feature([new Point(111,-47), "House 1", 12.5], "house1", s))
@@ -140,23 +140,23 @@ class LayerTestCase {
         assertEquals "House 2", features[1].get('name')
         assertEquals "House 3", features[2].get('name')
 
-        layer.calculate(s.get('name'), 'Building')
+        layer.update(s.get('name'), 'Building')
 
         features = layer.features
         assertEquals "Building", features[0].get('name')
         assertEquals "Building", features[1].get('name')
         assertEquals "Building", features[2].get('name')
 
-        layer.calculate(s.get('name'), 'Building 1', new Filter('price = 12.5'))
-        layer.calculate(s.get('name'), 'Building 2', new Filter('price = 13.5'))
-        layer.calculate(s.get('name'), 'Building 3', new Filter('price = 14.5'))
+        layer.update(s.get('name'), 'Building 1', new Filter('price = 12.5'))
+        layer.update(s.get('name'), 'Building 2', new Filter('price = 13.5'))
+        layer.update(s.get('name'), 'Building 3', new Filter('price = 14.5'))
 
         features = layer.features
         assertEquals "Building 1", features[0].get('name')
         assertEquals "Building 2", features[1].get('name')
         assertEquals "Building 3", features[2].get('name')
 
-        layer.calculate(s.get('price'), {f ->
+        layer.update(s.get('price'), {f ->
             f.get('price') * 2
         })
 
