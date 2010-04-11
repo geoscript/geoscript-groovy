@@ -1,7 +1,7 @@
 package geoscript.filter
 
 import org.junit.Test
-import static org.junit.Assert.assertEquals
+import static org.junit.Assert.*
 import geoscript.geom.*
 import geoscript.layer.*
 
@@ -71,13 +71,31 @@ class FilterTestCase {
     }
 
     @Test void cross() {
-        Filter f1 = Filter.cross("the_geom", Geometry.fromWKT("LINESTRING (-104 45, -95 45)"))
+        Filter f1 = Filter.crosses("the_geom", Geometry.fromWKT("LINESTRING (-104 45, -95 45)"))
         assertEquals "CROSS(the_geom, LINESTRING (-104 45, -95 45))", f1.cql
+
+        Layer layer = new Shapefile(new File(getClass().getClassLoader().getResource("states.shp").toURI()))
+        def features = layer.getFeatures(Filter.crosses(Geometry.fromWKT("LINESTRING (-108 47.1005, -102 47.5421, -95.1251 46.7851)")))
+        assertEquals 3, features.size()
+        def abbreviations = features.collect{it.get("STATE_ABBR")}
+        assertTrue(abbreviations.contains("MT"))
+        assertTrue(abbreviations.contains("ND"))
+        assertTrue(abbreviations.contains("MN"))
     }
 
-    @Test void intersect() {
-        Filter f1 = Filter.intersect(Geometry.fromWKT("POLYGON ((-104 45, -95 45, -95 50, -104 50, -104 45))"))
+    @Test void intersects() {
+        Filter f1 = Filter.intersects(Geometry.fromWKT("POLYGON ((-104 45, -95 45, -95 50, -104 50, -104 45))"))
         assertEquals "INTERSECT(the_geom, POLYGON ((-104 45, -95 45, -95 50, -104 50, -104 45)))", f1.cql
+
+        Layer layer = new Shapefile(new File(getClass().getClassLoader().getResource("states.shp").toURI()))
+        def features = layer.getFeatures(Filter.intersects(Geometry.fromWKT("POLYGON ((-108 47.1005, -102 47.5421, -95.1251 46.7851,  -95.125 44.45, -107 43.5, -108 47.1005))")))
+        assertEquals 5, features.size()
+        def abbreviations = features.collect{it.get("STATE_ABBR")}
+        assertTrue(abbreviations.contains("MT"))
+        assertTrue(abbreviations.contains("ND"))
+        assertTrue(abbreviations.contains("MN"))
+        assertTrue(abbreviations.contains("SD"))
+        assertTrue(abbreviations.contains("WY"))
     }
 }
 

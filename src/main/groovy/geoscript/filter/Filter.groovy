@@ -151,7 +151,9 @@ class Filter {
     }
 
     /**
-     * Create a Spatial Filter that is within a certain distance of the given Geometry
+     * Create a Spatial Filter that is within a certain distance of the given Geometry.
+     * There are some serious limitations to DWITHIN in Geotools.  It does not work with
+     * projection EPSG:4326!
      * @param fieldName The geometry field name (defaults to the_geom)
      * @param geometry The Geometry
      * @param distance The distance
@@ -168,8 +170,8 @@ class Filter {
      * @param geometry The Geometry
      * @return A Filter
      */
-    static Filter cross(String fieldName = "the_geom", Geometry geometry) {
-        new Filter("CROSS(${fieldName}, ${geometry.wkt})")
+    static Filter crosses(String fieldName = "the_geom", Geometry geometry) {
+        new Filter("CROSSES(${fieldName}, ${geometry.wkt})")
     }
 
     /**
@@ -178,8 +180,8 @@ class Filter {
      * @param bounds The Bounds
      * @return A Filter
      */
-    static Filter intersect(String fieldName = "the_geom", Geometry geometry) {
-        new Filter("INTERSECT(${fieldName}, ${geometry.wkt})")
+    static Filter intersects(String fieldName = "the_geom", Geometry geometry) {
+        new Filter("INTERSECTS(${fieldName}, ${geometry.wkt})")
     }
 
     /**
