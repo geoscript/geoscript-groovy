@@ -319,6 +319,14 @@ class Layer {
     }
 
     /**
+     * Add a Feature to the Layer
+     * @param o The Feature or List/Map of values
+     */
+    void plus(def o) {
+        add(o)
+    }
+
+    /**
      * Reproject the Layer
      * @param p The Projection
      * @param newName The new name (defaults to a default new name)

@@ -49,6 +49,14 @@ class LayerTestCase {
         assertEquals 1, layer1.count()
     }
 
+    @Test void plus() {
+        Schema s1 = new Schema("facilities", [new Field("geom","Point", "EPSG:2927"), new Field("name","string"), new Field("price","float")])
+        Layer layer1 = new Layer("facilities", s1)
+        assertEquals 0, layer1.count()
+        layer1 + new Feature([new Point(111,-47), "House", 12.5], "house1", s1)
+        assertEquals 1, layer1.count()
+    }
+
     @Test void features() {
         Schema s1 = new Schema("facilities", [new Field("geom","Point", "EPSG:2927"), new Field("name","string"), new Field("price","float")])
         Layer layer1 = new Layer("facilities", s1)
