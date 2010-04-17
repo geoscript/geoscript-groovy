@@ -11,6 +11,7 @@ import geoscript.proj.Projection
  * <p><code>
  * Field f2 = new Field("geom","Point", "EPSG:2927")
  * </code></p>
+ * @author Jared Erickson
  */
 class Field {
     

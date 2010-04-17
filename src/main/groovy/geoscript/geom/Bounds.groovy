@@ -8,6 +8,7 @@ import geoscript.proj.Projection
  * <p><code>
  * Bounds b = new Bounds(1,2,3,4, new Projection("EPSG:2927"))
  * </p></code>
+ * @author Jared Erickson
  */
 class Bounds {
 	

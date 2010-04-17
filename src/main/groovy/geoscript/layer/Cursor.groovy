@@ -18,6 +18,7 @@ import org.opengis.feature.simple.SimpleFeatureType
  * }
  * c.close()
  * </pre></code>
+ * @author Jared Erickson
  */
 class Cursor {
 

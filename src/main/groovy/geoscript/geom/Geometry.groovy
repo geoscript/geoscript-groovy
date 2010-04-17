@@ -12,6 +12,7 @@ import com.vividsolutions.jts.geom.IntersectionMatrix
 
 /**
  * The base class for other Geomtries.
+ * @author Jared Erickson
  */
 class Geometry {
 	

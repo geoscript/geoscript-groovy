@@ -13,6 +13,7 @@ import com.vividsolutions.jts.geom.Coordinate
  * <code>LinearRing l =  new LinearRing([111.0, -47],[123.0, -48],[110.0, -47], [111.0, -47])</code>
  * <p>Or you can create a LinearRing with a repated List of Points:</p>
  * <code>LinearRing l = new LinearRing(new Point(111.0, -47), new Point(123.0, -48), new Point(110.0, -47), new Point(111.0, -47))</code>
+ * @author Jared Erickson
  */
 class LinearRing extends LineString {
 	

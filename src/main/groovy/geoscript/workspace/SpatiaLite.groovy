@@ -6,6 +6,7 @@ import org.geotools.data.spatialite.SpatiaLiteDataStoreFactory
 
 /**
  * A SpatiaLite Workspace connects to a SpatiaLite database.
+ * @author Jared Erickson
  */
 class SpatiaLite extends Workspace {
 

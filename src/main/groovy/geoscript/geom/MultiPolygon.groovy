@@ -13,6 +13,7 @@ import com.vividsolutions.jts.geom.Polygon as JtsPolygon
  * <code>MultiPolygon mp = new MultiPolygon([new Polygon([1,2],[3,4],[5,6],[1,2]), new Polygon([7,8],[9,10],[11,12],[7,8])])</code>
  * <p>Or form a List of List of List of Doubles:</p>
  * <code>MultiPolygon mp = new MultiPolygon([[[[1,2],[3,4],[5,6],[1,2]]], [[[7,8],[9,10],[11,12],[7,8]]]])</code>
+ * @author Jared Erickson
  */ 
 class MultiPolygon extends GeometryCollection {
 	

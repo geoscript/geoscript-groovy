@@ -23,6 +23,7 @@ import com.vividsolutions.jts.geom.Coordinate
  * <p>Or you can create a Polygon a List LinearRings. The first List of
  * List of Doubles is the exterion ring.  Others are holes.</p>
  * <code>Polygon p = new Polygon([new LinearRing([1,1], [10,1], [10,10], [1,10], [1,1]), new LinearRing([2,2], [4,2], [4,4], [2,4], [2,2]), new LinearRing([5,5], [6,5], [6,6], [5,6], [5,5])])</code>
+ * @author Jared Erickson
  */
 class Polygon extends Geometry {
 	

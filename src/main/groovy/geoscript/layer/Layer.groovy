@@ -29,6 +29,7 @@ import org.geotools.xml.Encoder
 
 /**
  * A Layer is a source of spatial data
+ * @author Jared Erickson
  */
 class Layer {
 

@@ -6,6 +6,7 @@ import org.geotools.data.directory.DirectoryDataStore
 
 /**
  * A Directory Workspace can contain one or more Shapefiles.
+ * @author Jared Erickson
  */
 class Directory extends Workspace {
 

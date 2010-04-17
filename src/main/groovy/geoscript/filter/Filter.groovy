@@ -21,6 +21,7 @@ import org.geotools.filter.v1_1.OGC as OGC11
  * <code>
  * Filter f = new Filter('&lt;Filter&gt;&lt;PropertyIsEqualTo&gt;&lt;PropertyName&gt;name&lt;/PropertyName&gt;&lt;Literal&gt;foobar&lt;/Literal&gt;&lt;/PropertyIsEqualTo&gt;&lt;/Filter&gt;')
  * </code>
+ * @author Jared Erickson
  */
 class Filter {
     

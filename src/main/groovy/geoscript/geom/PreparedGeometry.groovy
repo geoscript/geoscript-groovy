@@ -11,6 +11,7 @@ import com.vividsolutions.jts.geom.prep.PreparedGeometryFactory
  * <code>def prep = Geometry.fromWKT('POLYGON ((0 0, 5 0, 5 5, 0 5, 0 0))').prepare()</code>
  * <p>Or by using the Geometry.prepare() static method:</p>
  * <code>def prep = Geometry.prepared(Geometry.fromWKT('POLYGON ((0 0, 5 0, 5 5, 0 5, 0 0))'))<code>
+ * @author Jared Erickson
  */
 class PreparedGeometry {
 

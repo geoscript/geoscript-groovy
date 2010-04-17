@@ -5,6 +5,7 @@ import org.geotools.data.postgis.PostgisNGDataStoreFactory
 
 /**
  * A PostGIS Workspace connects to a PostGIS database.
+ * @author Jared Erickson
  */
 class PostGIS extends Workspace {
 

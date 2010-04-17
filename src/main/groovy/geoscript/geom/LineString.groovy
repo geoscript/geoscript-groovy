@@ -12,6 +12,7 @@ import com.vividsolutions.jts.geom.Coordinate
  * <code>LineString line = new LineString([1,2],[3,4],[4,5])</code>
  * <p>Or you can create a LineString from a List of repeated Points.</p>
  * <code>LineString line = new LineString(new Point(1,2), new Point(3,4), new Point(4,5))</code>
+ * @author Jared Erickson
  */ 
 class LineString extends Geometry { 
 	

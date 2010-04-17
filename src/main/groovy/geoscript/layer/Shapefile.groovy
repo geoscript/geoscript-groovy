@@ -6,6 +6,7 @@ import geoscript.workspace.Directory
  * A Shapefile Layer.
  * <p>You can create a Shapefile Layer by passing the .shp file:</p>
  * <code>Shapefile shp = new Shapefile('states.shp')</code>
+ * @author Jared Erickson
  */
 class Shapefile extends Layer {
 

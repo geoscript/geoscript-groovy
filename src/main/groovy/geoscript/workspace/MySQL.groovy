@@ -5,6 +5,7 @@ import org.geotools.data.mysql.MySQLDataStoreFactory
 
 /**
  * A MySQL Workspace connects to a MySQL database.
+ * @author Jared Erickson
  */
 class MySQL extends Workspace {
 

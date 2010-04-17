@@ -7,6 +7,7 @@ import com.vividsolutions.jts.geom.Coordinate
  * A Point Geometry.
  * <p>You can create a Point from xy coordinates:</p>
  * <code>Point p = new Point(111, -47)</code>
+ * @author Jared Erickson
  */
 class Point extends Geometry {
 	

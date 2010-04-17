@@ -13,6 +13,7 @@ import com.vividsolutions.jts.geom.Point as JtsPoint
  * <code>MultiPoint m = new MultiPoint([new Point(1,2),new Point(3,4)])</code>
  * <p>Or from a List of List of Doubles:</p>
  * <code>MultiPoint m = new MultiPoint([[1,2],[3,4]])</code>
+ * @author Jared Erickson
  */
 class MultiPoint extends GeometryCollection {
 

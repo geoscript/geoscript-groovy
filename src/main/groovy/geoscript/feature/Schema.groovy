@@ -29,6 +29,7 @@ import geoscript.proj.Projection
  * <code>
  * Schema s4 = new Schema("widgets","geom:Point:srid=4326,name:String,price:float")
  * </code>
+ * @author Jared Erickson
  */
 class Schema {
 

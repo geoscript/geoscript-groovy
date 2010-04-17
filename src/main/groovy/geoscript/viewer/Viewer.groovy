@@ -31,6 +31,7 @@ import geoscript.geom.*
  * Point p = new Point(10,10)
  * Viewer.open(p.buffer(100))
  * </pre></code>
+ * @author Jared Erickson
  */
 class Viewer {
 

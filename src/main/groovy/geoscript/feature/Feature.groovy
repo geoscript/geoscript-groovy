@@ -22,6 +22,7 @@ import geoscript.geom.*
  * Schema s = new Schema('widgets', [['name','string'],['price','float']])
  * Feature f = new Feature(['name': 'anvil', 'price': 100.0], '1', s)
  * </code>
+ * @author Jared Erickson
  */
 class Feature {
 
