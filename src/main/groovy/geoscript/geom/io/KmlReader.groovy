@@ -13,7 +13,7 @@ import org.jdom.Element
  * <p><code>POINT (111 -47)</code></p>
  * @author Jared Erickson
  */
-class KmlReader {
+class KmlReader implements Reader {
 	
     /**
      * Read a Geometry from a KML String

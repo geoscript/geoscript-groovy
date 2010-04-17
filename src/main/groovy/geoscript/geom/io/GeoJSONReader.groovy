@@ -5,12 +5,12 @@ import geoscript.geom.*
 
 /**
  * Read a Geometry from a GeoJSON String.
- * <p><code>def reader = new GeoJSONReader()</code></p>
+ * <p><code>GeoJSONReader reader = new GeoJSONReader()</code></p>
  * <p><code>Point point = reader.read("""{ "type": "Point", "coordinates": [111.0, -47.0] }""")</code></p>
  * <p><code>POINT (111, -47)</code></p>
  * @author Jared Erickson
  */
-class GeoJSONReader {
+class GeoJSONReader implements Reader {
 
     /**
      * Read a Geometry from a GeoJSON String

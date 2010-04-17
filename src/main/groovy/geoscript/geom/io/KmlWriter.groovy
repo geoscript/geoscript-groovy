@@ -10,7 +10,7 @@ import com.vividsolutions.jts.geom.Coordinate
  * <p><code>&lt;Point&gt;&lt;coordinates&gt;111.0,-47.0&lt;/coordinates&gt;&lt;/Point&gt;</code></p>
  * @author Jared Erickson
  */
-class KmlWriter {
+class KmlWriter implements Writer {
 
     /**
      * Write the Geometry to KML

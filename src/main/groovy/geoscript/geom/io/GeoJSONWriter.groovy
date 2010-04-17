@@ -5,12 +5,12 @@ import com.vividsolutions.jts.geom.Coordinate
 
 /**
  * Write a Geometry to a GeoJSON String.
- * <p><code>def writer = new GeoJSONWriter()</code></p>
+ * <p><code>GeoJSONWriter writer = new GeoJSONWriter()</code></p>
  * <p><code>writer.write(new Point(111,-47))</code></p>
  * <p><code>{ "type": "Point", "coordinates": [111.0, -47.0] }</code></p>
  * @author Jared Erickson
  */
-class GeoJSONWriter {
+class GeoJSONWriter implements Writer {
 
     /**
      * Write the Geometry to a GeoJSON String
