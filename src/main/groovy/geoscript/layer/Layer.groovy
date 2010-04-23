@@ -25,6 +25,7 @@ import net.opengis.wfs.WfsFactory
 import org.geotools.wfs.v1_1.WFS
 import org.geotools.wfs.v1_1.WFSConfiguration
 import org.geotools.xml.Encoder
+import org.json.*
 //import org.geotools.geojson.GeoJSONWriter
 
 /**
@@ -394,9 +395,34 @@ class Layer {
      * @param out The OutputStream (defaults to System.out)
      */
     void toJSON(OutputStream out = System.out) {
-        FeatureCollection features = fs.features
+        //FeatureCollection features = fs.features
         //GeoJSONWriter w = new GeoJSONWriter()
         //w.write(features, out)
+        def writer = new geoscript.geom.io.GeoJSONWriter()
+        JSONObject jsonObject = new JSONObject()
+        jsonObject.put("type","FeatureCollection")
+        JSONArray array = new JSONArray()
+        Cursor cursor = getCursor()
+        while(cursor.hasNext()) {
+            Feature f = cursor.next()
+            JSONObject obj = new JSONObject()
+            obj.put("type","Feature")
+            obj.put("geometry", new JSONObject(writer.write(f.geom)))
+            JSONObject props = new JSONObject()
+            f.attributes.each{k,v ->
+                if (!(v instanceof Geometry)) {
+                    props.put(k,v)
+                }
+            }
+            obj.put("properties",props)
+            array.put(obj)
+        }
+        cursor.close()
+        jsonObject.put("features", array)
+        Writer w = new java.io.OutputStreamWriter(out)
+        jsonObject.write(w)
+        w.flush()
+        w.close()
     }
 
     /**
