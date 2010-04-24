@@ -234,7 +234,8 @@ class Schema {
             ("java.lang.Float".toLowerCase()) : "Float",
             ("java.lang.Integer".toLowerCase()) : "Integer",
             ("java.lang.Long".toLowerCase()) : "Long",
-            ("java.lang.Double".toLowerCase()) : "Double"
+            ("java.lang.Double".toLowerCase()) : "Double",
+            ("java.util.Date".toLowerCase()) : "Date"
         ]
         map.get(binding.toLowerCase(), binding)
     }
@@ -270,7 +271,8 @@ class Schema {
             ("Integer".toLowerCase()) : "java.lang.Integer",
             ("Short".toLowerCase()) : "java.lang.Integer",
             ("Long".toLowerCase()) : "java.lang.Long",
-            ("Double".toLowerCase()) : "java.lang.Double"
+            ("Double".toLowerCase()) : "java.lang.Double",
+            ("Date".toLowerCase()) : "java.util.Date"    
         ]
         map.get(alias.toLowerCase(), alias)
     }
