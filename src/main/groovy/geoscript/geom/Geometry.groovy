@@ -9,6 +9,7 @@ import com.vividsolutions.jts.io.WKBReader
 import com.vividsolutions.jts.io.WKBWriter
 import com.vividsolutions.jts.geom.Envelope
 import com.vividsolutions.jts.geom.IntersectionMatrix
+import geoscript.geom.io.*
 
 /**
  * The base class for other Geomtries.
@@ -45,6 +46,46 @@ class Geometry {
      * The JTS WKBReader
      */
     private static WKBReader wkbReader = new WKBReader()
+
+    /**
+     * The KML Writer
+     */
+    private static KmlWriter kmlWriter = new KmlWriter()
+
+    /**
+     * The KML Reader
+     */
+    private static KmlReader kmlReader = new KmlReader()
+
+    /**
+     * The GeoJSON Writer
+     */
+    private static GeoJSONWriter geoJSONWriter = new GeoJSONWriter()
+
+    /**
+     * The GeoJSON Reader
+     */
+    private static GeoJSONReader geoJSONReader = new GeoJSONReader()
+
+    /**
+     * The GML2 Writer
+     */
+    private static Gml2Writer gml2Writer = new Gml2Writer()
+
+    /**
+     * The Gml2 Reader
+     */
+    private static Gml2Reader gml2Reader = new Gml2Reader()
+
+    /**
+     * The GML3 Writer
+     */
+    private static Gml3Writer gml3Writer = new Gml3Writer()
+
+    /**
+     * The Gml3 Reader
+     */
+    private static Gml3Reader gml3Reader = new Gml3Reader()
 
     /**
      * Create a new Geometry wrapping a JTS Geometry
@@ -468,6 +509,38 @@ class Geometry {
     }
 
     /**
+     * Get a KML String for this Geometry
+     * @return The KML String
+     */
+    String getKml() {
+        kmlWriter.write(this)
+    }
+
+    /**
+     * Get a GeoJSON String for this Geometry
+     * @return The GeoJSON String
+     */
+    String getGeoJSON() {
+        geoJSONWriter.write(this)
+    }
+
+    /**
+     * Get a GML 2 String for this Geometry
+     * @return The GML 2 String
+     */
+    String getGml2() {
+        gml2Writer.write(this)
+    }
+
+    /**
+     * Get a GML 3 String for this Geometry
+     * @return The GML 3 String
+     */
+    String getGml3() {
+        gml3Writer.write(this)
+    }
+
+    /**
      * The string reprensentation
      * @return The string reprensentation
      */
@@ -534,6 +607,42 @@ class Geometry {
      */
     static Geometry fromWKB(byte[] wkb) {
         wrap(wkbReader.read(wkb))
+    }
+
+    /**
+     * Get a Geometry from a KML String
+     * @param kml A KML String
+     * @return A Geometry
+     */
+    static Geometry fromKml(String kml) {
+        kmlReader.read(kml)
+    }
+
+    /**
+     * Get a Geometry from a GeoJSON String
+     * @param geoJSON A GeoJSON String
+     * @return A Geometry
+     */
+    static Geometry fromGeoJSON(String geoJSON) {
+        geoJSONReader.read(geoJSON)
+    }
+
+    /**
+     * Get a Geometry from a GML2 String
+     * @param geoJSON A GML2 String
+     * @return A Geometry
+     */
+    static Geometry fromGML2(String gml2) {
+        gml2Reader.read(gml2)
+    }
+
+    /**
+     * Get a Geometry from a GML3 String
+     * @param geoJSON A GML3 String
+     * @return A Geometry
+     */
+    static Geometry fromGML3(String gml3) {
+        gml3Reader.read(gml3)
     }
 
     /**

@@ -45,6 +45,46 @@ class GeometryTestCase {
         assertEquals "POINT (111 -47)", g.toString()
     }
 
+    @Test void getKml() {
+        Geometry g = Geometry.fromWKT("POINT (111 -47)")
+        assertEquals "<Point><coordinates>111.0,-47.0</coordinates></Point>", g.kml
+    }
+
+    @Test void fromKml() {
+        Geometry g = Geometry.fromKml("<Point><coordinates>111.0,-47.0</coordinates></Point>")
+        assertEquals "POINT (111 -47)", g.toString()
+    }
+
+    @Test void getGeoJSON() {
+        Geometry g = Geometry.fromWKT("POINT (111 -47)")
+        assertEquals """{ "type": "Point", "coordinates": [111.0, -47.0] }""", g.geoJSON
+    }
+
+    @Test void fromGeoJSON() {
+        Geometry g = Geometry.fromGeoJSON("""{ "type": "Point", "coordinates": [111.0, -47.0] }""")
+        assertEquals "POINT (111 -47)", g.toString()
+    }
+
+    @Test void getGml2() {
+        Geometry g = Geometry.fromWKT("POINT (111 -47)")
+        assertEquals "<gml:Point><gml:coordinates>111.0,-47.0</gml:coordinates></gml:Point>", g.gml2
+    }
+
+    @Test void fromGml2() {
+        Geometry g = Geometry.fromGML2("<gml:Point><gml:coordinates>111.0,-47.0</gml:coordinates></gml:Point>")
+        assertEquals "POINT (111 -47)", g.toString()
+    }
+
+    @Test void getGml3() {
+        Geometry g = Geometry.fromWKT("POINT (111 -47)")
+        assertEquals "<gml:Point><gml:pos>111.0 -47.0</gml:pos></gml:Point>", g.gml3
+    }
+
+    @Test void fromGml3() {
+        Geometry g = Geometry.fromGML3("<gml:Point><gml:pos>111.0 -47.0</gml:pos></gml:Point>")
+        assertEquals "POINT (111 -47)", g.toString()
+    }
+
     @Test void getCoordinates() {
         Geometry g = Geometry.fromWKT("POINT (111 -47)")
         def coordinates = g.coordinates
