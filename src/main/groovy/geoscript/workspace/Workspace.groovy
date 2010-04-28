@@ -108,4 +108,11 @@ class Workspace {
         layer.features.each{l.add(it)}
         l
     }
+
+    /**
+     * Closes the Workspace by disposing of any resources.
+     */
+    void close() {
+        ds.dispose()
+    }
 }
