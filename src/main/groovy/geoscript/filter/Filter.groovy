@@ -2,6 +2,7 @@ package geoscript.filter
 
 import geoscript.geom.Bounds
 import geoscript.geom.Geometry
+import geoscript.feature.Feature
 import org.opengis.filter.Filter as GTFilter
 import org.geotools.filter.text.cql2.CQL
 import org.geotools.xml.Parser
@@ -113,6 +114,13 @@ class Filter {
         new String(out.toByteArray())
     }
    
+    /**
+     * Evaluate the Filter against a Feature
+     */
+    boolean evaluate(Feature f) {
+        filter.evaluate(f.f)
+    }
+
     /**
      * The string representation
      * @return The string representation

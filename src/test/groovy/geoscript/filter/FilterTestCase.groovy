@@ -4,6 +4,7 @@ import org.junit.Test
 import static org.junit.Assert.*
 import geoscript.geom.*
 import geoscript.layer.*
+import geoscript.feature.Feature
 
 class FilterTestCase {
     
@@ -70,7 +71,7 @@ class FilterTestCase {
         assertEquals "DWITHIN(the_geom, POINT (-100 47), 10.2, feet)", f1.cql
     }
 
-    @Test void cross() {
+    @Test void crosses() {
         Filter f1 = Filter.crosses("the_geom", Geometry.fromWKT("LINESTRING (-104 45, -95 45)"))
         assertEquals "CROSS(the_geom, LINESTRING (-104 45, -95 45))", f1.cql
 
@@ -96,6 +97,14 @@ class FilterTestCase {
         assertTrue(abbreviations.contains("MN"))
         assertTrue(abbreviations.contains("SD"))
         assertTrue(abbreviations.contains("WY"))
+    }
+
+    @Test void evaluate() {
+        Filter filter = new Filter("name='foobar'")
+        Feature feature1 = new Feature(['name':'foobar'], 'f1')
+        assertTrue filter.evaluate(feature1)
+        Feature feature2 = new Feature(['name':'test'], 'f2')
+        assertFalse filter.evaluate(feature2)
     }
 }
 
