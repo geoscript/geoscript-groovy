@@ -40,8 +40,8 @@ class ProjectionTestCase {
     AUTHORITY["EPSG","6326"]], 
   PRIMEM["Greenwich", 0.0, AUTHORITY["EPSG","8901"]], 
   UNIT["degree", 0.017453292519943295], 
-  AXIS["Geodetic latitude", NORTH], 
   AXIS["Geodetic longitude", EAST], 
+  AXIS["Geodetic latitude", NORTH], 
   AUTHORITY["EPSG","4326"]]"""
 
         String actual = p1.wkt
@@ -55,7 +55,7 @@ class ProjectionTestCase {
         Projection src = new Projection("EPSG:2927")
         Projection dest = new Projection("EPSG:4326")
         Point projectedPoint = src.transform(point, dest)
-        assertEquals "POINT (47.10679261700989 -122.34429002073523)", projectedPoint.toString()
+        assertEquals "POINT (-122.34429002073523 47.10679261700989)", projectedPoint.toString()
     }
 
     @Test void testToString() {
@@ -73,8 +73,13 @@ class ProjectionTestCase {
         Projection src = new Projection("EPSG:2927")
         Projection dest = new Projection("EPSG:4326")
         Point projectedPoint = Projection.transform(point, src, dest)
-        assertEquals "POINT (47.10679261700989 -122.34429002073523)", projectedPoint.toString()
+        assertEquals "POINT (-122.34429002073523 47.10679261700989)", projectedPoint.toString()
     }
-    
+
+    @Test void transform26916To4326() {
+        Point point = new Point(776041.0, 3386618.0)
+        Point projectedPoint = Projection.transform(point, "EPSG:26916", "EPSG:4326")
+        assertEquals "POINT (-84.12159978127191 30.580282514678842)", projectedPoint.wkt
+    }
 }
 

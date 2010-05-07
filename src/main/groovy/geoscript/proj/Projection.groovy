@@ -22,6 +22,15 @@ class Projection {
     CoordinateReferenceSystem crs
 
     /**
+     * By default GeoTools Referenceing assumes yx or lat/lon
+     */
+    static {
+        if (!System.getProperty("org.geotools.referencing.forceXY")) {
+            System.setProperty("org.geotools.referencing.forceXY", "true")
+        }
+    }
+
+    /**
      * Create a new Projection wrapping a GeoTools
      * CoordinateReferenceSystem
      * @param crs The GeoTools CoordinateReferenceSystem
