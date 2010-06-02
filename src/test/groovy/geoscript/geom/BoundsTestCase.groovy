@@ -45,6 +45,16 @@ class BoundsTestCase {
         assertEquals 4.0, b.t, 0.0
     }
 
+    @Test void getWidth() {
+        Bounds b = new Bounds(1,2,3,4)
+        assertEquals 2.0, b.width, 0.0
+    }
+
+    @Test void getHeight() {
+        Bounds b = new Bounds(1,2,3,5)
+        assertEquals 3.0, b.height, 0.0
+    }
+
     @Test void getGeometry() {
         Bounds b = new Bounds(1,2,3,4)
         Geometry g = b.geometry
