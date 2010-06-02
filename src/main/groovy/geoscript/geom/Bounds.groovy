@@ -85,7 +85,23 @@ class Bounds {
     double getT() {
         env.maxY()
     }
-	
+
+    /**
+     * Get the width
+     * @return The width
+     */
+    double getWidth() {
+        env.width
+    }
+
+    /**
+     * Get the height
+     * @return The height
+     */
+    double getHeight() {
+        env.height
+    }
+
     /**
      * Get the Projection (if any) or null
      * @return The Projection (if any) or null
