@@ -26,6 +26,10 @@ import org.geotools.wfs.v1_1.WFS
 import org.geotools.wfs.v1_1.WFSConfiguration
 import org.geotools.xml.Encoder
 import org.json.*
+import geoscript.geom.io.KmlWriter
+import org.jdom.*
+import org.jdom.output.*
+import org.jdom.input.*
 //import org.geotools.geojson.GeoJSONWriter
 
 /**
@@ -423,6 +427,89 @@ class Layer {
         jsonObject.write(w)
         w.flush()
         w.close()
+    }
+
+    /**
+     * Write the Layer as KML to an OutputStream.
+     * @param out The OutputStream (defaults to System.out)
+     * @param nameClosure A Closure that takes a Feature and returns a value
+     * used as the Placemark's name.  Default to the Feature's ID
+     * @param descriptionClosure A Closure that takes a Feature and returns a value
+     * used as the Placemark's description. Defaults to null which means no description
+     * is created
+     */
+    void toKML(OutputStream out = System.out, Closure nameClosure = {f -> f.id}, Closure descriptionClosure = null) {
+
+        String geometryType = schema.geom.typ.toLowerCase()
+        KmlWriter kmlWriter = new KmlWriter()
+
+        SAXBuilder builder = new SAXBuilder()
+        Namespace ns = Namespace.getNamespace("kml","http://www.opengis.net/kml/2.2")
+        Document doc = new Document()
+        Element kmlElem = new Element("kml",ns)
+        doc.setRootElement(kmlElem)
+        Element docElem = new Element("Document",ns)
+        kmlElem.addContent(docElem)
+        Element folderElem = new Element("Folder",ns)
+        docElem.addContent(folderElem)
+        folderElem.addContent(new Element("name",ns).setText(name))
+        Element schemaElem = new Element("Schema",ns)
+        schemaElem.setAttribute("name", name, ns)
+        schemaElem.setAttribute("id", name, ns)
+        folderElem.addContent(schemaElem)
+        schema.fields.each {fld ->
+            if (!fld.isGeometry()) {
+                schemaElem.addContent(new Element("SimpleField", ns).setAttribute("name",fld.name, ns).setAttribute("type", fld.typ, ns))
+            }
+        }
+        features.each {f ->
+            Element placeMarkElem = new Element("Placemark", ns)
+            placeMarkElem.addContent(new Element("name", ns).setText(nameClosure.call(f))) //f.get("STATE_NAME")
+            if (descriptionClosure != null) {
+                placeMarkElem.addContent(new Element("description", ns).setText(descriptionClosure.call(f)))
+            }
+            folderElem.addContent(placeMarkElem)
+            Element styleElem = new Element("Style", ns)
+            if (geometryType.endsWith("point") ) {
+                styleElem.addContent(new Element("IconStyle",ns).addContent(new Element("color",ns).setText("ff0000ff")))
+            }
+            else {
+                styleElem.addContent(new Element("LineStyle",ns).addContent(new Element("color",ns).setText("ff0000ff")))
+                if (geometryType.endsWith("polygon")) {
+                    styleElem.addContent(new Element("PolyStyle",ns).addContent(new Element("fill",ns).setText("0")))
+                }
+            }
+            placeMarkElem.addContent(styleElem)
+            Element extendedDataElem = new Element("ExtendedData",ns)
+            placeMarkElem.addContent(extendedDataElem)
+            Element schemaDataElem = new Element("SchemaData",ns).setAttribute("schemaUrl","#" + name,ns)
+            extendedDataElem.addContent(schemaDataElem)
+            schema.fields.each{fld ->
+                if (!fld.isGeometry()) {
+                    schemaDataElem.addContent(new Element("SimpleData",ns).setAttribute("name",fld.name,ns).setText(f.get(fld.name) as String))
+                }
+            }
+            // add geometry
+            String kml = kmlWriter.write(f.geom)
+            Element geomElem = builder.build(new StringReader(kml)).rootElement.detach()
+            addNamespace(geomElem,ns)
+            placeMarkElem.addContent(geomElem)
+
+        }
+
+        XMLOutputter outputter = new XMLOutputter(Format.getPrettyFormat())
+        outputter.output(doc, out)
+    }
+
+    /**
+     * Add a Namespace to the JDOM Element recursively.  This
+     * is needed by the toKML method.
+     * @param element The JDOM Element
+     * @param ns The JDOM Namespace
+     */
+    private void addNamespace(Element element, Namespace ns) {
+        element.setNamespace(ns)
+        element.children.each{e -> addNamespace(e, ns)}
     }
 
     /**

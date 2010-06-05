@@ -108,6 +108,16 @@ class LayerTestCase {
         assertEquals expected, actual
     }
 
+    @Test void toKML() {
+        Schema s1 = new Schema("facilities", [new Field("geom","Point", "EPSG:2927"), new Field("name","string"), new Field("price","float")])
+        Layer layer1 = new Layer("facilities", s1)
+        layer1.add(new Feature([new Point(-122.444,47.2528), "House", 12.5], "house1", s1))
+        def out = new java.io.ByteArrayOutputStream()
+        layer1.toKML(out, {f->f.get("name")}, {f-> "${f.get('name')} ${f.get('price')}"})
+        String kml = out.toString()
+        assertNotNull kml
+    }
+
     @Test void reproject() {
         Schema s1 = new Schema("facilities", [new Field("geom","Point", "EPSG:4326"), new Field("name","string"), new Field("price","float")])
         Layer layer1 = new Layer("facilities", s1)
