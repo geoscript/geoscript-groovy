@@ -24,20 +24,44 @@ import org.geotools.renderer.label.LabelCacheImpl
  */
 class Map {
 
+    /**
+     * The width of the Map
+     */
     int width = 600
 
+    /**
+     * The height of the Map
+     */
     int height = 400
 
+    /**
+     * The image type (png, jpg)
+     */
     String imageType = "png"
 
+    /**
+     * The background color (if any)
+     */
     String backgroundColor = null
 
+    /**
+     * A flag to fix the aspect ration (true) or not (false)
+     */
     boolean fixAspectRatio = true
 
+    /**
+     * The GeoTools Renderer
+     */
     private GTRenderer renderer
 
+    /**
+     * The GeoTools MapContext
+     */
     private MapContext context
 
+    /**
+     * Create a new Map
+     */
     Map() {
         context = new DefaultMapContext()
         renderer = new StreamingRenderer()
@@ -53,16 +77,50 @@ class Map {
         renderer.setContext(context)
     }
 
+    /**
+     * Set the Map Projection
+     * @param proj The Projection
+     */
     void setProjection(Projection proj) {
         context.setCoordinateReferenceSystem(proj.crs)
     }
 
+    /**
+     * Add a Layer with a Style
+     * @param layer The Layer
+     * @param style The Style
+     */
     void addLayer(Layer layer, Style style) {
         MapLayer mapLayer = new DefaultMapLayer(layer.fs, style.style);
         context.addLayer(mapLayer);
     }
 
+    /**
+     * Render the Map at a Bounds to a File
+     * @param bounds The Bounds
+     * @param file The File
+     */
     void render(Bounds bounds, File file) {
+        FileOutputStream out = new FileOutputStream(file)
+        render(bounds, out)
+        out.close()
+    }
+
+    /**
+     * Render the Map at a Bounds to an OutputStream
+     * @param bounds The Bounds
+     * @param out The OutputStream
+     */
+    void render(Bounds bounds, OutputStream out) {
+        ImageIO.write(renderToImage(bounds), imageType, out);
+    }
+   
+    /**
+     * Render the Map to a BufferedImage for the given Bounds
+     * @param bounds The Bounds
+     * @return A BufferedImage
+     */ 
+    BufferedImage renderToImage(Bounds bounds) {
         BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
         Graphics2D g = (Graphics2D) image.createGraphics();
         if (backgroundColor != null) {
@@ -72,10 +130,16 @@ class Map {
         if (fixAspectRatio) {
             bounds = fixAspectRatio(width, height, bounds)
         }
-        renderer.paint(g, new Rectangle(0, 0, width, height), bounds.env);
-        ImageIO.write(image, imageType, file);
+        renderer.paint(g, new Rectangle(0, 0, width, height), bounds.env)
+        return image
     }
 
+    /**
+     * Fix the aspect ration
+     * @param w The image width
+     * @param h The image height
+     * @param mapBounds The geographic/map Bounds
+     */
     private Bounds fixAspectRatio(int w, int h, Bounds mapBounds) {
         double mapWidth = mapBounds.width;
         double mapHeight = mapBounds.height;

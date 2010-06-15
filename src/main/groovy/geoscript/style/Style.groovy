@@ -53,25 +53,46 @@ class Style {
         this(fromFile(file))
     }
 
+    /**
+     * Create a default Style
+     */
     Style() {
         this(builder.createStyle())
     }
 
+    /**
+     * Create a Style with one SubStyle
+     * @param subStyle The SubStyle
+     */
     Style(SubStyle subStyle) {
         this(createGtStyleFromSubStyle(subStyle))
     }
 
-    private static createGtStyleFromSubStyle(SubStyle subStyle) {
+    /**
+     * Create GeoTools Style from a single SubStyle
+     * @param subStyle The SubStyle
+     * @return A GeoTools Style
+     */
+    private static GtStyle createGtStyleFromSubStyle(SubStyle subStyle) {
         GtStyle gtStyle = builder.createStyle()
         gtStyle.featureTypeStyles().add(subStyle.featureTypeStyle)
         gtStyle
     }
 
+    /**
+     * Create a Style from a List of SubStyles, Rules, or Symbolizers
+     * @param list A List of SubStyles, Rules, or Symbolizers
+     */
     Style(List list) {
         this(createGtStyleFromList(list))
     }
 
-    private static createGtStyleFromList(List list) {
+    /**
+     * Create a GeoTools Style from a List of SubStyles, Rules, or Symbolizers
+     * @param list A List of SubStyles, Rules, or Symbolizers
+     * @return A GeoTools Style
+     */
+    private static GtStyle createGtStyleFromList(List list) {
         if (list.size() > 0) {
             def firstItem = list[0]
             if (firstItem instanceof SubStyle) {
@@ -93,19 +114,37 @@ class Style {
         }
     }
 
+    /**
+     * Create a Style from a single Rule
+     * @param rule The Rule
+     */
     Style(Rule rule) {
         this(createGtStyleFromRule(rule))
     }
 
-    private static createGtStyleFromRule(Rule rule) {
+    /**
+     * Create a GeoTools Style from a single Rule
+     * @param rule The Rule
+     * @return a GeoTools Style
+     */
+    private static GtStyle createGtStyleFromRule(Rule rule) {
         createGtStyleFromSubStyle(new SubStyle(rule))
     }
 
+    /**
+     * Create a Style from a Symbolizer
+     * @param symbolizer The Symbolizer
+     */
     Style(Symbolizer symbolizer) {
         this(createGtStyleFromSymbolizer(symbolizer))
     }
 
-    private static createGtStyleFromSymbolizer(Symbolizer symbolizer) {
+    /**
+     * Create a GeoTools Style from a Symbolizer
+     * @param symbolizer The Symbolizer
+     * @return A GeoTools Style
+     */
+    private static GtStyle createGtStyleFromSymbolizer(Symbolizer symbolizer) {
         Rule rule = new Rule(symbolizer)
         SubStyle subStyle = new SubStyle(rule)
         createGtStyleFromSubStyle(subStyle)
@@ -119,30 +158,58 @@ class Style {
        style.featureTypeStyles().collect{ftStyle -> new SubStyle(ftStyle)}
     }
 
+    /**
+     * Get the name
+     * @return The name
+     */
     String getName() {
         style.name
     }
 
+    /**
+     * Set the name
+     * @param name The new name
+     */
     void setName(String name) {
         style.name = name
     }
 
+    /**
+     * Get the title
+     * @return The title
+     */
     String getTitle() {
         style.description.title
     }
 
+    /**
+     * Set the title
+     * @param title The new title
+     */
     void setTitle(String title) {
         style.description.title = title
     }
 
+    /**
+     * Get the abstract
+     * @return The abstract
+     */
     String getAbstract() {
         style.description.getAbstract()
     }
 
+    /**
+     * Set the abstract
+     * @return abstractStr The new abstract
+     */
     void setAbstract(String abstractStr) {
         style.description.setAbstract(abstractStr)
     }
 
+    /**
+     * The string representation
+     * @return The string representation
+     */
     String toString() {
         //getName() + " (" + getTitle() + ") " + getAbstract()
         style.toString()
@@ -158,10 +225,10 @@ class Style {
     }
 
     /**
-     * Convert this Style to an SLD document
+     * Convert this Style to an SLD document and write it to the OutputStream
      * @return An SLD Document
      */
-    String toSLD(OutputStream out = System.out) {
+    void toSLD(OutputStream out = System.out) {
 
         UserLayer userLayer = styleFactory.createUserLayer();
         userLayer.addUserStyle(style);
@@ -173,7 +240,7 @@ class Style {
         styleTransform.setIndentation(2);
         styleTransform.transform(sld, out);
     }
-   
+
     /**
      * Get a random (pastel) color
      * @return A Color

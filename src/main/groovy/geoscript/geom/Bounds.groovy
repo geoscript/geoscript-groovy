@@ -85,7 +85,32 @@ class Bounds {
     double getT() {
         env.maxY()
     }
-	
+
+    /**
+     * Get the width
+     * @return The width
+     */
+    double getWidth() {
+        env.width
+    }
+
+    /**
+     * Get the height
+     * @return The height
+     */
+    double getHeight() {
+        env.height
+    }
+
+    /**
+     * Expand the Bounds by the given distance in all directions
+     * @param distance The distance
+     */
+    Bounds expandBy(double distance) {
+        env.expandBy(distance)
+        this
+    }
+
     /**
      * Get the Projection (if any) or null
      * @return The Projection (if any) or null

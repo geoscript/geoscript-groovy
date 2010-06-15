@@ -200,6 +200,14 @@ class Layer {
     }
 
     /**
+     * Count the number of Features in the layer
+     * @return The number of Features in the Layer
+     */
+    int getCount() {
+        return count()
+    }
+
+    /**
      * Get the Bounds of the Features in the Layer
      * @param filer The Filter or Filter String to limit the Features used to construct the bounds. Defaults to null.
      * @return The Bounds of the Features in the Layer
@@ -208,6 +216,14 @@ class Layer {
         Filter f = (filter == null) ? Filter.PASS : new Filter(filter)
         Envelope e = fs.getBounds(new DefaultQuery(getName(), f.filter))
         return new Bounds(e)
+    }
+
+    /**
+     * Get the Bounds of the Features in the Layer
+     * @return The Bounds of the Features in the Layer
+     */
+    Bounds getBounds() {
+        return bounds()
     }
 
     /**
