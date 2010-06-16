@@ -261,5 +261,40 @@ class Style {
     static String convertColorToHex(Color color) {
         "#${Integer.toHextString(color.getRGB() & 0x00ffffff)}"
     }
+
+    /**
+     * Get a Color from a String.  Handle java.awt.Color names,
+     * hexadecimals, and RGB.
+     * @param str The String
+     * @return a Color or null
+     */
+    static Color getColor(String str) {
+        Map colorNameMap = [
+            "black": Color.black,
+            "blue": Color.blue,
+            "cyan": Color.cyan,
+            "darkGray": Color.darkGray,
+            "gray": Color.gray,
+            "green": Color.green,
+            "lightGray": Color.lightGray,
+            "magenta": Color.magenta,
+            "organge": Color.orange,
+            "pink": Color.pink,
+            "red": Color.red,
+            "white": Color.white,
+            "yellow": Color.yellow
+        ]
+        if (str.startsWith("#")) {
+            return Color.decode(str)
+        }
+        else if (str.split(",") == 3) {
+            String[] parts = str.split(",")
+            return new Color(parts[0] as int, parts[1] as int, parts[2] as int)
+        }
+        else if (colorNameMap.containsKey(str.toLowerCase())){
+            return colorNameMap.get(str.toLowerCase())
+        }
+        return null
+    }
 }
 
