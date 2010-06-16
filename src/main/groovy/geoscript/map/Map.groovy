@@ -124,7 +124,7 @@ class Map {
         BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
         Graphics2D g = (Graphics2D) image.createGraphics();
         if (backgroundColor != null) {
-            g.color = Color.WHITE
+            g.color = Color.decode(backgroundColor)
             g.fillRect(0,0,width,height)
         }
         if (fixAspectRatio) {
