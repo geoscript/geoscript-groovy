@@ -387,11 +387,31 @@ class Layer {
         fc.feature.add(features)
 
         Encoder e = new Encoder(new WFSConfiguration())
-        URI uri = (fs.name.namespaceURI == null) ? new URI("http://geotools") : fs.name.namespaceURI
+        URI uri = (fs.name.namespaceURI == null) ? new URI("http://geotools") : new URI(fs.name.namespaceURI)
         String prefix = "gt"
         e.namespaces.declarePrefix(prefix, uri.toString())
         e.indenting = true
         e.encode(fc, WFS.FeatureCollection, out)
+    }
+
+    /**
+     * Write the Layer as GML to a File
+     * @param file The File
+     */
+    String toGMLFile(File file) {
+        FileOutputStream out = new FileOutputStream(file)
+        toGML(out)
+        out.close()
+    }
+
+    /**
+     * Write the Layer as GML to a String
+     * @param out A GML String
+     */
+    String toGMLString() {
+        ByteArrayOutputStream out = new ByteArrayOutputStream()
+        toGML(out)
+        out.toString()
     }
 
     /**
@@ -427,6 +447,26 @@ class Layer {
         jsonObject.write(w)
         w.flush()
         w.close()
+    }
+
+    /**
+     * Write the Layer as GeoJSON to a File
+     * @param file The File
+     */
+    String toJSONFile(File file) {
+        FileOutputStream out = new FileOutputStream(file)
+        toJSON(out)
+        out.close()
+    }
+
+    /**
+     * Write the Layer as GeoJSON to a String
+     * @param out A GeoJSON String
+     */
+    String toJSONString() {
+        ByteArrayOutputStream out = new ByteArrayOutputStream()
+        toJSON(out)
+        out.toString()
     }
 
     /**
@@ -502,12 +542,41 @@ class Layer {
     }
 
     /**
+     * Write the Layer as KML to a String.
+     * @param nameClosure A Closure that takes a Feature and returns a value
+     * used as the Placemark's name.  Default to the Feature's ID
+     * @param descriptionClosure A Closure that takes a Feature and returns a value
+     * used as the Placemark's description. Defaults to null which means no description
+     * is created
+     */
+    String toKMLString(Closure nameClosure = {f -> f.id}, Closure descriptionClosure = null) {
+        ByteArrayOutputStream out = new ByteArrayOutputStream()
+        toKML(out, nameClosure, descriptionClosure)
+        out.toString()
+    }
+
+    /**
+     * Write the Layer as KML to a File.
+     * @param file The File we are writing
+     * @param nameClosure A Closure that takes a Feature and returns a value
+     * used as the Placemark's name.  Default to the Feature's ID
+     * @param descriptionClosure A Closure that takes a Feature and returns a value
+     * used as the Placemark's description. Defaults to null which means no description
+     * is created
+     */
+    void toKMLFile(File file, Closure nameClosure = {f -> f.id}, Closure descriptionClosure = null) {
+        FileOutputStream out = new FileOutputStream(file)
+        toKML(out, nameClosure, descriptionClosure)
+        out.close()
+    }
+
+    /**
      * Add a Namespace to the JDOM Element recursively.  This
      * is needed by the toKML method.
      * @param element The JDOM Element
      * @param ns The JDOM Namespace
      */
-    private void addNamespace(Element element, Namespace ns) {
+    protected void addNamespace(Element element, Namespace ns) {
         element.setNamespace(ns)
         element.children.each{e -> addNamespace(e, ns)}
     }
