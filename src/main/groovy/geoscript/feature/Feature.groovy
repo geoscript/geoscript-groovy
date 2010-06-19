@@ -181,16 +181,11 @@ class Feature {
      * Build a SimpleFeature using the List of data, the ID, and the Schema
      */
     private static SimpleFeature buildFeature(List attributes, String id, Schema schema) {
-        SimpleFeatureBuilder featureBuilder = new SimpleFeatureBuilder(schema.featureType)
-        attributes.each{
-            if (it instanceof Geometry) {
-                featureBuilder.add(it.g)
-            }
-            else {
-                featureBuilder.add(it);
-            }
+        Map map = [:]
+        schema.fields.eachWithIndex{fld, i ->
+            map.put(fld.name, attributes[i])
         }
-        featureBuilder.buildFeature(id)
+        buildFeature(map, id, schema)
     }
 
     /**
