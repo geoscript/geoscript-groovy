@@ -15,7 +15,7 @@ class Directory extends Workspace {
      * @param dir The File directory
      */
     Directory(File dir) {
-        super(new DirectoryDataStore(dir, new URI("http://geoscript.ogr")));
+        super(new DirectoryDataStore(dir, new URI("http://geoscript.org")));
     }
 
     /**
