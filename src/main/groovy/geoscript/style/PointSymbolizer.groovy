@@ -3,7 +3,24 @@ package geoscript.style
 import org.geotools.styling.SLD
 
 /**
- * The PointSymbolizer
+ * A PointSymbolizer.
+ * <p>You can create a PointSymbolizer using a map like syntax:</p>
+ * <p><code><pre>
+ * def sym = new PointSymbolizer(
+ *      shape: "circle",
+ *      fillColor: "#FF0000",
+ *      size: 6,
+ *      strokeOpacity: 0
+ * )
+ * </pre></code></p>
+ * <p>Or you can create a PointSymbolizer using properties:</p>
+ * <p><code><pre>
+ * def sym = new PointSymbolizer()
+ * sym.shape = "circle"
+ * sym.fillColor = "#FF0000"
+ * sym.size = 6
+ * sym.strokeOpacity = 0
+ * </pre></code></p>
  * @author Jared Erickson
  */
 class PointSymbolizer extends Symbolizer {
@@ -16,8 +33,8 @@ class PointSymbolizer extends Symbolizer {
     }
 
     /**
-     * Set the well known shape name (circle, square, triangle)
-     * @param The well known shape name (circle, square, triangle)
+     * Set the well known shape name (circle, square, triangle, star, cross, x, arrow)
+     * @param The well known shape name (circle, square, triangle, star, cross, x, arrow)
      */
     void setShape(String shape) {
         SLD.mark(symbolizer).setWellKnownName(Style.filterFactory.literal(shape))
@@ -56,8 +73,8 @@ class PointSymbolizer extends Symbolizer {
     }
 
     /**
-     * Set the stroke opacity (0.2)
-     * @param opacity The stroke opacity (0.2)
+     * Set the stroke opacity (0 = transparent to 1 = opaque)
+     * @param opacity The stroke opacity (0 = transparent to 1 = opaque)
      */
     void setStrokeOpacity(float opacity) {
         SLD.stroke(symbolizer).setOpacity(Style.filterFactory.literal(opacity))
@@ -72,25 +89,24 @@ class PointSymbolizer extends Symbolizer {
     }
 
     /**
-     * Set the fill opacity (0.75)
-     * @param opacity The fill opacity (0.75)
+     * Set the fill opacity (0 = transparent to 1 = opaque)
+     * @param opacity The fill opacity (0 = transparent to 1 = opaque)
      */
     void setFillOpacity(float opacity) {
         SLD.fill(symbolizer).setOpacity(Style.filterFactory.literal(opacity))
     }
 
     /**
-     * Set the external graphic image
-     * @param uri The URI of the external graphic image
-     * @param format The format of the image (image/png)
+     * Set the external graphic image (images/icon.png)
+     * @param uri The URI of the external graphic image (images/icon.png)
      */
     void setGraphic(String uri) {
         setGraphic(uri, "image/${uri.substring(uri.lastIndexOf('.') + 1)}")
     }
 
     /**
-     * Set the external graphic image
-     * @param uri The URI of the external graphic image
+     * Set the external graphic image (images/icon.png, image/png)
+     * @param uri The URI of the external graphic image (images/icon.png)
      * @param format The format of the image (image/png)
      */
     void setGraphic(String uri, String format) {
@@ -99,4 +115,3 @@ class PointSymbolizer extends Symbolizer {
     }
 
 }
-

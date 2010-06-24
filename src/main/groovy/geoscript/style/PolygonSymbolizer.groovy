@@ -87,6 +87,12 @@ class PolygonSymbolizer  extends Symbolizer {
 
     /**
      * Set the graphic fill's mark well known name
+     * <p>Verticle Line: shape://vertline</p>
+     * <p>Horizontal Line: shape://horline</p>
+     * <p>Slash: shape://slash</p>
+     * <p>Back Slash: shape://backslash</p>
+     * <p>Plus: shape://plus</p>
+     * <p>Times: shape://times</p>
      * @param The well known name
      */
     void setMarkName(String name) {

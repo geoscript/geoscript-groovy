@@ -3,7 +3,20 @@ package geoscript.style
 import org.geotools.styling.SLD
 
 /**
- * A LineSymbolizer
+ * A LineSymbolizer.
+ * <p>You can create a LineSymbolizer using a map like syntax:</p>
+ * <p><code><pre>
+ * def sym = new LineSymbolizer(
+ *      strokeColor: "#000000",
+ *      strokeWidth: 3
+ * )
+ * </pre></code></p>
+ * <p>Or you can create a LineSymbolizer using properties:</p>
+ * <p><code><pre>
+ * def sym = new LineSymbolizer()
+ * sym.strokeColor = "#000000"
+ * sym.strokeWidth = 3
+ * </pre></code></p>
  * @author Jared Erickson
  */
 class LineSymbolizer  extends Symbolizer {
@@ -16,40 +29,40 @@ class LineSymbolizer  extends Symbolizer {
     }
 
     /**
-     * Set the stroke color
-     * @param color The color
+     * Set the stroke color (#FF0000)
+     * @param color The color (#FF0000)
      */
     void setStrokeColor(String color) {
         SLD.stroke(symbolizer).setColor(Style.filterFactory.literal(color))
     }
 
     /**
-     * Set the stroke width
-     * @param width The stroke width
+     * Set the stroke width (1)
+     * @param width The stroke width (1)
      */
     void setStrokeWidth(float width) {
         SLD.stroke(symbolizer).setWidth(Style.filterFactory.literal(width))
     }
 
     /**
-     * Set the stroke opacity
-     * @param opacity The stroke opacity
+     * Set the stroke opacity  (0 = transparent to 1 = opaque)
+     * @param opacity The stroke opacity (0 = transparent to 1 = opaque)
      */
     void setStrokeOpacity(float opacity) {
         SLD.stroke(symbolizer).setOpacity(Style.filterFactory.literal(opacity))
     }
 
     /**
-     * Set the line cap (round)
-     * @param lineCap The line cap
+     * Set the line cap (round, butt, square)
+     * @param lineCap The line cap (round, butt, square)
      */
     void setStrokeLineCap(String lineCap) {
         SLD.stroke(symbolizer).setLineCap(Style.filterFactory.literal(lineCap))
     }
 
     /**
-     * Set the Stroke Dash Array with a String "5 2"
-     * @param The stroke dash array as a String "5 2"
+     * Set the Stroke Dash Array with a String ("5 2")
+     * @param The stroke dash array as a String ("5 2")
      */
     void setStrokeDashArray(String dashArray) {
         float[] floatArray = dashArray.split(" ").collect{Float.parseFloat(it)}.toArray() as float[]
@@ -68,6 +81,10 @@ class LineSymbolizer  extends Symbolizer {
 
     /**
      * Set the GraphicStroke/Mark well known name
+     * <p>Verticle Line: shape://vertline |-|-|</p>
+     * <p>Slash: shape://slash /-/-/</p>
+     * <p>Back Slash: shape://backslash \-\-\</p>
+     * <p>Times: shape://times X-X-X</p>
      * @param The well known name
      */
     void setGraphicStrokeMarkName(String name) {
@@ -76,7 +93,7 @@ class LineSymbolizer  extends Symbolizer {
     }
 
     /**
-     * Set the GraphicStroke/Mark/Stroke color
+     * Set the GraphicStroke/Mark/Stroke color (#FF0000)
      * @param color The Color
      */
     void setGraphicStrokeMarkStrokeColor(String color) {
@@ -85,7 +102,7 @@ class LineSymbolizer  extends Symbolizer {
     }
 
     /**
-     * Set the GraphicStroke/Mark/Stroke width
+     * Set the GraphicStroke/Mark/Stroke width (2)
      * @param width The width
      */
     void setGraphicStrokeMarkStrokeWidth(float width) {
@@ -94,7 +111,7 @@ class LineSymbolizer  extends Symbolizer {
     }
 
     /**
-     * Set the GraphicStroke/Mark size
+     * Set the GraphicStroke/Mark size (6)
      * @param size The size
      */
     void setGraphicStrokeMarkSize(float size) {
