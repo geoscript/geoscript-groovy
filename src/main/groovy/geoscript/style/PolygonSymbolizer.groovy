@@ -3,7 +3,24 @@ package geoscript.style
 import org.geotools.styling.SLD
 
 /**
- * The PolygonSymbolizer
+ * The PolygonSymbolizer.
+ * <p>You can create a PolygonSymbolizer using a map like syntax:</p>
+ * <p><code><pre>
+ * def sym = new PolygonSymbolizer(
+ *      fillColor: "#000080",
+ *      fillOpacity: 0.5,
+ *      strokeColor: "#FFFFFF",
+ *      strokeWidth: 2
+ * )
+ * </pre></code></p>
+ * <p>Or you can create a PolygonSymbolizer using properties:</p>
+ * <p><code><pre>
+ * def sym = new PolygonSymbolizer()
+ * sym.fillColor = "#000080"
+ * sym.fillOpacity = 0.5
+ * sym.strokeColor = "#FFFFFF"
+ * sym.strokeWidth = 2
+ * </pre></code></p>
  * @author Jared Erickson
  */
 class PolygonSymbolizer  extends Symbolizer {
@@ -32,8 +49,8 @@ class PolygonSymbolizer  extends Symbolizer {
     }
 
     /**
-     * Set the stroke opacity
-     * @param opacity The stroke opacity
+     * Set the stroke opacity (0=transparent to 1=opaque)
+     * @param opacity The stroke opacity (0=transparent to 1=opaque)
      */
     void setStrokeOpacity(float opacity) {
         SLD.stroke(symbolizer).setOpacity(Style.filterFactory.literal(opacity))
@@ -48,25 +65,24 @@ class PolygonSymbolizer  extends Symbolizer {
     }
 
     /**
-     * Set the fill opacity (0.5)
-     * @param opacity The fill opacity (0.5)
+     * Set the fill opacity (0=transparent to 1=opaque)
+     * @param opacity The fill opacity (0=transparent to 1=opaque)
      */
     void setFillOpacity(float opacity) {
         SLD.fill(symbolizer).setOpacity(Style.filterFactory.literal(opacity))
     }
 
     /**
-     * Set the external graphic image
-     * @param uri The URI of the external graphic image
-     * @param format The format of the image (image/png)
+     * Set the external graphic image (images/icon.png)
+     * @param uri The URI of the external graphic image (images/icon.png)
      */
     void setGraphic(String uri) {
         setGraphic(uri, "image/${uri.substring(uri.lastIndexOf('.') + 1)}")
     }
 
     /**
-     * Set the external graphic image
-     * @param uri The URI of the external graphic image
+     * Set the external graphic image (images/icon.png and image/png)
+     * @param uri The URI of the external graphic image (images/icon.png)
      * @param format The format of the image (image/png)
      */
     void setGraphic(String uri, String format) {
@@ -86,7 +102,7 @@ class PolygonSymbolizer  extends Symbolizer {
     }
 
     /**
-     * Set the graphic fill's mark well known name
+     * Set the graphic fill's mark well known name (shape://vertline)
      * <p>Verticle Line: shape://vertline</p>
      * <p>Horizontal Line: shape://horline</p>
      * <p>Slash: shape://slash</p>
@@ -101,8 +117,8 @@ class PolygonSymbolizer  extends Symbolizer {
     }
 
     /**
-     * Set the graphic fill's mark's stroke color
-     * @param color The Color
+     * Set the graphic fill's mark's stroke color (#FF0000)
+     * @param color The Color (#FF0000)
      */
     void setMarkStrokeColor(String color) {
         createGraphicFillIfNecessary()
@@ -110,8 +126,8 @@ class PolygonSymbolizer  extends Symbolizer {
     }
 
     /**
-     * Set the graphic fill's mark's stroke width
-     * @param width The width
+     * Set the graphic fill's mark's stroke width (1.5)
+     * @param width The width (1.5)
      */
     void setMarkStrokeWidth(float width) {
         createGraphicFillIfNecessary()
