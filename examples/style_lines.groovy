@@ -1,3 +1,11 @@
+/**
+ * GeoScript examples for the line section of the GeoServer SLD Cookbook.
+ *
+ * http://docs.geoserver.org/stable/en/user/styling/sld-cookbook/index.html
+ *
+ * To run, download the line shapefile.
+ *
+ */
 import geoscript.layer.*
 import geoscript.filter.Filter
 import geoscript.geom.Bounds

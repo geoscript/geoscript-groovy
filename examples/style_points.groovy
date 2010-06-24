@@ -1,3 +1,11 @@
+/**
+ * GeoScript examples for the point section of the GeoServer SLD Cookbook.
+ *
+ * http://docs.geoserver.org/stable/en/user/styling/sld-cookbook/index.html
+ * 
+ * To run, download the point shapefile.
+ *
+ */
 import geoscript.layer.*
 import geoscript.filter.Filter
 import geoscript.geom.Bounds
