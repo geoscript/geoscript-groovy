@@ -8,6 +8,9 @@ class PointTestCase {
     @Test void constructors() {
         def p1 = new Point(111,-47)
         assertEquals "POINT (111 -47)", p1.wkt
+
+        def p2 = [111,-47] as Point
+        assertEquals "POINT (111 -47)", p2.wkt
     }
 
     @Test void plus() {
