@@ -33,14 +33,14 @@ import geoscript.geom.*
  * import geoscript.geom.Point
  * import geoscript.viewer.Viewer
  * Point p = new Point(10,10)
- * Viewer.open(p.buffer(100))
+ * Viewer.draw(p.buffer(100))
  * </pre></code>
  * Or you can plot a List of Geometries.
  * <code<pre>
  * import geoscript.geom.Point
  * import geoscript.viewer.Viewer
  * Point p = new Point(10,10)
- * Viewer.openPlot([p, p.buffer(50), p.buffer(100)])
+ * Viewer.plot([p, p.buffer(50), p.buffer(100)])
  * </pre></code>
  * @author Jared Erickson
  */
