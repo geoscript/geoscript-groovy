@@ -21,6 +21,10 @@ import com.vividsolutions.jts.geom.Polygon as JtsPolygon
 import com.vividsolutions.jts.geom.Envelope
 import com.vividsolutions.jts.geom.MultiPolygon as JtsMultiPolygon
 import org.geotools.geometry.jts.LiteShape
+import org.geotools.renderer.chart.GeometryDataset
+import org.jfree.chart.JFreeChart
+import org.jfree.chart.ChartPanel
+import org.jfree.chart.ChartUtilities
 import geoscript.geom.*
 
 /**
@@ -31,26 +35,23 @@ import geoscript.geom.*
  * Point p = new Point(10,10)
  * Viewer.open(p.buffer(100))
  * </pre></code>
+ * Or you can plot a List of Geometries.
+ * <code<pre>
+ * import geoscript.geom.Point
+ * import geoscript.viewer.Viewer
+ * Point p = new Point(10,10)
+ * Viewer.openPlot([p, p.buffer(50), p.buffer(100)])
+ * </pre></code>
  * @author Jared Erickson
  */
 class Viewer {
 
     /**
-     * Draw a Geometry (or Geometries) onto a Canvas
+     * Draw a Geometry (or List of Geometries) onto a GUI
      * @param geom The Geomtry to List of Geometries to draw
-     * @param A List containing the size of the viewer (defaults to 500 by 500)
+     * @param A List containing the size of the GUI (defaults to 500 by 500)
      */
-    static void open(def geom, List size=[500,500]) {
-        Viewer v = new Viewer()
-        v.draw(geom, size)
-    }
-
-    /**
-     * Draw a Geometry (or Geometries) onto a Canvas
-     * @param geom The Geomtry to List of Geometries to draw
-     * @param A List containing the size of the viewer (defaults to 500 by 500)
-     */
-    void draw(def geom, List size=[500,500], double buf = 50) {
+    static void draw(def geom, List size=[500,500], double buf = 50) {
         if (!(geom instanceof List)) {
             geom = [geom]
         }
@@ -58,7 +59,7 @@ class Viewer {
         Dimension dim = new Dimension((int) (size[0] + 2 * buf), (int) (size[1] + 2 * buf))
         panel.preferredSize = dim
         panel.minimumSize = dim
-        JFrame frame = new JFrame("Geoescript Viewer")
+        JFrame frame = new JFrame("GeoScript Viewer")
         try {
             frame.defaultCloseOperation = JFrame.EXIT_ON_CLOSE
         }
@@ -71,62 +72,13 @@ class Viewer {
         frame.visible = true
     }
 
-
-
     /**
-     * Create an AffineTransform that transforms coordinates from world
-     * to the screen
+     * Draw Geometry (or List of Geometries) to a BufferedImage
+     * @param geom A Geometry or a List of Geometries
+     * @param size The size of image to create
+     * @return A BufferedImage
      */
-    static AffineTransform worldToScreen(def geom, List size=[500,500], double buf = 50) {
-
-        if (!(geom instanceof List)) {
-            geom = [geom]
-        }
-
-        def g = geom.collect{
-            it.g
-        }.toArray() as JtsGeometry[]
-
-        JtsGeometry gc = Geometry.factory.createGeometryCollection(g)
-        Envelope e = gc.envelopeInternal
-
-        double scale =  (e.width > 0) ? size[0] / e.width : Double.MAX_VALUE
-        scale = (e.height > 0) ? Math.min(scale, size[1] / e.height) : new Double(1).doubleValue()
-
-        double tx = -e.minX
-        double ty = -e.minY
-
-        //AffineTransform at = new AffineTransform()
-        // Scale to size of canvas (inverting the y axis)
-        //at.scale(scale, -scale)
-        // translate to the origin
-        //at.translate(tx, ty)
-        // translate to account for invert
-        //at.translate(0, (-size[1]/ scale))
-        // buffer
-        //at.translate(buf/scale, -buf/scale)
-
-        AffineTransform at = new AffineTransform()
-        at.scale(scale, -scale)
-        at.translate(
-            (buf/scale) - e.minX + (((size[0] / scale) - e.width) / 2),
-            (-buf/scale) - e.maxY - (((size[1] / scale) - e.height) / 2))
-
-
-        //double scaleX = size[0] / e.width
-        //double scaleY = size[1] / e.height
-        //double tx = -e.minX * scaleX
-        //double ty = (e.minY * scaleY) + size[1]
-        //AffineTransform at = new AffineTransform(scaleX, 0.0, 0.0, -scaleY, tx, ty)
-
-        //org.geotools.renderer.lite.RendererUtilities.worldToScreenTransform(
-        //  new Bounds(e.minX, e.minY, e.maxX, e.maxY).env, new
-        //  Rectangle(size[0], size[1]))
-
-        return at
-    }
-
-    static BufferedImage createImage(def geom, List size=[500,500]) {
+    static BufferedImage drawToImage(def geom, List size=[500,500]) {
         BufferedImage image = new BufferedImage(size[0], size[1], BufferedImage.TYPE_INT_ARGB)
         Graphics2D g2d = image.createGraphics()
         g2d.color = Color.WHITE
@@ -136,13 +88,148 @@ class Viewer {
         image
     }
 
-    static void save(File file, def geom, List size=[500,500], String formatName = "png") {
+    /**
+     * Save a drawing of the Geometry (or List of Geometries) to a File
+     * @param file The File
+     * @param geom A Geometry or a List of Geometries
+     * @param size The image size
+     * @param formatName The type of image to create (png, jpg)
+     */
+    static void drawToFile(def geom, List size=[500,500], File file) {
+        String fileName = file.absolutePath
+        String imageFormat = fileName.substring(fileName.lastIndexOf(".")+1)
         FileOutputStream out = new FileOutputStream(file)
-        ImageIO.write(createImage(geom,size), formatName, out)
+        ImageIO.write(drawToImage(geom,size), imageFormat, out)
         out.close()
     }
 
-    static void drawToGraphics(Graphics2D g2d, AffineTransform atx, def geom) {
+    /**
+     * Plot the Geometry (or List of Geometries) to a Swing JFrame using JFreeChart
+     * @param geom A Geometry (or List of Geometries)
+     * @param size The Size of the Frame
+     */
+    static void plot(def geom, List size=[500,500]) {
+        def panel = new ChartPanel(createPlot(geom))
+        def frame = new JFrame("GeoScript Geometry Plot")
+        try {
+            frame.defaultCloseOperation = JFrame.EXIT_ON_CLOSE
+        }
+        catch(SecurityException ex) {
+            frame.defaultCloseOperation = WindowConstants.HIDE_ON_CLOSE
+        }
+        frame.contentPane = panel
+        frame.setSize(size[0] as int, size[1] as int)
+        frame.visible = true
+    }
+
+    /**
+     * Plot a Geometry (or List of Geometries) to a BufferedImage
+     * @param geom A Geometry (or List of Geometries)
+     * @param size The size of image to create
+     */
+    static BufferedImage plotToImage(def geom, List size=[500,500]) {
+        def chart = createPlot(geom)
+        chart.createBufferedImage(size[0] as int, size[1] as int)
+    }
+
+    /**
+     * Plot a Geometry (or List of Geometries) to an image File
+     * @param geom The Geometry (or List of Geometries)
+     * @param size The size of the image
+     * @param file The File
+     */
+    static void plotToFile(def geom, List size=[500,500], File file) {
+        def chart = createPlot(geom)
+        String fileName = file.absolutePath
+        String imageFormat = fileName.substring(fileName.lastIndexOf(".")+1)
+        if (imageFormat.equalsIgnoreCase("png")) {
+            ChartUtilities.saveChartAsPNG(file, chart, size[0] as int, size[1] as int)
+        }
+        else if (imageFormat.equalsIgnoreCase("jpg") || imageFormat.equalsIgnoreCase("jpeg")) {
+            ChartUtilities.saveChartAsJPEG(file, chart, size[0] as int, size[1] as int)
+        }
+        else {
+            throw new Exception("Unsupported image format! Only PNGs and JPEGs are supported!")
+        }
+    }
+
+    /**
+     * Create a JFreeChart from a Geometry (or List of Geometries) using the
+     * GeoTools GeoemtryDataset
+     * @param geom A Geometry (or List of Geometries)
+     * @return The JFreeChart
+     */
+    private static JFreeChart createPlot(def geom) {
+        if (!(geom instanceof List)) {
+            geom = [geom]
+        }
+        def gd = new GeometryDataset(geom.collect{g->g.g} as JtsGeometry[])
+        def plot = gd.createPlot()
+        new JFreeChart(plot)
+    }
+
+    /**
+     * Create an AffineTransform that transforms coordinates from world
+     * to the screen
+     */
+    private static AffineTransform worldToScreen(def geom, List size=[500,500], double buf = 50.0) {
+
+        // Make sure the geom parameter is a List of Geometries
+        if (!(geom instanceof List)) {
+            geom = [geom]
+        }
+
+        // Turn into an Array of JTS Geometries
+        def g = geom.collect{
+            it.g
+        }.toArray() as JtsGeometry[]
+
+        // Create a JTS GeometryCollection
+        JtsGeometry gc = Geometry.factory.createGeometryCollection(g)
+        Envelope e = gc.envelopeInternal
+
+        // Image width and height
+        double imageWidth  = size[0] as double
+        double imageHeight = size[1] as double
+
+        // Extent width and height
+        double extentWidth = e.width
+        double extentHeight = e.height
+
+        // Scale
+        double scaleX = extentWidth  > 0 ? imageWidth  / extentWidth  : java.lang.Double.MAX_VALUE
+        double scaleY = extentHeight > 0 ? imageHeight / extentHeight : 1.0 as double
+        double scale = Math.min(scaleX, scaleY)
+
+        double tx = -e.minX * scaleX
+        double ty = (e.minY * scaleY) + (imageHeight)
+
+        // AffineTransform
+        AffineTransform at = new AffineTransform(scaleX, 0.0d, 0.0d, -scaleY, tx, ty)
+
+        //AffineTransform at = new AffineTransform()
+        // Scale to size of canvas by inverting the y axis
+        //at.scale(scale, -scale)
+
+        // translate to the origin
+        //at.translate(-e.minX, -e.minY)
+
+        // translate to account for the invert
+        //at.translate(0, -(imageHeight / scale))
+
+        // translate to account for the buffer
+        //at.translate(buf / scale, -buf / scale)
+
+        return at
+    }
+
+    /**
+     * Draw a Geometry or a List of Geometries to the given Graphics2D with the AffineTransform
+     * @param g2d The Graphics2D
+     * @param atx The AffineTransform
+     * @param geom A Geometry or a List of Geometries
+     */
+    private static void drawToGraphics(Graphics2D g2d, AffineTransform atx, def geom) {
         g2d.color = Color.BLACK
         Composite c = g2d.composite
         g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON)
