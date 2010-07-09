@@ -41,11 +41,27 @@ class PointSymbolizer extends Symbolizer {
     }
 
     /**
+     * Get the shape
+     * @return The shape
+     */
+    String getShape() {
+        SLD.mark(symbolizer)?.wellKnownName
+    }
+
+    /**
      * Set the size (12)
      * @param size The size (12)
      */
     void setSize(float size) {
         SLD.graphic(symbolizer).setSize(Style.filterFactory.literal(size))
+    }
+
+    /**
+     * Get the size
+     * @return The size
+     */
+    float getSize() {
+        SLD.graphic(symbolizer)?.size?.value
     }
 
     /**
@@ -57,11 +73,27 @@ class PointSymbolizer extends Symbolizer {
     }
 
     /**
+     * Get the rotation
+     * @return The rotation
+     */
+    float getRotation() {
+        SLD.graphic(symbolizer)?.rotation?.value
+    }
+
+    /**
      * Set the stroke color (#009900)
      * @param color The stroke color (#009900)
      */
     void setStrokeColor(String color) {
         SLD.stroke(symbolizer).setColor(Style.filterFactory.literal(color))
+    }
+
+    /**
+     * Get the stroke color
+     * @return The stroke color
+     */
+    String getStrokeColor() {
+        SLD.stroke(symbolizer)?.color
     }
 
     /**
@@ -73,11 +105,27 @@ class PointSymbolizer extends Symbolizer {
     }
 
     /**
+     * Get the stroke width
+     * @return The stroke width
+     */
+    float getStrokeWidth() {
+        SLD.stroke(symbolizer)?.width?.value
+    }
+
+    /**
      * Set the stroke opacity (0 = transparent to 1 = opaque)
      * @param opacity The stroke opacity (0 = transparent to 1 = opaque)
      */
     void setStrokeOpacity(float opacity) {
         SLD.stroke(symbolizer).setOpacity(Style.filterFactory.literal(opacity))
+    }
+
+    /**
+     * The stroke opacity
+     * @return The stroke opacity
+     */
+    float getStrokeOpacity() {
+        SLD.stroke(symbolizer)?.opacity?.value
     }
 
     /**
@@ -89,11 +137,27 @@ class PointSymbolizer extends Symbolizer {
     }
 
     /**
+     * Get the fill color
+     * @return The fill color
+     */
+    String getFillColor() {
+        SLD.fill(symbolizer)?.color
+    }
+
+    /**
      * Set the fill opacity (0 = transparent to 1 = opaque)
      * @param opacity The fill opacity (0 = transparent to 1 = opaque)
      */
     void setFillOpacity(float opacity) {
         SLD.fill(symbolizer).setOpacity(Style.filterFactory.literal(opacity))
+    }
+
+    /**
+     * Get the fill opacity
+     * @return The fill opacity
+     */
+    float getFillOpacity() {
+        SLD.fill(symbolizer)?.opacity?.value
     }
 
     /**
@@ -112,6 +176,20 @@ class PointSymbolizer extends Symbolizer {
     void setGraphic(String uri, String format) {
         File file = new File(uri)
         symbolizer.getGraphic().graphicalSymbols().add(Style.builder.createExternalGraphic(file.toURL(),format))
+    }
+
+    /**
+     * Get the graphic
+     * @return The graphic
+     */
+    String getGraphic() {
+        def file = symbolizer?.graphic?.graphicalSymbols().find{sym->
+            sym instanceof org.geotools.styling.ExternalGraphic
+        }?.location?.file
+        if (file) {
+            return new File(file).name
+        }
+        return null
     }
 
 }

@@ -41,11 +41,27 @@ class PolygonSymbolizer  extends Symbolizer {
     }
 
     /**
+     * Get the stroke color
+     * @return The stroke color
+     */
+    String getStrokeColor() {
+        SLD.stroke(symbolizer)?.color
+    }
+
+    /**
      * Set the stroke width (2)
      * @param width The stroke width (2)
      */
     void setStrokeWidth(float width) {
         SLD.stroke(symbolizer).setWidth(Style.filterFactory.literal(width))
+    }
+
+    /**
+     * Get the stroke width
+     * @return The stroke width
+     */
+    float getStrokeWidth() {
+        SLD.stroke(symbolizer)?.width?.value
     }
 
     /**
@@ -57,6 +73,14 @@ class PolygonSymbolizer  extends Symbolizer {
     }
 
     /**
+     * Get the stroke opacity
+     * @return The stroke opacity
+     */
+    float getStrokeOpacity() {
+        SLD.stroke(symbolizer)?.opacity?.value
+    }
+
+    /**
      * Set the fill color (#000080)
      * @param color The fill color (#000080)
      */
@@ -65,11 +89,27 @@ class PolygonSymbolizer  extends Symbolizer {
     }
 
     /**
+     * Get the fill color
+     * @return The fill color
+     */
+    String getFillColor() {
+        SLD.fill(symbolizer)?.color
+    }
+
+    /**
      * Set the fill opacity (0=transparent to 1=opaque)
      * @param opacity The fill opacity (0=transparent to 1=opaque)
      */
     void setFillOpacity(float opacity) {
         SLD.fill(symbolizer).setOpacity(Style.filterFactory.literal(opacity))
+    }
+
+    /**
+     * Get the fill opacity
+     * @return The fill opacity
+     */
+    float getFillOpacity() {
+        SLD.fill(symbolizer)?.opacity?.value
     }
 
     /**
@@ -89,6 +129,20 @@ class PolygonSymbolizer  extends Symbolizer {
         createGraphicFillIfNecessary()
         File file = new File(uri)
         symbolizer.fill.graphicFill.graphicalSymbols().add(Style.builder.createExternalGraphic(file.toURL(),format))
+    }
+
+    /**
+     * Get the graphic
+     * @return The graphic
+     */
+    String getGraphic() {
+        def file = symbolizer?.fill?.graphicFill?.graphicalSymbols().find{sym->
+            sym instanceof org.geotools.styling.ExternalGraphic
+        }?.location?.file
+        if (file) {
+            return new File(file).name
+        }
+        return null
     }
 
     /**
@@ -117,6 +171,19 @@ class PolygonSymbolizer  extends Symbolizer {
     }
 
     /**
+     * Get the mark name
+     * @return The mark name
+     */
+    String getMarkName() {
+        if (symbolizer?.fill?.graphicFill) {
+            SLD.mark(symbolizer.fill.graphicFill)?.wellKnownName
+        }
+        else {
+            return null
+        }
+    }
+
+    /**
      * Set the graphic fill's mark's stroke color (#FF0000)
      * @param color The Color (#FF0000)
      */
@@ -126,12 +193,38 @@ class PolygonSymbolizer  extends Symbolizer {
     }
 
     /**
+     * Get the mark stroke color
+     * @return The mark stroke color
+     */
+    String getMarkStrokeColor() {
+        if (symbolizer?.fill?.graphicFill) {
+            SLD.mark(symbolizer.fill.graphicFill)?.stroke?.color
+        }
+        else {
+            return null
+        }
+    }
+
+    /**
      * Set the graphic fill's mark's stroke width (1.5)
      * @param width The width (1.5)
      */
     void setMarkStrokeWidth(float width) {
         createGraphicFillIfNecessary()
         SLD.mark(symbolizer.fill.graphicFill).stroke.width = Style.filterFactory.literal(width)
+    }
+
+    /**
+     * Gethe mark stroke width
+     * @return The mark stroke width
+     */
+    float getMarkStrokeWidth() {
+        if (symbolizer?.fill?.graphicFill) {
+            SLD.mark(symbolizer.fill.graphicFill)?.stroke?.width.value
+        }
+        else {
+            return null
+        }
     }
 
 }

@@ -14,6 +14,11 @@ class Symbolizer {
     GtSymbolizer symbolizer
 
     /**
+     * The drawing order
+     */
+    double zIndex = 0;
+
+    /**
      * Create a new Symbolizer wrapping a GeoTools Symbolizer
      */
     Symbolizer(GtSymbolizer gtSymbolizer) {

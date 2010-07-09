@@ -4,7 +4,22 @@ import geoscript.feature.Field
 import org.geotools.styling.SLD
 
 /**
- * The TextSymbolizer
+ * The TextSymbolizer.
+ * <p>You can create a TextSymbolizer using a map like syntax:</p>
+ * <p><code><pre>
+ * def sym = new PolygonSymbolizer(
+ *      label: "name",
+ *      haloColor: "#FFFFFF",
+ *      haloRadius: 3
+ * )
+ * </pre></code></p>
+ * <p>Or you can create a TextSymbolizer using properties:</p>
+ * <p><code><pre>
+ * def sym = new TextSymbolizer()
+ * sym.label = "name"
+ * sym.haloColor = "#FFFFFF"
+ * sym.haloRadius = 3
+ * </pre></code></p>
  * @author Jared Erickson
  */
 class TextSymbolizer  extends Symbolizer {
@@ -17,11 +32,19 @@ class TextSymbolizer  extends Symbolizer {
     }
 
     /**
-     * Set the Field
-     * @param field The Field
+     * Set the label name
+     * @param name The label name
      */
-    void setField(Field field) {
-        symbolizer.label = Style.filterFactory.property(field.name)
+    void setLabel(String name) {
+        symbolizer.label = Style.filterFactory.property(name)
+    }
+
+    /**
+     * Get the label name
+     * @return The label
+     */
+    String getLabel() {
+        symbolizer.label
     }
 
     /**
@@ -33,11 +56,27 @@ class TextSymbolizer  extends Symbolizer {
     }
 
     /**
+     * Get the color
+     * @return The color
+     */
+    String getColor() {
+        symbolizer?.fill?.color
+    }
+
+    /**
      * Set the name of the Font Family
      * @param name The name of the Font Family
      */
     void setFontFamily(String name) {
         SLD.font(symbolizer).setFontFamily(Style.filterFactory.literal(name))
+    }
+
+    /**
+     * Get the font family
+     * @return The font family
+     */
+    String getFontFamily() {
+        SLD.font(symbolizer)?.fontFamily
     }
 
     /**
@@ -49,6 +88,14 @@ class TextSymbolizer  extends Symbolizer {
     }
 
     /**
+     * Get the font size
+     * @return The font size
+     */
+    int getFontSize() {
+        SLD.font(symbolizer)?.size.value as int
+    }
+
+    /**
      * Set the font style
      * @param style The font style
      */
@@ -57,11 +104,27 @@ class TextSymbolizer  extends Symbolizer {
     }
 
     /**
+     * Get the font style
+     * @return The font styles
+     */
+    String getFontStyle() {
+        SLD.font(symbolizer)?.style
+    }
+
+    /**
      * Set the font weight (bold,normal)
      * @param weight The font weight (bold, normal)
      */
     void setFontWeight(String weight) {
         SLD.font(symbolizer).setWeight(Style.filterFactory.literal(weight))
+    }
+
+    /**
+     * Get the font weight
+     * @return The font weight
+     */
+    String getFontWeight() {
+        SLD.font(symbolizer)?.weight
     }
 
     /**
@@ -83,12 +146,28 @@ class TextSymbolizer  extends Symbolizer {
     }
 
     /**
+     * Get the halo color
+     * @return The halo color
+     */
+    String getHaloColor() {
+        symbolizer?.halo?.fill?.color
+    }
+
+    /**
      * Set the halo radius
      * @param radius The halo radius
      */
     void setHaloRadius(float radius) {
         createHaloIfNecessary()
         symbolizer.halo.radius = Style.filterFactory.literal(radius)
+    }
+
+    /**
+     * Get the halo radius
+     * @return The halo radius
+     */
+    float getHaloRadius() {
+        symbolizer?.halo?.radius?.value as float
     }
 
     /**
@@ -112,12 +191,28 @@ class TextSymbolizer  extends Symbolizer {
     }
 
     /**
+     * Get the anchor point x
+     * @return The anchor point x
+     */
+    float getAnchorPointX() {
+        symbolizer?.labelPlacement?.anchorPoint?.anchorPointX.value as float
+    }
+
+    /**
      * Set the anchor point y
      * @param x The anchor point y
      */
     void setAnchorPointY(float y) {
         createPointPlacementIfNecessary()
         symbolizer.labelPlacement.anchorPoint.anchorPointY = Style.filterFactory.literal(y)
+    }
+
+    /**
+     * Get the anchor point y
+     * @return The anchor point y
+     */
+    float getAnchorPointY() {
+        symbolizer?.labelPlacement?.anchorPoint?.anchorPointY.value as float
     }
 
     /**
@@ -130,6 +225,14 @@ class TextSymbolizer  extends Symbolizer {
     }
 
     /**
+     * Get the displacement X
+     * @return The displacement X
+     */
+    float getDisplacementX() {
+        symbolizer?.labelPlacement?.displacement?.displacementX.value as float
+    }
+
+    /**
      * Set the displacement y
      * @param y The displacement y
      */
@@ -139,12 +242,28 @@ class TextSymbolizer  extends Symbolizer {
     }
 
     /**
+     * Get the displacement y
+     * @return The diplacement y
+     */
+    float getDisplacementY() {
+        symbolizer?.labelPlacement?.displacement?.displacementY.value as float
+    }
+
+    /**
      * Set the rotation
      * @param rotation The rotation
      */
     void setRotation(float rotation) {
         createPointPlacementIfNecessary()
         symbolizer.labelPlacement.rotation = Style.filterFactory.literal(rotation)
+    }
+
+    /**
+     * Get the rotation
+     * @return The rotation
+     */
+    float getRotation() {
+        symbolizer?.labelPlacement?.rotation?.value as float
     }
 
     /**
@@ -168,12 +287,28 @@ class TextSymbolizer  extends Symbolizer {
     }
 
     /**
+     * Get the follow line property
+     * @return The follow line property
+     */
+    boolean getFollowLine() {
+        symbolizer.options["followLine"] ?: false
+    }
+
+    /**
      * Set the perpendicular offset
      * @param offset The perpendicular offset
      */
     void setPerpendicularOffset(float offset) {
         createLinePlacementIfNecessary()
         symbolizer.labelPlacement.perpendicularOffset = Style.filterFactory.literal(offset)
+    }
+
+    /**
+     * Get the perpendicular offset
+     * @return The perpendicular offset
+     */
+    float getPerpendicularOffset() {
+        symbolizer?.labelPlacement?.perpendicularOffset ?: 0
     }
 
     /**
@@ -185,11 +320,27 @@ class TextSymbolizer  extends Symbolizer {
     }
 
     /**
+     * Get the auto wrap length
+     * @return The auto wrap length
+     */
+    float getAutoWrap() {
+        symbolizer.options["autoWrap"] as float ?: 0
+    }
+
+    /**
      * Set the maximum displacement distance
      * @param distance The maximum displacement distance
      */
     void setMaxDisplacement(float distance) {
         symbolizer.options.put("maxDisplacement", String.valueOf(distance))
+    }
+
+    /**
+     * Get the max diplacement distance
+     * @return The max diplacement distance
+     */
+    float getMaxDisplacement() {
+        symbolizer.options["maxDisplacement"] as float ?: 0
     }
 
     /**
@@ -201,11 +352,27 @@ class TextSymbolizer  extends Symbolizer {
     }
 
     /**
+     * Get the max angle delta
+     * @return The max angle delta
+     */
+    float getMaxAngleDelta() {
+        symbolizer.options["maxAngleDelta"] as float ?: 0
+    }
+
+    /**
      * Set the repeat distance
      * @param repeat The repeat distance
      */
     void setRepeat(float repeat) {
         symbolizer.options.put("repeat", String.valueOf(repeat))
+    }
+
+    /**
+     * Get the repeat distance
+     * @return The repeat distance
+     */
+    float getRepeat() {
+        symbolizer.options["repeat"] as float ?: 0
     }
 }
 

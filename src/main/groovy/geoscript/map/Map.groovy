@@ -86,12 +86,37 @@ class Map {
     }
 
     /**
+     * Get the Map's Projection
+     * @return The Map's Projection
+     */
+    Projection getProjection() {
+        new Projection(context.coordinateReferenceSystem)
+    }
+
+    /**
+     * Set the List of Layers
+     * @param The List of Layers
+     */
+    void setLayers(List<Layer> layers) {
+        context.clearLayerList()
+        layers.each{layer->addLayer(layer)}
+    }
+
+    /**
+     * Get the List of Layers
+     * @return The List of Layers
+     */
+    List<Layer> getLayers() {
+        context.layers.collect{mapLayer-> new Layer(mapLayer.featureSource)}
+    }
+
+    /**
      * Add a Layer with a Style
      * @param layer The Layer
      * @param style The Style
      */
-    void addLayer(Layer layer, Style style) {
-        MapLayer mapLayer = new DefaultMapLayer(layer.fs, style.style);
+    void addLayer(Layer layer) {
+        MapLayer mapLayer = new DefaultMapLayer(layer.fs, layer.style.gtStyle);
         context.addLayer(mapLayer);
     }
 
@@ -160,5 +185,11 @@ class Map {
         return new Bounds(l, b, r, t, mapBounds.proj);
     }
 
+    /**
+     * Closes the Map by disposing of any resources.
+     */
+    void close() {
+        context.dispose()
+    }
 }
 

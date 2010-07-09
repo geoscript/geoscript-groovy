@@ -10,175 +10,52 @@ import org.geotools.styling.Rule as GtRule
 class Rule {
 
     /**
-     * The GeoTools Rule
+     * A List of Symbolizers
      */
-    GtRule rule
+    List<Symbolizer> symbolizers
 
     /**
-     * Create a new Rule wrapping a GeoTools Rule
-     * @param gtRule The GeoTools Rule
+     * A Filter
      */
-    Rule(GtRule gtRule) {
-        this.rule = gtRule
-    }
+    Filter filter
 
     /**
-     * Create a new Rule with a Symbolizer
-     * @param symbolizer The Symbolizer
+     * The minimum scale denominator
      */
-    Rule(Symbolizer symbolizer) {
-        this(Style.builder.createRule(symbolizer.symbolizer))
-    }
+    double minScaleDenominator = 0.0
 
     /**
-     * Create a new Rule with a Symbolizer
-     * @param symbolizer The Symbolizer
+     * The maximum scale denominator
      */
-    Rule(Symbolizer symbolizer, Filter filter) {
-        this(symbolizer)
-        setFilter(filter)
-    }
-
+    double maxScaleDenominator = Double.POSITIVE_INFINITY
 
     /**
-     * Create a new Rule with a List of Symbolizers
-     * @param symbolizers A List of Symbolizers
+     * The Rule's name
      */
-    Rule(List<Symbolizer> symbolizers) {
-        this(createGtRule(symbolizers))
-    }
+    String name
 
     /**
-     * Create a new Rule with a List of Symbolizers
-     * @param symbolizers A List of Symbolizers
+     * The Rule's title
      */
-    Rule(List<Symbolizer> symbolizers, Filter filter) {
-        this(symbolizers)
-        setFilter(filter)
-    }
+    String title
 
     /**
-     * Create a GeoTools Rule from a List of Symbolizers
-     * @param symbolizers A List of Symbolizers
-     * @return a GeoTools Rule
+     * Get a GeoTools Rule for this GeoScript Rule
+     * @return A GeoTools Rule
      */
-    private static GtRule createGtRule(List<Symbolizer> symbolizers) {
-        Style.builder.createRule(symbolizers.collect{sym->
+    GtRule getGtRule() {
+        GtRule rule = Style.builder.createRule(symbolizers.collect{sym->
             sym.symbolizer
         }.toArray() as org.geotools.styling.Symbolizer[])
-    }
-
-    /**
-     * Get the Filter
-     * @return The Filter
-     */
-    Filter getFilter() {
-        new Filter(rule.filter)
-    }
-
-    /**
-     * Set the Filter
-     * @param filter The new Filter
-     */
-    void setFilter(Filter filter) {
-        rule.filter = filter.filter
-    }
-
-    /**
-     * Get the List of Symbolizers
-     * @return The List of Symbolizers
-     */
-    List<Symbolizer> getSymbolizers() {
-        rule.symbolizers().collect{sym -> new Symbolizer(sym)}
-    }
-
-    /**
-     * Get the max scale
-     * @return The max scale
-     */
-    double getMaxScale() {
-        rule.maxScaleDenominator
-    }
-
-    /**
-     * Set the max scale
-     * @param maxScale The new max scale
-     */
-    void setMaxScale(double maxScale) {
-        rule.maxScaleDenominator = maxScale
-    }
-
-    /**
-     * Get the min scale
-     * @return The min scale
-     */
-    double getMinScale() {
-        rule.minScaleDenominator
-    }
-
-    /**
-     * Set the min scale
-     * @param minScale The new min scale
-     */
-    void setMinScale(double minScale) {
-        rule.minScaleDenominator = minScale
-    }
-
-    /**
-     * Get the name
-     * @return The name
-     */
-    String getName() {
-        rule.name
-    }
-
-    /**
-     * Set the name
-     * @param name The new name
-     */
-    void setName(String name) {
+        if (filter) {
+            rule.filter = filter.filter
+        }
+        rule.minScaleDenominator = minScaleDenominator
+        rule.maxScaleDenominator = maxScaleDenominator
         rule.name = name
+        rule.description.title = title
+        rule
     }
 
-    /**
-     * Get the title
-     * @return The title
-     */
-    String getTitle() {
-        rule.description.title
-    }
-
-    /**
-     * Set the title
-     * @param title The new title
-     */
-    void setTitle(String title) {
-        rule.description.setTitle(title)
-    }
-
-    /**
-     * Get the abstract
-     * @return The abstract
-     */
-    String getAbstract() {
-        rule.description.getAbstract()
-    }
-
-    /**
-     * Set the abstract
-     * @return abstractStr The new abstract
-     */
-    void setAbstract(String abstractStr) {
-        rule.description.setAbstract(abstractStr)
-    }
-
-    /**
-     * The string representation
-     * @return The string representation
-     */
-    String toString() {
-        //getName() + " (" + getTitle() + ") " + getAbstract()
-        rule.toString()
-    }
 }
 

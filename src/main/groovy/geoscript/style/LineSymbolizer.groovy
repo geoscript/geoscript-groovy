@@ -37,11 +37,27 @@ class LineSymbolizer  extends Symbolizer {
     }
 
     /**
+     * Get the stroke color
+     * @return The stroke color
+     */
+    String getStrokeColor() {
+        SLD.stroke(symbolizer)?.color
+    }
+
+    /**
      * Set the stroke width (1)
      * @param width The stroke width (1)
      */
     void setStrokeWidth(float width) {
         SLD.stroke(symbolizer).setWidth(Style.filterFactory.literal(width))
+    }
+
+    /**
+     * Get the stroke width
+     * @return The stroke width
+     */
+    float getStrokeWidth() {
+        SLD.stroke(symbolizer)?.width?.value
     }
 
     /**
@@ -53,11 +69,27 @@ class LineSymbolizer  extends Symbolizer {
     }
 
     /**
+     * Get the stroke opacity
+     * @return The stroke opacity
+     */
+    float getStrokeOpacity() {
+        SLD.stroke(symbolizer)?.opacity?.value
+    }
+
+    /**
      * Set the line cap (round, butt, square)
      * @param lineCap The line cap (round, butt, square)
      */
     void setStrokeLineCap(String lineCap) {
         SLD.stroke(symbolizer).setLineCap(Style.filterFactory.literal(lineCap))
+    }
+
+    /**
+     * Get the stroke line cap
+     * @return The stroke line cap
+     */
+    String getStrokeLineCap() {
+        SLD.stroke(symbolizer)?.lineCap
     }
 
     /**
@@ -67,6 +99,19 @@ class LineSymbolizer  extends Symbolizer {
     void setStrokeDashArray(String dashArray) {
         float[] floatArray = dashArray.split(" ").collect{Float.parseFloat(it)}.toArray() as float[]
         SLD.stroke(symbolizer).setDashArray(floatArray)
+    }
+
+    /**
+     * Get the stroke dash array
+     * @return The stroke dash array
+     */
+    String getStrokeDashArray() {
+        if (SLD.stroke(symbolizer)?.dashArray) {
+            SLD.stroke(symbolizer)?.dashArray?.collect{it}.join(" ")
+        }
+        else {
+            return null
+        }
     }
 
     /**
@@ -93,12 +138,38 @@ class LineSymbolizer  extends Symbolizer {
     }
 
     /**
+     * Get the graphic stroke mark name
+     * @return The graphic stroke mark name
+     */
+    String getGraphicStrokeMarkName() {
+        if (symbolizer?.stroke?.graphicStroke) {
+            return SLD.mark(symbolizer.stroke.graphicStroke).wellKnownName
+        }
+        else {
+            return null
+        }
+    }
+
+    /**
      * Set the GraphicStroke/Mark/Stroke color (#FF0000)
      * @param color The Color
      */
     void setGraphicStrokeMarkStrokeColor(String color) {
         createGraphicStrokeIfNecessary()
         SLD.mark(symbolizer.stroke.graphicStroke).stroke.color = Style.filterFactory.literal(color)
+    }
+
+    /**
+     * Get the graphic stroke mark stroke color
+     * @return The graphic stroke mark stroke color
+     */
+    String getGraphicStrokeMarkStrokeColor() {
+        if (symbolizer?.stroke?.graphicStroke) {
+            return SLD.mark(symbolizer.stroke.graphicStroke).stroke?.color
+        }
+        else {
+            return null
+        }
     }
 
     /**
@@ -111,12 +182,38 @@ class LineSymbolizer  extends Symbolizer {
     }
 
     /**
+     * Get the graphic stroke mark stroke width
+     * @return The graphic stroke mark stroke width
+     */
+    float getGraphicStrokeMarkStrokeWidth() {
+        if (symbolizer?.stroke?.graphicStroke) {
+            return SLD.mark(symbolizer.stroke.graphicStroke).stroke?.width.value
+        }
+        else {
+            return 0
+        }
+    }
+
+    /**
      * Set the GraphicStroke/Mark size (6)
      * @param size The size
      */
     void setGraphicStrokeMarkSize(float size) {
         createGraphicStrokeIfNecessary()
         symbolizer.stroke.graphicStroke.size = Style.filterFactory.literal(size)
+    }
+
+    /**
+     * Get the graphic stoke mark size
+     * @return The graphic stoke mark size
+     */
+    float getGraphicStrokeMarkSize() {
+        if (symbolizer?.stroke?.graphicStroke) {
+            return symbolizer?.stroke?.graphicStroke?.size?.value
+        }
+        else {
+            return 0
+        }
     }
 }
 

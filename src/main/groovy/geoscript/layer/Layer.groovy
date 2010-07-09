@@ -6,6 +6,7 @@ import geoscript.proj.Projection
 import geoscript.feature.*
 import geoscript.workspace.*
 import geoscript.filter.Filter
+import geoscript.style.Style
 import org.geotools.data.FeatureSource
 import org.geotools.data.DefaultQuery
 import org.geotools.data.Query
@@ -60,9 +61,27 @@ class Layer {
     private Projection projection
 
     /**
+     * The Style
+     */
+    Style style
+
+    /**
      * The internal counter for new Layer names
      */
     private static int id = 0
+
+    /**
+     * Create a new Layer from a GeoTools FeatureSource
+     * @param fs The GeoTools FeatureSource
+     */
+    Layer(FeatureSource<SimpleFeatureType, SimpleFeature> fs) {
+        this.name = fs.name
+        this.workspace = new Workspace(fs.dataStore)
+        this.fs = fs
+        this.schema = new Schema(fs.schema)
+        this.projection = new Projection(fs.schema.coordinateReferenceSystem)
+        setDefaultStyle(this.schema.geom.typ)
+    }
 
     /**
      * Create a new Layer from an existing Layer
@@ -74,6 +93,7 @@ class Layer {
         this.fs = layer.fs
         this.schema = layer.schema
         this.projection = new Projection(fs.schema.coordinateReferenceSystem)
+        setDefaultStyle(this.schema.geom.typ)
     }
 
     /**
@@ -89,6 +109,7 @@ class Layer {
         this.fs = fs
         this.schema = schema
         this.projection = new Projection(fs.schema.coordinateReferenceSystem)
+        setDefaultStyle(this.schema.geom.typ)
     }
 
     /**
@@ -112,6 +133,7 @@ class Layer {
         this.fs = layer.fs
         this.schema = new Schema(layer.fs.schema)
         this.projection = new Projection(fs.schema.coordinateReferenceSystem)
+        setDefaultStyle(this.schema.geom.typ)
     }
 
     /**
@@ -127,6 +149,7 @@ class Layer {
         this.fs = layer.fs
         this.schema = new Schema(layer.fs.schema)
         this.projection = new Projection(fs.schema.coordinateReferenceSystem)
+        setDefaultStyle(this.schema.geom.typ)
     }
 
     /**
@@ -134,6 +157,17 @@ class Layer {
      */
     Layer() {
         this(newname(), new Schema("features", [new Field("geom","Geometry")]))
+    }
+
+    /**
+     * Set the default style based on the geometry type
+     * @param geometryType The geometry type
+     * @return A default Style
+     */
+    private void setDefaultStyle(String geometryType) {
+        if(!this.style) {
+            this.style = Style.getDefaultStyleForGeometryType(geometryType)
+        }
     }
 
     /**

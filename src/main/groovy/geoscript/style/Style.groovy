@@ -1,6 +1,9 @@
 package geoscript.style
 
+import geoscript.filter.Filter
 import org.geotools.styling.Style as GtStyle
+import org.geotools.styling.Rule as GtRule
+import org.geotools.styling.FeatureTypeStyle as GtFeatureTypeStyle
 import org.geotools.styling.SLDParser
 import org.geotools.styling.StyleFactory
 import org.geotools.styling.StyleBuilder
@@ -18,9 +21,9 @@ import java.awt.Color;
 class Style {
 
     /**
-     * The GeoTools Style
+     * A List of Rules
      */
-    GtStyle style
+    List<Rule> rules = []
 
     /**
      * The StyleBuilder
@@ -38,11 +41,19 @@ class Style {
     static FilterFactory filterFactory = CommonFactoryFinder.getFilterFactory(null)
 
     /**
-     * Create a Style wrapping a GeoTools Style
-     * @param style The GeoTools Style
+     * Create a Style from a List of Rules, or Symbolizers
+     * @param list A List of Rules, or Symbolizers
      */
-    Style(GtStyle style) {
-        this.style = style
+    Style(List list) {
+        if (list[0] instanceof Rule) {
+            this.rules = list
+        }
+        else if (list[0] instanceof Symbolizer) {
+            this.rules = [new Rule(symbolizers: list)]
+        }
+        else {
+            throw new Exception("A Style can only be created from a List of Rules or Symbolizers")
+        }
     }
 
     /**
@@ -50,68 +61,7 @@ class Style {
      * @param file The SLD File
      */
     Style(File file) {
-        this(fromFile(file))
-    }
-
-    /**
-     * Create a default Style
-     */
-    Style() {
-        this(builder.createStyle())
-    }
-
-    /**
-     * Create a Style with one SubStyle
-     * @param subStyle The SubStyle
-     */
-    Style(SubStyle subStyle) {
-        this(createGtStyleFromSubStyle(subStyle))
-    }
-
-    /**
-     * Create GeoTools Style from a single SubStyle
-     * @param subStyle The SubStyle
-     * @return A GeoTools Style
-     */
-    private static GtStyle createGtStyleFromSubStyle(SubStyle subStyle) {
-        GtStyle gtStyle = builder.createStyle()
-        gtStyle.featureTypeStyles().add(subStyle.featureTypeStyle)
-        gtStyle
-    }
-
-    /**
-     * Create a Style from a List of SubStyles, Rules, or Symbolizers
-     * @param list A List of SubStyles, Rules, or Symbolizers
-     */
-    Style(List list) {
-        this(createGtStyleFromList(list))
-    }
-
-    /**
-     * Create a GeoTools Style from a List of SubStyles, Rules, or Symbolizers
-     * @param list A List of SubStyles, Rules, or Symbolizers
-     * @return A GeoTools Style
-     */
-    private static GtStyle createGtStyleFromList(List list) {
-        if (list.size() > 0) {
-            def firstItem = list[0]
-            if (firstItem instanceof SubStyle) {
-                GtStyle style = builder.createStyle()
-                style.featureTypeStyles().addAll(list.collect{subStyle ->
-                    subStyle.featureTypeStyle
-                })
-                return style
-            }
-            else if (firstItem instanceof Rule) {
-                return createGtStyleFromSubStyle(new SubStyle(list))
-            }
-            else if (firstItem instanceof Symbolizer) {
-                return createGtStyleFromSubStyle(new SubStyle(new Rule(list)))
-            }
-        }
-        else {
-            return builder.createStyle()
-        }
+        fromFile(file)
     }
 
     /**
@@ -119,109 +69,81 @@ class Style {
      * @param rule The Rule
      */
     Style(Rule rule) {
-        this(createGtStyleFromRule(rule))
+        this([rule])
     }
 
-    /**
-     * Create a GeoTools Style from a single Rule
-     * @param rule The Rule
-     * @return a GeoTools Style
-     */
-    private static GtStyle createGtStyleFromRule(Rule rule) {
-        createGtStyleFromSubStyle(new SubStyle(rule))
-    }
-
-    /**
-     * Create a Style from a Symbolizer
+     /**
+     * Create a Style from a single Symbolizer
      * @param symbolizer The Symbolizer
      */
     Style(Symbolizer symbolizer) {
-        this(createGtStyleFromSymbolizer(symbolizer))
+        this([symbolizer])
     }
 
     /**
-     * Create a GeoTools Style from a Symbolizer
-     * @param symbolizer The Symbolizer
-     * @return A GeoTools Style
+     * Get the GeoTools Style
+     * @return The GeoTools Style
      */
-    private static GtStyle createGtStyleFromSymbolizer(Symbolizer symbolizer) {
-        Rule rule = new Rule(symbolizer)
-        SubStyle subStyle = new SubStyle(rule)
-        createGtStyleFromSubStyle(subStyle)
-    }
-
-    /**
-     * Get the Style's SubStyles (SLD FeatureTypeStyles)
-     * @return The Style's SubStyles
-     */
-    List<SubStyle> getSubStyles() {
-       style.featureTypeStyles().collect{ftStyle -> new SubStyle(ftStyle)}
-    }
-
-    /**
-     * Get the name
-     * @return The name
-     */
-    String getName() {
-        style.name
-    }
-
-    /**
-     * Set the name
-     * @param name The new name
-     */
-    void setName(String name) {
-        style.name = name
-    }
-
-    /**
-     * Get the title
-     * @return The title
-     */
-    String getTitle() {
-        style.description.title
-    }
-
-    /**
-     * Set the title
-     * @param title The new title
-     */
-    void setTitle(String title) {
-        style.description.title = title
-    }
-
-    /**
-     * Get the abstract
-     * @return The abstract
-     */
-    String getAbstract() {
-        style.description.getAbstract()
-    }
-
-    /**
-     * Set the abstract
-     * @return abstractStr The new abstract
-     */
-    void setAbstract(String abstractStr) {
-        style.description.setAbstract(abstractStr)
-    }
-
-    /**
-     * The string representation
-     * @return The string representation
-     */
-    String toString() {
-        //getName() + " (" + getTitle() + ") " + getAbstract()
-        style.toString()
+    GtStyle getGtStyle() {
+        def zIndexes = []
+        def lookup = [:]
+        rules.each{rule ->
+            def symbolizers = rule.symbolizers
+            def ruleMap = [:]
+            symbolizers.each{symbolizer ->
+                int z = symbolizer.zIndex
+                if(!ruleMap.containsKey(z)) {
+                    ruleMap[z] = new Rule(
+                        symbolizers: [],
+                        filter: rule.filter,
+                        minScaleDenominator: rule.minScaleDenominator,
+                        maxScaleDenominator: rule.maxScaleDenominator
+                    )
+                }
+                ruleMap[z].symbolizers.add(symbolizer)
+            }
+            ruleMap.keySet().each{z ->
+                if (!lookup.containsKey(z)) {
+                    zIndexes.add(z)
+                    lookup[z] = []
+                }
+                lookup[z].add(ruleMap[z])
+            }
+        }
+        def featureTypeStyles = zIndexes.sort().collect{z ->
+            def rules = lookup[z]
+            Style.builder.createFeatureTypeStyle("Feature", rules.collect{r->
+                r.gtRule
+            }.toArray() as GtRule[])
+        }
+        GtStyle style = builder.createStyle()
+        style.featureTypeStyles().addAll(featureTypeStyles)
+        style
     }
 
     /**
      * Parse the SLD File and get a GeoTools Style
      */
-    private static GtStyle fromFile(File file) {
+    private List<Rule> fromFile(File file) {
+        rules = []
         SLDParser parser = new SLDParser(styleFactory, file.toURI().toURL())
         GtStyle[] styles = parser.readXML()
-        styles[0]
+        styles[0].featureTypeStyles().eachWithIndex{fts,i ->
+            fts.rules().each {r ->
+                Rule rule = new Rule()
+                rule.filter = new Filter(r.filter)
+                rule.minScaleDenominator = r.minScaleDenominator
+                rule.maxScaleDenominator = r.maxScaleDenominator
+                rule.name = r.name
+                rule.title = r.description.title
+                rule.symbolizers = r.symbolizers().collect{s ->
+                    Symbolizer sym = new Symbolizer(s)
+                    sym.zIndex = i
+                    sym
+                }
+                rules.add(rule)
+            }
+        }
     }
 
     /**
@@ -230,6 +152,7 @@ class Style {
      */
     void toSLD(OutputStream out = System.out) {
 
+        GtStyle style = getGtStyle()
         UserLayer userLayer = styleFactory.createUserLayer();
         userLayer.addUserStyle(style);
 
@@ -242,14 +165,61 @@ class Style {
     }
 
     /**
+     * Get a default Style for the given geometry type
+     * @param geometryType The geometry type
+     * @return A Style
+     */
+    static Style getDefaultStyleForGeometryType(String geometryType) {
+        def sym;
+        def color = getRandomColor()
+        def darkerColor = color.darker()
+        if (geometryType.toLowerCase().endsWith("point")) {
+            sym = new PointSymbolizer(
+                fillColor: convertColorToHex(color),
+                strokeColor: convertColorToHex(darkerColor)
+            )
+        }
+        else if (geometryType.toLowerCase().endsWith("linestring") 
+            || geometryType.toLowerCase().endsWith("linearring")
+            || geometryType.toLowerCase().endsWith("curve")) {
+            sym = new LineSymbolizer(
+                strokeColor: convertColorToHex(color)
+            )
+        }
+        else if (geometryType.toLowerCase().endsWith("polygon")) {
+            sym = new PolygonSymbolizer(
+                fillColor: convertColorToHex(color),
+                strokeColor: convertColorToHex(darkerColor)
+            )
+        }
+        else {
+            sym = [
+                new PointSymbolizer(
+                    fillColor: convertColorToHex(color),
+                    strokeColor: convertColorToHex(darkerColor)
+                ),
+                new LineSymbolizer(
+                    strokeColor: convertColorToHex(color)
+                ),
+                new PolygonSymbolizer(
+                    fillColor: convertColorToHex(color),
+                    strokeColor: convertColorToHex(darkerColor)
+                )
+            ]
+        }
+        new Style(sym)
+    }
+
+    /**
      * Get a random (pastel) color
      * @return A Color
      */
     static Color getRandomColor() {
         java.util.Random random = new java.util.Random();
-        int r = random.nextInt(256 / 2);
-        int g = random.nextInt(256 / 2);
-        int b = random.nextInt(256 / 2);
+        int i = 128
+        int r = random.nextInt(i);
+        int g = random.nextInt(i);
+        int b = random.nextInt(i);
         new Color(r,g,b)
     }
 
@@ -259,8 +229,155 @@ class Style {
      * @return A hex color string
      */
     static String convertColorToHex(Color color) {
-        "#${Integer.toHextString(color.getRGB() & 0x00ffffff)}"
+        int i = color.getRGB() & 0x00ffffff
+        "#${Integer.toHexString(i)}"
     }
+
+    /**
+     * CSS Color names
+     */
+    static final Map colorNameMap = [
+        aliceblue: "#f0f8ff",
+        antiquewhite: "#faebd7",
+        aqua: "#00ffff",
+        aquamarine: "#7fffd4",
+        azure: "#f0ffff",
+        beige: "#f5f5dc",
+        bisque: "#ffe4c4",
+        black: "#000000",
+        blanchedalmond: "#ffebcd",
+        blue: "#0000ff",
+        blueviolet: "#8a2be2",
+        brown: "#a52a2a",
+        burlywood: "#deb887",
+        cadetblue: "#5f9ea0",
+        chartreuse: "#7fff00",
+        chocolate: "#d2691e",
+        coral: "#ff7f50",
+        cornflowerblue: "#6495ed",
+        cornsilk: "#fff8dc",
+        crimson: "#dc143c",
+        cyan: "#00ffff",
+        darkblue: "#00008b",
+        darkcyan: "#008b8b",
+        darkgoldenrod: "#b8860b",
+        darkgray: "#a9a9a9",
+        darkgreen: "#006400",
+        darkkhaki: "#bdb76b",
+        darkmagenta: "#8b008b",
+        darkolivegreen: "#556b2f",
+        darkorange: "#ff8c00",
+        darkorchid: "#9932cc",
+        darkred: "#8b0000",
+        darksalmon: "#e9967a",
+        darkseagreen: "#8fbc8f",
+        darkslateblue: "#483d8b",
+        darkslategray: "#2f4f4f",
+        darkturquoise: "#00ced1",
+        darkviolet: "#9400d3",
+        deeppink: "#ff1493",
+        deepskyblue: "#00bfff",
+        dimgray: "#696969",
+        dodgerblue: "#1e90ff",
+        firebrick: "#b22222",
+        floralwhite: "#fffaf0",
+        forestgreen: "#228b22",
+        fuchsia: "#ff00ff",
+        gainsboro: "#dcdcdc",
+        ghostwhite: "#f8f8ff",
+        gold: "#ffd700",
+        goldenrod: "#daa520",
+        gray: "#808080",
+        green: "#008000",
+        greenyellow: "#adff2f",
+        honeydew: "#f0fff0",
+        hotpink: "#ff69b4",
+        indianred: "#cd5c5c",
+        indigo: "#4b0082",
+        ivory: "#fffff0",
+        khaki: "#f0e68c",
+        lavender: "#e6e6fa",
+        lavenderblush: "#fff0f5",
+        lawngreen: "#7cfc00",
+        lemonchiffon: "#fffacd",
+        lightblue: "#add8e6",
+        lightcoral: "#f08080",
+        lightcyan: "#e0ffff",
+        lightgoldenrodyellow: "#fafad2",
+        lightgrey: "#d3d3d3",
+        lightgreen: "#90ee90",
+        lightpink: "#ffb6c1",
+        lightsalmon: "#ffa07a",
+        lightseagreen: "#20b2aa",
+        lightskyblue: "#87cefa",
+        lightslategray: "#778899",
+        lightsteelblue: "#b0c4de",
+        lightyellow: "#ffffe0",
+        lime: "#00ff00",
+        limegreen: "#32cd32",
+        linen: "#faf0e6",
+        magenta: "#ff00ff",
+        maroon: "#800000",
+        mediumaquamarine: "#66cdaa",
+        mediumblue: "#0000cd",
+        mediumorchid: "#ba55d3",
+        mediumpurple: "#9370d8",
+        mediumseagreen: "#3cb371",
+        mediumslateblue: "#7b68ee",
+        mediumspringgreen: "#00fa9a",
+        mediumturquoise: "#48d1cc",
+        mediumvioletred: "#c71585",
+        midnightblue: "#191970",
+        mintcream: "#f5fffa",
+        mistyrose: "#ffe4e1",
+        moccasin: "#ffe4b5",
+        navajowhite: "#ffdead",
+        navy: "#000080",
+        oldlace: "#fdf5e6",
+        olive: "#808000",
+        olivedrab: "#6b8e23",
+        orange: "#ffa500",
+        orangered: "#ff4500",
+        orchid: "#da70d6",
+        palegoldenrod: "#eee8aa",
+        palegreen: "#98fb98",
+        paleturquoise: "#afeeee",
+        palevioletred: "#d87093",
+        papayawhip: "#ffefd5",
+        peachpuff: "#ffdab9",
+        peru: "#cd853f",
+        pink: "#ffc0cb",
+        plum: "#dda0dd",
+        powderblue: "#b0e0e6",
+        purple: "#800080",
+        red: "#ff0000",
+        rosybrown: "#bc8f8f",
+        royalblue: "#4169e1",
+        saddlebrown: "#8b4513",
+        salmon: "#fa8072",
+        sandybrown: "#f4a460",
+        seagreen: "#2e8b57",
+        seashell: "#fff5ee",
+        sienna: "#a0522d",
+        silver: "#c0c0c0",
+        skyblue: "#87ceeb",
+        slateblue: "#6a5acd",
+        slategray: "#708090",
+        snow: "#fffafa",
+        springgreen: "#00ff7f",
+        steelblue: "#4682b4",
+        tan: "#d2b48c",
+        teal: "#008080",
+        thistle: "#d8bfd8",
+        tomato: "#ff6347",
+        turquoise: "#40e0d0",
+        violet: "#ee82ee",
+        wheat: "#f5deb3",
+        white: "#ffffff",
+        whitesmoke: "#f5f5f5",
+        yellow: "#ffff00",
+        yellowgreen: "#9acd32"
+    ]
 
     /**
      * Get a Color from a String.  Handle java.awt.Color names,
@@ -269,30 +386,19 @@ class Style {
      * @return a Color or null
      */
     static Color getColor(String str) {
-        Map colorNameMap = [
-            "black": Color.black,
-            "blue": Color.blue,
-            "cyan": Color.cyan,
-            "darkGray": Color.darkGray,
-            "gray": Color.gray,
-            "green": Color.green,
-            "lightGray": Color.lightGray,
-            "magenta": Color.magenta,
-            "organge": Color.orange,
-            "pink": Color.pink,
-            "red": Color.red,
-            "white": Color.white,
-            "yellow": Color.yellow
-        ]
         if (str.startsWith("#")) {
             return Color.decode(str)
         }
-        else if (str.split(",") == 3) {
+        else if (str.split(",").length >= 3) {
             String[] parts = str.split(",")
-            return new Color(parts[0] as int, parts[1] as int, parts[2] as int)
+            int r = parts[0] as int
+            int g = parts[1] as int
+            int b =  parts[2] as int
+            int a = parts.length > 3 ? parts[3] as int : 0
+            return new Color(r, g, b, a)
         }
         else if (colorNameMap.containsKey(str.toLowerCase())){
-            return colorNameMap.get(str.toLowerCase())
+            return Color.decode(colorNameMap.get(str.toLowerCase()))
         }
         return null
     }

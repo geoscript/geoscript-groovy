@@ -15,11 +15,12 @@ import geoscript.map.Map
 void createImage(Layer layer, Style style, File file) {
     //style.toSLD()
     Map map = new Map()
-    map.addLayer(layer, style)
+    layer.style = style
+    map.addLayer(layer)
     map.render(layer.bounds().expandBy(20), file)
 }
 
-Layer shp = new Shapefile("sld_cookbook_point/sld_cookbook_point.shp")
+Layer shp = new Shapefile("../../scripts/sld_cookbook_point/sld_cookbook_point.shp")
 
 createImage(shp, new Style(new PointSymbolizer(
     shape: "circle",
@@ -65,7 +66,7 @@ createImage(shp, new Style([
             strokeOpacity: 0
     ),
     new TextSymbolizer(
-        field: shp.schema.field("name"),
+        label: "name",
         color: "#000000"
     )
 ]), new File("point_label.png"))
@@ -79,7 +80,7 @@ createImage(shp, new Style([
             strokeOpacity: 0
     ),
     new TextSymbolizer(
-        field: shp.schema.field("name"),
+        label: "name",
         color: "#000000",
         fontFamily: "Arial",
         fontSize: 12,
@@ -100,7 +101,7 @@ createImage(shp, new Style([
             strokeOpacity: 0
     ),
     new TextSymbolizer(
-        field: shp.schema.field("name"),
+        label: "name",
         color: "#990099",
         fontFamily: "Arial",
         fontSize: 12,
@@ -115,35 +116,41 @@ createImage(shp, new Style([
 ]), new File("point_label_rotated.png"))
 
 
-Rule smallPopRule = new Rule(new PointSymbolizer(
-    shape: "circle",
-    size: 8,
-    fillColor: "#0033CC",
-    strokeOpacity: 0
-))
-smallPopRule.name = "SmallPop"
-smallPopRule.title = "1 to 5000"
-smallPopRule.filter = new Filter("pop < 5000")
+Rule smallPopRule = new Rule(
+    symbolizers: [
+        new PointSymbolizer(
+            shape: "circle",
+            size: 8,
+            fillColor: "#0033CC",
+            strokeOpacity: 0
+        )
+    ],
+    filter:  new Filter("pop < 5000")
+)
 
-Rule mediumPopRule = new Rule(new PointSymbolizer(
-    shape: "circle",
-    size: 12,
-    fillColor: "#0033CC",
-    strokeOpacity: 0
-))
-mediumPopRule.name = "MediumPop"
-mediumPopRule.title = "5000 to 100000"
-mediumPopRule.filter = new Filter("pop >= 5000 AND pop < 100000")
+Rule mediumPopRule = new Rule(
+    symbolizers: [
+        new PointSymbolizer(
+            shape: "circle",
+            size: 12,
+            fillColor: "#0033CC",
+            strokeOpacity: 0
+        )
+    ],
+    filter: new Filter("pop >= 5000 AND pop < 100000")
+)
 
-Rule largePopRule = new Rule(new PointSymbolizer(
-    shape: "circle",
-    size: 16,
-    fillColor: "#0033CC",
-    strokeOpacity: 0
-))
-largePopRule.name = "LargePop"
-largePopRule.title = "Greater than 100000"
-largePopRule.filter = new Filter("pop >= 100000")
+Rule largePopRule = new Rule(
+    symbolizers: [
+         new PointSymbolizer(
+            shape: "circle",
+            size: 16,
+            fillColor: "#0033CC",
+            strokeOpacity: 0
+        )
+    ],
+    filter: new Filter("pop >= 100000")
+)
 
 Style style =  new Style([
     smallPopRule,
@@ -153,34 +160,45 @@ Style style =  new Style([
 createImage(shp, style, new File("point_attribute_based.png"))
 
 // Zoom based scales
-Rule largeRule = new Rule(new PointSymbolizer(
-    shape: "circle",
-    size: 12,
-    fillColor: "#CC3300",
-    strokeOpacity: 0
-))
-largeRule.name = "Large"
-largeRule.maxScale = 160000000
+Rule largeRule = new Rule(
+    symbolizers: [
+        new PointSymbolizer(
+            shape: "circle",
+            size: 12,
+            fillColor: "#CC3300",
+            strokeOpacity: 0
+        )
+    ],
+    name: "Large",
+    maxScaleDenominator: 160000000
+)
 
-Rule mediumRule = new Rule(new PointSymbolizer(
-    shape: "circle",
-    size: 8,
-    fillColor: "#0033CC",
-    strokeOpacity: 0
-))
-mediumRule.name = "Medium"
-mediumRule.minScale = 160000000
-mediumRule.maxScale = 320000000
+Rule mediumRule = new Rule(
+    symbolizers: [
+        new PointSymbolizer(
+            shape: "circle",
+            size: 8,
+            fillColor: "#0033CC",
+            strokeOpacity: 0
+        )
+    ],
+    name: "Medium",
+    minScaleDenominator: 160000000,
+    maxScaleDenominator: 320000000
+)
 
-Rule smallRule = new Rule(new PointSymbolizer(
-    shape: "circle",
-    size: 4,
-    fillColor: "#0033CC",
-    strokeOpacity: 0
-))
-smallRule.name = "Small"
-smallRule.minScale = 320000000
-
+Rule smallRule = new Rule(
+    symbolizers: [
+        new PointSymbolizer(
+            shape: "circle",
+            size: 4,
+            fillColor: "#0033CC",
+            strokeOpacity: 0
+        )
+    ],
+    name: "Small",
+    minScaleDenominator: 320000000
+)
 createImage(shp, new Style([
     smallRule,
     mediumRule,
