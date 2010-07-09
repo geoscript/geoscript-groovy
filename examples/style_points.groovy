@@ -20,7 +20,7 @@ void createImage(Layer layer, Style style, File file) {
     map.render(layer.bounds().expandBy(20), file)
 }
 
-Layer shp = new Shapefile("../../scripts/sld_cookbook_point/sld_cookbook_point.shp")
+Layer shp = new Shapefile("sld_cookbook_point/sld_cookbook_point.shp")
 
 createImage(shp, new Style(new PointSymbolizer(
     shape: "circle",

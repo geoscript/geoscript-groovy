@@ -19,7 +19,7 @@ void createImage(Layer layer, Style style, File file) {
     map.render(layer.bounds().expandBy(20), file)
 }
 
-Layer shp = new Shapefile("../../scripts/sld_cookbook_line/sld_cookbook_line.shp")
+Layer shp = new Shapefile("sld_cookbook_line/sld_cookbook_line.shp")
 
 createImage(shp, new Style(new LineSymbolizer(
     strokeColor: "#000000",

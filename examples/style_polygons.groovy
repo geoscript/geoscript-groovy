@@ -20,7 +20,7 @@ void createImage(Layer layer, Style style, File file) {
     map.render(layer.bounds().expandBy(20), file)
 }
 
-Layer shp = new Shapefile("../../scripts/sld_cookbook_polygon/sld_cookbook_polygon.shp")
+Layer shp = new Shapefile("sld_cookbook_polygon/sld_cookbook_polygon.shp")
 
 createImage(shp, new Style(new PolygonSymbolizer(
     fillColor: "#000080",
