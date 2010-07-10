@@ -22,6 +22,14 @@ import org.geotools.styling.SLD
 class LineSymbolizer  extends Symbolizer {
 
     /**
+     * Create a new LineSymbolizer from a GeoTools LineSymbolizer
+     * @param symbolizer The GeoTools LineSymbolizer
+     */
+    LineSymbolizer(org.geotools.styling.LineSymbolizer symbolizer) {
+        super(symbolizer)
+    }
+
+    /**
      * Create a new LineSymbolizer
      */
     LineSymbolizer() {
@@ -90,6 +98,38 @@ class LineSymbolizer  extends Symbolizer {
      */
     String getStrokeLineCap() {
         SLD.stroke(symbolizer)?.lineCap
+    }
+
+    /**
+     * Set the line join (miter)
+     * @param lineCap The line join (miter)
+     */
+    void setStrokeLineJoin(String lineJoin) {
+        SLD.stroke(symbolizer).setLineJoin(Style.filterFactory.literal(lineCap))
+    }
+
+    /**
+     * Get the stroke line join
+     * @return The stroke line join
+     */
+    String getStrokeLineJoin() {
+        SLD.stroke(symbolizer)?.lineJoin
+    }
+
+    /**
+     * Set the stroke dash offset
+     * @param offset stroke dash offset
+     */
+    void setStrokeDashOffset(float offset) {
+        SLD.stroke(symbolizer).setDashOffset(Style.filterFactory.literal(offset))
+    }
+
+    /**
+     * Get the stroke dash offset
+     * @return The stroke dash offset
+     */
+    float getStrokeDashOffset() {
+        SLD.stroke(symbolizer)?.dashOffset?.value as float
     }
 
     /**
@@ -187,7 +227,7 @@ class LineSymbolizer  extends Symbolizer {
      */
     float getGraphicStrokeMarkStrokeWidth() {
         if (symbolizer?.stroke?.graphicStroke) {
-            return SLD.mark(symbolizer.stroke.graphicStroke).stroke?.width.value
+            return SLD.mark(symbolizer.stroke.graphicStroke).stroke?.width.value as float
         }
         else {
             return 0
@@ -209,7 +249,7 @@ class LineSymbolizer  extends Symbolizer {
      */
     float getGraphicStrokeMarkSize() {
         if (symbolizer?.stroke?.graphicStroke) {
-            return symbolizer?.stroke?.graphicStroke?.size?.value
+            return symbolizer?.stroke?.graphicStroke?.size?.value as float
         }
         else {
             return 0

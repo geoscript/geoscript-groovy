@@ -19,6 +19,15 @@ class StyleTestCase {
         Style style = new Style(sldFile)
         assertEquals(1, style.rules.size())
         assertEquals(1, style.rules[0].symbolizers.size())
+        def sym = style.rules[0].symbolizers[0]
+        assertEquals("#E6E6E6", sym.fillColor)
+        assertEquals(0.5, sym.fillOpacity, 0.1)
+        assertEquals("#4C4C4C", sym.strokeColor)
+        assertEquals("butt", sym.strokeLineCap)
+        assertEquals("miter", sym.strokeLineJoin)
+        assertEquals(1.0, sym.strokeOpacity, 0.1)
+        assertEquals(0.0, sym.strokeWidth, 0.1)
+        assertEquals(0.0, sym.strokeDashOffset, 0.1)
     }
 
     @Test void styleFromSymbolizer() {

@@ -25,6 +25,14 @@ import org.geotools.styling.SLD
 class TextSymbolizer  extends Symbolizer {
 
     /**
+     * Create a new TextSymbolizer from a GeoTools TextSymbolizer
+     * @param symbolizer The GeoTools TextSymbolizer
+     */
+    TextSymbolizer(org.geotools.styling.TextSymbolizer symbolizer) {
+        super(symbolizer)
+    }
+
+    /**
      * Create a new TextSymbolizer
      */
     TextSymbolizer() {

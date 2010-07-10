@@ -26,6 +26,14 @@ import org.geotools.styling.SLD
 class PointSymbolizer extends Symbolizer {
 
     /**
+     * Create a new PointSymbolizer from a GeoTools PointSymbolizer
+     * @param symbolizer The GeoTools PointSymbolizer
+     */
+    PointSymbolizer(org.geotools.styling.PointSymbolizer symbolizer) {
+        super(symbolizer)
+    }
+
+    /**
      * Create a new PointSymbolizer
      */
     PointSymbolizer() {
@@ -61,7 +69,7 @@ class PointSymbolizer extends Symbolizer {
      * @return The size
      */
     float getSize() {
-        SLD.graphic(symbolizer)?.size?.value
+        SLD.graphic(symbolizer)?.size?.value as float
     }
 
     /**
@@ -77,7 +85,7 @@ class PointSymbolizer extends Symbolizer {
      * @return The rotation
      */
     float getRotation() {
-        SLD.graphic(symbolizer)?.rotation?.value
+        SLD.graphic(symbolizer)?.rotation?.value as float
     }
 
     /**
@@ -109,7 +117,7 @@ class PointSymbolizer extends Symbolizer {
      * @return The stroke width
      */
     float getStrokeWidth() {
-        SLD.stroke(symbolizer)?.width?.value
+        SLD.stroke(symbolizer)?.width?.value as float
     }
 
     /**
@@ -125,7 +133,7 @@ class PointSymbolizer extends Symbolizer {
      * @return The stroke opacity
      */
     float getStrokeOpacity() {
-        SLD.stroke(symbolizer)?.opacity?.value
+        SLD.stroke(symbolizer)?.opacity?.value as float
     }
 
     /**
@@ -149,7 +157,7 @@ class PointSymbolizer extends Symbolizer {
      * @param opacity The fill opacity (0 = transparent to 1 = opaque)
      */
     void setFillOpacity(float opacity) {
-        SLD.fill(symbolizer).setOpacity(Style.filterFactory.literal(opacity))
+        SLD.fill(symbolizer).setOpacity(Style.filterFactory.literal(opacity)) as float
     }
 
     /**

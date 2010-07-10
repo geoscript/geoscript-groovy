@@ -137,7 +137,22 @@ class Style {
                 rule.name = r.name
                 rule.title = r.description.title
                 rule.symbolizers = r.symbolizers().collect{s ->
-                    Symbolizer sym = new Symbolizer(s)
+                    Symbolizer sym
+                    if (s instanceof org.geotools.styling.PointSymbolizer) {
+                        sym = new PointSymbolizer(s)
+                    }
+                    else if (s instanceof org.geotools.styling.LineSymbolizer) {
+                        sym = new LineSymbolizer(s)
+                    }
+                    else if (s instanceof org.geotools.styling.PolygonSymbolizer) {
+                        sym = new PolygonSymbolizer(s)
+                    }
+                    else if (s instanceof org.geotools.styling.TextSymbolizer) {
+                        sym = new TextSymbolizer(s)
+                    }
+                    else {
+                        sym = new Symbolizer(s)
+                    }
                     sym.zIndex = i
                     sym
                 }

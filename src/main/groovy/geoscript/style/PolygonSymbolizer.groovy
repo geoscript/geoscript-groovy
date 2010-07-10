@@ -26,6 +26,14 @@ import org.geotools.styling.SLD
 class PolygonSymbolizer  extends Symbolizer {
 
     /**
+     * Create a new PolygonSymbolizer from a GeoTools PolygonSymbolizer
+     * @param symbolizer The GeoTools PolygonSymbolizer
+     */
+    PolygonSymbolizer(org.geotools.styling.PolygonSymbolizer symbolizer) {
+        super(symbolizer)
+    }
+
+    /**
      * Create a new PolygonSymbolizer
      */
     PolygonSymbolizer() {
@@ -61,7 +69,7 @@ class PolygonSymbolizer  extends Symbolizer {
      * @return The stroke width
      */
     float getStrokeWidth() {
-        SLD.stroke(symbolizer)?.width?.value
+        SLD.stroke(symbolizer)?.width?.value as float
     }
 
     /**
@@ -77,7 +85,55 @@ class PolygonSymbolizer  extends Symbolizer {
      * @return The stroke opacity
      */
     float getStrokeOpacity() {
-        SLD.stroke(symbolizer)?.opacity?.value
+        SLD.stroke(symbolizer)?.opacity?.value as float
+    }
+
+    /**
+     * Set the line cap (round, butt, square)
+     * @param lineCap The line cap (round, butt, square)
+     */
+    void setStrokeLineCap(String lineCap) {
+        SLD.stroke(symbolizer).setLineCap(Style.filterFactory.literal(lineCap))
+    }
+
+    /**
+     * Get the stroke line cap
+     * @return The stroke line cap
+     */
+    String getStrokeLineCap() {
+        SLD.stroke(symbolizer)?.lineCap
+    }
+
+    /**
+     * Set the line join
+     * @param lineCap The line join
+     */
+    void setStrokeLineJoin(String lineJoin) {
+        SLD.stroke(symbolizer).setLineJoin(Style.filterFactory.literal(lineCap))
+    }
+
+    /**
+     * Get the stroke line join
+     * @return The stroke line join
+     */
+    String getStrokeLineJoin() {
+        SLD.stroke(symbolizer)?.lineJoin
+    }
+
+    /**
+     * Set the stroke dash offset
+     * @param offset stroke dash offset
+     */
+    void setStrokeDashOffset(float offset) {
+        SLD.stroke(symbolizer).setDashOffset(Style.filterFactory.literal(offset))
+    }
+
+    /**
+     * Get the stroke dash offset
+     * @return The stroke dash offset
+     */
+    float getStrokeDashOffset() {
+        SLD.stroke(symbolizer)?.dashOffset?.value as float
     }
 
     /**
@@ -109,7 +165,7 @@ class PolygonSymbolizer  extends Symbolizer {
      * @return The fill opacity
      */
     float getFillOpacity() {
-        SLD.fill(symbolizer)?.opacity?.value
+        SLD.fill(symbolizer)?.opacity?.value as float
     }
 
     /**
@@ -220,7 +276,7 @@ class PolygonSymbolizer  extends Symbolizer {
      */
     float getMarkStrokeWidth() {
         if (symbolizer?.fill?.graphicFill) {
-            SLD.mark(symbolizer.fill.graphicFill)?.stroke?.width.value
+            SLD.mark(symbolizer.fill.graphicFill)?.stroke?.width.value as float
         }
         else {
             return null
