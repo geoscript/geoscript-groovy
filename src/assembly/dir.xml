@@ -16,6 +16,7 @@
           <useProjectArtifact>true</useProjectArtifact>
           <excludes>
               <exclude>xml-apis*</exclude>
+              <exclude>jai_*</exclude>
           </excludes>
       </dependencySet>
   </dependencySets>
