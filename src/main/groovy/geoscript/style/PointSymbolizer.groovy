@@ -93,7 +93,7 @@ class PointSymbolizer extends Symbolizer {
      * @param color The stroke color (#009900)
      */
     void setStrokeColor(String color) {
-        SLD.stroke(symbolizer).setColor(Style.filterFactory.literal(color))
+        SLD.stroke(symbolizer).setColor(Style.filterFactory.literal(Style.getHexColor(color)))
     }
 
     /**
@@ -141,7 +141,7 @@ class PointSymbolizer extends Symbolizer {
      * @param color The fill color (#ff0000)
      */
     void setFillColor(String color) {
-        SLD.fill(symbolizer).setColor(Style.filterFactory.literal(color))
+        SLD.fill(symbolizer).setColor(Style.filterFactory.literal(Style.getHexColor(color)))
     }
 
     /**

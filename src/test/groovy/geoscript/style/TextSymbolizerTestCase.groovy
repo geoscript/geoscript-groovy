@@ -19,6 +19,26 @@ class TextSymbolizerTestCase {
         assertEquals("#000000", sym.color)
     }
 
+    @Test void colorFromRGB() {
+        def sym = new TextSymbolizer(
+            label: "name",
+            color: "0,0,0"
+        )
+        assertNotNull(sym)
+        assertEquals("name", sym.label)
+        assertEquals("#000000", sym.color)
+    }
+
+    @Test void colorFromName() {
+        def sym = new TextSymbolizer(
+            label: "name",
+            color: "black"
+        )
+        assertNotNull(sym)
+        assertEquals("name", sym.label)
+        assertEquals("#000000", sym.color)
+    }
+
     @Test void styled() {
         def sym = new TextSymbolizer(
             label: "name",
@@ -136,7 +156,7 @@ class TextSymbolizerTestCase {
             haloRadius: 3
         )
         assertEquals("name", sym.label)
-        assertEquals("#FFFFFF", sym.haloColor)
+        assertEquals("#ffffff", sym.haloColor)
         assertEquals(3, sym.haloRadius, 0.1)
     }
 

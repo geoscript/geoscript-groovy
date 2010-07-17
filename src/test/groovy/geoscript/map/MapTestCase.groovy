@@ -11,10 +11,13 @@ import geoscript.proj.Projection
  */
 class MapTestCase {
 
-    @Test void projection() {
+    @Test void proj() {
         Map map = new Map();
-        map.projection = new Projection("EPSG:2927")
-        assertEquals("EPSG:2927", map.projection.id)
+        map.proj = new Projection("EPSG:2927")
+        assertEquals("EPSG:2927", map.proj.id)
+        map.proj = "EPSG:4326"
+        assertEquals("EPSG:4326", map.proj.id)
+
     }
 
     @Test void layer() {
@@ -39,7 +42,7 @@ class MapTestCase {
         assertNotNull(shp)
 
         Map map = new Map()
-        map.projection = new Projection("EPSG:2927")
+        map.proj = new Projection("EPSG:2927")
         map.addLayer(shp)
         def image = map.renderToImage(shp.bounds)
         assertNotNull(image)
@@ -62,7 +65,7 @@ class MapTestCase {
         assertNotNull(shp)
 
         Map map = new Map()
-        map.projection = new Projection("EPSG:2927")
+        map.proj = new Projection("EPSG:2927")
         map.addLayer(shp)
         def image = map.render(shp.bounds, out)
         assertTrue(out.exists())
@@ -80,7 +83,7 @@ class MapTestCase {
         assertNotNull(shp)
 
         Map map = new Map()
-        map.projection = new Projection("EPSG:2927")
+        map.proj = new Projection("EPSG:2927")
         map.addLayer(shp)
         def image = map.render(shp.bounds, out)
         out.close()

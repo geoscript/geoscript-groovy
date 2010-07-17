@@ -244,8 +244,7 @@ class Style {
      * @return A hex color string
      */
     static String convertColorToHex(Color color) {
-        int i = color.getRGB() & 0x00ffffff
-        "#${Integer.toHexString(i)}"
+        "#${Integer.toHexString((color.getRGB() & 0xffffff) | 0x1000000).substring(1)}"
     }
 
     /**
@@ -416,6 +415,15 @@ class Style {
             return Color.decode(colorNameMap.get(str.toLowerCase()))
         }
         return null
+    }
+
+    /**
+     * Get a hex color String from a hex color string, RGB, or CSS name
+     * @param str A color String
+     * @return A hex color String
+     */
+    static String getHexColor(String str) {
+        convertColorToHex(getColor(str))
     }
 }
 

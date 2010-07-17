@@ -60,7 +60,7 @@ class TextSymbolizer  extends Symbolizer {
      * @param color The Color
      */
     void setColor(String color) {
-        symbolizer.fill.color = Style.filterFactory.literal(color)
+        symbolizer.fill.color = Style.filterFactory.literal(Style.getHexColor(color))
     }
 
     /**
@@ -150,7 +150,7 @@ class TextSymbolizer  extends Symbolizer {
      */
     void setHaloColor(String color) {
         createHaloIfNecessary()
-        symbolizer.halo.fill.color = Style.filterFactory.literal(color)
+        symbolizer.halo.fill.color = Style.filterFactory.literal(Style.getHexColor(color))
     }
 
     /**

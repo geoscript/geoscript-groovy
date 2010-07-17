@@ -28,7 +28,7 @@ class LineSymbolizerTestCase {
             strokeDashArray: "5 2"
         )
         assertNotNull(sym)
-        assertEquals("#0000FF", sym.strokeColor)
+        assertEquals("#0000ff", sym.strokeColor)
         assertEquals(3, sym.strokeWidth, 0.1)
         assertEquals("5.0 2.0", sym.strokeDashArray)
     }

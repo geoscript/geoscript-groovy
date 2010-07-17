@@ -27,7 +27,7 @@ class PolygonSymbolizerTestCase {
         )
         assertNotNull(sym)
         assertEquals("#000080", sym.fillColor)
-        assertEquals("#FFFFFF", sym.strokeColor)
+        assertEquals("#ffffff", sym.strokeColor)
         assertEquals(1, sym.strokeOpacity, 0.1)
         assertEquals(2, sym.strokeWidth, 0.1)
     }
@@ -42,7 +42,7 @@ class PolygonSymbolizerTestCase {
         assertNotNull(sym)
         assertEquals("#000080", sym.fillColor)
         assertEquals(0.5, sym.fillOpacity, 0.1)
-        assertEquals("#FFFFFF", sym.strokeColor)
+        assertEquals("#ffffff", sym.strokeColor)
         assertEquals(1, sym.strokeOpacity, 0.1)
         assertEquals(2, sym.strokeWidth, 0.1)
     }

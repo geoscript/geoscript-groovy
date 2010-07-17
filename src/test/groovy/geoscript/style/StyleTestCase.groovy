@@ -138,6 +138,20 @@ class StyleTestCase {
         assertNotNull(c)
     }
 
+    @Test void convertColorToHex() {
+        assertEquals("#000000", Style.convertColorToHex(Color.black))
+        assertEquals("#ffffff", Style.convertColorToHex(Color.white))
+        assertEquals("#ff0000", Style.convertColorToHex(Color.red))
+        assertEquals("#00ff00", Style.convertColorToHex(Color.green))
+        assertEquals("#0000ff", Style.convertColorToHex(Color.blue))
+    }
+
+    @Test void getHexColor() {
+        assertEquals("#f0ffff", Style.getHexColor("#f0ffff"))
+        assertEquals("#f0ffff", Style.getHexColor("240,255,255"))
+        assertEquals("#f0ffff", Style.getHexColor("azure"))
+    }
+
     @Test void getColor() {
 
         // Expected Color

@@ -16,6 +16,7 @@ import org.geotools.map.MapContext
 import org.geotools.map.MapLayer
 import org.geotools.renderer.GTRenderer
 import org.geotools.renderer.lite.StreamingRenderer
+import org.geotools.renderer.lite.LabelCache
 import org.geotools.renderer.label.LabelCacheImpl
 
 /**
@@ -60,6 +61,11 @@ class Map {
     private MapContext context
 
     /**
+     * The LabelCache
+     */
+    private LabelCache labelCache = new LabelCacheImpl()
+
+    /**
      * Create a new Map
      */
     Map() {
@@ -70,7 +76,7 @@ class Map {
         renderer.setJava2DHints(hints)
         renderer.setRendererHints([
             (StreamingRenderer.OPTIMIZED_DATA_LOADING_KEY): Boolean.TRUE,
-            (StreamingRenderer.LABEL_CACHE_KEY): new LabelCacheImpl(),
+            (StreamingRenderer.LABEL_CACHE_KEY): labelCache,
             (StreamingRenderer.SCALE_COMPUTATION_METHOD_KEY): StreamingRenderer.SCALE_ACCURATE,
             (StreamingRenderer.LINE_WIDTH_OPTIMIZATION_KEY): Boolean.FALSE,
         ])
@@ -81,15 +87,15 @@ class Map {
      * Set the Map Projection
      * @param proj The Projection
      */
-    void setProjection(Projection proj) {
-        context.setCoordinateReferenceSystem(proj.crs)
+    void setProj(def proj) {
+        context.setCoordinateReferenceSystem(new Projection(proj).crs)
     }
 
     /**
      * Get the Map's Projection
      * @return The Map's Projection
      */
-    Projection getProjection() {
+    Projection getProj() {
         new Projection(context.coordinateReferenceSystem)
     }
 
@@ -149,13 +155,20 @@ class Map {
         BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
         Graphics2D g = (Graphics2D) image.createGraphics();
         if (backgroundColor != null) {
-            g.color = Color.decode(backgroundColor)
+            g.color = Style.getColor(backgroundColor)
             g.fillRect(0,0,width,height)
         }
         if (fixAspectRatio) {
             bounds = fixAspectRatio(width, height, bounds)
         }
+        // If the Bounds doesn't have a Projection, assume it is the same
+        // Projection as the Map
+        if (bounds.proj == null) {
+            bounds = new Bounds(bounds.l, bounds.r, bounds.b, bounds.t, getProj())
+        }
         renderer.paint(g, new Rectangle(0, 0, width, height), bounds.env)
+        g.dispose()
+        labelCache.clear()
         return image
     }
 

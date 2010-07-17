@@ -45,7 +45,7 @@ class PolygonSymbolizer  extends Symbolizer {
      * @param color The stroke color (#FFFFFF)
      */
     void setStrokeColor(String color) {
-        SLD.stroke(symbolizer).setColor(Style.filterFactory.literal(color))
+        SLD.stroke(symbolizer).setColor(Style.filterFactory.literal(Style.getHexColor(color)))
     }
 
     /**
@@ -141,7 +141,7 @@ class PolygonSymbolizer  extends Symbolizer {
      * @param color The fill color (#000080)
      */
     void setFillColor(String color) {
-        SLD.fill(symbolizer).setColor(Style.filterFactory.literal(color))
+        SLD.fill(symbolizer).setColor(Style.filterFactory.literal(Style.getHexColor(color)))
     }
 
     /**
@@ -245,7 +245,7 @@ class PolygonSymbolizer  extends Symbolizer {
      */
     void setMarkStrokeColor(String color) {
         createGraphicFillIfNecessary()
-        SLD.mark(symbolizer.fill.graphicFill).stroke.color = Style.filterFactory.literal(color)
+        SLD.mark(symbolizer.fill.graphicFill).stroke.color = Style.filterFactory.literal(Style.getHexColor(color))
     }
 
     /**

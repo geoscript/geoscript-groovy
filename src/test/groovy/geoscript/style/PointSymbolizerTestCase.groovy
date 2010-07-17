@@ -18,7 +18,7 @@ class PointSymbolizerTestCase {
         )
         assertNotNull(sym)
         assertEquals("circle", sym.shape)
-        assertEquals("#FF0000", sym.fillColor)
+        assertEquals("#ff0000", sym.fillColor)
         assertEquals(6, sym.size, 0.0)
         assertEquals(0, sym.strokeOpacity, 0.0)
     }
@@ -34,7 +34,7 @@ class PointSymbolizerTestCase {
         )
         assertNotNull(sym)
         assertEquals("circle", sym.shape)
-        assertEquals("#FF0000", sym.fillColor)
+        assertEquals("#ff0000", sym.fillColor)
         assertEquals(6, sym.size, 0.0)
         assertEquals("#000000", sym.strokeColor)
         assertEquals(2, sym.strokeWidth, 0.0)

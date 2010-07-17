@@ -41,7 +41,7 @@ class LineSymbolizer  extends Symbolizer {
      * @param color The color (#FF0000)
      */
     void setStrokeColor(String color) {
-        SLD.stroke(symbolizer).setColor(Style.filterFactory.literal(color))
+        SLD.stroke(symbolizer).setColor(Style.filterFactory.literal(Style.getHexColor(color)))
     }
 
     /**
@@ -196,7 +196,7 @@ class LineSymbolizer  extends Symbolizer {
      */
     void setGraphicStrokeMarkStrokeColor(String color) {
         createGraphicStrokeIfNecessary()
-        SLD.mark(symbolizer.stroke.graphicStroke).stroke.color = Style.filterFactory.literal(color)
+        SLD.mark(symbolizer.stroke.graphicStroke).stroke.color = Style.filterFactory.literal(Style.getHexColor(color))
     }
 
     /**
