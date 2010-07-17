@@ -15,7 +15,8 @@ import geoscript.map.Map
 void createImage(Layer layer, Style style, File file) {
     //style.toSLD()
     Map map = new Map()
-    map.addLayer(layer, style)
+    layer.style = style
+    map.addLayer(layer)
     map.render(layer.bounds().expandBy(20), file)
 }
 
@@ -163,8 +164,8 @@ Rule largeRule = new Rule(
             strokeWidth: 6
         )
     ],
-    name: "Large"
-    maxScale: 1800000000
+    name: "Large",
+    maxScaleDenominator: 1800000000
 )
 
 Rule mediumRule = new Rule(
@@ -175,8 +176,8 @@ Rule mediumRule = new Rule(
         )
     ],
     name: "Medium",
-    minScale: 1800000000,
-    maxScale: 3600000000
+    minScaleDenominator: 1800000000,
+    maxScaleDenominator: 3600000000
 )
 
 Rule smallRule = new Rule(
@@ -186,8 +187,8 @@ Rule smallRule = new Rule(
             strokeWidth: 2
         )
     ],
-    name: "Small"
-    minScale: 3600000000
+    name: "Small",
+    minScaleDenominator: 3600000000
 )
 
 createImage(shp, new Style([
