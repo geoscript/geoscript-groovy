@@ -493,6 +493,15 @@ class Geometry {
     }
 
     /**
+     * Densify this Geometry
+     * @param distance The distance between coordinates
+     * @return A new densified Geometry
+     */
+    Geometry densify(double distance) {
+        Geometry.wrap(com.vividsolutions.jts.densify.Densifier.densify(this.g, distance))
+    }
+
+    /**
      * Get the WKT of the Geometry
      * @return The WKT of this Geometry
      */
