@@ -502,6 +502,24 @@ class Geometry {
     }
 
     /**
+     * Get the minimum enclosing rectangle
+     * @return The minimum enclosing rectangle
+     */
+    Geometry getMinimumRectangle() {
+        def minDiameter = new com.vividsolutions.jts.algorithm.MinimumDiameter(this.g)
+        Geometry.wrap(minDiameter.minimumRectangle)
+    }
+
+    /**
+     * Get the minimum diameter of this Geometry as a LineString
+     * @return The minimum diameter as a LineString
+     */
+    Geometry getMinimumDiameter() {
+        def minDiameter = new com.vividsolutions.jts.algorithm.MinimumDiameter(this.g)
+        Geometry.wrap(minDiameter.diameter)
+    }
+
+    /**
      * Get the WKT of the Geometry
      * @return The WKT of this Geometry
      */

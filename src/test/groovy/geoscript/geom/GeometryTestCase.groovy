@@ -162,4 +162,26 @@ class GeometryTestCase {
         Geometry densifiedGeom = g.densify(1)
         assertEquals("LINESTRING (0 0, 0 0.9090909090909092, 0 1.8181818181818183, 0 2.727272727272727, 0 3.6363636363636367, 0 4.545454545454545, 0 5.454545454545454, 0 6.363636363636363, 0 7.272727272727273, 0 8.181818181818182, 0 9.09090909090909, 0 10)", densifiedGeom.wkt)
     }
+
+    @Test void minimumRectangle() {
+        Geometry g = new MultiPoint([
+            new Point(2,1),
+            new Point(1,2),
+            new Point(4,3),
+            new Point(3,4)
+        ])
+        Geometry minRect = g.minimumRectangle
+        assertEquals("POLYGON ((1 2, 2 1, 4 3, 3 4, 1 2))", minRect.wkt)
+    }
+
+    @Test void minimumDiameter() {
+        Geometry g = new MultiPoint([
+            new Point(2,1),
+            new Point(1,2),
+            new Point(4,3),
+            new Point(3,4)
+        ])
+        Geometry minDiameter = g.minimumDiameter
+        assertEquals("LINESTRING (1 2, 2 1)", minDiameter.wkt)
+    }
 }
