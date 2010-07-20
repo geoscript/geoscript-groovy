@@ -353,6 +353,15 @@ class Geometry {
     }
 
     /**
+     * Get the reason why this Geometry is invalid.
+     * @return A textual reason why this Geometry is invalid
+     */
+    String getValidReason() {
+        def op = new com.vividsolutions.jts.operation.valid.IsValidOp(this.g)
+        op.validationError.message
+    }
+
+    /**
      * Whether this Geometry is within the given distance of the other Geometry
      * @param geom The other Geometry
      * @param distance The distance

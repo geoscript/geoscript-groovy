@@ -184,4 +184,18 @@ class GeometryTestCase {
         Geometry minDiameter = g.minimumDiameter
         assertEquals("LINESTRING (1 2, 2 1)", minDiameter.wkt)
     }
+
+    @Test void isValid() {
+        Geometry g1 = new Polygon([0,0],[10,10],[0,10],[10,0],[0,0])
+        assertFalse(g1.isValid())
+        Geometry g2 = new Polygon([0,0],[0,10],[10,10],[10,0],[0,0])
+        assertTrue(g2.isValid())
+    }
+
+    @Test void getValidReason() {
+        Geometry g = new Polygon([0,0],[10,10],[0,10],[10,0],[0,0])
+        assertFalse(g.isValid())
+        assertEquals("Self-intersection",g.validReason)
+    }
+
 }
