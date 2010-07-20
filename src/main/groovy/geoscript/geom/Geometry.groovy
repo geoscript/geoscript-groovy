@@ -467,8 +467,14 @@ class Geometry {
      * Get Delaunay Triangle Diagram for this Geometry
      * @return A Delaunay Triangle Diagram Geometry
      */
-    Geometry getDelaunayTriangleDiagram() {
-        def builder = new com.vividsolutions.jts.triangulate.DelaunayTriangulationBuilder()
+    Geometry getDelaunayTriangleDiagram(boolean isConforming = false) {
+        def builder;
+        if (isConforming) {
+            builder = new com.vividsolutions.jts.triangulate.ConformingDelaunayTriangulationBuilder()
+        }
+        else {
+            builder = new com.vividsolutions.jts.triangulate.DelaunayTriangulationBuilder()
+        }
         builder.setSites(g)
         Geometry.wrap(builder.getTriangles(Geometry.factory))
     }

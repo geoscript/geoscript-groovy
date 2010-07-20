@@ -117,6 +117,10 @@ class GeometryTestCase {
         // println("Delaunay Triangles: ${triangles}")
         assertNotNull(triangles)
         assertTrue(triangles instanceof GeometryCollection)
+
+        triangles = g.getDelaunayTriangleDiagram(true)
+        assertNotNull(triangles)
+        assertTrue(triangles instanceof GeometryCollection)
     }
 
     @Test void getVoronoiDiagram() {
