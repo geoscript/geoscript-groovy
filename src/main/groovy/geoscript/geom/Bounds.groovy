@@ -103,6 +103,15 @@ class Bounds {
     }
 
     /**
+     * Expand the Bounds by the given distance in all directions
+     * @param distance The distance
+     */
+    Bounds expandBy(double distance) {
+        env.expandBy(distance)
+        this
+    }
+
+    /**
      * Get the Projection (if any) or null
      * @return The Projection (if any) or null
      */

@@ -152,6 +152,7 @@ class LayerTestCase {
         assertNotNull(layer1)
         assertEquals "org.geotools.data.memory.MemoryDataStore", layer1.format
         assertEquals "facilities", layer1.name
+        assertTrue(layer1.style.rules[0].symbolizers[0] instanceof geoscript.style.PointSymbolizer)
 
         Layer layer2 = new Layer()
         assertEquals 0, layer2.count()
