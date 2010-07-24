@@ -173,7 +173,11 @@ class PointSymbolizer extends Symbolizer {
      * @param uri The URI of the external graphic image (images/icon.png)
      */
     void setGraphic(String uri) {
-        setGraphic(uri, "image/${uri.substring(uri.lastIndexOf('.') + 1)}")
+        String type = uri.substring(uri.lastIndexOf('.') + 1)
+        if (type.equalsIgnoreCase("jpg")) {
+            type = "jpeg"
+        }
+        setGraphic(uri, "image/${type}")
     }
 
     /**
@@ -182,8 +186,8 @@ class PointSymbolizer extends Symbolizer {
      * @param format The format of the image (image/png)
      */
     void setGraphic(String uri, String format) {
-        File file = new File(uri)
-        symbolizer.getGraphic().graphicalSymbols().add(Style.builder.createExternalGraphic(file.toURL(),format))
+        URL url = uri.startsWith("http") ? new URL(uri) : new File(uri).toURL()
+        symbolizer.getGraphic().graphicalSymbols().add(Style.builder.createExternalGraphic(url, format))
     }
 
     /**
