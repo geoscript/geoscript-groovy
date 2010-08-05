@@ -17,7 +17,6 @@ class MapTestCase {
         assertEquals("EPSG:2927", map.proj.id)
         map.proj = "EPSG:4326"
         assertEquals("EPSG:4326", map.proj.id)
-
     }
 
     @Test void layer() {
@@ -44,7 +43,8 @@ class MapTestCase {
         Map map = new Map()
         map.proj = new Projection("EPSG:2927")
         map.addLayer(shp)
-        def image = map.renderToImage(shp.bounds)
+        map.bounds = shp.bounds
+        def image = map.renderToImage()
         assertNotNull(image)
 
         File out = File.createTempFile("map",".png")
@@ -67,7 +67,8 @@ class MapTestCase {
         Map map = new Map()
         map.proj = new Projection("EPSG:2927")
         map.addLayer(shp)
-        def image = map.render(shp.bounds, out)
+        map.bounds = shp.bounds
+        def image = map.render(out)
         assertTrue(out.exists())
         map.close()
     }
@@ -85,10 +86,41 @@ class MapTestCase {
         Map map = new Map()
         map.proj = new Projection("EPSG:2927")
         map.addLayer(shp)
-        def image = map.render(shp.bounds, out)
+        map.bounds = shp.bounds
+        def image = map.render(out)
         out.close()
         assertTrue(f.exists())
         map.close()
+    }
+
+    @Test void getScaleDenominator() {
+        File file = new File(getClass().getClassLoader().getResource("states.shp").toURI())
+        assertNotNull(file)
+        Shapefile shp = new Shapefile(file)
+        assertNotNull(shp)
+
+        Map map = new Map()
+        map.proj = new Projection("EPSG:2927")
+        map.addLayer(shp)
+        map.bounds = shp.bounds
+        assertEquals(38273743.41534821, map.scaleDenominator, 0.01)
+    }
+
+    @Test void getBounds() {
+        File file = new File(getClass().getClassLoader().getResource("states.shp").toURI())
+        assertNotNull(file)
+        Shapefile shp = new Shapefile(file)
+        assertNotNull(shp)
+
+        Map map = new Map()
+        map.proj = new Projection("EPSG:2927")
+        map.addLayer(shp)
+        map.bounds = shp.bounds
+        assertEquals(shp.bounds.l, map.bounds.l, 0.01)
+        assertEquals(shp.bounds.r, map.bounds.r, 0.01)
+        assertEquals(shp.bounds.t, map.bounds.t, 0.01)
+        assertEquals(shp.bounds.b, map.bounds.b, 0.01)
+        assertEquals(shp.bounds.proj.id, map.bounds.proj.id)
     }
 
 }

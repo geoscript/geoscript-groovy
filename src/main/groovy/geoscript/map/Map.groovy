@@ -16,6 +16,7 @@ import org.geotools.map.MapContext
 import org.geotools.map.MapLayer
 import org.geotools.renderer.GTRenderer
 import org.geotools.renderer.lite.StreamingRenderer
+import org.geotools.renderer.lite.RendererUtilities
 import org.geotools.renderer.lite.LabelCache
 import org.geotools.renderer.label.LabelCacheImpl
 
@@ -127,46 +128,69 @@ class Map {
     }
 
     /**
+     * Get the Bounds
+     * @return The Bounds
+     */
+    Bounds getBounds() {
+        new Bounds(context.areaOfInterest)
+    }
+
+    /**
+     * Set the Bounds
+     * @param bounds The Bounds
+     */
+    void setBounds(Bounds bounds) {
+        context.areaOfInterest = bounds.env
+    }
+
+    /**
+     * Get the scale denominator
+     * @param The scale denminator
+     */
+    double getScaleDenominator() {
+        RendererUtilities.calculateOGCScale(getBounds().env, width, [:])
+    }
+
+    /**
      * Render the Map at a Bounds to a File
      * @param bounds The Bounds
      * @param file The File
      */
-    void render(Bounds bounds, File file) {
+    void render(File file) {
         FileOutputStream out = new FileOutputStream(file)
-        render(bounds, out)
+        render(out)
         out.close()
     }
 
     /**
      * Render the Map at a Bounds to an OutputStream
-     * @param bounds The Bounds
      * @param out The OutputStream
      */
-    void render(Bounds bounds, OutputStream out) {
-        ImageIO.write(renderToImage(bounds), imageType, out);
+    void render(OutputStream out) {
+        ImageIO.write(renderToImage(), imageType, out);
     }
    
     /**
      * Render the Map to a BufferedImage for the given Bounds
-     * @param bounds The Bounds
      * @return A BufferedImage
      */ 
-    BufferedImage renderToImage(Bounds bounds) {
+    BufferedImage renderToImage() {
         BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
         Graphics2D g = (Graphics2D) image.createGraphics();
         if (backgroundColor != null) {
             g.color = Style.getColor(backgroundColor)
             g.fillRect(0,0,width,height)
         }
+        def b = getBounds()
         if (fixAspectRatio) {
-            bounds = fixAspectRatio(width, height, bounds)
+            b = fixAspectRatio(width, height, b)
         }
         // If the Bounds doesn't have a Projection, assume it is the same
         // Projection as the Map
-        if (bounds.proj == null) {
-            bounds = new Bounds(bounds.l, bounds.r, bounds.b, bounds.t, getProj())
+        if (b.proj == null) {
+            b = new Bounds(b.l, b.r, b.b, b.t, getProj())
         }
-        renderer.paint(g, new Rectangle(0, 0, width, height), bounds.env)
+        renderer.paint(g, new Rectangle(0, 0, width, height), b.env)
         g.dispose()
         labelCache.clear()
         return image

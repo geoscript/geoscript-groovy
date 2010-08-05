@@ -17,7 +17,8 @@ void createImage(Layer layer, Style style, File file) {
     Map map = new Map()
     layer.style = style
     map.addLayer(layer)
-    map.render(layer.bounds().expandBy(20), file)
+    map.bounds = layer.bounds.expandBy(20)
+    map.render(file)
 }
 
 Layer shp = new Shapefile("sld_cookbook_line/sld_cookbook_line.shp")
