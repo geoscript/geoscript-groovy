@@ -53,7 +53,8 @@ class Rule {
         rule.minScaleDenominator = minScaleDenominator
         rule.maxScaleDenominator = maxScaleDenominator
         rule.name = name
-        rule.description.title = title
+        // rule.decription.title = new org.geotools.util.SimpleInternationalString(title)
+        rule.title = title
         rule
     }
 

@@ -97,7 +97,9 @@ class Style {
                         symbolizers: [],
                         filter: rule.filter,
                         minScaleDenominator: rule.minScaleDenominator,
-                        maxScaleDenominator: rule.maxScaleDenominator
+                        maxScaleDenominator: rule.maxScaleDenominator,
+                        name: rule.name,
+                        title: rule.title
                     )
                 }
                 ruleMap[z].symbolizers.add(symbolizer)
