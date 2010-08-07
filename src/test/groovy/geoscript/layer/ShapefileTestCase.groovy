@@ -15,7 +15,7 @@ class ShapefileTestCase {
 
         Shapefile shp = new Shapefile(file)
         assertNotNull(shp)
-        assertEquals file.parentFile, shp.file
+        assertEquals file, shp.file
 
         println("Number of Features: ${shp.count()}")
         println("Bounds: ${shp.bounds()}")

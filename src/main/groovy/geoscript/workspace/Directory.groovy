@@ -3,6 +3,7 @@ package geoscript.workspace
 import java.net.URI
 import java.io.File
 import org.geotools.data.directory.DirectoryDataStore
+import org.geotools.data.shapefile.ShapefileDataStoreFactory
 
 /**
  * A Directory Workspace can contain one or more Shapefiles.
@@ -15,7 +16,7 @@ class Directory extends Workspace {
      * @param dir The File directory
      */
     Directory(File dir) {
-        super(new DirectoryDataStore(dir, new URI("http://geoscript.org")));
+        super(new DirectoryDataStore(dir, new ShapefileDataStoreFactory.ShpFileStoreFactory(new ShapefileDataStoreFactory(),[:])));
     }
 
     /**
