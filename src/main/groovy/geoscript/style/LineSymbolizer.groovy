@@ -102,10 +102,10 @@ class LineSymbolizer  extends Symbolizer {
 
     /**
      * Set the line join (miter)
-     * @param lineCap The line join (miter)
+     * @param lineJoin The line join (miter)
      */
     void setStrokeLineJoin(String lineJoin) {
-        SLD.stroke(symbolizer).setLineJoin(Style.filterFactory.literal(lineCap))
+        SLD.stroke(symbolizer).setLineJoin(Style.filterFactory.literal(lineJoin))
     }
 
     /**
@@ -206,6 +206,28 @@ class LineSymbolizer  extends Symbolizer {
     String getGraphicStrokeMarkStrokeColor() {
         if (symbolizer?.stroke?.graphicStroke) {
             return SLD.mark(symbolizer.stroke.graphicStroke).stroke?.color
+        }
+        else {
+            return null
+        }
+    }
+
+    /**
+     * Set the GraphicStroke/Mark/Fill color (#FF0000)
+     * @param color The Color
+     */
+    void setGraphicStrokeMarkFillColor(String color) {
+        createGraphicStrokeIfNecessary()
+        SLD.mark(symbolizer.stroke.graphicStroke).fill.color = Style.filterFactory.literal(Style.getHexColor(color))
+    }
+
+    /**
+     * Get the graphic stroke mark fill color
+     * @return The graphic stroke mark fill color
+     */
+    String getGraphicStrokeMarkFillColor() {
+        if (symbolizer?.stroke?.graphicStroke) {
+            return SLD.mark(symbolizer.stroke.graphicStroke).fill?.color
         }
         else {
             return null
