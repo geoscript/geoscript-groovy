@@ -13,12 +13,13 @@ import geoscript.style.*
 import geoscript.map.Map
 
 void createImage(Layer layer, Style style, File file) {
-    //style.toSLD()
+    style.toSLD()
     Map map = new Map()
     layer.style = style
     map.addLayer(layer)
     map.bounds = layer.bounds.expandBy(20)
     map.render(file)
+    map.close()
 }
 
 Layer shp = new Shapefile("sld_cookbook_line/sld_cookbook_line.shp")
@@ -197,3 +198,30 @@ createImage(shp, new Style([
     mediumRule,
     smallRule
 ]), new File("line_zoom.png"))
+
+
+createImage(shp, new Style([
+    new LineSymbolizer(
+        strokeColor: "#000000",
+        strokeWidth: 15,
+        strokeLineJoin: "round",
+        strokeLineCap: "round",
+        zIndex: 0
+    ),
+    new LineSymbolizer(
+        graphicStrokeMarkName: "circle",
+        graphicStrokeMarkStrokeColor: "red",
+        graphicStrokeMarkFillColor: "red",
+        strokeDashArray: "10 20",
+        strokeDashOffset: 0,
+        zIndex: 1
+    ),
+    new LineSymbolizer(
+        graphicStrokeMarkName: "star",
+        graphicStrokeMarkStrokeColor: "blue",
+        graphicStrokeMarkFillColor: "blue",
+        strokeDashArray: "10 20",
+        strokeDashOffset: 15,
+        zIndex: 1
+    )
+]), new File("line_stardot.png"))
