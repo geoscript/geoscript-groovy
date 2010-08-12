@@ -13,6 +13,9 @@ import org.geotools.styling.StyledLayerDescriptor
 import org.geotools.factory.CommonFactoryFinder
 import org.opengis.filter.FilterFactory
 import java.awt.Color;
+import org.geotools.brewer.color.BrewerPalette;
+import org.geotools.brewer.color.ColorBrewer;
+import org.geotools.brewer.color.StyleGenerator;
 
 /**
  * A Style
@@ -426,6 +429,69 @@ class Style {
      */
     static String getHexColor(String str) {
         convertColorToHex(getColor(str))
+    }
+
+    /**
+     * The shared ColorBrewer instance
+     */
+    private static ColorBrewer colorBrewer;
+
+    /**
+     * Initiate and load ColorBrewer if necessary
+     */
+    private static void loadColorBrewer() {
+        if (colorBrewer == null) {
+            colorBrewer = new ColorBrewer();
+            colorBrewer.loadPalettes();
+        }
+    }
+
+    /**
+     * Get a PaletteType by a string
+     * @param type The string type
+     * @return A org.geotools.brewer.color.PaletteType
+     */
+    private static org.geotools.brewer.color.PaletteType getPaletteType(String type) {
+        if (type.equalsIgnoreCase("diverging")) {
+            return ColorBrewer.DIVERGING
+        } else if (type.equalsIgnoreCase("qualitative")) {
+            return ColorBrewer.QUALITATIVE
+        } else if (type.equalsIgnoreCase("sequential")) {
+            return ColorBrewer.SEQUENTIAL
+        } else {
+            return ColorBrewer.ALL
+        }
+
+    }
+
+    /**
+     * Get a List of Palette names by type (defaults to All)
+     * @param type The type (all, diverging, qualitative, sequential)
+     * @return A List of Palette names
+     */
+    static List getPaletteNames(String type = "all") {
+        loadColorBrewer()
+        colorBrewer.getPalettes(getPaletteType(type)).collect{palette ->
+            palette.name
+        }
+    }
+
+    /**
+     * Get a List of Colors from a Palette by name
+     * @param name The Palette name
+     * @param count The number of colors
+     * @return A List of Colors.  The List will be empty if the Palette can't
+     * be found.  The number of Colors is contrained by the number of maximum
+     * colors for the given palette.
+     */
+    static List getPaletteColors(String name, int count) {
+        loadColorBrewer()
+        def colors = []
+        def palette = colorBrewer.getPalette(name)
+        if (palette != null) {
+            colors.addAll(palette.getColors(Math.min(palette.maxColors, count)).toList())
+        }
+        colors
     }
 }
 

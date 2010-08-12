@@ -181,5 +181,40 @@ class StyleTestCase {
         assertEquals(expected.blue, actual.blue)
     }
 
+    @Test void getPaletteNames() {
+
+        // All
+        List names = Style.getPaletteNames()
+        assertTrue(names.size() > 0)
+
+        // Qualitative
+        names = Style.getPaletteNames("qualitative")
+        assertTrue(names.size() > 0)
+
+        // Sequential
+        names = Style.getPaletteNames("sequential")
+        assertTrue(names.size() > 0)
+
+        // Diverging
+        names = Style.getPaletteNames("diverging")
+        assertTrue(names.size() > 0)
+    }
+
+    @Test void getPaletteColors() {
+
+        // 5 Greens
+        List colors = Style.getPaletteColors("Greens", 5)
+        assertTrue(colors.size() == 5)
+
+        // 11 RdYlGn
+        colors = Style.getPaletteColors("RdYlGn", 999)
+        assertTrue(colors.size() == 11)
+
+        // Empty
+        colors = Style.getPaletteColors("NOT A REAL PALETTE", 5)
+        assertTrue(colors.isEmpty())
+
+    }
+
 }
 
