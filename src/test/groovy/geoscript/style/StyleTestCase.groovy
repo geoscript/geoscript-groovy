@@ -2,6 +2,7 @@ package geoscript.style
 
 import geoscript.feature.Field
 import geoscript.filter.Filter
+import geoscript.layer.Shapefile
 import org.geotools.styling.Style as GtStyle
 import java.awt.Color
 import org.junit.Test
@@ -214,6 +215,48 @@ class StyleTestCase {
         colors = Style.getPaletteColors("NOT A REAL PALETTE", 5)
         assertTrue(colors.isEmpty())
 
+    }
+
+    @Test void createUniqueValuesStyle() {
+
+        // Get states shapefile
+        File file = new File(getClass().getClassLoader().getResource("states.shp").toURI())
+        Shapefile shapefile = new Shapefile(file)
+
+        // Default is random colors
+        Style style1 = Style.createUniqueValuesStyle(shapefile, "STATE_ABBR")
+        assertNotNull(style1)
+        assertEquals(49, style1.rules.size())
+
+        // Color palette
+        Style style2 = Style.createUniqueValuesStyle(shapefile, "STATE_ABBR", "Greens")
+        assertNotNull(style2)
+        assertEquals(49, style2.rules.size())
+
+        // Color list
+        Style style3 = Style.createUniqueValuesStyle(shapefile, "STATE_ABBR", ["teal","slateblue","tan","wheat","salmon"])
+        assertNotNull(style3)
+        assertEquals(49, style3.rules.size())
+
+        // Color Closure
+        Style style4 = Style.createUniqueValuesStyle(shapefile, "STATE_ABBR", {i,v -> Style.getRandomColor()})
+        assertNotNull(style4)
+        assertEquals(49, style4.rules.size())
+    }
+
+    @Test void createGraduatedStyle() {
+
+        // Get states shapefile
+        File file = new File(getClass().getClassLoader().getResource("states.shp").toURI())
+        Shapefile shapefile = new Shapefile(file)
+
+        Style style1 = Style.createGraduatedStyle(shapefile, "WORKERS", "Quantile", 5, "Greens")
+        assertNotNull(style1)
+        assertEquals(5, style1.rules.size())
+
+        Style style2 = Style.createGraduatedStyle(shapefile, "WORKERS", "EqualInterval", 7, ["#eee8aa","#98fb98","#afeeee","#d87093","#ffefd5","#ffdab9","#cd853f"])
+        assertNotNull(style2)
+        assertEquals(7, style2.rules.size())
     }
 
 }

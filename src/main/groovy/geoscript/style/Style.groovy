@@ -1,6 +1,9 @@
 package geoscript.style
 
 import geoscript.filter.Filter
+import geoscript.feature.Feature
+import geoscript.layer.Layer
+import geoscript.layer.Cursor
 import org.geotools.styling.Style as GtStyle
 import org.geotools.styling.Rule as GtRule
 import org.geotools.styling.FeatureTypeStyle as GtFeatureTypeStyle
@@ -134,35 +137,45 @@ class Style {
         SLDParser parser = new SLDParser(styleFactory, file.toURI().toURL())
         GtStyle[] styles = parser.readXML()
         styles[0].featureTypeStyles().eachWithIndex{fts,i ->
-            fts.rules().each {r ->
-                Rule rule = new Rule()
-                rule.filter = new Filter(r.filter)
-                rule.minScaleDenominator = r.minScaleDenominator
-                rule.maxScaleDenominator = r.maxScaleDenominator
-                rule.name = r.name
-                rule.title = r.description.title
-                rule.symbolizers = r.symbolizers().collect{s ->
-                    Symbolizer sym
-                    if (s instanceof org.geotools.styling.PointSymbolizer) {
-                        sym = new PointSymbolizer(s)
-                    }
-                    else if (s instanceof org.geotools.styling.LineSymbolizer) {
-                        sym = new LineSymbolizer(s)
-                    }
-                    else if (s instanceof org.geotools.styling.PolygonSymbolizer) {
-                        sym = new PolygonSymbolizer(s)
-                    }
-                    else if (s instanceof org.geotools.styling.TextSymbolizer) {
-                        sym = new TextSymbolizer(s)
-                    }
-                    else {
-                        sym = new Symbolizer(s)
-                    }
-                    sym.zIndex = i
-                    sym
+            getRulesFromGtFeatureTypeStyle(fts, i).each{r -> rules.add(r)}
+        }
+    }
+
+    /**
+     * Get a List of GeoScript Rules from a GeoTools FeatureTypeStyle at the given index
+     * @param fts The GeoTools FeatureTypeStyle
+     * @param index The Z index
+     * @return a List of GeoScript Rules
+     */
+    private static List<Rule> getRulesFromGtFeatureTypeStyle(GtFeatureTypeStyle fts, int index = 0) {
+        fts.rules().collect {r ->
+            Rule rule = new Rule()
+            rule.filter = new Filter(r.filter)
+            rule.minScaleDenominator = r.minScaleDenominator
+            rule.maxScaleDenominator = r.maxScaleDenominator
+            rule.name = r.name
+            rule.title = r.description.title
+            rule.symbolizers = r.symbolizers().collect{s ->
+                Symbolizer sym
+                if (s instanceof org.geotools.styling.PointSymbolizer) {
+                    sym = new PointSymbolizer(s)
                 }
-                rules.add(rule)
+                else if (s instanceof org.geotools.styling.LineSymbolizer) {
+                    sym = new LineSymbolizer(s)
+                }
+                else if (s instanceof org.geotools.styling.PolygonSymbolizer) {
+                    sym = new PolygonSymbolizer(s)
+                }
+                else if (s instanceof org.geotools.styling.TextSymbolizer) {
+                    sym = new TextSymbolizer(s)
+                }
+                else {
+                    sym = new Symbolizer(s)
+                }
+                sym.zIndex = index
+                sym
             }
+            return rule
         }
     }
 
@@ -399,7 +412,7 @@ class Style {
     ]
 
     /**
-     * Get a Color from a String.  Handle java.awt.Color names,
+     * Get a Color from a String.  Handles CSS names,
      * hexadecimals, and RGB.
      * @param str The String
      * @return a Color or null
@@ -484,14 +497,138 @@ class Style {
      * be found.  The number of Colors is contrained by the number of maximum
      * colors for the given palette.
      */
-    static List getPaletteColors(String name, int count) {
+    static List getPaletteColors(String name, int count = -1) {
         loadColorBrewer()
         def colors = []
         def palette = colorBrewer.getPalette(name)
+        if (count == -1) {
+            count = palette.maxColors
+        }
         if (palette != null) {
             colors.addAll(palette.getColors(Math.min(palette.maxColors, count)).toList())
         }
         colors
     }
+
+    /**
+     * Create a graduated Style
+     * @param layer The Layer
+     * @param field The Field name
+     * @param method The classification method (Quantile or EqualInterval)
+     * @param number The number of categories
+     * @param colors A Palette name, or a List of Colors
+     * @param elseMode The else mode (ignore, min, max)
+     * @return The graduated Style
+     */
+    static Style createGraduatedStyle(Layer layer, String field, String method, int number, def colors, String elseMode = "ignore") {
+
+        org.opengis.filter.FilterFactory2 ff = org.geotools.factory.CommonFactoryFinder.getFilterFactory2(null)
+        org.opengis.filter.expression.Function function = ff.function(method, ff.property(field), ff.literal(number))
+        org.geotools.filter.function.Classifier classifier = (org.geotools.filter.function.Classifier) function.evaluate(layer.fs.features)
+
+        int elseModeInt
+        if (elseMode.equalsIgnoreCase("min")) {
+            elseModeInt = org.geotools.brewer.color.StyleGenerator.ELSEMODE_INCLUDEASMIN
+        } else if (elseMode.equalsIgnoreCase("max")) {
+            elseModeInt = org.geotools.brewer.color.StyleGenerator.ELSEMODE_INCLUDEASMAX
+        } else {
+            elseModeInt = org.geotools.brewer.color.StyleGenerator.ELSEMODE_IGNORE
+        }
+
+        // If the colors argument is a String treat it
+        // like a Palette
+        if (colors instanceof String) {
+            colors = getPaletteColors(colors) as java.awt.Color[]
+        }
+        else {
+            colors = colors.collect{c ->
+                c instanceof java.awt.Color ? c as Color : Style.getColor(c as String)
+            } as java.awt.Color[]
+        }
+
+        // Generate the FeatureTypeStyle
+        GtFeatureTypeStyle featureTypeStyle = org.geotools.brewer.color.StyleGenerator.createFeatureTypeStyle(
+                classifier,
+                (org.geotools.filter.Expression) ff.property(field),
+                colors,
+                "test",
+                layer.fs.schema.geometryDescriptor,
+                elseModeInt,
+                0.5,
+                null);
+
+        new Style(getRulesFromGtFeatureTypeStyle(featureTypeStyle))
+    }
+
+    /**
+     * Create a Style with a Rule for every unique value of a Layer's Field
+     * @param layer The Layer
+     * @param field The Field name
+     * @param colors A Closure (which takes index based on 0 and a value), a Palette name, or a List of Colors
+     * @return A Style
+     */
+    static Style createUniqueValuesStyle(Layer layer, String field, def colors = {index, value -> Style.getRandomColor()}) {
+
+        // Collect the unique values
+        Set uniqueValueSet = new HashSet()
+
+        Cursor c = layer.cursor
+        while(c.hasNext()) {
+            Feature f = c.next()
+            uniqueValueSet.add(f.get(field))
+        }
+        c.close()
+
+        List uniqueValues = new ArrayList(uniqueValueSet)
+        Collections.sort(uniqueValues)
+
+        // If the colors argument is a String treat it
+        // like a Palette
+        if (colors instanceof String) {
+            colors = getPaletteColors(colors)
+        }
+
+        // Create the list of Rules
+        int i = 0
+        List rules = uniqueValues.collect{value ->
+
+            // Get the Color
+            def color
+            if (colors instanceof Closure) {
+               color = colors.call(i, value)
+            }
+            else {
+                // Set our counter back to 0 if
+                // it exceeds the number of colors
+                // in the List
+                if (i >= colors.size()) {
+                    i = 0
+                }
+                color = colors[i]
+            }
+
+            // Make sure color is a java.awt.Color
+            if (color instanceof String) {
+                color = getColor(color)
+            }
+
+            // Increment our counter
+            i++
+
+            // Create the Rule
+            new Rule(
+                name: "${field} = ${value}",
+                title: "${field} = ${value}",
+                filter: new Filter(filterFactory.equals(filterFactory.property(field), filterFactory.literal(value))),
+                symbolizers: [
+                    Symbolizer.getDefaultForGeometryType(layer.schema.geom.typ, color)
+                ]
+            )
+        }
+
+        // Create our Style with a Rule for each unique value
+        new Style(rules)
+    }
+
 }
 
