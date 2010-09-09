@@ -19,6 +19,7 @@ void createImage(Layer layer, Style style, File file) {
     map.addLayer(layer)
     map.bounds = layer.bounds.expandBy(20)
     map.render(file)
+    map.close()
 }
 
 Layer shp = new Shapefile("sld_cookbook_polygon/sld_cookbook_polygon.shp")
@@ -191,3 +192,8 @@ createImage(shp, new Style([
     largeRule
 ]), new File("polygon_zoom.png"))
 
+// Unique value style 
+createImage(shp, Style.createUniqueValuesStyle(shp, "name"), new File("polygon_uniquevalue.png"))
+
+// Graduated color style 
+createImage(shp, Style.createGraduatedStyle(shp, "name", "equalinterval", 4, "Greens"), new File("polygon_graduated.png"))
