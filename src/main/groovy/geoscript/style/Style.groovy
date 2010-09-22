@@ -87,6 +87,14 @@ class Style {
     }
 
     /**
+     * Create a Style from a GeoTools Style
+     * @param gtStyle The GeoTools Style
+     */
+    Style(GtStyle gtStyle) {
+        this(getRulesFromGtStyle(gtStyle))
+    }
+
+    /**
      * Get the GeoTools Style
      * @return The GeoTools Style
      */
@@ -139,6 +147,19 @@ class Style {
         styles[0].featureTypeStyles().eachWithIndex{fts,i ->
             getRulesFromGtFeatureTypeStyle(fts, i).each{r -> rules.add(r)}
         }
+    }
+
+    /**
+     * Create a GeoScript Style from a GeoTools Style
+     * @param style The GeoTools Style
+     * @return A GeoScript Style
+     */
+    private static List<Rule> getRulesFromGtStyle(GtStyle style) {
+        List rules = []
+        style.featureTypeStyles().eachWithIndex{fts,i ->
+            getRulesFromGtFeatureTypeStyle(fts, i).each{r -> rules.add(r)}
+        }
+        rules
     }
 
     /**
