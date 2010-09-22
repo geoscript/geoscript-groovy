@@ -13,12 +13,12 @@ import geoscript.style.*
 import geoscript.map.Map
 
 void createImage(Layer layer, Style style, File file) {
-    //style.toSLD()
     Map map = new Map()
     layer.style = style
     map.addLayer(layer)
     map.bounds = layer.bounds.expandBy(20)
     map.render(file)
+    map.close()
 }
 
 Layer shp = new Shapefile("sld_cookbook_point/sld_cookbook_point.shp")

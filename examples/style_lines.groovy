@@ -13,7 +13,6 @@ import geoscript.style.*
 import geoscript.map.Map
 
 void createImage(Layer layer, Style style, File file) {
-    style.toSLD()
     Map map = new Map()
     layer.style = style
     map.addLayer(layer)
