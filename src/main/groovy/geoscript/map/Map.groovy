@@ -67,6 +67,11 @@ class Map {
     private LabelCache labelCache = new LabelCacheImpl()
 
     /**
+     * The List of Layers
+     */
+    private List layers = []
+
+    /**
      * Create a new Map
      */
     Map() {
@@ -101,30 +106,12 @@ class Map {
     }
 
     /**
-     * Set the List of Layers
-     * @param The List of Layers
-     */
-    void setLayers(List<Layer> layers) {
-        context.clearLayerList()
-        layers.each{layer->addLayer(layer)}
-    }
-
-    /**
-     * Get the List of Layers
-     * @return The List of Layers
-     */
-    List<Layer> getLayers() {
-        context.layers.collect{mapLayer-> new Layer(mapLayer.featureSource)}
-    }
-
-    /**
      * Add a Layer with a Style
      * @param layer The Layer
      * @param style The Style
      */
     void addLayer(Layer layer) {
-        MapLayer mapLayer = new DefaultMapLayer(layer.fs, layer.style.gtStyle);
-        context.addLayer(mapLayer);
+        layers.add(layer)
     }
 
     /**
@@ -152,6 +139,17 @@ class Map {
     }
 
     /**
+     * Render the Map at a Bounds to a file name
+     * @param bounds The Bounds
+     * @param fileName The file name
+     */
+    void render(String fileName) {
+        FileOutputStream out = new FileOutputStream(new File(fileName))
+        render(out)
+        out.close()
+    }
+
+    /**
      * Render the Map at a Bounds to a File
      * @param bounds The Bounds
      * @param file The File
@@ -167,7 +165,7 @@ class Map {
      * @param out The OutputStream
      */
     void render(OutputStream out) {
-        ImageIO.write(renderToImage(), imageType, out);
+        ImageIO.write(renderToImage(), imageType, out)
     }
    
     /**
@@ -175,8 +173,8 @@ class Map {
      * @return A BufferedImage
      */ 
     BufferedImage renderToImage() {
-        BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
-        Graphics2D g = (Graphics2D) image.createGraphics();
+        BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB)
+        Graphics2D g = (Graphics2D) image.createGraphics()
         if (backgroundColor != null) {
             g.color = Style.getColor(backgroundColor)
             g.fillRect(0,0,width,height)
@@ -190,9 +188,14 @@ class Map {
         if (b.proj == null) {
             b = new Bounds(b.l, b.r, b.b, b.t, getProj())
         }
+        layers.each{layer ->
+            MapLayer mapLayer = new DefaultMapLayer(layer.fs, layer.style.gtStyle)
+            context.addLayer(mapLayer)
+        }
         renderer.paint(g, new Rectangle(0, 0, width, height), b.env)
         g.dispose()
         labelCache.clear()
+        context.clearLayerList()
         return image
     }
 
@@ -203,23 +206,23 @@ class Map {
      * @param mapBounds The geographic/map Bounds
      */
     private Bounds fixAspectRatio(int w, int h, Bounds mapBounds) {
-        double mapWidth = mapBounds.width;
-        double mapHeight = mapBounds.height;
-        double scaleX = w / mapWidth;
-        double scaleY = h / mapHeight;
-        double scale = 1.0D;
+        double mapWidth = mapBounds.width
+        double mapHeight = mapBounds.height
+        double scaleX = w / mapWidth
+        double scaleY = h / mapHeight
+        double scale = 1.0D
         if (scaleX < scaleY) {
-            scale = scaleX;
+            scale = scaleX
         } else {
-            scale = scaleY;
+            scale = scaleY
         }
-        double deltaX = w / scale - mapWidth;
-        double deltaY = h / scale - mapHeight;
-        double l = mapBounds.l - deltaX / 2D;
-        double r = mapBounds.r + deltaX / 2D;
-        double b = mapBounds.b - deltaY / 2D;
-        double t = mapBounds.t + deltaY / 2D;
-        return new Bounds(l, b, r, t, mapBounds.proj);
+        double deltaX = w / scale - mapWidth
+        double deltaY = h / scale - mapHeight
+        double l = mapBounds.l - deltaX / 2D
+        double r = mapBounds.r + deltaX / 2D
+        double b = mapBounds.b - deltaY / 2D
+        double t = mapBounds.t + deltaY / 2D
+        return new Bounds(l, b, r, t, mapBounds.proj)
     }
 
     /**
