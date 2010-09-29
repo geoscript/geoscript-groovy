@@ -22,9 +22,11 @@ import com.vividsolutions.jts.geom.Envelope
 import com.vividsolutions.jts.geom.MultiPolygon as JtsMultiPolygon
 import org.geotools.geometry.jts.LiteShape
 import org.geotools.renderer.chart.GeometryDataset
+import org.geotools.renderer.chart.GeometryRenderer
 import org.jfree.chart.JFreeChart
 import org.jfree.chart.ChartPanel
 import org.jfree.chart.ChartUtilities
+import org.jfree.chart.plot.XYPlot
 import geoscript.geom.*
 
 /**
@@ -163,8 +165,9 @@ class Viewer {
         if (!(geom instanceof List)) {
             geom = [geom]
         }
-        def gd = new GeometryDataset(geom.collect{g->g.g} as JtsGeometry[])
-        def plot = gd.createPlot()
+        def dataset = new GeometryDataset(geom.collect{g->g.g} as JtsGeometry[])
+        def renderer = new GeometryRenderer()
+        def plot = new XYPlot(dataset, dataset.domain, dataset.range, renderer)
         new JFreeChart(plot)
     }
 
