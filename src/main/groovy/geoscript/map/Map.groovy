@@ -127,7 +127,12 @@ class Map {
      * @param bounds The Bounds
      */
     void setBounds(Bounds bounds) {
-        context.areaOfInterest = bounds.env
+        // If the Bounds doesn't have a Projection
+        // assume it's the same as the Map
+        if (bounds.proj == null) {
+            bounds = new Bounds(bounds.l, bounds.b, bounds.r, bounds.t, getProj())
+        }
+        context.setAreaOfInterest(bounds.env, bounds.proj.crs)
     }
 
     /**
@@ -184,9 +189,9 @@ class Map {
             b = fixAspectRatio(width, height, b)
         }
         // If the Bounds doesn't have a Projection, assume it is the same
-        // Projection as the Map
+        // Projection as the Map       
         if (b.proj == null) {
-            b = new Bounds(b.l, b.r, b.b, b.t, getProj())
+            b = new Bounds(b.l, b.b, b.r, b.t, getProj())
         }
         layers.each{layer ->
             MapLayer mapLayer = new DefaultMapLayer(layer.fs, layer.style.gtStyle)
