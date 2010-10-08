@@ -101,8 +101,8 @@ class LineSymbolizer  extends Symbolizer {
     }
 
     /**
-     * Set the line join (miter)
-     * @param lineJoin The line join (miter)
+     * Set the line join (mitre, round, bevel)
+     * @param lineJoin The line join (mitre, round, bevel)
      */
     void setStrokeLineJoin(String lineJoin) {
         SLD.stroke(symbolizer).setLineJoin(Style.filterFactory.literal(lineJoin))
@@ -174,6 +174,9 @@ class LineSymbolizer  extends Symbolizer {
      */
     void setGraphicStrokeMarkName(String name) {
         createGraphicStrokeIfNecessary()
+        if (!name.startsWith("shape://")) {
+            name = "shape://${name}"
+        }
         SLD.mark(symbolizer.stroke.graphicStroke).wellKnownName = Style.filterFactory.literal(name)
     }
 
