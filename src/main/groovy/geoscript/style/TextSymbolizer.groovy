@@ -104,8 +104,8 @@ class TextSymbolizer  extends Symbolizer {
     }
 
     /**
-     * Set the font style
-     * @param style The font style
+     * Set the font style (normal, italic, oblique)
+     * @param style The font style (normal, italic, oblique)
      */
     void setFontStyle(String style) {
         SLD.font(symbolizer).setStyle(Style.filterFactory.literal(style))
