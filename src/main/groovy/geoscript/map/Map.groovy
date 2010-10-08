@@ -132,7 +132,7 @@ class Map {
         if (bounds.proj == null) {
             bounds = new Bounds(bounds.l, bounds.b, bounds.r, bounds.t, getProj())
         }
-        context.setAreaOfInterest(bounds.env, bounds.proj.crs)
+        context.setAreaOfInterest(bounds.env, bounds.proj?.crs)
     }
 
     /**
