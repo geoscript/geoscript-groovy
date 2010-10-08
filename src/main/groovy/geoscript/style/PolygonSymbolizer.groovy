@@ -105,11 +105,11 @@ class PolygonSymbolizer  extends Symbolizer {
     }
 
     /**
-     * Set the line join
-     * @param lineCap The line join
+     * Set the line join (mitre, round, bevel)
+     * @param lineCap The line join (mitre, round, bevel)
      */
     void setStrokeLineJoin(String lineJoin) {
-        SLD.stroke(symbolizer).setLineJoin(Style.filterFactory.literal(lineCap))
+        SLD.stroke(symbolizer).setLineJoin(Style.filterFactory.literal(lineJoin))
     }
 
     /**
@@ -223,6 +223,9 @@ class PolygonSymbolizer  extends Symbolizer {
      */
     void setMarkName(String name) {
         createGraphicFillIfNecessary()
+        if (!name.startsWith("shape://")) {
+            name = "shape://${name}"
+        }
         SLD.mark(symbolizer.fill.graphicFill).wellKnownName = Style.filterFactory.literal(name)
     }
 
