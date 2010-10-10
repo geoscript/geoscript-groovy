@@ -189,9 +189,19 @@ class Map {
             b = fixAspectRatio(width, height, b)
         }
         // If the Bounds doesn't have a Projection, assume it is the same
-        // Projection as the Map       
+        // Projection as the Map.  If the Map doesn't have a Projection
+        // get if from the first Layer that has a Projection
         if (b.proj == null) {
-            b = new Bounds(b.l, b.b, b.r, b.t, getProj())
+            def p = getProj()
+            if (p == null || p.crs == null) {
+                layers.each{layer->
+                    if (layer.proj != null) {
+                        p = layer.proj
+                        return
+                    }
+                }
+            }
+            b = new Bounds(b.l, b.b, b.r, b.t, p)
         }
         layers.each{layer ->
             MapLayer mapLayer = new DefaultMapLayer(layer.fs, layer.style.gtStyle)

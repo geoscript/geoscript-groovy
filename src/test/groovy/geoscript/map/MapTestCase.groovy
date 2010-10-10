@@ -4,6 +4,7 @@ import org.junit.Test
 import static org.junit.Assert.*
 import geoscript.layer.*
 import geoscript.proj.Projection
+import geoscript.geom.Bounds
 
 /**
  * The Map UnitTest
@@ -48,7 +49,47 @@ class MapTestCase {
         assertNotNull(image)
 
         File out = File.createTempFile("map",".png")
-        println(out)
+        println("renderToImage: ${out}")
+        javax.imageio.ImageIO.write(image, "png", out);
+        assertTrue(out.exists())
+        map.close()
+    }
+
+    @Test void renderToImageWithMapNoProjection() {
+        File file = new File(getClass().getClassLoader().getResource("states.shp").toURI())
+        assertNotNull(file)
+
+        Shapefile shp = new Shapefile(file)
+        assertNotNull(shp)
+
+        Map map = new Map()
+        map.addLayer(shp)
+        map.bounds = shp.bounds
+        def image = map.renderToImage()
+        assertNotNull(image)
+
+        File out = File.createTempFile("map",".png")
+        println("renderToImageWithMapNoProjection: ${out}")
+        javax.imageio.ImageIO.write(image, "png", out);
+        assertTrue(out.exists())
+        map.close()
+    }
+
+    @Test void renderToImageWithMapBoundsNoProjection() {
+        File file = new File(getClass().getClassLoader().getResource("states.shp").toURI())
+        assertNotNull(file)
+
+        Shapefile shp = new Shapefile(file)
+        assertNotNull(shp)
+
+        Map map = new Map()
+        map.addLayer(shp)
+        map.bounds = new Bounds(-126, 45.315, -116, 50.356)
+        def image = map.renderToImage()
+        assertNotNull(image)
+
+        File out = File.createTempFile("map",".png")
+        println("renderToImageWithMapBoundsNoProjection: ${out}")
         javax.imageio.ImageIO.write(image, "png", out);
         assertTrue(out.exists())
         map.close()
@@ -57,7 +98,7 @@ class MapTestCase {
     @Test void renderToFile() {
 
         File out = File.createTempFile("map",".png")
-        println(out)
+        println("renderToFile: ${out}")
 
         File file = new File(getClass().getClassLoader().getResource("states.shp").toURI())
         assertNotNull(file)
@@ -75,7 +116,7 @@ class MapTestCase {
 
     @Test void renderToOutputStream() {
         File f = File.createTempFile("map",".png")
-        println(f)
+        println("renderToOutputStream: ${f}")
         FileOutputStream out = new FileOutputStream(f)
 
         File file = new File(getClass().getClassLoader().getResource("states.shp").toURI())
