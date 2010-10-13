@@ -19,29 +19,38 @@ class TextItem extends Item {
     void draw(Graphics g) {
         g.color = color
         g.font = font
-        int drawX = x
-        int drawY = y
-        if (width > 0 && !halign.equalsIgnoreCase("left")) {
-            def metrics = g.fontMetrics
-            int stringWidth = metrics.stringWidth(text)
+        drawString(g, text, x, y, width, height, halign, valign)
+    }
+
+    private void drawString(Graphics g, String text, int x, int y, int w, int h, String halign, String valign) {
+        def metrics = g.fontMetrics
+        def bounds = metrics.getStringBounds(text, g)
+
+        int textX = x
+        if (w > 0) {
             if (halign.equalsIgnoreCase("center")) {
-                drawX = x + (width / 2 - stringWidth / 2)
+                textX = x + w/2 - bounds.width/2
             }
             else if (halign.equalsIgnoreCase("right")) {
-                drawX = x+ (width - stringWidth)
+                textX = x + w - bounds.width
             }
         }
-        if (height > 0 && !valign.equalsIgnoreCase("bottom")) {
-            def metrics = g.fontMetrics
-            int stringHeight = metrics.getStringBounds(text, g).height
-            if (valign.equalsIgnoreCase("middle")) {
-                drawX = height / 2 - stringHeight / 2
+
+        int textY = y
+        if (h > 0) {
+            if (valign.equalsIgnoreCase("top")) {
+                textY = y + bounds.height
             }
-            else if (valign.equalsIgnoreCase("top")) {
-                drawX = height + stringHeight
+            else if (valign.equalsIgnoreCase("middle")) {
+                textY = y + h/2 + bounds.height / 2 - metrics.descent
+            }
+            else if (valign.equalsIgnoreCase("bottom")) {
+                textY = y + h - metrics.descent
             }
         }
-        g.drawString(text, drawX, drawY)
+        
+        //g.drawRect(textX, textY - bounds.height + metrics.descent as int, bounds.width as int, bounds.height as int)
+        g.drawString(text, textX, textY)
     }
 
 }
