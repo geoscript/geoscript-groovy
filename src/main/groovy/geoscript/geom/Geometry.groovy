@@ -480,8 +480,8 @@ class Geometry {
     }
 
     /**
-     * Get Delaunay Triangle Diagram for this Geometry
-     * @return A Delaunay Triangle Diagram Geometry
+     * Get the Voronoi Diagram for this Geometry
+     * @return A Voronoi Diagram Geometry
      */
     Geometry getVoronoiDiagram() {
         def builder = new com.vividsolutions.jts.triangulate.VoronoiDiagramBuilder()

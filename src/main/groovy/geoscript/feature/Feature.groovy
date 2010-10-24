@@ -112,6 +112,15 @@ class Feature {
     }
 
     /**
+     * The Bounds of the Feature's Geometry.
+     * @param The Bounds of the Feature's Geometry
+     */
+    Bounds getBounds() {
+        Bounds b = getGeom().bounds
+        new Bounds(b.west, b.south, b.east, b.north, schema.proj)
+    }
+
+    /**
      * Get a value by Field name
      * @param name The Field name
      * @return The attribute value

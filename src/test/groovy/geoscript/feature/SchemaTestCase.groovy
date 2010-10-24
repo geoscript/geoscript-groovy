@@ -32,6 +32,17 @@ class SchemaTestCase {
         Schema s1 = new Schema("widgets", [new Field("geom","Point"), new Field("name","string"), new Field("price","float")])
         Field field = s1.geom
         assertEquals "geom: Point", field.toString()
+
+        Schema s2 = new Schema("widgets", [new Field("name","string"), new Field("price","float")])
+        assertNull s2.geom
+    }
+
+    @Test void getProj() {
+        Schema s1 = new Schema("widgets", [new Field("geom","Point", "EPSG:4326"), new Field("name","string"), new Field("price","float")])
+        assertEquals "EPSG:4326", s1.proj.id
+
+        Schema s2 = new Schema("widgets", [new Field("name","string"), new Field("price","float")])
+        assertNull s2.proj
     }
 
     @Test void field() {

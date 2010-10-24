@@ -86,11 +86,27 @@ class Schema {
     }
 
     /**
-     * Get the Schema's geometry Field
+     * Get the Schema's geometry Field or null if none exists
      * @return The Schema's Geometry Field
      */
     Field getGeom() {
-        field(featureType.geometryDescriptor.localName)
+        Field f = null
+        if (featureType.geometryDescriptor) {
+            f = field(featureType.geometryDescriptor.localName)
+        }
+        f
+    }
+
+    /**
+     * Get the Schema's Projection or null if one doesn't exist
+     * @return A Projection or null
+     */
+    Projection getProj() {
+        def p = null
+        if (featureType.coordinateReferenceSystem) {
+            p = new Projection(featureType.coordinateReferenceSystem)
+        }
+        p
     }
 
     /**

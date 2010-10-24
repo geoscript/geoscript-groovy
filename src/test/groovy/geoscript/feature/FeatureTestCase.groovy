@@ -56,6 +56,17 @@ class FeatureTestCase {
         assertEquals "POINT (121 -49)", f1.geom.toString()
     }
 
+    @Test void getBounds() {
+        Schema s1 = new Schema("houses", [new Field("geom","LineString", "EPSG:4326"), new Field("name","string"), new Field("price","float")])
+        Feature f1 = new Feature([new LineString([1,1], [10,10]), "House", 12.5], "house1", s1)
+        Bounds b = f1.bounds
+        assertEquals(1, b.west, 0.0)
+        assertEquals(1, b.south, 0.0)
+        assertEquals(10, b.east, 0.0)
+        assertEquals(10, b.north, 0.0)
+        assertEquals("EPSG:4326", b.proj.id)
+    }
+
     @Test void get() {
         Schema s1 = new Schema("houses", [new Field("geom","Point"), new Field("name","string"), new Field("price","float")])
         Feature f1 = new Feature([new Point(111,-47), "House", 12.5], "house1", s1)
