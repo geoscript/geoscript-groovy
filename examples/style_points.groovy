@@ -55,9 +55,16 @@ createImage(shp, new Style(new PointSymbolizer(
     strokeWidth: 2
 )), new File("point_transparent_triangle.png"))
 
+// PNG Icons
 createImage(shp, new Style(new PointSymbolizer(
     graphic: 'smileyface.png'
 )), new File("point_graphic.png"))
+
+// SVG Icons
+createImage(shp, new Style(new PointSymbolizer(
+    graphic: 'accommodation_camping.svg',
+    size: 16
+)), new File("point_graphic_svg.png"))
 
 createImage(shp, new Style([
     new PointSymbolizer(
