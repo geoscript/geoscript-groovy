@@ -9,6 +9,7 @@ import com.vividsolutions.jts.io.WKBReader
 import com.vividsolutions.jts.io.WKBWriter
 import com.vividsolutions.jts.geom.Envelope
 import com.vividsolutions.jts.geom.IntersectionMatrix
+import com.vividsolutions.jts.geom.util.AffineTransformation
 import geoscript.geom.io.*
 
 /**
@@ -532,6 +533,108 @@ class Geometry {
     Geometry getMinimumDiameter() {
         def minDiameter = new com.vividsolutions.jts.algorithm.MinimumDiameter(this.g)
         Geometry.wrap(minDiameter.diameter)
+    }
+    
+    /**
+     * Translate the Geometry.
+     * @param x The distance in the x direction
+     * @param y The distance in the y direction
+     * @return The translated Geometry
+     */
+    Geometry translate(double x, double y) {
+        Geometry.wrap(AffineTransformation.translationInstance(x,y).transform(g))
+    }
+    
+    /**
+     * Scale the Geometry relative to the origin
+     * @param xScale The x direction value
+     * @param yScale The y direction value
+     */
+    Geometry scale(double xScale, double yScale) {
+        Geometry.wrap(AffineTransformation.scaleInstance(xScale, yScale).transform(g))
+    }
+
+    /**
+     * Scale the Geometry relative to the origin
+     * @param xScale The x direction value
+     * @param yScale The y direction value
+     * @param x The x oordinate
+     * @param y The y oordinate
+     */
+    Geometry scale(double xScale, double yScale, double x, double y) {
+        Geometry.wrap(AffineTransformation.scaleInstance(xScale, yScale, x, y).transform(g))
+    }
+
+    /**
+     * Rotate the current Geometry around it's origin by a given angle theta(in radians)
+     * @param theta The angle of rotation in radians
+     * @return A new rotated Geometry
+     */
+    Geometry rotate(double theta) {
+        Geometry.wrap(AffineTransformation.rotationInstance(theta).transform(g))
+    }
+
+    /**
+     * Rotate the current Geometry around it's origin by a given angle theta(in radians)
+     * @param sin The sin of the angle of rotation in radians
+     * @param cos The cos of the angle of rotation in radians
+     * @return A new rotated Geometry
+     */
+    Geometry rotate(double sin, double cos) {
+        Geometry.wrap(AffineTransformation.rotationInstance(sin, cos).transform(g))
+    }
+
+    /**
+     * Rotate the current Geometry around the xy coordinate by a given angle theta(in radians)
+     * @param theta The angle of rotation in radians
+     * @param x The x oordinate
+     * @param y The y oordinate
+     * @return A new rotated Geometry
+     */
+    Geometry rotate(double theta, double x, double y) {
+        Geometry.wrap(AffineTransformation.rotationInstance(theta, x, y).transform(g))
+    }
+
+    /**
+     * Rotate the current Geometry around the xy coordinate by a given angle theta(in radians)
+     * @param sin The sin of the angle of rotation in radians
+     * @param cos The cos of the angle of rotation in radians
+     * @param x The x oordinate
+     * @param y The y oordinate
+     * @return A new rotated Geometry
+     */
+    Geometry rotate(double sin, double cos, double x, double y) {
+        Geometry.wrap(AffineTransformation.rotationInstance(cos, sin, x, y).transform(g))
+    }
+
+    /**
+     * Shear the Geometry in X and Y direction
+     * @param xShear The distance to shear in the x direction
+     * @param yShear The distance to shear in the y direction
+     * @return The new sheard Geometry
+     */
+    Geometry shear(double xShear, double yShear) {
+        Geometry.wrap(AffineTransformation.shearInstance(xShear, yShear).transform(g))
+    }
+
+    /**
+     * Reflect the Geometry about the line (0 0, x y)
+     * @param x The x oordinate
+     * @param y The y oordinate
+     */
+    Geometry reflect(double x, double y) {
+        Geometry.wrap(AffineTransformation.reflectionInstance(x, y).transform(g))
+    }
+
+    /**
+     * Reflect the Geometry about the line (x1 y1, x2 y2)
+     * @param x1 The x oordinate of the first coordinate
+     * @param y1 The y oordinate of the first coordinate
+     * @param x2 The x oordinate of the second coordinate
+     * @param y2 The y oordinate of the second coordinate
+     */
+    Geometry reflect(double x1, double y1, double x2, double y2) {
+        Geometry.wrap(AffineTransformation.reflectionInstance(x1, y1, x2, y2).transform(g))
     }
 
     /**

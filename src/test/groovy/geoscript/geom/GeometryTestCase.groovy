@@ -202,4 +202,40 @@ class GeometryTestCase {
         assertEquals("Self-intersection",g.validReason)
     }
 
+    @Test void translate() {
+        Geometry g = new Point(20,20)
+        assertEquals("POINT (25 20)", g.translate(5,0).wkt)
+        assertEquals("POINT (25 25)", g.translate(5,5).wkt)
+        assertEquals("POINT (15 20)", g.translate(-5,0).wkt)
+        assertEquals("POINT (15 15)", g.translate(-5,-5).wkt)
+    }
+
+    @Test void scale() {
+        Geometry g = new Polygon([10,10],[10,20],[20,20],[20,10],[10,10])
+        assertEquals("POLYGON ((50 50, 50 100, 100 100, 100 50, 50 50))", g.scale(5,5).wkt)
+        assertEquals("POLYGON ((-10 -10, -10 40, 40 40, 40 -10, -10 -10))", g.scale(5,5,g.centroid.x, g.centroid.y).wkt)
+    }
+
+    @Test void rotate() {
+        Geometry g = new Polygon([10,10],[10,20],[20,20],[20,10],[10,10])
+        // theta
+        assertTrue(new Bounds(-8, 14, 8, 29).geometry.contains(g.rotate(45 * Math.PI / 180)))
+        // sin, cos
+        assertTrue(new Bounds(10, 18, 29, 37).geometry.contains(g.rotate(15 * Math.PI / 180, 90 * Math.PI / 180)))
+        // theta, x, y
+        assertTrue(new Bounds(7, 7, 23, 23).geometry.contains(g.rotate(45 * Math.PI / 180, g.centroid.x, g.centroid.y)))
+        // sin, cos, x, y
+        assertTrue(new Bounds(5, 5, 25, 25).geometry.contains(g.rotate(15 * Math.PI / 180, 90 * Math.PI / 180, g.centroid.x, g.centroid.y)))
+    }
+
+    @Test void shear() {
+        Geometry g = new Polygon([10,10],[10,20],[20,20],[20,10],[10,10])
+        assertTrue(new Bounds(20.0,30.0,40.0,60.0).geometry.contains(g.shear(1,2)))
+    }
+
+    @Test void reflect() {
+        Geometry g = new Polygon([10,10],[10,20],[20,20],[20,10],[10,10])
+        assertTrue(new Bounds(-10,13,5,29).geometry.contains(g.reflect(10,30)))
+        assertTrue(new Bounds(-10,30,1,41).geometry.contains(g.reflect(10,30,20,40)))
+    }
 }
