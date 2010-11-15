@@ -10,12 +10,18 @@ import java.awt.RenderingHints
 import java.awt.AlphaComposite
 import java.awt.BorderLayout
 import java.awt.Rectangle
+import java.awt.Shape
+import java.awt.geom.Point2D
 import javax.swing.JFrame
 import javax.swing.JPanel
 import javax.swing.WindowConstants
 import java.awt.geom.AffineTransform
 import javax.imageio.ImageIO
 import java.awt.image.BufferedImage
+import com.vividsolutions.jts.awt.ShapeWriter
+import com.vividsolutions.jts.awt.PointTransformation
+import com.vividsolutions.jts.awt.SqarePointShapeFactory
+import com.vividsolutions.jts.geom.Coordinate
 import com.vividsolutions.jts.geom.Geometry as JtsGeometry
 import com.vividsolutions.jts.geom.Polygon as JtsPolygon
 import com.vividsolutions.jts.geom.Envelope
@@ -57,7 +63,7 @@ class Viewer {
         if (!(geom instanceof List)) {
             geom = [geom]
         }
-        Panel panel = new Panel(geom, worldToScreen(geom, size, buf))
+        Panel panel = new Panel(geom)
         Dimension dim = new Dimension((int) (size[0] + 2 * buf), (int) (size[1] + 2 * buf))
         panel.preferredSize = dim
         panel.minimumSize = dim
@@ -83,9 +89,15 @@ class Viewer {
     static BufferedImage drawToImage(def geom, List size=[500,500]) {
         BufferedImage image = new BufferedImage(size[0], size[1], BufferedImage.TYPE_INT_ARGB)
         Graphics2D g2d = image.createGraphics()
-        g2d.color = Color.WHITE
-        g2d.fillRect(0,0,size[0],size[1])
-        drawToGraphics(g2d, worldToScreen(geom, size), geom)
+        //g2d.color = Color.WHITE
+        //g2d.fillRect(0,0,size[0],size[1])
+        Bounds bounds = new GeometryCollection(geom).bounds
+        bounds.expandBy(bounds.width * 0.10)
+        geom = geom instanceof List ? geom : [geom]
+        geom.each{g ->
+            def c = randomColor()
+            draw(g2d, size, [g], bounds, c.darker(), c)
+        }
         g2d.dispose()
         image
     }
@@ -103,6 +115,75 @@ class Viewer {
         FileOutputStream out = new FileOutputStream(file)
         ImageIO.write(drawToImage(geom,size), imageFormat, out)
         out.close()
+    }
+
+    /**
+     * Generate a random color
+     * @return A Color
+     */
+    private static Color randomColor() {
+        def random = new java.util.Random()
+        int red = random.nextInt(256)
+        int green = random.nextInt(256)
+        int blue = random.nextInt(256)
+        new Color(red,green,blue)
+    }
+
+    /**
+     * Draw a List of GeoScript Geometries to a Graphics2D.
+     * @param g2d The Graphics2D
+     * @param size The size of the Graphics2D/Image
+     * @param geometries A List of GeoScript Geometries
+     */
+    static void draw(Graphics2D g2d, List size, List geometries, Bounds bounds,
+        Color strokeColor = new Color(99,99,99), Color fillColor = new Color(206,206,206),
+        String markerShape = "square", double markerSize = 8, float opacity = 0.75, float strokeWidth = 1.0,
+        boolean drawCoordinates = false) {
+
+        int imageWidth = size[0]
+        int imageHeight = size[1]
+
+        // @TODO Add support for other shapes when jts 1.11 comes out
+        def shapeFactory = new SqarePointShapeFactory(markerSize)
+
+        ShapeWriter shapeWriter = new ShapeWriter({Coordinate mapCoordinate, Point2D shape ->
+            double imageX = (1 - (bounds.r - mapCoordinate.x) / bounds.width) * imageWidth
+            double imageY = ((bounds.t - mapCoordinate.y) / bounds.height) * imageHeight
+            shape.setLocation(imageX,imageY);
+        } as PointTransformation, shapeFactory)
+
+        Composite strokeComposite = g2d.getComposite()
+        Composite fillComposite = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, opacity)
+
+        geometries.each{geometry->
+            Shape shp = shapeWriter.toShape(geometry.g)
+            // Fill
+            g2d.setComposite(fillComposite)
+            g2d.setColor(fillColor)
+            g2d.fill(shp)
+            // Stroke
+            g2d.setComposite(strokeComposite)
+            g2d.setStroke(new BasicStroke(strokeWidth))
+            g2d.setColor(strokeColor)
+            g2d.draw(shp)
+            if (drawCoordinates) {
+                g2d.setStroke(new BasicStroke(strokeWidth))
+                List coords = geometry.coordinates
+                if (coords.size() > 1) {
+                    coords.each{c ->
+                        Shape coordinateShp = shapeWriter.toShape(geometry.g.getFactory().createPoint(c))
+                        // Fill
+                        g2d.setComposite(fillComposite)
+                        g2d.setColor(fillColor)
+                        g2d.fill(coordinateShp)
+                        // Stroke
+                        g2d.setComposite(strokeComposite)
+                        g2d.setColor(strokeColor)
+                        g2d.draw(coordinateShp)
+                    }
+                }
+            }
+        }
     }
 
     /**
@@ -170,120 +251,34 @@ class Viewer {
         def plot = new XYPlot(dataset, dataset.domain, dataset.range, renderer)
         new JFreeChart(plot)
     }
-
-    /**
-     * Create an AffineTransform that transforms coordinates from world
-     * to the screen
-     */
-    private static AffineTransform worldToScreen(def geom, List size=[500,500], double buf = 50.0) {
-
-        // Make sure the geom parameter is a List of Geometries
-        if (!(geom instanceof List)) {
-            geom = [geom]
-        }
-
-        // Turn into an Array of JTS Geometries
-        def g = geom.collect{
-            it.g
-        }.toArray() as JtsGeometry[]
-
-        // Create a JTS GeometryCollection
-        JtsGeometry gc = Geometry.factory.createGeometryCollection(g)
-        Envelope e = gc.envelopeInternal
-
-        // Image width and height
-        double imageWidth  = size[0] as double
-        double imageHeight = size[1] as double
-
-        // Extent width and height
-        double extentWidth = e.width
-        double extentHeight = e.height
-
-        // Scale
-        double scaleX = extentWidth  > 0 ? imageWidth  / extentWidth  : java.lang.Double.MAX_VALUE
-        double scaleY = extentHeight > 0 ? imageHeight / extentHeight : 1.0 as double
-        double scale = Math.min(scaleX, scaleY)
-
-        double tx = -e.minX * scaleX
-        double ty = (e.minY * scaleY) + (imageHeight)
-
-        // AffineTransform
-        AffineTransform at = new AffineTransform(scaleX, 0.0d, 0.0d, -scaleY, tx, ty)
-
-        //AffineTransform at = new AffineTransform()
-        // Scale to size of canvas by inverting the y axis
-        //at.scale(scale, -scale)
-
-        // translate to the origin
-        //at.translate(-e.minX, -e.minY)
-
-        // translate to account for the invert
-        //at.translate(0, -(imageHeight / scale))
-
-        // translate to account for the buffer
-        //at.translate(buf / scale, -buf / scale)
-
-        return at
-    }
-
-    /**
-     * Draw a Geometry or a List of Geometries to the given Graphics2D with the AffineTransform
-     * @param g2d The Graphics2D
-     * @param atx The AffineTransform
-     * @param geom A Geometry or a List of Geometries
-     */
-    private static void drawToGraphics(Graphics2D g2d, AffineTransform atx, def geom) {
-        g2d.color = Color.BLACK
-        Composite c = g2d.composite
-        g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON)
-        g2d.stroke = new BasicStroke(2)
-
-        if (!(geom instanceof List)) {
-            geom = [geom]
-        }
-
-        geom.each{g ->
-            LiteShape shp = new LiteShape(g.g, atx, false)
-            if (g instanceof Polygon || g instanceof MultiPolygon) {
-                g2d.color = Color.WHITE
-                g2d.composite = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, new Float(0.5).floatValue())
-                g2d.fill(shp)
-            }
-            g2d.composite = c
-            g2d.color = Color.BLACK
-            g2d.draw(shp)
-        }
-    }
-
 }
 
 /**
  * The JPanel used to draw Geometry
  */
-private class Panel extends JPanel {
+private static class Panel extends JPanel {
 
     /**
      * The List of Geometries to draw
      */
-    List<Geometry> geoms
+    private List<Geometry> geoms
+
+    private boolean drawCoordinates = false
+    private Color color = Viewer.randomColor()
+    private String markerShape = "square"
+    private double markerSize = 8
+    private float opacity = 0.75
+    private float strokeWidth = 1.0
 
     /**
-     * The AffineTransform that converts between mapping and screen coordinates
-     */
-    AffineTransform atx
-
-    /**
-     * Create a new Panel with the List of Geometries to draw and the
-     * AffineTransform that converts between mapping and screen coordinates
+     * Create a new Panel with the List of Geometries to draw
      * @param geoms The List of Geometries to draw
-     * @param atx The AffineTransform that converts between mapping and screen coordinates
      */
-    Panel(List<Geometry> geoms, AffineTransform atx) {
+    Panel(List<Geometry> geoms) {
         super()
         background = Color.WHITE
         opaque = true
         this.geoms = geoms
-        this.atx = atx
     }
 
     /**
@@ -292,7 +287,12 @@ private class Panel extends JPanel {
      */
     void paintComponent(Graphics gr) {
         super.paintComponent(gr)
+        List size = [getWidth(), getHeight()]
         Graphics2D g2d = (Graphics2D)gr
-        Viewer.drawToGraphics(g2d, atx, geoms)
+        Bounds bounds = new GeometryCollection(geoms).bounds
+        bounds.expandBy(bounds.width * 0.10)
+        geoms.each{g ->
+            Viewer.draw(g2d, size, [g], bounds, color.darker(), color, markerShape, markerSize, opacity, strokeWidth, drawCoordinates)
+        }
     }
 }
