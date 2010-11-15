@@ -181,4 +181,26 @@
     </properties>
     <name>geoscript groovy</name>
     <description>A groovy implementation of geoscript.</description>
+    <url>http://geoscript.org/</url>
+    <licenses>
+        <license>
+            <name>MIT</name>
+            <url>http://www.opensource.org/licenses/mit-license.php</url>
+        </license>
+    </licenses>
+    <scm>
+        <connection>scm:git://github.com/jericks/geoscript-groovy.git</connection>
+        <url>https://github.com/jericks/geoscript-groovy</url>
+        <developerConnection>scm:git@github.com:jericks/geoscript-groovy.git</developerConnection>
+    </scm>
+    <issueManagement>
+        <system>github</system>
+        <url>https://github.com/jericks/geoscript-groovy/issues</url>
+    </issueManagement>
+    <developers>
+        <developer>
+            <id>jericks</id>
+            <name>Jared Erickson</name>
+        </developer>
+    </developers>
 </project>
