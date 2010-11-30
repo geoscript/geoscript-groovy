@@ -382,5 +382,38 @@ class TextSymbolizer  extends Symbolizer {
     float getRepeat() {
         symbolizer.options["repeat"] as float ?: 0
     }
+    
+    /**
+     * Set the goodness of fit parameter (0 to 1)
+     * @param goodness A value between 0 and 1
+     */
+    void setGoodnessOfFit(float goodness) {
+        symbolizer.options.put("goodnessOfFit", String.valueOf(goodness))
+    }
+    
+    /** 
+     * Get the goodness of fit parameter
+     * @return The goodness of fit parameter
+     */
+    float getGoodnessOfFit() {
+        symbolizer.options["goodnessOfFit"] as float ?: 0
+    }
+    
+    /**
+     * Set the polygon align option (mbr)
+     * @param value The option value (mbr)
+     */
+    void setPolygonAlign(String value) {
+        symbolizer.options.put("polygonAlign", value)
+    }
+
+    /**
+     * Get the polygon align option
+     * @return The option value or null
+     */
+    String getPolygonAlign() {
+        symbolizer.options["polygonAlign"]
+    }
+
 }
 
