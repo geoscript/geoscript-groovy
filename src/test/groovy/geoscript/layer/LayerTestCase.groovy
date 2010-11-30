@@ -45,8 +45,19 @@ class LayerTestCase {
         Schema s1 = new Schema("facilities", [new Field("geom","Point", "EPSG:2927"), new Field("name","string"), new Field("price","float")])
         Layer layer1 = new Layer("facilities", s1)
         assertEquals 0, layer1.count()
+        // Add a Feature
         layer1.add(new Feature([new Point(111,-47), "House", 12.5], "house1", s1))
         assertEquals 1, layer1.count()
+        // Add a Feature by passing a List of values
+        layer1.add([new Point(110,-46), "House 2", 14.1])
+        assertEquals 2, layer1.count()
+        // Add a List of Features
+        layer1.add([
+            new Feature([new Point(109,-45), "House 3", 15.5], "house2", s1),
+            new Feature([new Point(108,-44), "House 4", 16.5], "house3", s1),
+            new Feature([new Point(107,-43), "House 5", 17.5], "house4", s1)
+        ])
+        assertEquals 5, layer1.count()
     }
 
     @Test void plus() {
@@ -167,6 +178,7 @@ class LayerTestCase {
         layer.add(new Feature([new Point(111,-47), "House 1", 12.5], "house1", s))
         layer.add(new Feature([new Point(112,-46), "House 2", 13.5], "house2", s))
         layer.add(new Feature([new Point(113,-45), "House 3", 14.5], "house3", s))
+        assertEquals 3, layer.count
 
         def features = layer.features
         assertEquals "House 1", features[0].get('name')
@@ -198,6 +210,7 @@ class LayerTestCase {
         assertEquals 12.5 * 2, features[0].get('price'), 0.01
         assertEquals 13.5 * 2, features[1].get('price'), 0.01
         assertEquals 14.5 * 2, features[2].get('price'), 0.01
+        assertEquals 3, layer.count
     }
 
 }

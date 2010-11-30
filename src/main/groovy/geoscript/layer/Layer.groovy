@@ -351,6 +351,7 @@ class Layer {
         }
         finally {
             t.close()
+            fs.transaction = Transaction.AUTO_COMMIT
         }
     }
 
@@ -359,19 +360,44 @@ class Layer {
      * @param o The Feature or List/Map of values
      */
     void add(def o) {
-        Feature f
-        if (o instanceof Feature) {
-            f = o
-            if (f.schema == null) {
-                f.schema = schema
+        // If it is a List of Features, then add it inside of a Transaction
+        if (o instanceof List && o.size() > 0 && o.get(0) instanceof Feature) {
+            Transaction t = new DefaultTransaction("addTransaction")
+            try {
+                FeatureStore<SimpleFeatureType, SimpleFeature> store = (FeatureStore)fs
+                store.transaction = t
+                o.each{f->
+                    FeatureCollection fc = FeatureCollections.newCollection()
+                    fc.add(f.f)
+                    store.addFeatures(fc)
+                }
+                t.commit()
+            }
+            catch (Exception e) {
+                e.printStackTrace()
+                t.rollback()
+            }
+            finally {
+                t.close()
+                fs.transaction = Transaction.AUTO_COMMIT
             }
         }
+        // Otherwise its a Feature or a List of values
         else {
-            f = schema.feature(o)
+            Feature f
+            if (o instanceof Feature) {
+                f = o
+                if (f.schema == null) {
+                    f.schema = schema
+                }
+            }
+            else {
+                f = schema.feature(o)
+            }
+            FeatureCollection fc = FeatureCollections.newCollection()
+            fc.add(f.f)
+            fs.addFeatures(fc)
         }
-        FeatureCollection fc = FeatureCollections.newCollection()
-        fc.add(f.f)
-        fs.addFeatures(fc)
     }
 
     /**
