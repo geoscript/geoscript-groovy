@@ -13,7 +13,7 @@ interface Writer {
      * @param g The Geometry
      * @return A String
      */
-    String write(Geometry g);
+    String write(Geometry g)
 
 }
 

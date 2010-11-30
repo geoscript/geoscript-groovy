@@ -13,7 +13,7 @@ interface Reader {
      * @param str The String
      * @return A Geometry
      */
-    Geometry read(String str);
+    Geometry read(String str)
 
 }
 
