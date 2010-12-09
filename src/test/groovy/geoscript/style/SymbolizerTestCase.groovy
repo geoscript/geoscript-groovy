@@ -22,6 +22,16 @@ class SymbolizerTestCase {
 
     }
 
+    @Test void getSetGeometry() {
+        def sym1 = new PointSymbolizer(geometry: "the_geom")
+        assertNotNull sym1
+        assertEquals "the_geom", sym1.geometry
+
+        def sym2 = new PointSymbolizer(geometry: new geoscript.filter.Function("buffer(the_geom,100)"))
+        assertNotNull sym2
+        assertTrue sym2.geometry instanceof geoscript.filter.Function
+    }
+
 }
 
 

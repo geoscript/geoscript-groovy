@@ -9,6 +9,20 @@ import static org.junit.Assert.*
  */
 class TextSymbolizerTestCase {
 
+    @Test void setGetLabel() {
+        def sym = new TextSymbolizer(
+            label: "name"
+        )
+        assertTrue sym.label instanceof String
+        assertEquals "name", sym.label
+
+        sym = new TextSymbolizer(
+            label: new geoscript.filter.Function("strCapitalize(name)")
+        )
+        assertTrue sym.label instanceof geoscript.filter.Function
+        assertEquals "strCapitalize([name])", sym.label.toString()
+    }
+
     @Test void simple() {
         def sym = new TextSymbolizer(
             label: "name",

@@ -26,6 +26,41 @@ class Symbolizer {
     }
 
     /**
+     * Set the geometry. Some Layers may have more than one
+     * geometry Field.  You can set the name of the field here.  Or you
+     * can pass in a geoscript.filter.Function.
+     * @param geom The name of the geometry Field or a geoscript.filter.Function
+     */
+    void setGeometry(def geom) {
+        if (geom instanceof geoscript.filter.Function) {
+            symbolizer.geometry = geom.function
+        } else {
+            symbolizer.geometry = Style.filterFactory.property(geom)
+        }
+    }
+
+    /**
+     * Get the geometry value
+     * @return The geometry value
+     */
+    def getGeometry() {
+        def geom = symbolizer.geometry
+        if (geom == null) {
+            return null
+        }
+        // Try to make it GeoScript friendly
+        if (geom instanceof org.opengis.filter.expression.PropertyName) {
+            return geom.propertyName
+        } else if (geom instanceof org.opengis.filter.expression.Literal) {
+            return geom.value
+        } else if (geom instanceof org.opengis.filter.expression.Function) {
+            return new geoscript.filter.Function(geom)
+        } else {
+            return geom
+        }
+    }
+
+    /**
      * The string representation
      * @param The string representation
      */

@@ -40,19 +40,34 @@ class TextSymbolizer  extends Symbolizer {
     }
 
     /**
-     * Set the label name
-     * @param name The label name
+     * Set the label
+     * @param lbl The label by name or with a Function
      */
-    void setLabel(String name) {
-        symbolizer.label = Style.filterFactory.property(name)
+    void setLabel(def lbl) {
+        if (lbl instanceof Field) {
+            symbolizer.label = Style.filterFactory.property(lbl.name)
+        } else if (lbl instanceof geoscript.filter.Function) {
+            symbolizer.label = lbl.function
+        } else {
+            symbolizer.label = Style.filterFactory.property(lbl)
+        }
     }
-
+  
     /**
      * Get the label name
      * @return The label
      */
-    String getLabel() {
-        symbolizer.label
+    def getLabel() {
+        def lbl = symbolizer.label
+        if (lbl instanceof org.opengis.filter.expression.PropertyName) {
+            return lbl.propertyName
+        } else if (lbl instanceof org.opengis.filter.expression.Literal) {
+            return lbl.value
+        } else if (lbl instanceof org.opengis.filter.expression.Function) {
+            return new geoscript.filter.Function(lbl)
+        } else {
+            return lbl
+        }
     }
 
     /**
