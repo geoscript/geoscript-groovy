@@ -13,7 +13,7 @@ import org.geotools.filter.v1_1.OGCConfiguration as OGCConfiguration11
 import org.geotools.filter.v1_1.OGC as OGC11 
 
 /**
- * A Filter is a predicate or constraint used to match or filter Feature objects
+ * A Filter is a predicate or constraint used to match or filter Feature objects.
  * <p>You can create Filters from CQL:</p>
  * <code>
  * Filter f = new Filter("name='foobar')
