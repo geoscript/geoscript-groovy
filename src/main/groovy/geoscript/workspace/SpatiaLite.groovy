@@ -8,7 +8,7 @@ import org.geotools.data.spatialite.SpatiaLiteDataStoreFactory
  * A SpatiaLite Workspace connects to a SpatiaLite database.
  * @author Jared Erickson
  */
-class SpatiaLite extends Workspace {
+class SpatiaLite extends Database {
 
     /**
      * Create a new SpatiaLite Workspace from a name and directory
@@ -25,7 +25,7 @@ class SpatiaLite extends Workspace {
      * @param dir The directory name containing the database
      */
     SpatiaLite(String name, String dir) {
-        this(name, new File(dir).absolutePath)
+        this(name, new File(dir).absoluteFile)
     }
 
     /**

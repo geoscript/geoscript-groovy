@@ -14,11 +14,10 @@ class SpatiaLiteTestCase {
 
     @Test void constructrors() {
 
-        //println("java.library.path = " + System.getProperty("java.library.path"))
         /*File file = new File(getClass().getClassLoader().getResource("states.shp").toURI()).parentFile
         assertNotNull(file)
 
-        SpatiaLite spatialite = new SpatiaLite("db.splite", file)
+        SpatiaLite spatialite = new SpatiaLite("db.sqlite", file)
         assertNotNull(spatialite)
 
         assertEquals 1, spatialite.layers.size()

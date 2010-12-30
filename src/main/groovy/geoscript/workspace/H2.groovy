@@ -8,7 +8,7 @@ import org.geotools.data.h2.H2DataStoreFactory
  * A H2 Workspace connects to a spatially enabled H2 database.
  * @author Jared Erickson
  */
-class H2 extends Workspace {
+class H2 extends Database {
 
     /**
      * Create a new H2 Workspace with a name and directory
