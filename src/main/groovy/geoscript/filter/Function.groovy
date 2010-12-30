@@ -1,9 +1,7 @@
 package geoscript.filter
 
-import geoscript.feature.Field
 import org.geotools.factory.CommonFactoryFinder
 import org.opengis.filter.expression.Function as GtFunction
-import org.opengis.filter.expression.Expression
 
 /**
  * A GeoScript Function either wraps an existing GeoTools Function or an CQL String.
