@@ -30,6 +30,3 @@ while(c.hasNext()) {
     println(f)
 }
 c.close()
-
-// Export as GML
-layer.toGML()
