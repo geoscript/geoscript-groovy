@@ -7,8 +7,8 @@ import javax.imageio.ImageIO
 import java.awt.Color
 
 /**
- *
- * @author jericks
+ * The ImageProducer can write png, gif, or jpeg Images.
+ * @author Jared Erickson
  */
 class ImageProducer implements Producer {
 
@@ -56,6 +56,12 @@ class ImageProducer implements Producer {
         type
     }
 
+    /**
+     * Write the print Template to the OutputStream in the given mime type
+     * @param template The print Template
+     * @param mimeType The mime type (defaults to image/png)
+     * @param out The OutputStream
+     */
     BufferedImage produce(Template template, String mimeType = "image/png") {
         int imageType = mimeType.equalsIgnoreCase("image/jpeg") ? BufferedImage.TYPE_INT_RGB : BufferedImage.TYPE_INT_ARGB
         BufferedImage image = new BufferedImage(template.width, template.height, imageType)

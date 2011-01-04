@@ -1,8 +1,8 @@
 package geoscript.print
 
 /**
- * A Producer can write a print Template to an OutputStream for a given
- * mime type
+ * A Producer can write a Print template to an OutputStream for a given
+ * mime type.
  * @author Jared Erickson
  */
 interface Producer {

@@ -8,8 +8,8 @@ import com.lowagie.text.pdf.PdfContentByte
 import com.lowagie.text.pdf.PdfTemplate
 
 /**
- *
- * @author jericks
+ * The PdfProducer can write PDF documents.
+ * @author Jared Erickson
  */
 class PdfProducer implements Producer {
 

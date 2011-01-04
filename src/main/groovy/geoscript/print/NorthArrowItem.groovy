@@ -6,19 +6,40 @@ import java.awt.BasicStroke
 import java.awt.geom.GeneralPath
 
 /**
- * A NorthArrow Item
- * @author jericks
+ * The NorthArrowItem can display a north arrow
+ * @author Jared Erickson
  */
 class NorthArrowItem extends Item {
 
+    /**
+     * The first fill Color
+     */
     Color fillColor1 = Color.BLACK
+
+    /**
+     * The first stroke Color
+     */
     Color strokeColor1 = Color.BLACK
 
+    /**
+     * The second fill Color
+     */
     Color fillColor2 = Color.WHITE
+
+    /**
+     * The second stroke Color
+     */
     Color strokeColor2 = Color.BLACK
 
+    /**
+     * The stroke width
+     */
     float strokeWidth = 1
 
+    /**
+     * Draw the NorthArrowItem
+     * @param g The Graphics
+     */
     void draw(Graphics g) {
 
         def path1 = new GeneralPath()

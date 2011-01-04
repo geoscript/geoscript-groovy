@@ -5,23 +5,57 @@ import java.awt.Font
 import java.awt.Color
 
 /**
- * A Text Item
+ * The Text Item can display text.
  * @author Jared Erickson
  */
 class TextItem extends Item {
 
+    /**
+     * The text to display
+     */
     String text
+
+    /**
+     * The text color
+     */
     Color color = Color.BLACK
+
+    /**
+     * The text Font
+     */
     Font font = new Font("Default", Font.PLAIN, 12)
+
+    /**
+     * The horizontal alignment of the text (left, center, right)
+     */
     String halign = "left" // left, center, right
+
+    /**
+     * The vertical alignment of the text (top, middle, bottom)
+     */
     String valign = "bottom" // top, middle, bottom
 
+    /**
+     * Draw the TextItem
+     * @param g The Graphics
+     */
     void draw(Graphics g) {
         g.color = color
         g.font = font
         drawString(g, text, x, y, width, height, halign, valign)
     }
 
+    /**
+     * Draw the text to the Graphics
+     * @param g The Graphics
+     * @param text The text
+     * @param x The x coordinate
+     * @param y The y coordinate
+     * @param w The width
+     * @param h The height
+     * @param halign The horizontal alignment of the text (left, center, right)
+     * @param valign The vertical alignment of the text (top, middle, bottom)
+     */
     private void drawString(Graphics g, String text, int x, int y, int w, int h, String halign, String valign) {
         def metrics = g.fontMetrics
         def bounds = metrics.getStringBounds(text, g)
@@ -52,6 +86,4 @@ class TextItem extends Item {
         //g.drawRect(textX, textY - bounds.height + metrics.descent as int, bounds.width as int, bounds.height as int)
         g.drawString(text, textX, textY)
     }
-
 }
-

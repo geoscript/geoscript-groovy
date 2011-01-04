@@ -8,8 +8,8 @@ import org.w3c.dom.DOMImplementation
 import org.w3c.dom.Document
 
 /**
- *
- * @author jericks
+ * The SvgProducer can write SVG documents.
+ * @author Jared Erickson
  */
 class SvgProducer implements Producer {
 
@@ -41,6 +41,4 @@ class SvgProducer implements Producer {
         g.stream(new OutputStreamWriter(out));
         g.dispose()
     }
-
 }
-

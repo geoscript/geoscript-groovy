@@ -8,15 +8,30 @@ import java.awt.font.LineBreakMeasurer
 import java.awt.font.TextAttribute
 
 /**
- * Draw paragraphs of text
+ * The ParagraphItem can display paragraphs of text.
  * @author Jared Erickson
  */
 class ParagraphItem extends Item {
 
+    /**
+     * The text
+     */
     String text
+
+    /**
+     * The text Color
+     */
     Color color = Color.BLACK
+
+    /**
+     * The text Font
+     */
     Font font = new Font("Default", Font.PLAIN, 12)
 
+    /**
+     * Draw the ParagraphItem
+     * @param g The Graphics
+     */
     void draw(Graphics g) {
         g.color = color
         g.font = font
