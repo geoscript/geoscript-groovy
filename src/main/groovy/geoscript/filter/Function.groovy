@@ -21,12 +21,12 @@ class Function {
     private static def ff = CommonFactoryFinder.getFilterFactory2(null)
 
     /**
-     * The GeoTools Functions
+     * The GeoTools Function
      */
     GtFunction function
 
     /**
-     * Create a Function from a GeoTools Functions
+     * Create a Function from a GeoTools Function
      * @param f The GeoTools Function
      */
     Function(GtFunction f) {
