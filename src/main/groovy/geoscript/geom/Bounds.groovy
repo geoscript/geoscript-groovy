@@ -48,7 +48,7 @@ class Bounds {
      * @param south the bottom/south most coordinate (minY)
      * @param east The right/east most coordinate (maxX)
      * @param north The top/north most coordinate (maxY)
-      * @param proj The Projection can either be a Projection or a String
+     * @param proj The Projection can either be a Projection or a String
      */
     Bounds(double west, double south, double east, double north, def proj) {
         this(new ReferencedEnvelope(west, east, south, north, new Projection(proj).crs))
