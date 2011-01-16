@@ -24,5 +24,5 @@ class PointTestCase {
         assertEquals(111, p1.x, 0.0)
         assertEquals(-47, p1.y, 0.0)
     }
-
+    
 }

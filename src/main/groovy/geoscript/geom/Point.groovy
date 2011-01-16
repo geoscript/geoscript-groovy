@@ -46,8 +46,8 @@ class Point extends Geometry {
     }
 
     /**
-     * Add this Point with another to create a MultiPoint
-     * <p><code>def p = new Point(1,2)<code></p>
+     * Add this Point with another to create a MultiPoint.
+     * <p><code>def p = new Point(1,2)</code></p>
      * <p><code>def m = p + new Point(3,4)</code></p>
      * <p><code>MULTIPOINT (1 2, 3 4)</code></p>
      * @param point The other Point
@@ -56,5 +56,4 @@ class Point extends Geometry {
     MultiPoint plus(Point point) {
         new MultiPoint(*[this, point])
     }
-
 }
