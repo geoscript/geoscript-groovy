@@ -238,4 +238,43 @@ class GeometryTestCase {
         assertTrue(new Bounds(-10,13,5,29).geometry.contains(g.reflect(10,30)))
         assertTrue(new Bounds(-10,30,1,41).geometry.contains(g.reflect(10,30,20,40)))
     }
+
+    @Test void getAt() {
+        // LineString
+        def line = Geometry.fromWKT("LINESTRING (1 2, 2 1)")
+        assertEquals("POINT (1 2)", line[0].wkt)
+        assertEquals("POINT (2 1)", line[1].wkt)
+        assertNull(line[2])
+
+        // Point
+        def point = new Point(111,-47)
+        assertEquals(111, point[0], 0.0)
+        assertEquals(-47, point[1], 0.0)
+        assertNull(point[2])
+        def (x,y) = point
+        assertEquals(111, x, 0.0)
+        assertEquals(-47, y, 0.0)
+
+        // Polygon
+        def poly = new Polygon(new LinearRing([1,1], [10,1], [10,10], [1,10], [1,1]),
+            [
+                new LinearRing([2,2], [4,2], [4,4], [2,4], [2,2]),
+                new LinearRing([5,5], [6,5], [6,6], [5,6], [5,5])
+            ]
+        )
+        assertEquals("LINEARRING (1 1, 10 1, 10 10, 1 10, 1 1)", poly[0].wkt)
+        assertEquals("LINEARRING (2 2, 4 2, 4 4, 2 4, 2 2)", poly[1].wkt)
+        assertEquals("LINEARRING (5 5, 6 5, 6 6, 5 6, 5 5)", poly[2].wkt)
+        assertNull(poly[3])
+
+        // MultiPoint
+        def mp = new MultiPoint([1,2],[3,4])
+        assertEquals("POINT (1 2)", mp[0].wkt)
+        assertEquals("POINT (3 4)", mp[1].wkt)
+        assertNull(mp[2])
+        def (p1, p2) = mp
+        assertEquals("POINT (1 2)", p1.wkt)
+        assertEquals("POINT (3 4)", p2.wkt)
+    }
+
 }

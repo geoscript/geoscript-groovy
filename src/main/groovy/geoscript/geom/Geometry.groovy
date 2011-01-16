@@ -638,6 +638,45 @@ class Geometry {
     }
 
     /**
+     * Get the sub Geometry at the specified index.  This
+     * allows support for Groovy's multiple assignment.
+     * <p><code>def p1 = new Point(111,-47)</code></p>
+     * <p><code>def (x,y) = p1</code></p>
+     * @return The sub Geometry at the specified index
+     */
+    Object getAt(int index) {
+        // Point => X, Y
+        if (g instanceof com.vividsolutions.jts.geom.Point) {
+            if (index == 0) {
+                return g.x
+            } else if (index == 1) {
+                return g.y
+            }
+        }
+        // Polygon => Exterior and Interior LinearRing(s)
+        else if (g instanceof com.vividsolutions.jts.geom.Polygon) {
+            if (index == 0) {
+                return Geometry.wrap(g.exteriorRing)
+            } else if (g.numInteriorRing > 0 && index <= g.numInteriorRing) {
+                return Geometry.wrap(g.getInteriorRingN(index - 1))
+            }
+        }
+        // GeometryCollection => Geometry
+        else if (g instanceof com.vividsolutions.jts.geom.GeometryCollection) {
+            if (index < g.numGeometries) {
+                return Geometry.wrap(g.getGeometryN(index))
+            }
+        }
+        // Other Geometry => Point
+        else {
+            if (index < g.numPoints) {
+                def c = g.coordinates[index]
+                return new Point(c.x, c.y)
+            }
+        }
+    }
+
+    /**
      * Get the WKT of the Geometry
      * @return The WKT of this Geometry
      */

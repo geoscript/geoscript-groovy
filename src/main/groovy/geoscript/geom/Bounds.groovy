@@ -208,6 +208,28 @@ class Bounds {
     }
 
     /**
+     * Get a value from this Bounds at the given index (west = 0, south = 1,
+     * east = 2, north = 3).
+     * <p><code>Bounds b = new Bounds(1,2,3,4)</code></p>
+     * <p><code>def w = b[0]</code></p>
+     * <p><code>def (w,s,e,n) = b</code></p>
+     * @return A value from this Bounds or null if the index is greater than 3
+     */
+    Object getAt(int index) {
+        if (index == 0) {
+            west
+        } else if (index == 1) {
+            south
+        } else if (index == 2) {
+            east
+        } else if (index == 3) {
+            north
+        } else {
+            null
+        }
+    }
+
+    /**
      * The string representation
      * @return The string representation
      */

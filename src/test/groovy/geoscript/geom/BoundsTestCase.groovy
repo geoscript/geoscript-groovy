@@ -1,7 +1,7 @@
 package geoscript.geom
 
 import org.junit.Test
-import static org.junit.Assert.assertEquals
+import static org.junit.Assert.*
 import geoscript.proj.Projection
 import org.geotools.geometry.jts.ReferencedEnvelope
 
@@ -138,5 +138,19 @@ class BoundsTestCase {
 		
         Bounds b3 = new Bounds(1,2,3,4)
         assertEquals "(1.0,2.0,3.0,4.0)", b3.toString()
+    }
+
+    @Test void getAt() {
+        Bounds b = new Bounds(1,2,3,4)
+        assertEquals(1, b[0], 0)
+        assertEquals(2, b[1], 0)
+        assertEquals(3, b[2], 0)
+        assertEquals(4, b[3], 0)
+        assertNull(b[4])
+        def (w,s,e,n) = b
+        assertEquals(1, w, 0)
+        assertEquals(2, s, 0)
+        assertEquals(3, e, 0)
+        assertEquals(4, n, 0)
     }
 }
