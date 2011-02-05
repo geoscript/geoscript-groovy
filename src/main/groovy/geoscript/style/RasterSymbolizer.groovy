@@ -1,6 +1,7 @@
 package geoscript.style
 
 import geoscript.raster.Raster
+import org.geotools.styling.SLD
 
 /**
  * A Symbolizer for Rasters.

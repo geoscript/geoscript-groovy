@@ -1,6 +1,7 @@
 package geoscript.map
 
 import geoscript.layer.Layer
+import geoscript.raster.Raster
 import geoscript.style.Style
 import geoscript.geom.Bounds
 import geoscript.proj.Projection
@@ -108,10 +109,17 @@ class Map {
     /**
      * Add a Layer with a Style
      * @param layer The Layer
-     * @param style The Style
      */
     void addLayer(Layer layer) {
         layers.add(layer)
+    }
+
+    /**
+     * Add a Raster
+     * @param raster The Raster
+     */
+    void addRaster(Raster raster) {
+        layers.add(raster)
     }
 
     /**
@@ -204,7 +212,12 @@ class Map {
             b = new Bounds(b.l, b.b, b.r, b.t, p)
         }
         layers.each{layer ->
-            MapLayer mapLayer = new DefaultMapLayer(layer.fs, layer.style.gtStyle)
+            MapLayer mapLayer
+            if (layer instanceof Layer) {
+                mapLayer = new DefaultMapLayer(layer.fs, layer.style.gtStyle)
+            } else if (layer instanceof Raster) {
+                mapLayer = new DefaultMapLayer(layer.coverage, layer.style.gtStyle)
+            }
             context.addLayer(mapLayer)
         }
         renderer.paint(g, new Rectangle(0, 0, width, height), b.env)

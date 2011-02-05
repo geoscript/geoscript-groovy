@@ -2,6 +2,8 @@ package geoscript.raster
 
 import geoscript.proj.Projection
 import geoscript.geom.Bounds
+import geoscript.style.Style
+import geoscript.style.RasterSymbolizer
 import org.geotools.factory.Hints
 import org.geotools.coverage.grid.AbstractGridCoverage
 import org.opengis.coverage.grid.GridCoverageReader
@@ -29,6 +31,11 @@ class Raster {
     protected AbstractGridFormat format
 
     /**
+     * The Style
+     */
+    Style style
+
+    /**
      * Create a new Raster using a given Format to read the File.
      * @param format The GeoTools AbstractGridFormat
      * @param file The File
@@ -42,6 +49,7 @@ class Raster {
         this.format = format
         this.reader = format.getReader(file, hints)
         this.coverage = reader.read(null)
+        style = new Style(new RasterSymbolizer())
     }
 
     /**

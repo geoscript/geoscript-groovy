@@ -3,8 +3,10 @@ package geoscript.map
 import org.junit.Test
 import static org.junit.Assert.*
 import geoscript.layer.*
+import geoscript.raster.*
 import geoscript.proj.Projection
 import geoscript.geom.Bounds
+import geoscript.style.RasterSymbolizer
 
 /**
  * The Map UnitTest
@@ -50,6 +52,26 @@ class MapTestCase {
 
         File out = File.createTempFile("map",".png")
         println("renderToImage: ${out}")
+        javax.imageio.ImageIO.write(image, "png", out);
+        assertTrue(out.exists())
+        map.close()
+    }
+
+    @Test void renderRasterToImage() {
+        File file = new File(getClass().getClassLoader().getResource("alki.tif").toURI())
+        assertNotNull(file)
+
+        Raster raster = new GeoTIFF(file)
+
+        Map map = new Map()
+        map.proj = new Projection("EPSG:2927")
+        map.addRaster(raster)
+        map.bounds = raster.bounds
+        def image = map.renderToImage()
+        assertNotNull(image)
+
+        File out = File.createTempFile("raster",".png")
+        println("renderRasterToImage: ${out}")
         javax.imageio.ImageIO.write(image, "png", out);
         assertTrue(out.exists())
         map.close()
