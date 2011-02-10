@@ -46,5 +46,47 @@ class RasterSymbolizerTestCase {
         assertNotNull sym
     }
 
+    @Test void addToColorMap() {
+        def sym = new RasterSymbolizer()
+        sym.addToColorMap(100, "#ff0000")
+        sym.addToColorMap(200, "#00ff00","Level 200")
+        sym.addToColorMap(300, "#0000ff", "Level 300", 0.25)
+        def colorMap = sym.colorMap
+        assertEquals 100, colorMap[0].quantity
+        assertEquals 200, colorMap[1].quantity
+        assertEquals 300, colorMap[2].quantity
+        assertEquals "#ff0000", colorMap[0].color
+        assertEquals "#00ff00", colorMap[1].color
+        assertEquals "#0000ff", colorMap[2].color
+        assertNull colorMap[0].label
+        assertEquals "Level 200", colorMap[1].label
+        assertEquals "Level 300", colorMap[2].label
+        assertEquals 1.0, colorMap[0].opacity, 0.1
+        assertEquals 1.0, colorMap[1].opacity, 0.1
+        assertEquals 0.25, colorMap[2].opacity, 0.01
+    }
+
+    @Test void setColorMap() {
+        def sym = new RasterSymbolizer()
+        sym.colorMap = [
+            [quantity: 100, color: "#ff0000"],
+            [quantity: 200, color: "#00ff00", label: "Level 200"],
+            [quantity: 300, color: "#0000ff", label: "Level 300", opacity: 0.25]
+        ]
+        def colorMap = sym.colorMap
+        assertEquals 100, colorMap[0].quantity
+        assertEquals 200, colorMap[1].quantity
+        assertEquals 300, colorMap[2].quantity
+        assertEquals "#ff0000", colorMap[0].color
+        assertEquals "#00ff00", colorMap[1].color
+        assertEquals "#0000ff", colorMap[2].color
+        assertNull colorMap[0].label
+        assertEquals "Level 200", colorMap[1].label
+        assertEquals "Level 300", colorMap[2].label
+        assertEquals 1.0, colorMap[0].opacity, 0.1
+        assertEquals 1.0, colorMap[1].opacity, 0.1
+        assertEquals 0.25, colorMap[2].opacity, 0.01
+    }
+
 
 }
