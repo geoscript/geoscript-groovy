@@ -63,6 +63,131 @@ class RasterSymbolizer extends Symbolizer {
         symbolizer.overlap = Style.filterFactory.literal(overlap.toUpperCase())
     }
 
+    /**
+     * Set the shaded relief
+     * @param brightnessOnly Whether to apply to current layer (false) or other layers (true)
+     * @param reliefFactor The amount of exaggeration (55 gives reasonable results for DEMs)
+     */
+    void setShadedRelief(boolean brightnessOnly = false, double reliefFactor = 1.0) {
+        symbolizer.shadedRelief = Style.styleFactory.createShadedRelief(Style.filterFactory.literal(reliefFactor))
+        symbolizer.shadedRelief.brightnessOnly = brightnessOnly
+    }
+
+    /**
+     * Set the shaded relief brightness only flag
+     * @param brightnessOnly The shaded relief brighness only flag
+     */
+    void setShadedReliefBrightnessOnly(boolean brightnessOnly) {
+        if (symbolizer.shadedRelief == null) {
+             symbolizer.shadedRelief = Style.styleFactory.createShadedRelief(Style.filterFactory.literal(1.0))
+        }
+        symbolizer.shadedRelief.brightnessOnly = brightnessOnly
+    }
+
+    /**
+     * Set the shaded relief exaggeration factor
+     * @param reliefFactor The shaded relief exaggeration factor
+     */
+    void setShadedReliefFactor(double reliefFactor) {
+        if (symbolizer.shadedRelief == null) {
+             symbolizer.shadedRelief = Style.styleFactory.createShadedRelief(Style.filterFactory.literal(reliefFactor))
+        } else {
+            symbolizer.shadedRelief.reliefFactor = Style.filterFactory.literal(reliefFactor)
+        }
+    }
+
+    /**
+     * Get the shaded relief brightness only flag (can be null if the symbolizer doesn't contain
+     * shaded relief)
+     * @return The shaded relief brightness only flag (null, true or false)
+     */
+    Boolean getShadedReliefBrightnessOnly() {
+        symbolizer?.shadedRelief?.brightnessOnly
+    }
+
+    /**
+     * Get the shaded relief exaggeration factor (can be null if the symbolizer doesn't contain shaded relief)
+     * @return The shaded relief exaggeration factor (null or some number)
+     */
+    Double getShadedReliefFactor() {
+        symbolizer?.shadedRelief?.reliefFactor?.value
+    }
+    
+    /**
+     * Set the contrast enhancement method (histogram or normalize)
+     * @param method The contrast enhancement method (histogram or normalize)
+     */
+    void setContrastEnhancementMethod(String method) {
+        def gammaValue = getContrastEnhancementGammaValue()
+        if (gammaValue == null) gammaValue = 1.0
+        def contrastMethod = org.opengis.style.ContrastMethod.NORMALIZE
+        if (method.equalsIgnoreCase("histogram")) contrastMethod = org.opengis.style.ContrastMethod.HISTOGRAM
+        symbolizer.contrastEnhancement = Style.styleFactory.contrastEnhancement(Style.filterFactory.literal(gammaValue), contrastMethod)
+    }
+
+    /**
+     * Get the contrast enhancement method.
+     * @return The contrast enhancement method (normalize, histogram, or null)
+     */
+    String getContrastEnhancementMethod() {
+        def value = symbolizer?.contrastEnhancement?.method
+        if (value != null) {
+            if (value == org.opengis.style.ContrastMethod.NORMALIZE) {
+                return "normalize"
+            } else {
+                return "histogram"
+            }
+        } else {
+            return null
+        }
+    }
+
+    /**
+     * Set the constrast enhancement gamma value
+     * @param The gamma value.  > 1 to brighten, 1 no change, < 1 to dim
+     */
+    void setContrastEnhancementGammaValue(double value) {
+        if (symbolizer.contrastEnhancement == null) {
+            symbolizer.contrastEnhancement = Style.styleFactory.contrastEnhancement(Style.filterFactory.literal(value), org.opengis.style.ContrastMethod.NORMALIZE) 
+        } else {
+            symbolizer.contrastEnhancement.gammaValue = Style.filterFactory.literal(value)
+        }
+    }
+
+    /**
+     * Get the contrast enhancement gamma value.
+     * @return The gamma value which can be null
+     */
+    Double getContrastEnhancementGammaValue() {
+        symbolizer?.contrastEnhancement?.gammaValue?.value
+    }
+
+    /**
+     * Set the image outline
+     * @param symbolizer The LineSymbolizer or PolygonSymbolizer
+     */
+    void setImageOutline(Symbolizer sym) {
+        assert sym instanceof LineSymbolizer || sym instanceof PolygonSymbolizer
+        symbolizer.imageOutline = sym.symbolizer
+    }
+
+    /**
+     * Get the image outline.
+     * @return A LineSymbolizer, a PolygonSymbolizer or null
+     */
+    Symbolizer getImageOutline() {
+        def imageOutline = symbolizer.imageOutline
+        if (imageOutline != null) {
+            if (imageOutline instanceof org.geotools.styling.LineSymbolizer) {
+                return new LineSymbolizer(imageOutline)
+            } else if (imageOutline instanceof org.geotools.styling.PolygonSymbolizer) {
+                return new PolygonSymbolizer(imageOutline)
+            }
+        } else {
+            return null
+        }
+    }
+
 	/**
 	 * Create a gray scale RasterSymbolizer for the given band.
 	 * @param band The index of the band to use
@@ -103,6 +228,67 @@ class RasterSymbolizer extends Symbolizer {
         sym.channelSelection = sel
         new RasterSymbolizer(sym)
 	}
+
+    /**
+     * Set the RGB channel selection.
+     * @param channels The RGB channels
+     */
+    void setChannelSelection(Map channels) {
+        def channelTypeMap = [:]
+        channels.each{channel->
+            String name = channel.key
+            Map value = channel.value
+            String band = value.name
+            def contrastEnhancement
+            if (value.containsKey("contrastEnhancement")) {
+                Map ce = value.contrastEnhancement
+                def gammaValue = ce.containsKey("gammaValue") ? ce.gammaValue : 1.0
+                def methodType = ce.containsKey("method") ? ce.method : org.opengis.style.ContrastMethod.NORMALIZE
+                def method = methodType.equalsIgnoreCase("normalize") ? org.opengis.style.ContrastMethod.NORMALIZE : org.opengis.style.ContrastMethod.HISTOGRAM
+                contrastEnhancement = Style.styleFactory.contrastEnhancement(Style.filterFactory.literal(gammaValue), method)
+            } else {
+                contrastEnhancement = Style.styleFactory.contrastEnhancement(Style.filterFactory.literal(1.0), org.opengis.style.ContrastMethod.NORMALIZE)
+            }
+            channelTypeMap[name] = Style.styleFactory.createSelectedChannelType(band, contrastEnhancement)
+        }
+        if (channelTypeMap.containsKey("gray")) {
+            symbolizer.channelSelection = Style.styleFactory.channelSelection(channelTypeMap["gray"])
+        } else {
+            symbolizer.channelSelection = Style.styleFactory.channelSelection(channelTypeMap["red"], channelTypeMap["green"], channelTypeMap["blue"])
+        }
+    }
+
+    /**
+     * Get the channel selection as a Map
+     * @return A Map representing the bands in the channel selection
+     */
+    Map getChannelSelection() {
+        if (symbolizer.channelSelection != null && (symbolizer.channelSelection.grayChannel != null || symbolizer.channelSelection.getRGBChannels() != null && symbolizer.channelSelection.getRGBChannels()[0] != null)) {
+            def contrastToMap = {contrast ->
+                if (contrast != null) {
+                    return [
+                        method: (contrast.method == org.opengis.style.ContrastMethod.NORMALIZE) ? "normalize" : "histogram",
+                        gammaValue: contrast.gammaValue.value
+                    ]
+                } else {
+                    return [:]
+                }
+            }
+            if (symbolizer.channelSelection.grayChannel != null) {
+                return ["gray": ["name": symbolizer.channelSelection.grayChannel.channelName, "contrastEnhancement": contrastToMap(symbolizer.channelSelection.grayChannel.contrastEnhancement)]]
+            } else {
+                def channels = symbolizer.channelSelection.getRGBChannels()
+                def channelMap = [
+                    "red":   ["name": channels[0].channelName, "contrastEnhancement": contrastToMap(channels[0].contrastEnhancement)],
+                    "green": ["name": channels[1].channelName, "contrastEnhancement": contrastToMap(channels[1].contrastEnhancement)],
+                    "blue":  ["name": channels[2].channelName, "contrastEnhancement": contrastToMap(channels[2].contrastEnhancement)]
+                ]
+                return channelMap
+            }
+        } else {
+            return null
+        }
+    }
 
     /**
      * Create a RasterSymbolizer from a ColorMap of values.
@@ -188,6 +374,4 @@ class RasterSymbolizer extends Symbolizer {
         if (label) entry.label = Style.filterFactory.literal(label)
         symbolizer.colorMap.addColorMapEntry(entry)
     }
-
-
 }
