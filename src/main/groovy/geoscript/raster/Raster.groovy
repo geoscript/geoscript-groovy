@@ -21,14 +21,14 @@ class Raster {
     AbstractGridCoverage coverage
 
     /**
+     * The GeoTools AbstractGridFormat
+     */
+    AbstractGridFormat gridFormat
+
+    /**
      * The GeoTools GridCoverageReader
      */
     protected GridCoverageReader reader
-
-    /**
-     * The GeoTools AbstractGridFormat
-     */
-    protected AbstractGridFormat format
 
     /**
      * The Style
@@ -46,10 +46,21 @@ class Raster {
         if (proj) {
             hints.put(Hints.DEFAULT_COORDINATE_REFERENCE_SYSTEM, proj.crs)
         }
-        this.format = format
-        this.reader = format.getReader(file, hints)
+        this.gridFormat = format
+        this.reader = gridFormat.getReader(file, hints)
         this.coverage = reader.read(null)
         style = new Style(new RasterSymbolizer())
+    }
+
+    /**
+     * Create a Raster from a GeoTools AbstractGridCoverage and an AbstractGridFormat.
+     * @param coverage The GeoTools AbstractGridFormat
+     * @param format The GeoTools AbstractGridFormat
+     */
+    Raster(AbstractGridCoverage coverage, AbstractGridFormat format) {
+       this.coverage = coverage
+       this.gridFormat = format
+       style = new Style(new RasterSymbolizer())
     }
 
     /**
@@ -57,7 +68,7 @@ class Raster {
      * @return The format name
      */
     String getFormat() {
-        format.getName()
+        gridFormat.getName()
     }
 
     /**
