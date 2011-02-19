@@ -2,12 +2,14 @@ package geoscript.raster
 
 import geoscript.proj.Projection
 import geoscript.geom.Bounds
+import geoscript.geom.Point
 import geoscript.style.Style
 import geoscript.style.RasterSymbolizer
 import org.geotools.factory.Hints
 import org.geotools.coverage.grid.AbstractGridCoverage
 import org.opengis.coverage.grid.GridCoverageReader
 import org.geotools.coverage.grid.io.AbstractGridFormat
+import org.geotools.coverage.processing.DefaultProcessor
 
 /**
  * The Raster base class
@@ -141,6 +143,53 @@ class Raster {
      */
     void render() {
         coverage.show()
+    }
+
+    /**
+     * Crop this Raster
+     * @param bounds The Bounds
+     * @return A new Raster
+     */
+    Raster crop(Bounds bounds) {
+        def processor = new DefaultProcessor()
+        def params = processor.getOperation("CoverageCrop").parameters
+        params.parameter("Source").value = coverage
+        params.parameter("Envelope").value = new org.geotools.geometry.GeneralEnvelope(bounds.env)
+        def cropped = processor.doOperation(params)
+        new Raster(cropped, gridFormat)
+    }
+
+    /**
+     * Reproject this Raster to another Projection creating a new Raster
+     * @param proj The Projection
+     * @return A new Raster
+     */
+    Raster reproject(Projection proj) {
+        def processor = new DefaultProcessor()
+        def params = processor.getOperation("Resample").parameters
+        params.parameter("Source").value = coverage
+        params.parameter("CoordinateReferenceSystem").value = proj.crs
+        def reprojected = processor.doOperation(params)
+        new Raster(reprojected, gridFormat)
+    }
+
+    /**
+     * Write the Raster to the File
+     * @param file The File
+     */
+    void write(File file) {
+       gridFormat.getWriter(file).write(coverage, null)
+    }
+
+    /**
+     * Get the value of the Raster at the given Location.
+     * If the Raster contains multiple bands a Collection of values, one for
+     * each band, will be returned.
+     * @param point The Point where we want a value from the Raster
+     * @return A value
+     */
+    def evaluate(Point point) {
+        coverage.evaluate(new org.geotools.geometry.GeneralDirectPosition(point.x, point.y))
     }
 }
 
