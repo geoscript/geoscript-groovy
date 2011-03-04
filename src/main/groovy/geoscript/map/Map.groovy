@@ -4,6 +4,7 @@ import geoscript.layer.Layer
 import geoscript.style.Style
 import geoscript.geom.Bounds
 import geoscript.proj.Projection
+import geoscript.wms.WMSLayer
 import java.awt.RenderingHints
 import java.awt.image.BufferedImage
 import javax.imageio.ImageIO
@@ -115,6 +116,14 @@ class Map {
     }
 
     /**
+     * Add a WMSLayer
+     * @param wmsLayer The WMSLayer
+     */
+    void addWMSLayer(WMSLayer wmsLayer) {
+        layers.add(wmsLayer)
+    }
+
+    /**
      * Get the Bounds
      * @return The Bounds
      */
@@ -204,7 +213,12 @@ class Map {
             b = new Bounds(b.l, b.b, b.r, b.t, p)
         }
         layers.each{layer ->
-            MapLayer mapLayer = new DefaultMapLayer(layer.fs, layer.style.gtStyle)
+            MapLayer mapLayer
+            if (layer instanceof WMSLayer) {
+                mapLayer = new org.geotools.map.WMSMapLayer(layer.wms, layer.layer)
+            } else {
+                mapLayer = new DefaultMapLayer(layer.fs, layer.style.gtStyle)
+            }
             context.addLayer(mapLayer)
         }
         renderer.paint(g, new Rectangle(0, 0, width, height), b.env)
