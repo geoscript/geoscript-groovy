@@ -665,4 +665,12 @@ class Layer {
         id += 1
         "layer_${id}".toString()
     }
+
+    /**
+     * The string representation
+     * @return The string representation
+     */
+    String toString() {
+        name
+    }
 }
