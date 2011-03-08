@@ -12,7 +12,7 @@ import org.geotools.referencing.datum.DefaultEllipsoid
  */
 class Geodetic {
     
-    // Ellipsoids
+    // Ellipsoids from pyproj
     static final DefaultEllipsoid MERIT = DefaultEllipsoid.createFlattenedSphere("MERIT 1983", 6378137.0, 298.257, SI.METER)
     static final DefaultEllipsoid SGC84 = DefaultEllipsoid.createFlattenedSphere("Soviet Geodetic System 85", 6378136.0, 298.257, SI.METER)
     static final DefaultEllipsoid GRS80 = DefaultEllipsoid.createFlattenedSphere("GRS 1980(IUGG, 1980)", 6378137.0, 298.257222101, SI.METER)
@@ -238,4 +238,4 @@ class Geodetic {
     String toString() {
         return "Geodetic [${ellipsoid}]"
     }
-}
+
