@@ -206,6 +206,27 @@ class Bounds {
     Polygon getPolygon() {
         new Polygon([west, south], [west, north], [east, north], [east, south], [west, south])
     }
+    
+    /**
+     * Partitions the bounding box into a set of smaller bounding boxes.
+     * @param res The resolution to tile at and should be in range 0-1.
+     * @return A List of smaller bounding boxes
+     */
+    List<Bounds> tile(double res) {
+        double dx = width * res
+        double dy = height * res
+        List bounds = []
+        double y = south
+        while (y < north) {
+            double x = west
+            while (x < east) {
+                bounds.add(new Bounds(x,y,Math.min(x + dx, east), Math.min(y+dy, north), proj))
+                x += dx
+            }
+            y += dy
+        }
+        bounds
+    }
 
     /**
      * Get a value from this Bounds at the given index (west = 0, south = 1,

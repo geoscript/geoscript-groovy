@@ -153,4 +153,14 @@ class BoundsTestCase {
         assertEquals(3, e, 0)
         assertEquals(4, n, 0)
     }
+
+    @Test void tile() {
+        def b = new Bounds(0,0,100,100)
+        def bounds = b.tile(0.50)
+        assertEquals 4, bounds.size()
+        assertEquals new Bounds(0.0,0.0,50.0,50.0).geometry.wkt, bounds[0].geometry.wkt
+        assertEquals new Bounds(50.0,0.0,100.0,50.0).geometry.wkt, bounds[1].geometry.wkt
+        assertEquals new Bounds(0.0,50.0,50.0,100.0).geometry.wkt, bounds[2].geometry.wkt
+        assertEquals new Bounds(50.0,50.0,100.0,100.0).geometry.wkt, bounds[3].geometry.wkt
+    }
 }
