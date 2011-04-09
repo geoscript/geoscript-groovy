@@ -79,7 +79,7 @@ class ProjectionTestCase {
     @Test void transform26916To4326() {
         Point point = new Point(776041.0, 3386618.0)
         Point projectedPoint = Projection.transform(point, "EPSG:26916", "EPSG:4326")
-        assertEquals "POINT (-84.12159978127191 30.580282514678835)", projectedPoint.wkt
+        assertEquals "POINT (-84.121611219545 30.58028618546373)", projectedPoint.wkt
     }
 }
 

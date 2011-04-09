@@ -120,12 +120,11 @@ class BoundsTestCase {
 
     @Test void reproject() {
         Bounds b1 = new Bounds(-111, 44.7, -110, 44.9, "EPSG:4326")
-        println(b1.polygon.wkt)
         Bounds b2 = b1.reproject("EPSG:26912")
-        assertEquals(499999, b2.west as int)
-        assertEquals(4949624, b2.south as int)
-        assertEquals(579224, b2.east as int)
-        assertEquals(4972327, b2.north as int)
+        assertEquals(500000, b2.west as int)
+        assertEquals(4949625, b2.south as int)
+        assertEquals(579225, b2.east as int)
+        assertEquals(4972328, b2.north as int)
     }
 
     @Test void string() {
