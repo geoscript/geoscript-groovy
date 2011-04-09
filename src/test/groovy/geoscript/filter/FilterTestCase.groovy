@@ -106,5 +106,34 @@ class FilterTestCase {
         Feature feature2 = new Feature(['name':'test'], 'f2')
         assertFalse filter.evaluate(feature2)
     }
+
+    @Test void equals() {
+        Filter f1 = new Filter("name='foobar'")
+        Filter f2 = new Filter("name='foobar'")
+        Filter f3 = new Filter("name='test'")
+        assertTrue f1 == f2
+        assertFalse f1 == f3
+        assertFalse f2 == f3
+    }
+
+    @Test void hashCodeTest() {
+        Filter f1 = new Filter("name='foobar'")
+        Filter f2 = new Filter("name='foobar'")
+        Filter f3 = new Filter("name='test'")
+        assertTrue f1.hashCode() == f2.hashCode()
+        assertFalse f1.hashCode() == f3.hashCode()
+        assertFalse f2.hashCode() == f3.hashCode()
+    }
+
+    @Test void plus() {
+        Filter f1 = new Filter("name='foo'")
+        Filter f2 = new Filter("name='bar'")
+        Filter f3 = Filter.PASS
+        assertEquals("[[ name = foo ] AND [ name = bar ]]", (f1 + f2).toString())
+        assertEquals("[ name = foo ]", (f3 + f1).toString())
+        // @TODO [[[ name = foo ] AND Filter.INCLUDE]]
+        // assertEquals("[ name = foo ]", (f1 + f3).toString())
+    }
+
 }
 

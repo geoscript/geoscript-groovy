@@ -11,6 +11,8 @@ import org.geotools.filter.v1_0.OGCConfiguration as OGCConfiguration10
 import org.geotools.filter.v1_0.OGC as OGC10 
 import org.geotools.filter.v1_1.OGCConfiguration as OGCConfiguration11 
 import org.geotools.filter.v1_1.OGC as OGC11 
+import org.geotools.factory.CommonFactoryFinder
+import org.opengis.filter.FilterFactory
 
 /**
  * A Filter is a predicate or constraint used to match or filter Feature objects.
@@ -30,7 +32,12 @@ class Filter {
      * The wrapped GeoTools Filter
      */
     GTFilter filter
-    
+
+    /**
+     * The GeoTools FilterFactory
+     */
+    FilterFactory factory = CommonFactoryFinder.getFilterFactory(null)
+
     /**
      * Create a new Filter wrapping a GeoTools Filter
      * @param filter The org.opengis.filter.Filter
@@ -127,6 +134,36 @@ class Filter {
      */
     String toString() {
         filter.toString()
+    }
+
+    /**
+     * Does this Filter equal another Filter?
+     * @return Whether this and the other Filter are equal
+     */
+    boolean equals(Object obj) {
+        filter.equals(obj.filter)
+    }
+
+    /**
+     * Returns the hash code value of the Filter
+     * @return The hash code value of the Filter
+     */
+    int hashCode() {
+        filter.hashCode()
+    }
+
+    /**
+     * Combine the current Filter with another Filter.
+     * @param other Another Filter or a CQL String
+     * @return A combined Filter
+     */
+    Filter plus(def other) {
+        println("plus :: ${filter == GTFilter.INCLUDE}")
+        if (filter == GTFilter.INCLUDE) {
+            return new Filter(other)
+        } else {
+            return new Filter(factory.and(filter, new Filter(other).filter))
+        }
     }
     
     /**
