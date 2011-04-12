@@ -67,11 +67,6 @@
             <version>${gt.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.geotools</groupId>
-            <artifactId>gt-directory</artifactId>
-            <version>${gt.version}</version>
-        </dependency>
-        <dependency>
             <groupId>org.geotools.xsd</groupId>
             <artifactId>gt-xsd-wfs</artifactId>
             <version>${gt.version}</version>
@@ -177,7 +172,7 @@
         </plugins>
     </build>
     <properties>
-        <gt.version>2.7-SNAPSHOT</gt.version>
+        <gt.version>2.7.0.1</gt.version>
     </properties>
     <name>geoscript groovy</name>
     <description>A groovy implementation of geoscript.</description>
