@@ -123,6 +123,14 @@ class Bounds {
     }
 
     /**
+     * Get the area of this Bounds
+     * @return The area
+     */
+    double getArea() {
+        env.area
+    }
+
+    /**
      * Get the width
      * @return The width
      */
@@ -226,6 +234,31 @@ class Bounds {
             y += dy
         }
         bounds
+    }
+
+    /**
+     * Calculate a quad tree for this Bounds between the start and stop levels. The Closure
+     * is called for each new Bounds generated.
+     * @param start The start level
+     * @param stop The stop level
+     * @param closure The Closure called for each new Bounds
+     */
+    void quadTree(int start, int stop, Closure closure) {
+        Projection p = getProj()
+        for(int level = start; level < stop; level++) {
+            double factor = Math.pow(2, level)
+            double dx = (this.east - this.west) / factor
+            double dy = (this.north - this.south) / factor
+            double minx = this.west
+            for(int x = 0; x < factor; ++x) {
+                double miny = this.south
+                for(int y = 0; y < factor; ++y) {
+                    closure(new Bounds(minx, miny, minx + dx, miny + dy, p))
+                    miny += dy
+                }
+                minx += dx
+            }
+        }
     }
 
     /**

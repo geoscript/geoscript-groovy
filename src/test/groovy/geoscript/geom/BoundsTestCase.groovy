@@ -75,6 +75,50 @@ class BoundsTestCase {
         assertEquals 3.0, b.height, 0.0
     }
 
+    @Test void getArea() {
+        Bounds b = new Bounds(1,2,3,5)
+        assertEquals 6.0, b.area, 0.1
+    }
+
+    @Test void quadTree() {
+        Bounds b = new Bounds(-180, -90, 180, 90, "EPSG:4326")
+        List quads = [
+            // Level 0
+            [-180,-90,180,90],
+            // Level 1
+            [-180,-90,0,0],
+            [-180,0,0,90],
+            [0,-90,180,0],
+            [0,0,180,90],
+            // Level 2
+            [-180,-90,-90,-45],
+            [-180,-45,-90,0],
+            [-180,0,-90,45],
+            [-180,45,-90,90],
+            [-90,-90,0,-45],
+            [-90,-45,0,0],
+            [-90,0,0,45],
+            [-90,45,0,90],
+            [0,-90,90,-45],
+            [0,-45,90,0],
+            [0,0,90,45],
+            [0,45,90,90],
+            [90,-90,180,-45],
+            [90,-45,180,0],
+            [90,0,180,45],
+            [90,45,180,90]
+        ]
+
+        int c = 0;
+        b.quadTree(0,2,{bounds ->
+            assertEquals(bounds.west, quads[c][0], 0.1)
+            assertEquals(bounds.south, quads[c][1], 0.1)
+            assertEquals(bounds.east, quads[c][2], 0.1)
+            assertEquals(bounds.north, quads[c][3], 0.1)
+            c++
+        })
+    }
+
     @Test void expandBy() {
         Bounds b = new Bounds(1,2,3,4)
         Bounds b2 = b.expandBy(10)
