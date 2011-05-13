@@ -135,5 +135,23 @@ class FilterTestCase {
         // assertEquals("[ name = foo ]", (f1 + f3).toString())
     }
 
+    @Test void and() {
+        Filter f1 = new Filter("name='foo'")
+        Filter f2 = new Filter("name='bar'")
+        Filter f3 = Filter.PASS
+        assertEquals("[[ name = foo ] AND [ name = bar ]]", (f1.and(f2)).toString())
+        assertEquals("[ name = foo ]", (f3.and(f1)).toString())
+    }
+
+    @Test void or() {
+        Filter f1 = new Filter("name='foo'")
+        Filter f2 = new Filter("name='bar'")
+        assertEquals("[[ name = foo ] OR [ name = bar ]]", (f1.or(f2)).toString())
+    }
+
+    @Test void getNot() {
+        Filter f1 = new Filter("name='foo'")
+        assertEquals new Filter("name <> 'foo'"), f1.not
+    }
 }
 

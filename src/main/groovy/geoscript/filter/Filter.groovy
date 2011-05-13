@@ -12,7 +12,8 @@ import org.geotools.filter.v1_0.OGC as OGC10
 import org.geotools.filter.v1_1.OGCConfiguration as OGCConfiguration11 
 import org.geotools.filter.v1_1.OGC as OGC11 
 import org.geotools.factory.CommonFactoryFinder
-import org.opengis.filter.FilterFactory
+import org.geotools.factory.GeoTools
+import org.opengis.filter.FilterFactory2
 
 /**
  * A Filter is a predicate or constraint used to match or filter Feature objects.
@@ -36,7 +37,7 @@ class Filter {
     /**
      * The GeoTools FilterFactory
      */
-    FilterFactory factory = CommonFactoryFinder.getFilterFactory(null)
+    FilterFactory2 factory = CommonFactoryFinder.getFilterFactory2(GeoTools.defaultHints)
 
     /**
      * Create a new Filter wrapping a GeoTools Filter
@@ -129,6 +130,14 @@ class Filter {
     }
 
     /**
+     * Get a new Filter that is the negation of the current Filter
+     * @return A new Filter that is the negation of the current Filter
+     */
+    Filter getNot() {
+        new Filter(factory.not(filter))
+    }
+
+    /**
      * The string representation
      * @return The string representation
      */
@@ -158,14 +167,31 @@ class Filter {
      * @return A combined Filter
      */
     Filter plus(def other) {
-        println("plus :: ${filter == GTFilter.INCLUDE}")
+        and(other)
+    }
+
+    /**
+     * Combine the current Filter with another Filter.
+     * @param other Another Filter or a CQL String
+     * @return A combined Filter
+     */
+    Filter and(def other) {
         if (filter == GTFilter.INCLUDE) {
             return new Filter(other)
         } else {
             return new Filter(factory.and(filter, new Filter(other).filter))
         }
     }
-    
+
+    /**
+     * Combine the current Filter with another Filter in an OR relationship.
+     * @param other Another Filter or a CQL String
+     * @return A new Filter
+     */
+    Filter or(def other) {
+        new Filter(factory.or(filter, new Filter(other).filter))
+    }
+
     /**
      * The PASS Filter wrapps the Geotools INCLUDE Filter
      */
