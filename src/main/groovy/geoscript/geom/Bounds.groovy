@@ -1,6 +1,7 @@
 package geoscript.geom
 
 import org.geotools.geometry.jts.ReferencedEnvelope
+import com.vividsolutions.jts.geom.Envelope
 import geoscript.proj.Projection
 
 /**
@@ -26,7 +27,17 @@ class Bounds {
     Bounds(ReferencedEnvelope env) {
         this.env = env
     }
-	
+
+    /**
+     * Create a new Bounds wrapping an Envelope.
+     * <p><code>Envelope e = new Envelope(1,3,2,4)</code></p>
+     * <p><code>Bounds b = new Bounds(e)</code></p>
+     * @param env The ReferencedEnvelope
+     */
+    Bounds(Envelope env) {
+        this(new ReferencedEnvelope(env, null))
+    }
+
     /**
      * Create a new Bounds with west, south, east, and north coordinates.
      * <p><code>Bounds b = new Bounds(1,2,3,4)</code></p>
@@ -259,6 +270,50 @@ class Bounds {
                 minx += dx
             }
         }
+    }
+
+    /**
+     * Get whether the Bounds is empty (width and height are zero)
+     * @return Whether the Bounds is empty
+     */
+    boolean isEmpty() {
+       env.empty 
+    }
+    
+    /**
+     * Determine whether this Bounds equals another Bounds
+     * @param other The other Bounds
+     * @return Whether this Bounds and the other Bounds are equal
+     */
+    boolean equals(Object other) {
+        (other instanceof Bounds && env.equals(other.env)) ? true : false
+    }
+    
+    /**
+     * Determine whether this Bounds contains the other Bounds
+     * @param other The other Bounds
+     * @return Whether this Bounds contains the other Bounds
+     */
+    boolean contains(Bounds other) {
+        env.contains(other.env)
+    }
+    
+    /**
+     * Determine whether this Bounds intersects with the other Bounds
+     * @param other The other Bounds
+     * @return Whether this Bounds intersects with the other Bounds
+     */
+    boolean intersects(Bounds other) {
+        env.intersects(other.env)
+    }
+    
+    /**
+     * Calculate the intersection between this Bounds and the other Bounds
+     * @param other The other Bounds
+     * @return The intersection Bounds between this and the other Bounds
+     */
+    Bounds intersection(Bounds other) {
+        new Bounds(env.intersection(other.env))
     }
 
     /**

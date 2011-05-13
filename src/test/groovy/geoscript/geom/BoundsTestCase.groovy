@@ -4,6 +4,7 @@ import org.junit.Test
 import static org.junit.Assert.*
 import geoscript.proj.Projection
 import org.geotools.geometry.jts.ReferencedEnvelope
+import com.vividsolutions.jts.geom.Envelope
 
 /**
  * The Bounds unit test
@@ -23,6 +24,10 @@ class BoundsTestCase {
 
         Bounds b4 = new Bounds(1,2,3,4, "EPSG:2927")
         assertEquals "(1.0,2.0,3.0,4.0,EPSG:2927)", b4.toString()
+
+        Bounds b5 = new Bounds(new Envelope(1,2,3,4))
+        assertEquals "(1.0,3.0,2.0,4.0)", b5.toString()
+        assertNull b5.proj
     }
 	
     @Test void l() {
@@ -206,4 +211,50 @@ class BoundsTestCase {
         assertEquals new Bounds(0.0,50.0,50.0,100.0).geometry.wkt, bounds[2].geometry.wkt
         assertEquals new Bounds(50.0,50.0,100.0,100.0).geometry.wkt, bounds[3].geometry.wkt
     }
+
+    @Test void isEmpty() {
+        def b1 = new Bounds(-10, -20, 10, -10)
+        def b2 = new Bounds(-10, 0, 10, 20)
+        assertTrue b1.intersection(b2).empty
+    }
+
+    @Test void equals() {
+        def b1 = new Bounds(-10, -20, 10, -10)
+        def b2 = new Bounds(-10, 0, 10, 20)
+        def b3 = new Bounds(-10, -20, 10, -10)
+        assertFalse b1.equals(b2)
+        assertFalse b2.equals(b3)
+        assertTrue b1.equals(b3)
+    }
+
+    @Test void contains() {
+        def b1 = new Bounds(0,0,10,10)
+        def b2 = new Bounds(3,3,6,6)
+        def b3 = new Bounds(5,5,15,15)
+        assertTrue b1.contains(b2)
+        assertFalse b2.contains(b1)
+        assertFalse b2.contains(b3)
+        assertFalse b1.contains(b3)
+    }
+
+    @Test void intersects() {
+        def b1 = new Bounds(0,0,10,10)
+        def b2 = new Bounds(3,3,6,6)
+        def b3 = new Bounds(5,5,15,15)
+        def b4 = new Bounds(20,25,25,30)
+        assertTrue b1.intersects(b2)
+        assertTrue b2.intersects(b1)
+        assertTrue b2.intersects(b3)
+        assertTrue b1.intersects(b3)
+        assertFalse b1.intersects(b4)
+    }
+
+    @Test void intersection() {
+        def b1 = new Bounds(0,0,10,10)
+        def b2 = new Bounds(3,3,6,6)
+        def b3 = new Bounds(20,25,25,30)
+        assertEquals new Bounds(3,3,6,6), b1.intersection(b2)
+        assertTrue b1.intersection(b3).empty
+    }
+
 }
