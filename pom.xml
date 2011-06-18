@@ -172,7 +172,8 @@
         </plugins>
     </build>
     <properties>
-        <gt.version>2.7.0.1</gt.version>
+		<!-- 2.7.0.1 -->
+        <gt.version>8-SNAPSHOT</gt.version>
     </properties>
     <name>geoscript groovy</name>
     <description>A groovy implementation of geoscript.</description>

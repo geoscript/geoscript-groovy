@@ -81,7 +81,7 @@ class Map {
         hints.add(new RenderingHints(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON))
         renderer.setJava2DHints(hints)
         renderer.setRendererHints([
-            (StreamingRenderer.OPTIMIZED_DATA_LOADING_KEY): Boolean.TRUE,
+            //(StreamingRenderer.OPTIMIZED_DATA_LOADING_KEY): Boolean.TRUE,
             (StreamingRenderer.LABEL_CACHE_KEY): labelCache,
             (StreamingRenderer.SCALE_COMPUTATION_METHOD_KEY): StreamingRenderer.SCALE_ACCURATE,
             (StreamingRenderer.LINE_WIDTH_OPTIMIZATION_KEY): Boolean.FALSE,
