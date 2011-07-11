@@ -12,6 +12,7 @@ import geoscript.layer.Shapefile
 class FunctionTestCase {
 
     @Test void constructors() {
+
         def maxFunction = new Function("max(2,4)")
         assertEquals 4, maxFunction(), 0.1
         assertEquals "max([2], [4])", maxFunction.toString()

@@ -1,7 +1,7 @@
 package geoscript.map
 
 import geoscript.layer.Layer
-import geoscript.style.Style
+import geoscript.style.ColorUtil
 import geoscript.geom.Bounds
 import geoscript.proj.Projection
 import java.awt.RenderingHints
@@ -13,6 +13,7 @@ import java.awt.Color
 import org.geotools.map.DefaultMapContext
 import org.geotools.map.DefaultMapLayer
 import org.geotools.map.MapContext
+import org.geotools.map.MapContent
 import org.geotools.map.MapLayer
 import org.geotools.renderer.GTRenderer
 import org.geotools.renderer.lite.StreamingRenderer
@@ -59,7 +60,7 @@ class Map {
     /**
      * The GeoTools MapContext
      */
-    private MapContext context
+    private MapContent context
 
     /**
      * The LabelCache
@@ -70,6 +71,11 @@ class Map {
      * The List of Layers
      */
     private List layers = []
+
+    /**
+     * The Projection
+     */
+    private Projection projection
 
     /**
      * Create a new Map
@@ -93,8 +99,9 @@ class Map {
      * Set the Map Projection
      * @param proj The Projection
      */
-    void setProj(def proj) {
-        context.setCoordinateReferenceSystem(new Projection(proj).crs)
+    void setProj(def projection) {
+        this.projection = new Projection(projection)
+         context.setCoordinateReferenceSystem(new Projection(projection).crs)
     }
 
     /**
@@ -102,13 +109,21 @@ class Map {
      * @return The Map's Projection
      */
     Projection getProj() {
-        new Projection(context.coordinateReferenceSystem)
+        this.projection
+        //new Projection(context.getCoordianteReferenceSystem())
     }
 
     /**
-     * Add a Layer with a Style
+     * Set the background color
+     * @param color  The background color (#ffffff, red)
+     */
+    void setBackgroundColor(def color) {
+        this.backgroundColor = ColorUtil.toHex(color)
+    }
+
+    /**
+     * Add a Layer
      * @param layer The Layer
-     * @param style The Style
      */
     void addLayer(Layer layer) {
         layers.add(layer)
@@ -181,7 +196,7 @@ class Map {
         BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB)
         Graphics2D g = (Graphics2D) image.createGraphics()
         if (backgroundColor != null) {
-            g.color = Style.getColor(backgroundColor)
+            g.color = ColorUtil.getColor(backgroundColor)
             g.fillRect(0,0,width,height)
         }
         def b = getBounds()
@@ -204,7 +219,7 @@ class Map {
             b = new Bounds(b.l, b.b, b.r, b.t, p)
         }
         layers.each{layer ->
-            MapLayer mapLayer = new DefaultMapLayer(layer.fs, layer.style.gtStyle)
+            MapLayer mapLayer = new DefaultMapLayer(layer.fs, layer.style.style)
             context.addLayer(mapLayer)
         }
         renderer.paint(g, new Rectangle(0, 0, width, height), b.env)
