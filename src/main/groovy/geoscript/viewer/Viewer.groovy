@@ -20,7 +20,7 @@ import javax.imageio.ImageIO
 import java.awt.image.BufferedImage
 import com.vividsolutions.jts.awt.ShapeWriter
 import com.vividsolutions.jts.awt.PointTransformation
-import com.vividsolutions.jts.awt.SqarePointShapeFactory
+import com.vividsolutions.jts.awt.PointShapeFactory
 import com.vividsolutions.jts.geom.Coordinate
 import com.vividsolutions.jts.geom.Geometry as JtsGeometry
 import com.vividsolutions.jts.geom.Polygon as JtsPolygon
@@ -143,8 +143,20 @@ class Viewer {
         int imageWidth = size[0]
         int imageHeight = size[1]
 
-        // @TODO Add support for other shapes when jts 1.11 comes out
-        def shapeFactory = new SqarePointShapeFactory(markerSize)
+        def shapeFactory
+        if (markerShape.equalsIgnoreCase("circle")) {
+            shapeFactory = new PointShapeFactory.Circle(markerSize)
+        } else if (markerShape.equalsIgnoreCase("cross")) {
+            shapeFactory = new PointShapeFactory.Cross(markerSize)
+        } else if (markerShape.equalsIgnoreCase("star")) {
+            shapeFactory = new PointShapeFactory.Star(markerSize)
+        } else if (markerShape.equalsIgnoreCase("Triangle")) {
+            shapeFactory = new PointShapeFactory.Triangle(markerSize)
+        } else if (markerShape.equalsIgnoreCase("X")) {
+            shapeFactory = new PointShapeFactory.X(markerSize)
+        } else /* if (markerShape.equalsIgnoreCase("square")) */ {
+            shapeFactory = new PointShapeFactory.Square(markerSize)
+        }
 
         ShapeWriter shapeWriter = new ShapeWriter({Coordinate mapCoordinate, Point2D shape ->
             double imageX = (1 - (bounds.r - mapCoordinate.x) / bounds.width) * imageWidth
