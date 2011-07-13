@@ -47,7 +47,9 @@ class Cursor {
      * @return The next Feature
      */
     Feature next() {
-        new Feature(iter.next())
+        Feature f = new Feature(iter.next())
+        f.layer = layer
+        f
     }
 
     /**

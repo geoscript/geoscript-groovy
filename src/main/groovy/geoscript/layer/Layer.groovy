@@ -26,6 +26,7 @@ import net.opengis.wfs.WfsFactory
 import org.geotools.wfs.v1_1.WFS
 import org.geotools.wfs.v1_1.WFSConfiguration
 import org.geotools.xml.Encoder
+import org.opengis.filter.FilterFactory2
 import org.json.*
 import geoscript.geom.io.KmlWriter
 import org.jdom.*
@@ -73,6 +74,11 @@ class Layer {
      * The internal counter for new Layer names
      */
     private static int id = 0
+
+    /**
+     * The FilterFactory2 for creating Filters
+     */
+    private final static FilterFactory2 filterFactory = org.geotools.factory.CommonFactoryFinder.getFilterFactory2(org.geotools.factory.GeoTools.getDefaultHints())
 
     /**
      * Create a new Layer from a GeoTools FeatureSource
@@ -333,7 +339,6 @@ class Layer {
                 Cursor c = getCursor(f)
                 while(c.hasNext()) {
                     Feature feature = c.next()
-                    def filterFactory = org.geotools.factory.CommonFactoryFinder.getFilterFactory2(org.geotools.factory.GeoTools.getDefaultHints())
                     def idFilter = filterFactory.id(java.util.Collections.singleton(feature.f.identifier))
                     store.modifyFeatures(ad, value.call(feature), idFilter)
                 }
@@ -406,6 +411,54 @@ class Layer {
      */
     void plus(def o) {
         add(o)
+    }
+
+    /**
+     * A Map of modified Features by ID
+     */
+    private Map modifiedFeatures
+
+    /**
+     * Add the Feature to a List of modified Features
+     * @param feature The modified Feature
+     * @param name The modified field name.
+     */
+    void queueModified(Feature feature, String name) {
+        if (!modifiedFeatures) {
+            modifiedFeatures = new HashMap()
+        }
+        String id = feature.id
+        if (!modifiedFeatures.containsKey(id)) {
+            modifiedFeatures[id] = [names: []]
+        }
+        modifiedFeatures[id].feature = feature
+        modifiedFeatures[id].names.add(name)
+    }
+
+    /**
+     * Update all modified Features whose values where changed with the Feature.set(field,value) method.
+     */
+    void update() {
+        if (modifiedFeatures != null && !modifiedFeatures.isEmpty()) {
+            def idFilter = filterFactory.createFidFilter()
+            modifiedFeatures.keySet().each{id-> idFilter.addFid(id)}
+            def results = fs.dataStore.getFeatureWriter(name, idFilter, Transaction.AUTO_COMMIT)
+            try {
+                while(results.hasNext()) {
+                    def feat = results.next()
+                    String id = feat.identifier
+                    modifiedFeatures[id].names.each { name ->
+                        feat.setAttribute(name, modifiedFeatures[id].feature.f.getAttribute(name))
+                    }
+                    results.write()
+                    modifiedFeatures.remove(modifiedFeatures[id])
+                }
+            }
+            finally {
+                results.close()
+            }
+            modifiedFeatures.clear()
+        }
     }
 
     /**

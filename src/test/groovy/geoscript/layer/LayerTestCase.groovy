@@ -7,6 +7,7 @@ import geoscript.feature.Field
 import geoscript.feature.Feature
 import geoscript.proj.Projection
 import geoscript.filter.Filter
+import geoscript.workspace.Memory
 import geoscript.geom.*
 
 /**
@@ -170,6 +171,45 @@ class LayerTestCase {
         layer2.add([new Point(1,2)])
         layer2.add([new Point(3,4)])
         assertEquals 2, layer2.count()
+    }
+
+    @Test void updateFeatures() {
+
+        // Create a Layer in memory
+        Memory mem = new Memory()
+        Layer l = mem.create('coffee_stands',[new Field("geom", "Point"), new Field("name", "String")])
+        assertNotNull(l)
+
+        // Add some Features
+        l.add([new Point(1,1), "Hot Java"])
+        l.add([new Point(2,2), "Cup Of Joe"])
+        l.add([new Point(3,3), "Hot Wire"])
+
+        // Make sure they are there and the attributes are equal
+        assertEquals 3, l.count()
+        List<Feature> features = l.features
+        assertEquals features[0].get("geom").wkt, "POINT (1 1)"
+        assertEquals features[1].get("geom").wkt, "POINT (2 2)"
+        assertEquals features[2].get("geom").wkt, "POINT (3 3)"
+        assertEquals features[0].get("name"), "Hot Java"
+        assertEquals features[1].get("name"), "Cup Of Joe"
+        assertEquals features[2].get("name"), "Hot Wire"
+
+        // Now do some updating
+        features[0].set("geom", new Point(5,5))
+        features[1].set("name", "Coffee")
+        features[2].set("geom", new Point(6,6))
+        features[2].set("name", "Hot Coffee")
+        l.update()
+
+        // Ok, now do some more checking
+        features = l.features
+        assertEquals features[0].get("geom").wkt, "POINT (5 5)"
+        assertEquals features[1].get("geom").wkt, "POINT (2 2)"
+        assertEquals features[2].get("geom").wkt, "POINT (6 6)"
+        assertEquals features[0].get("name"), "Hot Java"
+        assertEquals features[1].get("name"), "Coffee"
+        assertEquals features[2].get("name"), "Hot Coffee"
     }
 
     @Test void update() {

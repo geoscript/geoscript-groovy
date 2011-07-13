@@ -4,6 +4,7 @@ import org.opengis.feature.simple.SimpleFeature
 import org.geotools.feature.simple.SimpleFeatureBuilder
 import com.vividsolutions.jts.geom.Geometry as JtsGeometry
 import geoscript.geom.*
+import geoscript.layer.Layer
 
 /**
  * A Feature contains a set of named attributes with values.
@@ -35,6 +36,11 @@ class Feature {
      * The Schema
      */
     Schema schema
+
+    /**
+     * The Layer the Feature was read from
+     */
+    Layer layer
 
     /**
      * Create a new Feature by wrapping a GeoTools SimpleFeature
@@ -143,7 +149,14 @@ class Feature {
      */
     void set(String name, Object value) {
         Field fld = schema.field(name)
-        f.setAttribute(name, (value instanceof Geometry) ? ((Geometry)value).g : value)
+        if (name.equalsIgnoreCase(schema.geom.name)) {
+            f.defaultGeometry = ((Geometry)value).g
+        } else {
+            f.setAttribute(name, value)
+        }
+        if (layer) {
+            layer.queueModified(this, name)
+        }
     }
 
     /**
