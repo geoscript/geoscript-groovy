@@ -5,8 +5,6 @@ import com.vividsolutions.jts.geom.GeometryFactory
 import com.vividsolutions.jts.geom.Coordinate
 import com.vividsolutions.jts.geom.prep.PreparedGeometryFactory
 import com.vividsolutions.jts.io.WKTReader
-import com.vividsolutions.jts.io.WKBReader
-import com.vividsolutions.jts.io.WKBWriter
 import com.vividsolutions.jts.geom.Envelope
 import com.vividsolutions.jts.geom.IntersectionMatrix
 import com.vividsolutions.jts.geom.util.AffineTransformation
@@ -39,14 +37,14 @@ class Geometry {
     private static WKTReader wktReader = new WKTReader()
 
     /**
-     * The JTS WKBWriter
+     * The WKB Writer
      */
-    private static WKBWriter wkbWriter = new WKBWriter()
+    private static WkbWriter wkbWriter = new WkbWriter()
 
     /**
-     * The JTS WKBReader
+     * The WKB Reader
      */
-    private static WKBReader wkbReader = new WKBReader()
+    private static WkbReader wkbReader = new WkbReader()
 
     /**
      * The KML Writer
@@ -205,8 +203,8 @@ class Geometry {
      * Get the boundary of this Geometry
      * @return The boundary of this Geometry
      */
-    double getBoundary() {
-        this.g.boundary
+    Geometry getBoundary() {
+        Geometry.wrap(this.g.boundary)
     }
 
     /**
@@ -214,7 +212,7 @@ class Geometry {
      * @return The centroid as a Point of this Geometry
      */
     Point getCentroid() {
-        wrap(this.g.centroid)
+        wrap(this.g.centroid) as Point
     }
 
     /**
@@ -230,7 +228,7 @@ class Geometry {
      * @return The Envelope of this Geometry
      */
     Envelope getEnvelope() {
-        this.g.envelope
+        this.g.envelopeInternal
     }
 
     /**
@@ -264,7 +262,7 @@ class Geometry {
      * @return The interior Point of this Geometry
      */
     Point getInteriorPoint() {
-        wrap(this.g.getInteriorPoint())
+        wrap(this.g.getInteriorPoint()) as Point
     }
 
     /**
@@ -674,6 +672,7 @@ class Geometry {
                 return new Point(c.x, c.y)
             }
         }
+        return null
     }
 
     /**
@@ -686,10 +685,18 @@ class Geometry {
     
     /**
      * Get the WKB of the Geometry
-     * @return The WKB of this Geometry
+     * @return The WKB hex string of this Geometry
      */
-    byte[] getWkb() {
-        wkbWriter.write(g)
+    String getWkb() {
+        wkbWriter.write(this)
+    }
+
+     /**
+     * Get the WKB of the Geometry
+     * @return The WKB byte array of this Geometry
+     */
+    byte[] getWkbBytes() {
+        wkbWriter.writeBytes(this)
     }
 
     /**
@@ -785,12 +792,21 @@ class Geometry {
     }
 
     /**
-     * Get a Geometry from WKB
-     * @param wkb The WKB
+     * Get a Geometry from WKB byte array
+     * @param wkb The WKB byte array
      * @return A Geometry
      */
     static Geometry fromWKB(byte[] wkb) {
-        wrap(wkbReader.read(wkb))
+        wkbReader.read(wkb)
+    }
+
+    /**
+     * Get a Geometry from WKB hex string
+     * @param wkb The WKB hex string
+     * @return A Geometry
+     */
+    static Geometry fromWKB(String wkb) {
+        wkbReader.read(wkb)
     }
 
     /**

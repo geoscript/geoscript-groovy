@@ -29,7 +29,21 @@ class GeometryTestCase {
         Geometry g = new Geometry(Geometry.factory.createPoint(new Coordinate(111,-47)))
         assertEquals "POINT (111 -47)", g.wkt
     }
-	
+
+    @Test void getWkb() {
+        Geometry g = new Point(111,-47)
+        assertEquals "0000000001405BC00000000000C047800000000000", g.wkb
+        assertArrayEquals([0, 0, 0, 0, 1, 64, 91, -64, 0, 0, 0, 0, 0, -64, 71, -128, 0, 0, 0, 0, 0] as byte[], g.wkbBytes)
+    }
+
+    @Test void fromWkb() {
+        Geometry expected = new Point(111, -47)
+        Geometry actual = Geometry.fromWKB("0000000001405BC00000000000C047800000000000")
+        assertEquals expected.wkt, actual.wkt
+        actual = Geometry.fromWKB([0, 0, 0, 0, 1, 64, 91, -64, 0, 0, 0, 0, 0, -64, 71, -128, 0, 0, 0, 0, 0] as byte[])
+        assertEquals expected.wkt, actual.wkt
+    }
+
     @Test void string() {
         Geometry g = new Geometry(Geometry.factory.createPoint(new Coordinate(111,-47)))
         assertEquals "POINT (111 -47)", g.toString()
