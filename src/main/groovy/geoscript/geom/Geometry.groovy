@@ -4,7 +4,6 @@ import com.vividsolutions.jts.geom.Geometry as JtsGeometry
 import com.vividsolutions.jts.geom.GeometryFactory
 import com.vividsolutions.jts.geom.Coordinate
 import com.vividsolutions.jts.geom.prep.PreparedGeometryFactory
-import com.vividsolutions.jts.io.WKTReader
 import com.vividsolutions.jts.geom.Envelope
 import com.vividsolutions.jts.geom.IntersectionMatrix
 import com.vividsolutions.jts.geom.util.AffineTransformation
@@ -32,9 +31,14 @@ class Geometry {
     static PreparedGeometryFactory preparedFactory = new PreparedGeometryFactory()
 
     /**
-     * The JTS WKTReader
+     * The WKT Writer
      */
-    private static WKTReader wktReader = new WKTReader()
+    private static WktWriter wktWriter = new WktWriter()
+
+    /**
+     * The WKT Reader
+     */
+    private static WktReader wktReader = new WktReader()
 
     /**
      * The WKB Writer
@@ -680,7 +684,7 @@ class Geometry {
      * @return The WKT of this Geometry
      */
     String getWkt() {
-        g.toText()
+        wktWriter.write(this)
     }
     
     /**
@@ -788,7 +792,7 @@ class Geometry {
      * @return A Geometry
      */
     static Geometry fromWKT(String wkt) {
-        wrap(wktReader.read(wkt))
+        wktReader.read(wkt)
     }
 
     /**
