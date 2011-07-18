@@ -24,7 +24,50 @@ class GeometryTestCase {
         assertNotNull(p)
         assertEquals pt.buffer(5.0).toString(), p.toString()
     }
-	
+
+    @Test void singleSidedBuffer() {
+       String wkt = "LINESTRING (0.693359375 46.591796875, 5.703125 51.337890625, 9.306640625 48.0419921875, 12.03125 53.0078125, 19.2822265625 45.80078125)"
+       Geometry g = Geometry.fromWKT(wkt)
+       Geometry buffer = g.singleSidedBuffer(-2)
+       assertEquals "POLYGON ((0.693359375 46.591796875, 5.703125 51.337890625, 9.306640625 48.0419921875, 12.03125 53.0078125, 19.2822265625 45.80078125, 17.8723180343991 44.38227571867897, 12.506275490911024 49.71579679220651, 11.060054369792876 47.07994216823311, 10.832564011572027 46.749104791663626, 10.543576944652168 46.470372468507726, 10.20473972588441 46.25497847602753, 9.82970793845354 46.11160347389942, 9.43359585401137 46.04602566227302, 9.032367307756616 46.06088791274607, 8.642192334992414 46.155591257181634, 8.278795497549897 46.32631902690761, 7.9568221633754534 46.566190669457164, 5.727082494228705 48.605586708310895, 2.0688486708215663 45.139891507188345, 0.693359375 46.591796875))", buffer.wkt
+    }
+
+    @Test void equals() {
+        Geometry g1 = new Point(111, -47)
+        Geometry g2 = new Point(111, -47)
+        Geometry g3 = new Point(123, -32)
+        assertTrue g1.equals(g2)
+        assertFalse g1.equals(g3)
+        assertFalse g2.equals(g3)
+    }
+
+    @Test void testHashCode() {
+        Geometry g1 = new Point(111, -47)
+        Geometry g2 = new Point(111, -47)
+        Geometry g3 = new Point(123, -32)
+        assertTrue g1.hashCode().equals(g2.hashCode())
+        assertFalse g1.hashCode().equals(g3.hashCode())
+        assertFalse g2.hashCode().equals(g3.hashCode())
+    }
+
+    @Test void equalsNorm() {
+        Geometry g1 = new Point(111, -47)
+        Geometry g2 = new Point(111, -47)
+        Geometry g3 = new Point(123, -32)
+        assertTrue g1.equalsNorm(g2)
+        assertFalse g1.equalsNorm(g3)
+        assertFalse g2.equalsNorm(g3)
+    }
+
+    @Test void equalsTopo() {
+        Geometry g1 = new Point(111, -47)
+        Geometry g2 = new Point(111, -47)
+        Geometry g3 = new Point(123, -32)
+        assertTrue g1.equalsTopo(g2)
+        assertFalse g1.equalsTopo(g3)
+        assertFalse g2.equalsTopo(g3)
+    }
+
     @Test void getWkt() {
         Geometry g = new Geometry(Geometry.factory.createPoint(new Coordinate(111,-47)))
         assertEquals "POINT (111 -47)", g.wkt
@@ -203,6 +246,13 @@ class GeometryTestCase {
         assertEquals("LINESTRING (1 2, 2 1)", minDiameter.wkt)
     }
 
+    @Test void getMinimumClearance() {
+        String wkt = "POLYGON ((12.998046875 53.4912109375, 16.337890625 49.9755859375, 11.591796875 44.5263671875, 19.5458984375 45.0537109375, 17.6123046875 53.6669921875, 12.998046875 53.4912109375))"
+        Geometry g = Geometry.fromWKT(wkt)
+        Geometry minClearance = g.minimumClearance
+        assertEquals "LINESTRING (16.337890625 49.9755859375, 18.340085760928826 50.42505831495341)", minClearance.wkt
+    }
+
     @Test void isValid() {
         Geometry g1 = new Polygon([0,0],[10,10],[0,10],[10,0],[0,0])
         assertFalse(g1.isValid())
@@ -291,4 +341,33 @@ class GeometryTestCase {
         assertEquals("POINT (3 4)", p2.wkt)
     }
 
+    @Test void norm() {
+        Geometry g1 = new Polygon([10,10],[10,20],[20,20],[20,10],[10,10])
+        Geometry g2 = g1.norm
+        assertNotNull g2
+    }
+
+    @Test void createRandomPoints() {
+        int number = 100
+        String wkt = "POLYGON ((8.603515625 52.919921875, 5.52734375 45.2734375, 20.9521484375 45.9326171875, 19.150390625 53.798828125, 8.603515625 52.919921875))"
+        Geometry g = Geometry.fromWKT(wkt)
+        Geometry pts = Geometry.createRandomPoints(g, number)
+        assertEquals number, pts.numPoints
+        pts.coordinates.each {coord ->
+            assertTrue g.contains(new Point(coord.x, coord.y))
+        }
+    }
+
+    @Test void createRandomPointsInGrid() {
+        int number = 100
+        Bounds b = new Bounds(4, 45, 19, 53)
+        Geometry g = b.geometry
+        Geometry pts = Geometry.createRandomPointsInGrid(b, number, true, 0.75)
+        // Yes, this is actually correct.  More random points can be generated than the number
+        // given if required
+        assertEquals 121, pts.numPoints
+        pts.coordinates.each {coord ->
+            assertTrue g.contains(new Point(coord.x, coord.y))
+        }
+    }
 }
