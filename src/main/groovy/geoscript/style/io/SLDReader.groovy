@@ -9,7 +9,10 @@ import org.geotools.styling.SLDParser
 /**
  * Read a Geoscript Style from a SLD File, InputStream or String
  * <p>
- * <code>def reader = new SLDReader("states.sld")</code>
+ * <pre><code>
+ * Reader reader = new SLDReader()
+ * Style style = reader.read("states.sld")
+ * </code></pre>
  * </p>
  * @author Jared Erickson
  */

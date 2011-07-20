@@ -7,7 +7,10 @@ import org.geotools.styling.Style as GtStyle
 /**
  * Read a Geoscript Style from a CSS File, InputStream or String
  * <p>
- * <code>def reader = new CSSReader("states.css")</code>
+ * <pre><code>
+ * Reader reader = new CSSReader()
+ * Style style = reader.read("states.css")
+ * </code></pre>
  * </p>
  * @author Jared Erickson
  */

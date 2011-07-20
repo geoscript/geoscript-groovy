@@ -42,6 +42,17 @@ class SLDWriterTestCase {
         assertEquals expectedSld, sld
     }
 
+    @Test void writeToFile() {
+        Symbolizer sym = new Fill("wheat") + new Stroke("brown")
+        SLDWriter writer = new SLDWriter();
+        File file = File.createTempFile("simple",".sld")
+        writer.write(sym, file)
+        String sld = file.text.trim()
+        assertNotNull sld
+        assertTrue sld.length() > 0
+        assertEquals expectedSld, sld
+    }
+
     @Test void writeToString() {
         Symbolizer sym = new Fill("wheat") + new Stroke("brown")
         SLDWriter writer = new SLDWriter();

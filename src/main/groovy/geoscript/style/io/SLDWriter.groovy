@@ -4,7 +4,7 @@ import geoscript.style.Style
 import org.geotools.styling.SLDTransformer
 
 /**
- * Write a Symbolizer to an SLD document
+ * Write a Style to an SLD document
  * <p>
  * <code><pre>
  * def sym = new Fill("#ff00FF") + new Stroke("#ffff00", 0.25")
@@ -33,7 +33,18 @@ class SLDWriter implements Writer {
         }
         transformer.transform(style.style, out)
     }
-    
+
+    /**
+     * Write the Style to the File
+     * @param style The Style
+     * @param file The File
+     */
+    void write(Style style, File file) {
+        FileOutputStream out = new FileOutputStream(file)
+        write(style, out)
+        out.close()
+    }
+
     /**
      * Write the Style to a String
      * @param The Style

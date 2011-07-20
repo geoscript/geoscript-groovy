@@ -3,7 +3,7 @@ package geoscript.style.io
 import geoscript.style.Style
 
 /**
- * Read a GeoScript Style from an InputStream, File, or String 
+ * Read a GeoScript Style from an InputStream, File, or String.
  * @author Jared Erickson
  */
 interface Reader {
