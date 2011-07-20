@@ -15,8 +15,7 @@ import org.geotools.styling.Symbolizer as GtSymbolizer
 class Label extends Symbolizer {
     
     /**
-     * The property can be a Field or String
-     * @TODO Function
+     * The property can be a Field, String, or Function
      */
     def property
 
