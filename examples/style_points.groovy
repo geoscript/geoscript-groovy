@@ -27,6 +27,9 @@ createImage(shp, new Shape("#FF0000", 6, "circle"), new File("point_simple.png")
 // Simple point with stroke
 createImage(shp, new Shape("#FF0000", 6, "circle").stroke("#000000",2), new File("point_simple_stroke.png"))
 
+// Simple point with true type font
+createImage(shp, new Shape("navy", 18, "ttf://Wingdings#0xF054"), new File("point_simple_ttf.png"))
+
 // Rotated square
 createImage(shp, new Shape("#009900", 12, "square", 1.0, 45), new File("point_rotated_square.png"))
 
