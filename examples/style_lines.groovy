@@ -7,8 +7,6 @@
  *
  */
 import geoscript.layer.*
-import geoscript.filter.Filter
-import geoscript.geom.Bounds
 import geoscript.style.*
 import geoscript.map.Map
 
