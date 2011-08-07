@@ -14,7 +14,23 @@ class WkbWriter implements Writer {
     /**
      * The JTS WKBWriter
      */
-    private final static WKBWriter writer = new WKBWriter()
+    private final WKBWriter writer
+
+    /**
+     * Create a new WkbWriter.
+     */
+    WkbWriter() {
+        writer = new WKBWriter()
+    }
+
+    /**
+     * Create a new WkbWriter with an output dimension and byte order.
+     * @param outputDimension The output dimension
+     * @param byteOrder The byte order
+     */
+    WkbWriter(int outputDimension, int byteOrder) {
+        writer = new WKBWriter(outputDimension, byteOrder)
+    }
 
     /**
      * Write the Geometry to WKB hex String
