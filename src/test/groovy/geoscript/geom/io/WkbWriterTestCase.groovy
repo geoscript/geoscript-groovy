@@ -20,6 +20,24 @@ class WkbWriterTestCase {
         byte[] expecteds = [0, 0, 0, 0, 1, 64, 91, -64, 0, 0, 0, 0, 0, -64, 71, -128, 0, 0, 0, 0, 0] as byte[]
         byte[] actuals = writer.writeBytes(p)
         assertArrayEquals(expecteds, actuals)
+
+        writer = new WkbWriter(3, WkbWriter.BIG_ENDIAN)
+        p = new Point(111,-47)
+        expected = "0080000001405BC00000000000C0478000000000007FF8000000000000"
+        actual = writer.write(p)
+        assertEquals expected, actual
+
+        writer = new WkbWriter(2, WkbWriter.LITTLE_ENDIAN)
+        p = new Point(111,-47)
+        expected = "01010000000000000000C05B4000000000008047C0"
+        actual = writer.write(p)
+        assertEquals expected, actual
+
+        writer = new WkbWriter(3, WkbWriter.LITTLE_ENDIAN)
+        p = new Point(111,-47)
+        expected = "01010000800000000000C05B4000000000008047C0000000000000F87F"
+        actual = writer.write(p)
+        assertEquals expected, actual
     }
 
     @Test void writeLineString() {
