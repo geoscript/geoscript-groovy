@@ -54,8 +54,9 @@ class Schema {
      * </code></p>
      * @param name The Schema name
      * @param typeSpec The Schema String.
+     * @param uri The namespace uri
      */
-    Schema(String name, String typeSpec) {
+    Schema(String name, String typeSpec, String uri = "http://geoscript.org/feature") {
         this(DataUtilities.createType(name, typeSpec))
     }
 
@@ -72,8 +73,9 @@ class Schema {
      * </code></p>
      * @param name The Schema's name
      * @param fields A List of Fields, a List of Lists, or a List of Maps
+     * @param uri The namespace uri
      */
-    Schema(String name, def fields) {
+    Schema(String name, def fields, String uri = "http://geoscript.org/feature") {
         this(buildFeatureType(name, fields))
     }
 
@@ -107,6 +109,14 @@ class Schema {
             p = new Projection(featureType.coordinateReferenceSystem)
         }
         p
+    }
+
+    /**
+     * Get the namespace uri of this Schema
+     * @return The namespace uri
+     */
+    String getUri() {
+        featureType.name.namespaceURI
     }
 
     /**
@@ -294,11 +304,16 @@ class Schema {
     }
 
     /**
-     * Build a SimpleFeatureType from the name and a List of Fields
+     * Build a SimpleFeatureType from the name and a List of Fields.
+     * @param name The name
+     * @param fields A List of Fields or Strings
+     * @param uri The namespace uri
+     * @return a GeoTools SimpleFeatureType
      */
-    private static SimpleFeatureType buildFeatureType(String name, def fields) {
+    private static SimpleFeatureType buildFeatureType(String name, def fields, String uri = "http://geoscript.org/feature") {
         SimpleFeatureTypeBuilder builder = new SimpleFeatureTypeBuilder()
         builder.setName(new NameImpl(name))
+        builder.namespaceURI = uri
         fields.each{field ->
             if (!(field instanceof Field)) {
                 field = new Field(field)
