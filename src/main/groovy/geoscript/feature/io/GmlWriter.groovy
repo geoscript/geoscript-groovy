@@ -1,11 +1,8 @@
 package geoscript.feature.io
 
 import geoscript.feature.Feature
-
 import javax.xml.namespace.QName
-import org.geotools.xml.Parser
 import org.geotools.xml.Encoder
-import org.geotools.xml.Configuration
 import org.geotools.gml2.GMLConfiguration as GML2
 import org.geotools.gml3.GMLConfiguration as GML3
 import org.geotools.gml3.v3_2.GMLConfiguration as GML32
@@ -17,8 +14,7 @@ import org.geotools.gml3.v3_2.GMLConfiguration as GML32
  */
 class GmlWriter implements Writer {
 
-
-     /**
+    /**
      * Write a Feature to a GML String
      * @param feature The Feature
      * @return A GML String
@@ -37,7 +33,7 @@ class GmlWriter implements Writer {
      * @param nsprefix The XML namespace prefix
      * @return A GML String
      */
-    String write(Feature feature, double version, boolean format, boolean bounds, xmldecl, String nsprefix) {
+    String write(Feature feature, double version, boolean format, boolean bounds, boolean xmldecl, String nsprefix) {
         String nsURI = (version == 3.2) ? new GML32().getNamespaceURI() : new GML3().getNamespaceURI()
         String fName = (version < 3.2) ? "_Feature" : "AbstractFeature"
         QName qName = new QName(nsURI, fName)
@@ -52,6 +48,8 @@ class GmlWriter implements Writer {
         if (format) {
             encoder.indenting = true
         }
+        encoder.namespaces.declarePrefix(nsprefix, feature.schema.uri)
+
         encoder.encodeAsString(feature.f, qName)
     }
 

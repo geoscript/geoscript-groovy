@@ -20,20 +20,21 @@ class GmlWriterTestCase {
         // Create a Feature from a List of values
         Feature feature = new Feature([new Point(111,-47), "House", 12.5], "house1", schema)
 
-        // Write the Feature to a GeoJSON String
+        // Write the Feature to a GML String
         GmlWriter writer = new GmlWriter()
-        String expected = """<gml:houses fid="house1" xmlns:gml="http://www.opengis.net/gml" xmlns:xlink="http://www.w3.org/1999/xlink">
+        String expected = """<gsf:houses fid="house1" xmlns:gml="http://www.opengis.net/gml"
+    xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:gsf="http://geoscript.org/feature">
     <gml:name>House</gml:name>
-    <gml:geom>
+    <gsf:geom>
         <gml:Point>
             <gml:coord>
                 <gml:X>111.0</gml:X>
                 <gml:Y>-47.0</gml:Y>
             </gml:coord>
         </gml:Point>
-    </gml:geom>
-    <gml:price>12.5</gml:price>
-</gml:houses>
+    </gsf:geom>
+    <gsf:price>12.5</gsf:price>
+</gsf:houses>
 """
         String actual = writer.write(feature)
         assertEquals expected, actual
