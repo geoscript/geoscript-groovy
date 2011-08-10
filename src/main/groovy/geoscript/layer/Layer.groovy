@@ -9,7 +9,6 @@ import geoscript.filter.Filter
 import geoscript.style.Style
 import org.geotools.data.FeatureSource
 import org.geotools.data.DefaultQuery
-import org.geotools.data.Query
 import org.geotools.data.Transaction
 import org.geotools.data.FeatureStore
 import org.geotools.data.FeatureReader
@@ -22,17 +21,13 @@ import org.opengis.feature.simple.SimpleFeature
 import org.opengis.referencing.crs.CoordinateReferenceSystem
 import org.opengis.feature.type.AttributeDescriptor
 import com.vividsolutions.jts.geom.Envelope
-import net.opengis.wfs.WfsFactory
-import org.geotools.wfs.v1_1.WFS
-import org.geotools.wfs.v1_1.WFSConfiguration
-import org.geotools.xml.Encoder
 import org.opengis.filter.FilterFactory2
-import org.json.*
 import geoscript.geom.io.KmlWriter
 import org.jdom.*
 import org.jdom.output.*
 import org.jdom.input.*
-//import org.geotools.geojson.GeoJSONWriter
+import geoscript.layer.io.GmlWriter
+import geoscript.layer.io.GeoJSONWriter
 
 /**
  * A Layer is a source of spatial data
@@ -147,10 +142,9 @@ class Layer {
     }
 
     /**
-     * Create a new Layer with a name
+     * Create a new Layer with a name in the Memory Workspace
      * @param name The Layer's name
      * @param schema The Schema
-
      */
     Layer(String name, Schema schema) {
         this.workspace = new Memory()
@@ -163,7 +157,7 @@ class Layer {
     }
 
     /**
-     * Create a new Layer with a default name, Schema, and Memory Workspace
+     * Create a new Layer with a default name, Schema in the Memory Workspace
      */
     Layer() {
         this(newname(), new Schema("features", [new Field("geom","Geometry")]))
@@ -507,20 +501,16 @@ class Layer {
     }
 
     /**
+     * The GML Layer Writer
+     */
+    private static final GmlWriter gmlWriter = new GmlWriter()
+
+    /**
      * Write the Layer as GML to an Outputstream
      * @param out The OutputStream (defaults to System.out)
      */
     void toGML(OutputStream out = System.out) {
-        FeatureCollection features = fs.features
-        def fc = WfsFactory.eINSTANCE.createFeatureCollectionType()
-        fc.feature.add(features)
-
-        Encoder e = new Encoder(new WFSConfiguration())
-        URI uri = (fs.name.namespaceURI == null) ? new URI("http://geotools") : new URI(fs.name.namespaceURI)
-        String prefix = "gt"
-        e.namespaces.declarePrefix(prefix, uri.toString())
-        e.indenting = true
-        e.encode(fc, WFS.FeatureCollection, out)
+        gmlWriter.write(this, out)
     }
 
     /**
@@ -528,9 +518,7 @@ class Layer {
      * @param file The File
      */
     String toGMLFile(File file) {
-        FileOutputStream out = new FileOutputStream(file)
-        toGML(out)
-        out.close()
+        gmlWriter.write(this, file)
     }
 
     /**
@@ -538,44 +526,20 @@ class Layer {
      * @param out A GML String
      */
     String toGMLString() {
-        ByteArrayOutputStream out = new ByteArrayOutputStream()
-        toGML(out)
-        out.toString()
+        gmlWriter.write(this)
     }
+
+    /**
+     * The GeoJSON Layer Writer
+     */
+    private final static GeoJSONWriter geoJSONWriter = new GeoJSONWriter()
 
     /**
      * Write the Layer as GeoJSON to an OutputStream
      * @param out The OutputStream (defaults to System.out)
      */
     void toJSON(OutputStream out = System.out) {
-        //FeatureCollection features = fs.features
-        //GeoJSONWriter w = new GeoJSONWriter()
-        //w.write(features, out)
-        def writer = new geoscript.geom.io.GeoJSONWriter()
-        JSONObject jsonObject = new JSONObject()
-        jsonObject.put("type","FeatureCollection")
-        JSONArray array = new JSONArray()
-        Cursor cursor = getCursor()
-        while(cursor.hasNext()) {
-            Feature f = cursor.next()
-            JSONObject obj = new JSONObject()
-            obj.put("type","Feature")
-            obj.put("geometry", new JSONObject(writer.write(f.geom)))
-            JSONObject props = new JSONObject()
-            f.attributes.each{k,v ->
-                if (!(v instanceof Geometry)) {
-                    props.put(k,v)
-                }
-            }
-            obj.put("properties",props)
-            array.put(obj)
-        }
-        cursor.close()
-        jsonObject.put("features", array)
-        Writer w = new java.io.OutputStreamWriter(out)
-        jsonObject.write(w)
-        w.flush()
-        w.close()
+        geoJSONWriter.write(this, out)
     }
 
     /**
@@ -583,9 +547,7 @@ class Layer {
      * @param file The File
      */
     String toJSONFile(File file) {
-        FileOutputStream out = new FileOutputStream(file)
-        toJSON(out)
-        out.close()
+        geoJSONWriter.write(this, file)
     }
 
     /**
@@ -593,9 +555,7 @@ class Layer {
      * @param out A GeoJSON String
      */
     String toJSONString() {
-        ByteArrayOutputStream out = new ByteArrayOutputStream()
-        toJSON(out)
-        out.toString()
+        geoJSONWriter.write(layer)
     }
 
     /**

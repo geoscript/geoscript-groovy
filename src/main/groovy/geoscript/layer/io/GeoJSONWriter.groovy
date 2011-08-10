@@ -20,7 +20,7 @@ class GeoJSONWriter implements Writer {
      * @param out The OutputStream
      */
     void write(Layer layer, OutputStream out) {
-       featureJSON.writeFeatureCollection(layer.fs, out)
+       featureJSON.writeFeatureCollection(layer.fs.features, out)
     }
 
     /**

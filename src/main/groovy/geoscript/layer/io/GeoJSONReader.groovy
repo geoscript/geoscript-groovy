@@ -20,7 +20,10 @@ class GeoJSONReader implements Reader {
      * @return A GeoScript Layer
      */
     Layer read(InputStream input) {
-        new Layer(featureJSON.readFeatureCollection(input))
+        def featureCollection = featureJSON.readFeatureCollection(input)
+        geoscript.workspace.Workspace ws = new geoscript.workspace.Memory()
+        ws.ds.addFeatures(featureCollection)
+        return ws.get(ws.layers[0])
     }
 
     /**
@@ -38,7 +41,7 @@ class GeoJSONReader implements Reader {
      * @return A GeoScript Layer
      */
     Layer read(String str) {
-        read(new ByteArrayInputStream(str))
+        read(new ByteArrayInputStream(str.getBytes("UTF-8")))
     }
 
 }
