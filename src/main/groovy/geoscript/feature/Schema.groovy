@@ -57,7 +57,7 @@ class Schema {
      * @param uri The namespace uri
      */
     Schema(String name, String typeSpec, String uri = "http://geoscript.org/feature") {
-        this(DataUtilities.createType(name, typeSpec))
+        this(DataUtilities.createType(uri, name, typeSpec))
     }
 
     /**
