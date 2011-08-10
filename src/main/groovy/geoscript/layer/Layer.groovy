@@ -362,7 +362,7 @@ class Layer {
 
     /**
      * Add a Feature to the Layer
-     * @param o The Feature or List/Map of values
+     * @param o The Feature, the List of Features, or a List/Map of values
      */
     void add(def o) {
         // If it is a List of Features, then add it inside of a Transaction
