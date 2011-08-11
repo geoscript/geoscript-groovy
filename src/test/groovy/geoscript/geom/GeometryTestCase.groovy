@@ -370,4 +370,13 @@ class GeometryTestCase {
             assertTrue g.contains(new Point(coord.x, coord.y))
         }
     }
+
+    @Test void getGeometryType() {
+        Point p = new Point(145, -47)
+        assertEquals "Point", p.geometryType
+
+        LineString lineString = new LineString([[0,0],[1,1],[2,2]])
+        assertEquals "LineString", lineString.geometryType
+    }
+
 }

@@ -769,8 +769,8 @@ class Geometry {
     }
 
     /**
-     * The string reprensentation
-     * @return The string reprensentation
+     * The string representation
+     * @return The string representation
      */
     String toString() {
         return wkt
@@ -824,6 +824,14 @@ class Geometry {
      */
     PreparedGeometry prepare() {
         new PreparedGeometry(this)
+    }
+
+    /**
+     * Get the name of the Geometry type
+     * @return The name of the Geometry type
+     */
+    String getGeometryType() {
+        this.g.geometryType
     }
 
     /**
