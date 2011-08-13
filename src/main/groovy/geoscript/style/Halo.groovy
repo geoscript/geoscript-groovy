@@ -1,5 +1,6 @@
 package geoscript.style
 
+import geoscript.filter.Expression
 import org.geotools.styling.Rule
 import org.geotools.styling.TextSymbolizer
 import org.geotools.styling.Symbolizer as GtSymbolizer
@@ -22,7 +23,7 @@ class Halo extends Symbolizer {
     /**
      * The radius
      */
-    double radius = 1
+    Expression radius = new Expression(1.0)
 
     /**
      * Create a new Halo with named parameters.
@@ -44,10 +45,18 @@ class Halo extends Symbolizer {
      * @param fill The Fill
      * @param radius The radius
      */
-    Halo(Fill fill, double radius) {
+    Halo(Fill fill, def radius) {
         super()
         this.fill = fill
-        this.radius = radius
+        this.radius = new Expression(radius)
+    }
+
+    /**
+     * Set the radius
+     * @param radius The radius
+     */
+    void setRadius(def radius) {
+        this.radius = new Expression(radius)
     }
 
     /**
@@ -71,7 +80,7 @@ class Halo extends Symbolizer {
         super.apply(sym)
         sym.halo = styleFactory.createHalo(
             fill.createFill(),
-            filterFactory.literal(radius)
+            radius.expr
         )
     }
 

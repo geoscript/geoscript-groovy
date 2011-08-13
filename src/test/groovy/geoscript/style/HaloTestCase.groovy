@@ -1,7 +1,9 @@
 package geoscript.style
 
 import org.junit.Test
-import static org.junit.Assert.*
+import static org.junit.Assert.assertEquals
+import geoscript.filter.Color
+import geoscript.filter.Expression
 
 /**
  * The Halo Unit Test
@@ -11,13 +13,18 @@ class HaloTestCase {
 
     @Test void constructors() {
         Halo halo = new Halo(new Fill("#ffffff"), 1)
-        assertEquals "#ffffff", halo.fill.color
-        assertEquals 1, halo.radius, 0.1
-        assertEquals "Halo(fill = Fill(color = #ffffff, opacity = 1.0), radius = 1.0)", halo.toString()
+        assertEquals "#ffffff", halo.fill.color.value
+        assertEquals 1, halo.radius.value, 0.1
+        assertEquals "Halo(fill = Fill(color = #ffffff, opacity = 1.0), radius = 1)", halo.toString()
+
+        halo = new Halo(new Fill(new Color("#ffffff")), new Expression(1))
+        assertEquals "#ffffff", halo.fill.color.value
+        assertEquals 1, halo.radius.value, 0.1
+        assertEquals "Halo(fill = Fill(color = #ffffff, opacity = 1.0), radius = 1)", halo.toString()
 
         halo = new Halo(fill: new Fill("navy"), radius: 2.5)
-        assertEquals "#000080", halo.fill.color
-        assertEquals 2.5, halo.radius, 0.1
+        assertEquals "#000080", halo.fill.color.value
+        assertEquals 2.5, halo.radius.value, 0.1
         assertEquals "Halo(fill = Fill(color = #000080, opacity = 1.0), radius = 2.5)", halo.toString()
     }
 

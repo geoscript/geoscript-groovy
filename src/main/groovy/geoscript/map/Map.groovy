@@ -1,7 +1,7 @@
 package geoscript.map
 
 import geoscript.layer.Layer
-import geoscript.style.ColorUtil
+
 import geoscript.geom.Bounds
 import geoscript.proj.Projection
 import java.awt.RenderingHints
@@ -9,10 +9,10 @@ import java.awt.image.BufferedImage
 import javax.imageio.ImageIO
 import java.awt.Graphics2D
 import java.awt.Rectangle
-import java.awt.Color
+
 import org.geotools.map.DefaultMapContext
 import org.geotools.map.DefaultMapLayer
-import org.geotools.map.MapContext
+
 import org.geotools.map.MapContent
 import org.geotools.map.MapLayer
 import org.geotools.renderer.GTRenderer
@@ -20,6 +20,7 @@ import org.geotools.renderer.lite.StreamingRenderer
 import org.geotools.renderer.lite.RendererUtilities
 import org.geotools.renderer.lite.LabelCache
 import org.geotools.renderer.label.LabelCacheImpl
+import geoscript.filter.Color
 
 /**
  * The GeoScript Map for rendering Layers as Images
@@ -118,7 +119,7 @@ class Map {
      * @param color  The background color (#ffffff, red)
      */
     void setBackgroundColor(def color) {
-        this.backgroundColor = ColorUtil.toHex(color)
+        this.backgroundColor = Color.toHex(color)
     }
 
     /**
@@ -196,7 +197,7 @@ class Map {
         BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB)
         Graphics2D g = (Graphics2D) image.createGraphics()
         if (backgroundColor != null) {
-            g.color = ColorUtil.getColor(backgroundColor)
+            g.color = Color.getColor(backgroundColor)
             g.fillRect(0,0,width,height)
         }
         def b = getBounds()

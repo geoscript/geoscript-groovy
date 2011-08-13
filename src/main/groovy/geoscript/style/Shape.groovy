@@ -1,5 +1,6 @@
 package geoscript.style
 
+import geoscript.filter.Expression
 import org.geotools.styling.Rule
 import org.geotools.styling.Mark
 import org.geotools.styling.PointSymbolizer
@@ -8,6 +9,7 @@ import org.geotools.styling.LineSymbolizer
 import org.geotools.styling.TextSymbolizer
 import org.geotools.styling.Symbolizer as GtSymbolizer
 import org.geotools.styling.Graphic
+import geoscript.filter.Color
 
 /**
  * A Symbolizer for point geometries that consists of a color and size.
@@ -22,17 +24,17 @@ class Shape extends Symbolizer {
     /**
      * The color (#ff000, blue, [255,255,0])
      */
-    String color
+    Color color
 
     /**
      * The size (6, 10, 12, ect...)
      */
-    double size = 6
+    Expression size = new Expression(6)
 
     /**
      * The type (circle, square, triangle, star, cross, or x).
      */
-    String type = "circle"
+    Expression type = new Expression("circle")
 
     /**
      * The Stroke
@@ -42,12 +44,12 @@ class Shape extends Symbolizer {
     /**
      * The rotation angle (0-360 or a geoscript.filter.Function)
      */
-    def rotation
+    Expression rotation
 
     /**
      * The opacity (0: transparent - 1 opaque)
      */
-    double opacity
+    Expression opacity
 
     /**
      * Create a new Shape
@@ -79,13 +81,13 @@ class Shape extends Symbolizer {
      * @param opacity The opacity (0-1)
      * @param angle The angle or rotation (0-360)
      */
-    Shape(def color, double size = 6, String type = "circle", double opacity = 1.0, def angle = 0) {
+    Shape(def color, def size = 6, def type = "circle", def opacity = 1.0, def angle = 0) {
         super()
-        this.color = ColorUtil.toHex(color)
-        this.opacity = opacity
-        this.size = size
-        this.type = type
-        this.rotation = angle
+        this.color = new Color(color)
+        this.opacity = new Expression(opacity)
+        this.size = new Expression(size)
+        this.type = new Expression(type)
+        this.rotation = new Expression(angle)
     }
 
     /**
@@ -93,7 +95,39 @@ class Shape extends Symbolizer {
      * @param color  The color (#ffffff, red)
      */
     void setColor(def color) {
-        this.color = ColorUtil.toHex(color)
+        this.color = new Color(color)
+    }
+
+    /**
+     * Set the size
+     * @param size The size
+     */
+    void setSize(def size) {
+        this.size = new Expression(size)
+    }
+
+    /**
+     * Set the type (circle, square, triangle, star, cross, or x).
+     * @param type The type (circle, square, triangle, star, cross, or x).
+     */
+    void setType(def type) {
+        this.type = new Expression(type)
+    }
+
+    /**
+     * Set the rotation angle (0-360 or a geoscript.filter.Function)
+     * @param rotation The rotation angle (0-360 or a geoscript.filter.Function)
+     */
+    void setRotation(def rotation) {
+        this.rotation = new Expression(rotation)
+    }
+
+    /**
+     * Set the opacity (0: transparent - 1 opaque)
+     * @param opacity The opacity (0: transparent - 1 opaque)
+     */
+    void setOpacity(def opacity) {
+        this.opacity = new Expression(opacity)
     }
 
     /**
@@ -105,7 +139,7 @@ class Shape extends Symbolizer {
      * @param join The line join (mitre, round, bevel)
      * @return This Shape
      */
-    Shape stroke(def color = "#000000", double width = 1, def dash = null, def cap = null, def join = null) {
+    Shape stroke(def color = "#000000", def width = 1, def dash = null, def cap = null, def join = null) {
         this.stroke = new Stroke(color, width, dash, cap, join)
         this
     }
@@ -130,13 +164,9 @@ class Shape extends Symbolizer {
     protected void apply(GtSymbolizer sym) {
         super.apply(sym)
         Graphic graphic = createGraphic(sym)
-        graphic.size = filterFactory.literal(size)
-        if (rotation != null) {
-            if (rotation instanceof geoscript.filter.Function) {
-                graphic.rotation = rotation.function
-            } else if (rotation > 0) {
-                graphic.rotation = filterFactory.literal(rotation)
-            }
+        graphic.size = size.expr
+        if (rotation != null && rotation.value != null) {
+            graphic.rotation = rotation.expr
         }
         graphic.graphicalSymbols().clear()
         graphic.graphicalSymbols().add(createMark())
@@ -148,7 +178,7 @@ class Shape extends Symbolizer {
      */
     protected Mark createMark() {
         Mark mark = styleFactory.createMark()
-        if (color != null) {
+        if (color != null && color.value != null) {
             mark.fill = new Fill(color, opacity).createFill()
         } else {
             mark.fill = null
@@ -158,7 +188,7 @@ class Shape extends Symbolizer {
         } else {
             mark.stroke = null
         }
-        mark.wellKnownName = filterFactory.literal(type)
+        mark.wellKnownName = type.expr
         return mark
     }
 

@@ -11,6 +11,7 @@ import org.geotools.styling.PointSymbolizer
 import org.geotools.styling.PointSymbolizerImpl
 import org.geotools.styling.PolygonSymbolizer
 import org.geotools.styling.TextSymbolizer
+import geoscript.filter.Color
 
 /**
  * The Symbolizer Unit Test
@@ -48,14 +49,14 @@ class SymbolizerTestCase {
         def composite = new Fill("red") + new Stroke("#ffffff")
         assertTrue composite instanceof Composite
         assertEquals 2, composite.parts.size()
-        assertEquals "Composite (Fill(color = #ff0000, opacity = 1.0), Stroke(color = #ffffff, width = 1.0))", composite.toString()
+        assertEquals "Composite (Fill(color = #ff0000, opacity = 1.0), Stroke(color = #ffffff, width = 1))", composite.toString()
     }
 
     @Test void and() {
         def composite = new Fill("red").and(new Stroke("#ffffff"))
         assertTrue composite instanceof Composite
         assertEquals 2, composite.parts.size()
-        assertEquals "Composite (Fill(color = #ff0000, opacity = 1.0), Stroke(color = #ffffff, width = 1.0))", composite.toString()
+        assertEquals "Composite (Fill(color = #ff0000, opacity = 1.0), Stroke(color = #ffffff, width = 1))", composite.toString()
     }
 
     @Test void getDefault() {
@@ -275,7 +276,7 @@ class SymbolizerTestCase {
         assertEquals(49, sym3.parts.size())
 
         // Color Closure
-        Symbolizer sym4 = Symbolizer.createUniqueValuesSymbolizer(shapefile, "STATE_ABBR", {i,v -> ColorUtil.getRandom()})
+        Symbolizer sym4 = Symbolizer.createUniqueValuesSymbolizer(shapefile, "STATE_ABBR", {i,v -> Color.getRandom()})
         assertNotNull(sym4)
         assertEquals(49, sym4.parts.size())
     }

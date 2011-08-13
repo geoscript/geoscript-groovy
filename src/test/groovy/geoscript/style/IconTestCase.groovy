@@ -2,7 +2,7 @@ package geoscript.style
 
 import org.junit.Test
 import static org.junit.Assert.*
-
+import geoscript.filter.Expression
 
 /**
  * The Icon Unit Test
@@ -16,12 +16,21 @@ class IconTestCase {
         assertTrue icon.url instanceof URL
         assertEquals "image/png", icon.format
         assertEquals "Icon(url = http://www.geotools.org/_static/img/geotools-logo.png, format = image/png)", icon.toString()
+        assertEquals(-1, icon.size.value)
 
-        icon = new Icon(url: "http://www.geotools.org/_static/img/geotools-logo.png", format: "image/png")
+        icon = new Icon(url: "http://www.geotools.org/_static/img/geotools-logo.png", format: "image/png", size: 32)
         assertEquals new URL("http://www.geotools.org/_static/img/geotools-logo.png"), icon.url
         assertTrue icon.url instanceof URL
         assertEquals "image/png", icon.format
         assertEquals "Icon(url = http://www.geotools.org/_static/img/geotools-logo.png, format = image/png)", icon.toString()
+        assertEquals 32, icon.size.value
+
+        icon = new Icon(url: "http://www.geotools.org/_static/img/geotools-logo.png", format: "image/png", size: new Expression(32))
+        assertEquals new URL("http://www.geotools.org/_static/img/geotools-logo.png"), icon.url
+        assertTrue icon.url instanceof URL
+        assertEquals "image/png", icon.format
+        assertEquals "Icon(url = http://www.geotools.org/_static/img/geotools-logo.png, format = image/png)", icon.toString()
+        assertEquals 32, icon.size.value
     }
 
     @Test void apply() {

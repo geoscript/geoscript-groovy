@@ -1,5 +1,6 @@
 package geoscript.style
 
+import geoscript.filter.Expression
 import org.geotools.styling.Rule
 import org.geotools.styling.TextSymbolizer
 import org.geotools.styling.Symbolizer as GtSymbolizer
@@ -29,22 +30,22 @@ class Font extends Symbolizer {
     /**
      * The font style (normal, italic, oblique)
      */
-    String style = "normal"
+    Expression style = new Expression("normal")
 
     /**
      * The font weight (normal, bold)
      */
-    String weight = "normal"
+    Expression weight = new Expression("normal")
 
     /**
      * The font size (8,10,12,24,ect...)
      */
-    int size = 10
+    Expression size = new Expression(10)
 
     /**
      * The font family (serif, Arial, Verdana)
      */
-    String family = "serif"
+    Expression family = new Expression("serif")
 
     /**
      * Create a new Font with named parameters.
@@ -68,12 +69,44 @@ class Font extends Symbolizer {
      * @param size The Font size (8,10,12,24,ect...)
      * @param family The Font family (serif, Arial, Verdana)
      */
-    Font(String style = "normal", String weight = "normal", int size = 10, String family = "serif") {
+    Font(def style = "normal", def weight = "normal", def size = 10, def family = "serif") {
         super()
-        this.style = style
-        this.weight = weight
-        this.size = size
-        this.family = family
+        this.style = new Expression(style)
+        this.weight = new Expression(weight)
+        this.size = new Expression(size)
+        this.family = new Expression(family)
+    }
+
+    /**
+     * Set the font style (normal, italic, oblique)
+     * @param style The font style
+     */
+    void setStyle(def style) {
+        this.style = new Expression(style)
+    }
+
+    /**
+     * Set the font weight (normal, bold)
+     * @param weight The font weight
+     */
+    void setWeight(def weight) {
+        this.weight = new Expression(weight)
+    }
+
+    /**
+     * The font size (8,10,12,24,ect...)
+     * @param size The font size
+     */
+    void setSize(def size) {
+        this.size = new Expression(size)
+    }
+
+    /**
+     * The font family (serif, Arial, Verdana)
+     * @param family
+     */
+    void setFamily(def family) {
+        this.family = new Expression(family)
     }
 
     /**
@@ -96,10 +129,10 @@ class Font extends Symbolizer {
     protected void apply(GtSymbolizer sym) {
         super.apply(sym)
         def f = styleFactory.createFont(
-            filterFactory.literal(family),
-            filterFactory.literal(style),
-            filterFactory.literal(weight),
-            filterFactory.literal(size),
+            family.expr,
+            style.expr,
+            weight.expr,
+            size.expr,
         )
         sym.font = f
     }

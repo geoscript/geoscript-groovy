@@ -73,7 +73,7 @@ class FilterTestCase {
 
     @Test void crosses() {
         Filter f1 = Filter.crosses("the_geom", Geometry.fromWKT("LINESTRING (-104 45, -95 45)"))
-        assertEquals "CROSS(the_geom, LINESTRING (-104 45, -95 45))", f1.cql
+        assertEquals "CROSSES(the_geom, LINESTRING (-104 45, -95 45))", f1.cql
 
         Layer layer = new Shapefile(new File(getClass().getClassLoader().getResource("states.shp").toURI()))
         def features = layer.getFeatures(Filter.crosses(Geometry.fromWKT("LINESTRING (-108 47.1005, -102 47.5421, -95.1251 46.7851)")))
@@ -86,7 +86,7 @@ class FilterTestCase {
 
     @Test void intersects() {
         Filter f1 = Filter.intersects(Geometry.fromWKT("POLYGON ((-104 45, -95 45, -95 50, -104 50, -104 45))"))
-        assertEquals "INTERSECT(the_geom, POLYGON ((-104 45, -95 45, -95 50, -104 50, -104 45)))", f1.cql
+        assertEquals "INTERSECTS(the_geom, POLYGON ((-104 45, -95 45, -95 50, -104 50, -104 45)))", f1.cql
 
         Layer layer = new Shapefile(new File(getClass().getClassLoader().getResource("states.shp").toURI()))
         def features = layer.getFeatures(Filter.intersects(Geometry.fromWKT("POLYGON ((-108 47.1005, -102 47.5421, -95.1251 46.7851,  -95.125 44.45, -107 43.5, -108 47.1005))")))

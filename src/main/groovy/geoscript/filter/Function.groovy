@@ -18,7 +18,7 @@ import org.opengis.filter.expression.Literal
  * details.
  * @author Jared Erickson
  */
-class Function {
+class Function extends Expression {
 
     /**
      * The GeoTools CommonFactoryFinder for finding GeoTools Functions
@@ -35,6 +35,7 @@ class Function {
      * @param f The GeoTools Function
      */
     Function(GtFunction f) {
+        super(f)
         function = f
     }
 
@@ -52,7 +53,7 @@ class Function {
      * @param closure The Closure
      */
     Function(String name, Closure closure) {
-            this(new ClosureFunction(name, closure))
+        this(new ClosureFunction(name, closure))
     }
 	
     /**

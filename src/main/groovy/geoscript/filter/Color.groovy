@@ -1,15 +1,20 @@
-package geoscript.style
+package geoscript.filter
 
-import java.awt.Color
-import org.geotools.brewer.color.BrewerPalette
 import org.geotools.brewer.color.ColorBrewer
-import org.geotools.brewer.color.StyleGenerator
 
 /**
- * A set of Color Utilities
+ * A Color Expression and a set of Color Utilities.
  * @author Jared Erickson
  */
-class ColorUtil {
+class Color extends Expression {
+
+    /**
+     * Create a new Color from a value
+     * @param value The value
+     */
+    Color(def value) {
+        super(Expression.filterFactory.literal(toHex(value)))
+    }
 
     /**
      * Get a Color from an Object.  Handles CSS names (red, wheat),
@@ -17,9 +22,9 @@ class ColorUtil {
      * @param color A Object convertable to a Color
      * @return a Color or null
      */
-    static Color getColor(def color) {
+    static java.awt.Color getColor(def color) {
         // Color: Color.BLACK, new Color(255,255,255)
-        if (color instanceof Color) {
+        if (color instanceof java.awt.Color) {
             return color
         }
         // RGB as String: "255,255,255"
@@ -29,18 +34,22 @@ class ColorUtil {
             int g = parts[1] as int
             int b =  parts[2] as int
             int a = parts.length > 3 ? parts[3] as int : 0
-            return new Color(r, g, b, a)
+            return new java.awt.Color(r, g, b, a)
+        }
+        // geoscript.filter.Color
+        else if (color instanceof Color) {
+            return java.awt.Color.decode(color.toString())
         }
         // Hexadecimal: #00ff00
         else if (color instanceof String && color.startsWith("#")) {
             // #00ff00
             if (color.length() == 7) {
-                return Color.decode(color)
+                return java.awt.Color.decode(color)
             }
             // #0f0
             else if (color.length() == 4) {
                 String hex = "#" + color[1] * 2 + color[2] * 2 + color[3] * 2
-                return Color.decode(hex)
+                return java.awt.Color.decode(hex)
             }
             // Oops
             else {
@@ -49,7 +58,7 @@ class ColorUtil {
         }
         // CSS Color Names: wheat, black, navy
         else if (color instanceof String && colorNameMap.containsKey(color.toLowerCase())){
-            return Color.decode(colorNameMap.get(color.toLowerCase()))
+            return java.awt.Color.decode(colorNameMap.get(color.toLowerCase()))
         }
         // RGB as List: [255,255,255,0.1]
         else if (color instanceof List && color.size() >= 3) {
@@ -57,7 +66,7 @@ class ColorUtil {
             int g = color[1] as int
             int b =  color[2] as int
             int a = color.size > 3 ? color[3] as int : 0
-            return new Color(r, g, b, a)
+            return new java.awt.Color(r, g, b, a)
         }
         // RGB as Map [r:255,g:255,b:0,a:125]
         else if (color instanceof Map && color.containsKey("r") && color.containsKey("g") && color.containsKey("b")) {
@@ -65,7 +74,7 @@ class ColorUtil {
             int g = color.g as int
             int b =  color.b as int
             int a = color.containsKey('a') ? color.a as int : 0
-            return new Color(r, g, b, a)
+            return new java.awt.Color(r, g, b, a)
         }
         else {
             return null
@@ -80,7 +89,7 @@ class ColorUtil {
     static String toHex(def color) {
         if (color instanceof String && color.startsWith("#")) {
             return color
-        } else if (color instanceof Color) {
+        } else if (color instanceof java.awt.Color) {
             return "#${Integer.toHexString((color.getRGB() & 0xffffff) | 0x1000000).substring(1)}"
         } else {
             def c = getColor(color)
@@ -96,25 +105,25 @@ class ColorUtil {
      * Generate a random color
      * @return A Color
      */
-    static Color getRandom() {
+    static java.awt.Color getRandom() {
         def random = new java.util.Random()
         int red = random.nextInt(256)
         int green = random.nextInt(256)
         int blue = random.nextInt(256)
-        new Color(red,green,blue)
+        new java.awt.Color(red,green,blue)
     }
 
     /**
      * Get a random pastel color
      * @return A Color
      */
-    static Color getRandomPastel() {
+    static java.awt.Color getRandomPastel() {
         java.util.Random random = new java.util.Random()
         int i = 128
         int r = random.nextInt(i)
         int g = random.nextInt(i)
         int b = random.nextInt(i)
-        new Color(r,g,b)
+        new java.awt.Color(r,g,b)
     }
 
     /**

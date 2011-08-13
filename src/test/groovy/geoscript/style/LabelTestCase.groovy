@@ -2,6 +2,8 @@ package geoscript.style
 
 import org.junit.Test
 import static org.junit.Assert.*
+import geoscript.filter.Property
+import geoscript.filter.Expression
 
 /**
  * The Label Unit Test
@@ -12,20 +14,20 @@ class LabelTestCase {
 
         // Create a Label
         Label label = new Label("name")
-        assertEquals "name", label.property
+        assertEquals "name", label.property.value
         assertEquals "Label(property = name)", label.toString()
 
         // Add a Font
         assertTrue label.font(new Font()) instanceof Label
-        assertEquals "normal", label.font.style
-        assertEquals "normal", label.font.weight
-        assertEquals 10, label.font.size
-        assertEquals "serif", label.font.family
+        assertEquals "normal", label.font.style.value
+        assertEquals "normal", label.font.weight.value
+        assertEquals 10, label.font.size.value
+        assertEquals "serif", label.font.family.value
 
         // Add a Halo
         assertTrue label.halo(new Fill("#999999"), 2.5) instanceof Label
-        assertEquals "#999999", label.halo.fill.color
-        assertEquals 2.5, label.halo.radius, 0.1
+        assertEquals "#999999", label.halo.fill.color.value
+        assertEquals 2.5, label.halo.radius.value, 0.1
 
         // Add point placement
         assertTrue label.point([0.75,0.25], [5,2], 0.25) instanceof Label
@@ -99,16 +101,34 @@ class LabelTestCase {
 
         // Priority
         assertTrue label.priority("POP_SIZE") instanceof Label
-        assertEquals label.priority, "POP_SIZE"
+        assertEquals label.priority.value, "POP_SIZE"
 
         // Named parameters
         label = new Label(property: "name", font: new Font(size:16))
-        assertEquals "name", label.property
+        assertEquals "name", label.property.value
         assertEquals "Label(property = name)", label.toString()
-        assertEquals "normal", label.font.style
-        assertEquals "normal", label.font.weight
-        assertEquals 16, label.font.size
-        assertEquals "serif", label.font.family
+        assertEquals "normal", label.font.style.value
+        assertEquals "normal", label.font.weight.value
+        assertEquals 16, label.font.size.value
+        assertEquals "serif", label.font.family.value
+    }
+
+    @Test void constructorWithExpressions() {
+
+        Label label = new Label(new Property("NAME"))
+        assertTrue label.property instanceof Property
+        assertTrue label.property.expr instanceof org.opengis.filter.expression.PropertyName
+        assertEquals "NAME", label.property.value
+
+        label = new Label(new Expression("&#x2192;"))
+        assertTrue label.property instanceof Expression
+        assertTrue label.property.expr instanceof org.opengis.filter.expression.Literal
+        assertEquals "&#x2192;", label.property.value
+
+        label = new Label("NAME")
+        assertTrue label.property instanceof Expression
+        assertTrue label.property.expr instanceof org.opengis.filter.expression.PropertyName
+        assertEquals "NAME", label.property.value
     }
 
     @Test void apply() {

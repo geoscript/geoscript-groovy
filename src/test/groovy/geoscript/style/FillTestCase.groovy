@@ -2,6 +2,8 @@ package geoscript.style
 
 import org.junit.Test
 import static org.junit.Assert.*
+import geoscript.filter.Expression
+import geoscript.filter.Color
 
 /**
  * The Fill Unit Test
@@ -13,20 +15,30 @@ class FillTestCase {
 
         // Create a simple Fill
         Fill fill = new Fill("#ffffff", 0.75)
-        assertEquals "#ffffff", fill.color
-        assertEquals 0.75, fill.opacity, 0.01
+        assertEquals "#ffffff", fill.color.value
+        assertEquals 0.75, fill.opacity.value, 0.01
         assertEquals "Fill(color = #ffffff, opacity = 0.75)", fill.toString()
 
         def gtFill = fill.createFill()
         assertEquals "#ffffff", gtFill.color.value
         assertEquals 0.75, gtFill.opacity.value, 0.01
 
+        // Create a simple Fill with Expressions
+        fill = new Fill(new Color("#ffffff"), new Expression(0.75))
+        assertEquals "#ffffff", fill.color.value
+        assertEquals 0.75, fill.opacity.value, 0.01
+        assertEquals "Fill(color = #ffffff, opacity = 0.75)", fill.toString()
+
+        gtFill = fill.createFill()
+        assertEquals "#ffffff", gtFill.color.value
+        assertEquals 0.75, gtFill.opacity.value, 0.01
+
         // Add Hatch
         fill.hatch("slash", new Stroke("wheat"), 4)
-        assertEquals "slash", fill.hatch.name
-        assertEquals "#f5deb3", fill.hatch.stroke.color
-        assertEquals 1.0, fill.hatch.stroke.width, 0.1
-        assertEquals 4.0, fill.hatch.size, 0.1
+        assertEquals "shape://slash", fill.hatch.name.value
+        assertEquals "#f5deb3", fill.hatch.stroke.color.value
+        assertEquals 1.0, fill.hatch.stroke.width.value, 0.1
+        assertEquals 4.0, fill.hatch.size.value, 0.1
 
         gtFill = fill.createFill();
         assertEquals "#ffffff", gtFill.color.value
@@ -44,8 +56,8 @@ class FillTestCase {
 
         // Named parameters
         fill = new Fill(color: "red", opacity:0.22)
-        assertEquals "#ff0000", fill.color
-        assertEquals 0.22, fill.opacity, 0.1
+        assertEquals "#ff0000", fill.color.value
+        assertEquals 0.22, fill.opacity.value, 0.1
     }
 
     @Test void apply() {

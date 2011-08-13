@@ -5,7 +5,6 @@ import geoscript.layer.Layer
 import geoscript.layer.Cursor
 import geoscript.filter.Filter
 import geoscript.style.io.SLDWriter
-import java.awt.Color
 import org.geotools.styling.Style as GtStyle
 import org.geotools.styling.Rule
 import org.geotools.factory.CommonFactoryFinder
@@ -17,6 +16,7 @@ import org.geotools.styling.PointSymbolizer
 import org.geotools.styling.LineSymbolizer
 import org.geotools.styling.PolygonSymbolizer
 import org.geotools.styling.TextSymbolizer
+import geoscript.filter.Color
 
 /**
  * A Base class for all Symbolizers
@@ -262,25 +262,25 @@ class Symbolizer implements Style {
      * @param geometryType The geometry type
      * @return A Symbolizer
      */
-    static Symbolizer getDefault(String geometryType, def color = ColorUtil.getRandomPastel()) {
+    static Symbolizer getDefault(String geometryType, def color = Color.getRandomPastel()) {
         def sym;
-        Color baseColor = ColorUtil.getColor(color)
-        Color darkerColor = baseColor.darker()
+        java.awt.Color baseColor = Color.getColor(color)
+        java.awt.Color darkerColor = baseColor.darker()
         if (geometryType.toLowerCase().endsWith("point")) {
-            sym = new Shape(ColorUtil.toHex(baseColor))
+            sym = new Shape(Color.toHex(baseColor))
         }
         else if (geometryType.toLowerCase().endsWith("linestring") 
             || geometryType.toLowerCase().endsWith("linearring")
             || geometryType.toLowerCase().endsWith("curve")) {
-            sym = new Stroke(ColorUtil.toHex(baseColor))
+            sym = new Stroke(Color.toHex(baseColor))
         }
         else if (geometryType.toLowerCase().endsWith("polygon")) {
-            sym = new Fill(ColorUtil.toHex(baseColor)) + new Stroke(ColorUtil.toHex(darkerColor))
+            sym = new Fill(Color.toHex(baseColor)) + new Stroke(Color.toHex(darkerColor))
         }
         else {
-            sym = new Shape(ColorUtil.toHex(baseColor)) +
-            new Fill(ColorUtil.toHex(baseColor)) +
-            new Stroke(ColorUtil.toHex(darkerColor))
+            sym = new Shape(Color.toHex(baseColor)) +
+            new Fill(Color.toHex(baseColor)) +
+            new Stroke(Color.toHex(darkerColor))
         }
         sym
     }
@@ -292,7 +292,7 @@ class Symbolizer implements Style {
      * @param colors A Closure (which takes index based on 0 and a value), a Palette name, or a List of Colors
      * @return A Symbolizer
      */
-    static Symbolizer createUniqueValuesSymbolizer(Layer layer, String field, def colors = {index, value -> ColorUtil.getRandomPastel()}) {
+    static Symbolizer createUniqueValuesSymbolizer(Layer layer, String field, def colors = {index, value -> Color.getRandomPastel()}) {
 
         // Collect the unique values
         Set uniqueValueSet = new HashSet()
@@ -310,7 +310,7 @@ class Symbolizer implements Style {
         // If the colors argument is a String treat it
         // like a Palette
         if (colors instanceof String) {
-            colors = ColorUtil.getPaletteColors(colors)
+            colors = Color.getPaletteColors(colors)
         }
 
         // Create the list of Rules
@@ -334,7 +334,7 @@ class Symbolizer implements Style {
 
             // Make sure color is a java.awt.Color
             if (color instanceof String) {
-                color = ColorUtil.getColor(color)
+                color = Color.getColor(color)
             }
 
             // Increment our counter
@@ -378,11 +378,11 @@ class Symbolizer implements Style {
         // If the colors argument is a String treat it
         // like a Palette
         if (colors instanceof String) {
-            colors = ColorUtil.getPaletteColors(colors) as java.awt.Color[]
+            colors = Color.getPaletteColors(colors) as java.awt.Color[]
         }
         else {
             colors = colors.collect{c ->
-                ColorUtil.getColor(c)
+                Color.getColor(c)
             } as java.awt.Color[]
         }
 

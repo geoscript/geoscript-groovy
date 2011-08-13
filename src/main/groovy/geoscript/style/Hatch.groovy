@@ -1,5 +1,6 @@
 package geoscript.style
 
+import geoscript.filter.Expression
 import org.geotools.styling.Rule
 import org.geotools.styling.LineSymbolizer
 import org.geotools.styling.Symbolizer as GtSymbolizer
@@ -20,7 +21,7 @@ class Hatch extends Symbolizer {
     /**
      * The name of the pattern (vertline, horline, slash, backslash, plus, times)
      */
-    String name ="vertline"
+    Expression name = new Expression("shape://vertline")
 
     /**
      * The Stroke
@@ -30,7 +31,7 @@ class Hatch extends Symbolizer {
     /**
      * The size
      */
-    double size = 8
+    Expression size = new Expression(8)
 
     /**
      * Create a new Hatch with named parameters.
@@ -54,14 +55,35 @@ class Hatch extends Symbolizer {
      * @param size The size
      * @return
      */
-    Hatch(String name, Stroke stroke = new Stroke(), double size = 8) {
+    Hatch(def name, Stroke stroke = new Stroke(), def size = 8) {
         super()
-        this.name = name
+        setName(name)
         this.stroke = stroke
-        this.size = size
+        this.size = new Expression(size)
     }
 
-    
+    /**
+     * Set the name of the pattern (vertline, horline, slash, backslash, plus, times)
+     * @param name The name of the pattern (vertline, horline, slash, backslash, plus, times)
+     */
+    void setName(def name) {
+        if (name instanceof Expression && name.value in ['vertline', 'horline', 'slash', 'backslash', 'plus', 'times']) {
+            name = "shape://${name.value}".toString()
+        }
+        if (name instanceof String && name in ['vertline', 'horline', 'slash', 'backslash', 'plus', 'times']) {
+            name = "shape://${name}".toString()
+        }
+        this.name = new Expression(name)
+    }
+
+    /**
+     * Set the size
+     * @param size The size
+     */
+    void setSize(def size) {
+        this.size = new Expression(size)
+    }
+
     /**
      * Prepare the GeoTools Rule by applying this Symbolizer
      * @param rule The GeoTools Rule
@@ -93,13 +115,13 @@ class Hatch extends Symbolizer {
      */
     protected Graphic createHatch() {
         Mark mark = styleFactory.createMark()
-        mark.wellKnownName = filterFactory.literal("shape://${name}".toString())
+        mark.wellKnownName = name.expr
         mark.stroke = stroke.createStroke()
 
         Graphic graphic = styleBuilder.createGraphic()
         graphic.graphicalSymbols().clear()
         graphic.graphicalSymbols().add(mark)
-        graphic.size = filterFactory.literal(size)
+        graphic.size = size.expr
 
         graphic
     }

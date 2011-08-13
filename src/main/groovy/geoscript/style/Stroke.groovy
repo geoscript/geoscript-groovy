@@ -1,9 +1,11 @@
 package geoscript.style
 
+import geoscript.filter.Expression
 import org.geotools.styling.Rule
 import org.geotools.styling.Stroke as GtStroke
 import org.geotools.styling.LineSymbolizer
 import org.geotools.styling.Symbolizer as GtSymbolizer
+import geoscript.filter.Color
 
 /**
  * A Symbolizer for linear geometries that consists of a color and a width.
@@ -18,17 +20,17 @@ class Stroke extends Symbolizer {
     /**
      * The color in hexadecimal format (#00FF00)
      */
-    String color
+    Color color
 
     /**
      * The width (1, 2, 5, ect...)
      */
-    double width
+    Expression width
 
     /**
      * The opacity (0: transparent - 1 opaque)
      */
-    double opacity = 1;
+    Expression opacity = new Expression(1)
 
     /**
      * The dash pattern. Odd items specify length in pixels of the dash.
@@ -39,12 +41,12 @@ class Stroke extends Symbolizer {
     /**
      * The line cap (butt, round, square)
      */
-    String cap
+    Expression cap
 
     /**
      * The line join (miter, round, bevel)
      */
-    String join
+    Expression join
 
     /**
      * The Hatch
@@ -65,14 +67,14 @@ class Stroke extends Symbolizer {
      * @param cap The line cap (round, butt, square)
      * @param join The line join (mitre, round, bevel)
      */
-    Stroke(def color = "#000000", double width = 1, List dash = null, String cap = null, String join = null, double opacity = 1.0) {
+    Stroke(def color = "#000000", def width = 1, List dash = null, def cap = null, def join = null, def opacity = 1.0) {
         super()
-        this.color = ColorUtil.toHex(color)
-        this.width = width
+        this.color = new Color(color)
+        this.width = new Expression(width)
         this.dash = dash
-        this.cap = cap
-        this.join = join
-        this.opacity = opacity
+        this.cap = new Expression(cap)
+        this.join = new Expression(join)
+        this.opacity = new Expression(opacity)
     }
 
     /**
@@ -94,7 +96,39 @@ class Stroke extends Symbolizer {
      * @param color  The color (#ffffff, red)
      */
     void setColor(def color) {
-        this.color = ColorUtil.toHex(color)
+        this.color = new Color(color)
+    }
+
+    /**
+     * Set the width
+     * @param width The width
+     */
+    void setWidth(def width) {
+        this.width = new Expression(width)
+    }
+
+    /**
+     * Set the opacity (0: transparent - 1 opaque)
+     * @param opacity The opacity (0: transparent - 1 opaque)
+     */
+    void setOpacity(def opacity) {
+        this.opacity = new Expression(opacity)
+    }
+
+    /**
+     * Set the line cap(butt, round, square)
+     * @param cap The line cap
+     */
+    void setCap(def cap) {
+        this.cap = new Expression(cap)
+    }
+
+    /**
+     * Set the line join(miter, round, bevel)
+     * @param join The line join
+     */
+    void setJoin(def join) {
+        this.join = new Expression(join)
     }
 
     /**
@@ -104,7 +138,7 @@ class Stroke extends Symbolizer {
      * @param size The size
      * @return This Stroke
      */
-    Stroke hatch(String name, Stroke stroke = new Stroke(), double size = 8) {
+    Stroke hatch(def name, Stroke stroke = new Stroke(), def size = 8) {
         this.hatch = new Hatch(name, stroke, size)
         this
     }
@@ -150,12 +184,12 @@ class Stroke extends Symbolizer {
      */
     protected GtStroke createStroke(GtSymbolizer sym) {
         def ff = filterFactory
-        GtStroke stroke = styleFactory.createStroke(ff.literal(color), ff.literal(width))
+        GtStroke stroke = styleFactory.createStroke(color?.expr, width?.expr)
         if (dash) {
             if (dash instanceof List) {
                 if (dash[0] instanceof List) {
                     stroke.dashArray = dash[0]
-                    stroke.dashOffset = ff.literal(dash[1])
+                    stroke.dashOffset = new Expression(dash[1]).expr
                 } else {
                     stroke.dashArray = dash
                 }
@@ -163,10 +197,10 @@ class Stroke extends Symbolizer {
                 stroke.dashArray = dash.split(",")
             }
         }
-        if (cap) stroke.lineCap = ff.literal(cap)
-        if (join) stroke.lineJoin = ff.literal(join)
+        if (cap && cap.value != null) stroke.lineCap = cap.expr
+        if (join && join.value != null) stroke.lineJoin = join.expr
         if (hatch) stroke.graphicStroke = hatch.createHatch()
-        stroke.opacity = ff.literal(opacity)
+        stroke.opacity = opacity.expr
         stroke
     }
 

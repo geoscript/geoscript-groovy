@@ -1,5 +1,8 @@
 package geoscript.style
 
+import geoscript.filter.Property
+import geoscript.filter.Expression
+import geoscript.filter.Function
 import org.geotools.styling.Rule
 import org.geotools.styling.TextSymbolizer
 import org.geotools.styling.Symbolizer as GtSymbolizer
@@ -17,7 +20,7 @@ class Label extends Symbolizer {
     /**
      * The property can be a Field, String, or Function
      */
-    def property
+    Expression property
 
     /**
      * The Font
@@ -37,7 +40,7 @@ class Label extends Symbolizer {
     /**
      * The priority
      */
-    def priority
+    Expression priority
 
     /**
      * The Point or Line Placement
@@ -57,7 +60,7 @@ class Label extends Symbolizer {
      */
     Label(def property) {
         super()
-        this.property = property
+        setProperty(property)
     }
 
     /**
@@ -71,6 +74,18 @@ class Label extends Symbolizer {
             if(this.hasProperty(k)){
                 this."$k" = v
             }
+        }
+    }
+
+    /**
+     * Set the Label's Property which can be a String, a Field, or a Function
+     * @param property The Label's Property
+     */
+    void setProperty(def property) {
+        if (property instanceof Property || property instanceof Function || property instanceof Expression) {
+            this.property = property
+        } else {
+            this.property = new Property(property)
         }
     }
 
@@ -90,7 +105,7 @@ class Label extends Symbolizer {
      * @param radius The radius
      * @return This Label
      */
-    Label halo(Fill fill, double radius) {
+    Label halo(Fill fill, def radius) {
         this.halo = new Halo(fill, radius)
         this
     }
@@ -122,10 +137,10 @@ class Label extends Symbolizer {
      * @param rotate The rotation
      * @return This Label
      */
-    Label point(List anchor = [0.5,0.5], List displace = [0,0], double rotate = 0){
-        def anchorPoint = styleFactory.createAnchorPoint(filterFactory.literal(anchor[0]), filterFactory.literal(anchor[1]))
-        def displacement = styleFactory.createDisplacement(filterFactory.literal(displace[0]), filterFactory.literal(displace[1]))
-        this.placement = styleFactory.createPointPlacement(anchorPoint, displacement, filterFactory.literal(rotate))
+    Label point(List anchor = [0.5,0.5], List displace = [0,0], def rotate = 0){
+        def anchorPoint = styleFactory.createAnchorPoint(new Expression(anchor[0]).expr, new Expression(anchor[1]).expr)
+        def displacement = styleFactory.createDisplacement(new Expression(displace[0]).expr, new Expression(displace[1]).expr)
+        this.placement = styleFactory.createPointPlacement(anchorPoint, displacement, new Expression(rotate).expr)
         this
     }
 
@@ -153,12 +168,12 @@ class Label extends Symbolizer {
      * @param repeat The repeat distance
      * @return This Label
      */
-    Label linear(double offset = 0, def gap = null, def igap = null, boolean align = false, boolean follow = false,
+    Label linear(def offset = 0, def gap = null, def igap = null, boolean align = false, boolean follow = false,
         boolean group = false, def displacement = null, def repeat = null) {
-        placement = styleFactory.createLinePlacement(filterFactory.literal(offset))
+        placement = styleFactory.createLinePlacement(new Expression(offset).expr)
         placement.aligned = align
-        if (gap) placement.gap = filterFactory.literal(gap)
-        if (igap) placement.initialGap = filterFactory.literal(igap)
+        if (gap) placement.gap = new Expression(gap).expr
+        if (igap) placement.initialGap = new Expression(igap).expr
         options.followLine = String.valueOf(follow)
         options.group = String.valueOf(group)
         if (displacement) options.maxDisplacement = String.valueOf(displacement)
@@ -190,7 +205,7 @@ class Label extends Symbolizer {
      * @return This Label
      */
     Label priority(def priority) {
-        this.priority = priority
+        this.priority = new Expression(priority)
         this
     }
 
@@ -319,19 +334,14 @@ class Label extends Symbolizer {
     @Override
     protected void apply(GtSymbolizer sym) {
         super.apply(sym)
-        if (property instanceof geoscript.filter.Function) {
-            sym.label = property.function
-        }
-        else  {
-            sym.label = filterFactory.property(property instanceof geoscript.feature.Field ? property.name : property)
-        }
+        sym.label = property.expr
         if (font) font.apply(sym)
         if (halo) halo.apply(sym)
         if (fill) fill.apply(sym)
         if (shape) shape.apply(sym)
         if (placement) sym.labelPlacement = placement
-        if (priority) {
-            sym.priority = filterFactory.property(priority instanceof geoscript.feature.Field ? priority.name : priority)
+        if (priority != null && priority.value != null) {
+            sym.priority = priority.expr
         }
     }
 

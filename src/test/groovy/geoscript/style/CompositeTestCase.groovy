@@ -62,7 +62,7 @@ class CompositeTestCase {
 
     @Test void string() {
         Composite comp = new Fill("red") + new Stroke("blue")
-        assertEquals "Composite (Fill(color = #ff0000, opacity = 1.0), Stroke(color = #0000ff, width = 1.0))", comp.toString()
+        assertEquals "Composite (Fill(color = #ff0000, opacity = 1.0), Stroke(color = #0000ff, width = 1))", comp.toString()
     }
 
 }

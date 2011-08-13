@@ -3,6 +3,8 @@ package geoscript.style
 import org.junit.Test
 import static org.junit.Assert.*
 import org.geotools.styling.LineSymbolizer
+import geoscript.filter.Color
+import geoscript.filter.Expression
 
 /**
  * The Shape Unit Test
@@ -13,19 +15,30 @@ class ShapeTestCase {
     @Test void constructors() {
 
         Shape shape = new Shape("#999999")
-        assertEquals "#999999", shape.color
-        assertEquals 6, shape.size, 0.1
-        assertEquals "circle", shape.type
-        assertEquals "Shape(color = #999999, size = 6.0, type = circle)", shape.toString()
+        assertEquals "#999999", shape.color.value
+        assertEquals 6, shape.size.value, 0.1
+        assertEquals "circle", shape.type.value
+        assertEquals "Shape(color = #999999, size = 6, type = circle)", shape.toString()
 
         def mark = shape.createMark()
         assertEquals "#999999", mark.fill.color.value
         assertEquals "circle", mark.wellKnownName.value
 
+        // Create a Shape from Expressions
+        shape = new Shape(new Color("#999999"), new Expression(6), new Expression("circle"))
+        assertEquals "#999999", shape.color.value
+        assertEquals 6, shape.size.value as double, 0.1
+        assertEquals "circle", shape.type.value
+        assertEquals "Shape(color = #999999, size = 6, type = circle)", shape.toString()
+
+        mark = shape.createMark()
+        assertEquals "#999999", mark.fill.color.value
+        assertEquals "circle", mark.wellKnownName.value
+
         shape = new Shape([255,105,43], 5.5, "square")
-        assertEquals "#ff692b", shape.color
-        assertEquals 5.5, shape.size, 0.1
-        assertEquals "square", shape.type
+        assertEquals "#ff692b", shape.color.value
+        assertEquals 5.5, shape.size.value, 0.1
+        assertEquals "square", shape.type.value
         assertEquals "Shape(color = #ff692b, size = 5.5, type = square)", shape.toString()
 
         mark = shape.createMark()
@@ -33,11 +46,11 @@ class ShapeTestCase {
         assertEquals "square", mark.wellKnownName.value
 
         shape = new Shape("#999999").stroke("yellow")
-        assertEquals "#999999", shape.color
-        assertEquals 6, shape.size, 0.1
-        assertEquals "circle", shape.type
-        assertEquals "#ffff00", shape.stroke.color
-        assertEquals "Shape(color = #999999, size = 6.0, type = circle)", shape.toString()
+        assertEquals "#999999", shape.color.value
+        assertEquals 6, shape.size.value, 0.1
+        assertEquals "circle", shape.type.value
+        assertEquals "#ffff00", shape.stroke.color.value
+        assertEquals "Shape(color = #999999, size = 6, type = circle)", shape.toString()
 
         mark = shape.createMark()
         assertEquals "#999999", mark.fill.color.value
@@ -46,11 +59,11 @@ class ShapeTestCase {
 
         // Named parameters
         shape = new Shape(type: "star", color: "blue", opacity: 0.5)
-        assertEquals "#0000ff", shape.color
-        assertEquals 6, shape.size, 0.1
-        assertEquals "star", shape.type
-        assertEquals 0.5, shape.opacity, 0.1
-        assertEquals "Shape(color = #0000ff, size = 6.0, type = star)", shape.toString()
+        assertEquals "#0000ff", shape.color.value
+        assertEquals 6, shape.size.value, 0.1
+        assertEquals "star", shape.type.value
+        assertEquals 0.5, shape.opacity.value, 0.1
+        assertEquals "Shape(color = #0000ff, size = 6, type = star)", shape.toString()
     }
 
     @Test void apply() {
@@ -76,17 +89,13 @@ class ShapeTestCase {
     }
 
     @Test void createGraphic() {
-
         Stroke stroke = new Stroke(null, 0, [4,6])
         Shape shape = new Shape("#666666", 4, "circle").stroke("#333333",1)
         stroke.shape(shape)
         //assertNull line.stroke.graphicStroke
         //shape.apply(line)
         //assertNotNull line.stroke.graphicStroke
-
-        stroke.asSLD()
-
-
+        //stroke.asSLD()
     }
 
 }

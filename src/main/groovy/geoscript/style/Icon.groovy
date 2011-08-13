@@ -4,6 +4,7 @@ import org.geotools.styling.Rule
 import org.geotools.styling.PointSymbolizer
 import org.geotools.styling.PolygonSymbolizer
 import org.geotools.styling.Symbolizer as GtSymbolizer
+import geoscript.filter.Expression
 
 /**
  * A Symbolizer for an external image or glyph.
@@ -28,7 +29,7 @@ class Icon extends Symbolizer {
     /**
      * The size of the Icon (default to -1 which means auto-size)
      */
-    double size = -1
+    Expression size = new Expression(-1)
 
     /**
      * Create a new Icon with named parameters.
@@ -52,11 +53,19 @@ class Icon extends Symbolizer {
      * @param format The image format (image/png)
      * @param size The size of the Icon (default to -1 which means auto-size)
      */
-    Icon(def url, String format, double size = -1) {
+    Icon(def url, String format, def size = -1) {
         super()
         this.url = toURL(url)
         this.format = format
-        this.size = size
+        this.size = new Expression(size)
+    }
+
+    /**
+     * Set the size of the icon
+     * @param size The size
+     */
+    void setSize(def size) {
+        this.size = new Expression(size)
     }
 
     /**
@@ -113,8 +122,8 @@ class Icon extends Symbolizer {
             if (!sym.graphic) {
                 sym.graphic = styleBuilder.createGraphic()
             }
-            if (size > -1) {
-                sym.graphic.size = filterFactory.literal(size)
+            if (size.value > -1) {
+                sym.graphic.size = size.expr
             }
             sym.graphic.graphicalSymbols().add(externalGraphic)
         } else if (sym instanceof PolygonSymbolizer) {

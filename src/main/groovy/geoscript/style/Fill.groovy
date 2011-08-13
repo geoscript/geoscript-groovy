@@ -1,9 +1,11 @@
 package geoscript.style
 
+import geoscript.filter.Expression
 import org.geotools.styling.Fill as GtFill
 import org.geotools.styling.Rule
 import org.geotools.styling.PolygonSymbolizer
 import org.geotools.styling.Symbolizer as GtSymbolizer
+import geoscript.filter.Color
 
 /**
  * A Symbolizer for area/polygonal geometries.  It consists of a color and an opacity.
@@ -18,12 +20,12 @@ class Fill extends Symbolizer {
     /**
      * The Color (#ff0000, red, [0,0.,255])
      */
-    String color
+    Color color
 
     /**
      * The opacity (1.0 = opaque to 0.0 = transparent)
      */
-    double opacity
+    Expression opacity
 
     /**
      * The Icon
@@ -57,10 +59,10 @@ class Fill extends Symbolizer {
      * @param color The Color
      * @param opacity The opacity (1 opaque to 0 transparent)
      */
-    Fill(def color, double opacity = 1.0) {
+    Fill(def color, def opacity = 1.0) {
         super()
-        this.color = ColorUtil.toHex(color)
-        this.opacity = opacity
+        this.color = new Color(color)
+        this.opacity = new Expression(opacity)
         this.icon = null
         this.hatch = null
     }
@@ -80,12 +82,12 @@ class Fill extends Symbolizer {
     /**
      * Compose this Fill with a Hatch pattern.
      * <code>def f = new Fill().hatch('slash')</code>
-     * @param name
-     * @param stroke
-     * @param size
-     * @return
+     * @param name The name of the hatch pattern
+     * @param stroke The Stroke
+     * @param size The size
+     * @return This Fill
      */
-    Fill hatch(String name, Stroke stroke = null, double size = 8) {
+    Fill hatch(String name, Stroke stroke = null, def size = 8) {
         this.hatch = new Hatch(name, stroke, size)
         this
     }
@@ -95,7 +97,15 @@ class Fill extends Symbolizer {
      * @param color  The color (#ffffff, red)
      */
     void setColor(def color) {
-        this.color = ColorUtil.toHex(color)
+        this.color = new Color(color)
+    }
+
+    /**
+     * Set the opacity
+     * @param opacity The opacity
+     */
+    void setOpacity(def opacity) {
+        this.opacity = new Expression(opacity)
     }
 
     /**
@@ -104,15 +114,15 @@ class Fill extends Symbolizer {
      */
     protected GtFill createFill() {
         GtFill fill = styleBuilder.createFill()
-        if (color) {
-            fill.color = filterFactory.literal(color)
+        if (color != null && color.value != null) {
+            fill.color = color.expr
         } else {
             fill.color = null
         }
         if (hatch) {
             fill.graphicFill = hatch.createHatch()
         }
-        fill.opacity = filterFactory.literal(opacity)
+        fill.opacity = opacity.expr
         fill
     }
 
