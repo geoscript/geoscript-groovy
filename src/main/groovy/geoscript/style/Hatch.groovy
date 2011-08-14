@@ -53,7 +53,6 @@ class Hatch extends Symbolizer {
      * @param name (vertline, horline, slash, backslash, plus, times)
      * @param stroke A Stroke
      * @param size The size
-     * @return
      */
     Hatch(def name, Stroke stroke = new Stroke(), def size = 8) {
         super()

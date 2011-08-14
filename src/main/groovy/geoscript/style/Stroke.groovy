@@ -60,7 +60,7 @@ class Stroke extends Symbolizer {
 
     /**
      * Create a new Stroke.
-     * <p><code>def shape = new Shape("#ff0000", 0.25)</code></p>
+     * <p><code>def stroke = new Stroke("#ff0000", 0.25, [5,2], "round", "bevel")</code></p>
      * @param color The color
      * @param width The width
      * @param dash The dash pattern
