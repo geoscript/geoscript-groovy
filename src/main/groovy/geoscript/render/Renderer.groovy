@@ -10,7 +10,6 @@ import org.geotools.map.DefaultMapContext
 import org.geotools.map.DefaultMapLayer
 import org.geotools.renderer.lite.StreamingRenderer
 
-
 /**
  * The astract base class for Renderers
  */
