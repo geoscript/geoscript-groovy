@@ -102,7 +102,7 @@ class Map {
      */
     void setProj(def projection) {
         this.projection = new Projection(projection)
-         context.setCoordinateReferenceSystem(new Projection(projection).crs)
+        context.setCoordinateReferenceSystem(new Projection(projection).crs)
     }
 
     /**
@@ -111,7 +111,6 @@ class Map {
      */
     Projection getProj() {
         this.projection
-        //new Projection(context.getCoordianteReferenceSystem())
     }
 
     /**
