@@ -8,6 +8,7 @@
  */
 import geoscript.layer.*
 import geoscript.style.*
+import geoscript.filter.*
 import geoscript.map.Map
 
 void createImage(Layer layer, Symbolizer symbolizer, File file) {
@@ -71,3 +72,9 @@ createImage(shp, new Stroke(color: "#000000", width: 15, join: "round", cap: "ro
         new Stroke(shape: new Shape(color: "blue", size: 10, type: "star"), dash: [[10,20],15]).zindex(2),
         new File("line_star_dots.png")
 )
+
+// Line with arrows
+createImage(shp, new Stroke("#333333", 5, null, "round").zindex(0) +
+        new Stroke("#6699FF", 3, null, "round").zindex(1) +
+        new Label(new Expression("\u2192")).linear().font(new Font("normal", "bold", 12, "Lucida Sans")).halo(new Fill("#FFFFFF", 0.85), 1).fill(new Fill("#AAAAAA")).maxDisplacement(100).forceLeftToRight(false),
+        new File("line_arrow.png"))
