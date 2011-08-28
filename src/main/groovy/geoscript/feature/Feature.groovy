@@ -143,6 +143,17 @@ class Feature {
     }
 
     /**
+     * Get a value by Field name.  This method supports
+     * a the following syntax:
+     * <p><code>feature["name"]</code></p>
+     * @param name The Field name
+     * @return The Field value
+     */
+    Object getAt(String name) {
+        get(name)
+    }
+
+    /**
      * Set a value for a Field
      * @param name The Field name
      * @param value The new attribute value
@@ -157,6 +168,17 @@ class Feature {
         if (layer) {
             layer.queueModified(this, name)
         }
+    }
+    
+    /**
+     * Another way of setting a value. This method supports
+     * the following syntax:
+     * <p><code>feature["name"] = "lighthouse"</code></p>
+     * @param name The Field name
+     * @param value The new value
+     */
+    void putAt(String name, Object value) {
+        set(name, value)
     }
 
     /**

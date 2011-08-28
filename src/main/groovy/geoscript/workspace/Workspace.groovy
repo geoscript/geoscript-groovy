@@ -58,6 +58,17 @@ class Workspace {
     Layer get(String name) {
         new Layer(this, ds.getFeatureSource(name))
     }
+    
+    
+    /**
+     * Another way to get a Layer by name.
+     * <p><code>Layer layer = workspace["hospitals"]</code><p>
+     * @param The Layer name
+     * @return A Layer
+     */
+    Layer getAt(String name) {
+        get(name)
+    }
 
     /**
      * Create a Layer with a List of Fields

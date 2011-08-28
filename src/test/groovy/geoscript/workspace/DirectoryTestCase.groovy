@@ -48,6 +48,17 @@ class DirectoryTestCase {
         assertEquals "states", layer.name
     }
 
+    @Test void getAt() {
+        File file = new File(getClass().getClassLoader().getResource("states.shp").toURI()).parentFile
+        assertNotNull(file)
+        Directory dir = new Directory(file)
+        assertNotNull(dir)
+
+        Layer layer = dir["states"]
+        assertNotNull(layer)
+        assertEquals "states", layer.name
+    }
+
     @Test void create() {
         File file = new File(System.getProperty("java.io.tmpdir"))
         Directory dir = new Directory(file)
