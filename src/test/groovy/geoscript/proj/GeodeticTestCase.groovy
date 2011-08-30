@@ -6,6 +6,7 @@ import geoscript.geom.Point
 
 /**
  * The Geodetic UnitTest
+ * @author Jared Erickson
  */
 class GeodeticTestCase {
 

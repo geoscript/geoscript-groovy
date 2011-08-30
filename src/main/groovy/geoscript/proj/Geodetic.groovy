@@ -238,4 +238,4 @@ class Geodetic {
     String toString() {
         return "Geodetic [${ellipsoid}]"
     }
-
+}
