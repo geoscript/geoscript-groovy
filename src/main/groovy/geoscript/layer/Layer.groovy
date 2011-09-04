@@ -7,6 +7,7 @@ import geoscript.feature.*
 import geoscript.workspace.*
 import geoscript.filter.Filter
 import geoscript.style.Style
+import geoscript.style.Symbolizer
 import org.geotools.data.FeatureSource
 import org.geotools.data.DefaultQuery
 import org.geotools.data.Transaction
@@ -85,7 +86,7 @@ class Layer {
         this.fs = fs
         this.schema = new Schema(fs.schema)
         this.projection = new Projection(fs.schema.coordinateReferenceSystem)
-        setDefaultStyle(this.schema.geom.typ)
+        setDefaultSymbolizer(this.schema.geom.typ)
     }
 
     /**
@@ -98,7 +99,7 @@ class Layer {
         this.fs = layer.fs
         this.schema = layer.schema
         this.projection = new Projection(fs.schema.coordinateReferenceSystem)
-        setDefaultStyle(this.schema.geom.typ)
+        setDefaultSymbolizer(this.schema.geom.typ)
     }
 
     /**
@@ -114,7 +115,7 @@ class Layer {
         this.fs = fs
         this.schema = schema
         this.projection = new Projection(fs.schema.coordinateReferenceSystem)
-        setDefaultStyle(this.schema.geom.typ)
+        setDefaultSymbolizer(this.schema.geom.typ)
     }
 
     /**
@@ -138,7 +139,7 @@ class Layer {
         this.fs = layer.fs
         this.schema = new Schema(layer.fs.schema)
         this.projection = new Projection(fs.schema.coordinateReferenceSystem)
-        setDefaultStyle(this.schema.geom.typ)
+        setDefaultSymbolizer(this.schema.geom.typ)
     }
 
     /**
@@ -153,7 +154,7 @@ class Layer {
         this.fs = layer.fs
         this.schema = new Schema(layer.fs.schema)
         this.projection = new Projection(fs.schema.coordinateReferenceSystem)
-        setDefaultStyle(this.schema.geom.typ)
+        setDefaultSymbolizer(this.schema.geom.typ)
     }
 
     /**
@@ -164,13 +165,13 @@ class Layer {
     }
 
     /**
-     * Set the default style based on the geometry type
+     * Set the default Symbolizer based on the geometry type
      * @param geometryType The geometry type
-     * @return A default Style
+     * @return A default Symbolizer
      */
-    private void setDefaultStyle(String geometryType) {
+    private void setDefaultSymbolizer(String geometryType) {
         if(!this.style) {
-            this.style = Style.getDefaultStyleForGeometryType(geometryType)
+            this.style = Symbolizer.getDefault(geometryType)
         }
     }
 

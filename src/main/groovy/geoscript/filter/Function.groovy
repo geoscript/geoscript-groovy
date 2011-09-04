@@ -4,7 +4,6 @@ import org.geotools.factory.CommonFactoryFinder
 import org.opengis.filter.expression.Function as GtFunction
 import org.geotools.filter.FunctionImpl
 import org.geotools.filter.FunctionFactory
-import org.geotools.filter.FunctionExpressionImpl
 import org.geotools.factory.FactoryIteratorProvider
 import org.geotools.factory.GeoTools
 import org.opengis.filter.expression.Literal
@@ -19,7 +18,7 @@ import org.opengis.filter.expression.Literal
  * details.
  * @author Jared Erickson
  */
-class Function {
+class Function extends Expression {
 
     /**
      * The GeoTools CommonFactoryFinder for finding GeoTools Functions
@@ -36,6 +35,7 @@ class Function {
      * @param f The GeoTools Function
      */
     Function(GtFunction f) {
+        super(f)
         function = f
     }
 
@@ -47,14 +47,14 @@ class Function {
         this(org.geotools.filter.text.ecql.ECQL.toExpression(str))
     }
 
-	/**
-	 * Create a new Function from a Closure
-	 * @param name The name of the new Function
-	 * @param closure The Closure
-	 */
-	Function(String name, Closure closure) {
-		this(new ClosureFunction(name, closure))
-	}
+    /**
+     * Create a new Function from a Closure
+     * @param name The name of the new Function
+     * @param closure The Closure
+     */
+    Function(String name, Closure closure) {
+        this(new ClosureFunction(name, closure))
+    }
 	
     /**
      * Call the Function with an optional parameter.
@@ -87,23 +87,23 @@ class Function {
         function.toString()
     }
 	
-	/**
-	 * A GeoTools Function that delegates to a Groovy Closure.
-	 */
-	private static class ClosureFunction extends FunctionImpl {
-		private final Closure closure
-		ClosureFunction(String name, Closure closure) {
-			setName(name)
-			this.closure = closure
+    /**
+     * A GeoTools Function that delegates to a Groovy Closure.
+     */
+    private static class ClosureFunction extends FunctionImpl {
+        private final Closure closure
+        ClosureFunction(String name, Closure closure) {
+            setName(name)
+            this.closure = closure
             functionFactory.functions.add(this)
-		}
-		def evaluate(def obj) {
-			closure(obj)
-		}
+        }
+        def evaluate(def obj) {
+            closure(obj)
+        }
         String toString() {
             "${name}()"
         }
-	}
+    }
 
     /**
      * A GeoScript FunctionFactory
@@ -121,6 +121,9 @@ class Function {
     static {
         GeoTools.addClassLoader(provider.class.classLoader)
         GeoTools.addFactoryIteratorProvider(provider)
+        // If a custom function is called before a standard function,
+        // the standard functions (through CQL) can't be found.
+        org.geotools.filter.text.ecql.ECQL.toExpression("centroid(the_geom)")
     }
 
     /**
