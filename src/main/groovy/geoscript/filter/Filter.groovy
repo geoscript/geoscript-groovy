@@ -5,6 +5,7 @@ import geoscript.geom.Geometry
 import geoscript.feature.Feature
 import org.opengis.filter.Filter as GTFilter
 import org.geotools.filter.text.cql2.CQL
+import org.geotools.filter.text.ecql.ECQL
 import org.geotools.xml.Parser
 import org.geotools.xml.Encoder
 import org.geotools.filter.v1_0.OGCConfiguration as OGCConfiguration10 
@@ -93,7 +94,7 @@ class Filter {
      * @return The Filter as CQL
      */
     String getCql() {
-        CQL.toCQL(filter)
+        ECQL.toCQL(filter)
     }
     
     /**
@@ -260,7 +261,7 @@ class Filter {
      * Create a GeoTools Filter from a CQL String
      */
     private static GTFilter fromCQL(String cql) {
-        CQL.toFilter(cql)
+        return ECQL.toFilter(cql)
     }
 
     /**

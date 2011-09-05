@@ -17,6 +17,10 @@ class FilterTestCase {
 
         Filter f3 = new Filter(f1)
         assertEquals f1.toString(), f3.toString()
+
+        Filter f4 = new Filter("CARPOOL/PERSON > 0.06")
+        println f4.toString()
+        assertEquals "[ (CARPOOL/PERSON) > 0.06 ]", f4.toString()
     }
     
     @Test void getCql() {
