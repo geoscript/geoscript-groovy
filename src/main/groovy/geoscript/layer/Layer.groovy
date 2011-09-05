@@ -253,7 +253,11 @@ class Layer {
      */
     Bounds bounds(def filter = null) {
         Filter f = (filter == null) ? Filter.PASS : new Filter(filter)
-        Envelope e = fs.getBounds(new DefaultQuery(getName(), f.filter))
+        def query = new DefaultQuery(getName(), f.filter)
+        Envelope e = fs.getBounds(query)
+        if (!e) {
+            e = fs.getFeatures(query).bounds
+        }
         return new Bounds(e)
     }
 

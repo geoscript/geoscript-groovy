@@ -23,5 +23,12 @@ class ShapefileTestCase {
         assertEquals "(-124.73142200000001,24.955967,-66.969849,49.371735,EPSG:4326)", shp.bounds().toString()
     }
 
+    @Test void bounds() {
+        File file = new File(getClass().getClassLoader().getResource("states.shp").toURI())
+        Shapefile shp = new Shapefile(file)
+        assertEquals "(-124.73142200000001,24.955967,-66.969849,49.371735,EPSG:4326)", shp.bounds.toString()
+        assertEquals "(-109.055199,36.988972000000004,-102.036758,41.00341,EPSG:4326)", shp.bounds("STATE_NAME = 'Colorado'").toString()
+    }
+
 }
 

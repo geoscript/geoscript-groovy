@@ -86,6 +86,10 @@ class LayerTestCase {
         assertNotNull(bounds);
         println("Bounds: ${bounds}")
         assertEquals "(111.0,-47.0,111.0,-47.0)", bounds.toString()
+        layer1.add(new Feature([new Point(108,-44), "House 2", 16.5], "house2", s1))
+        bounds = layer1.bounds("name = 'House 2'")
+        assertNotNull(bounds);
+        println("Bounds for House 2: ${bounds}")
     }
 
     @Test void cursor() {
