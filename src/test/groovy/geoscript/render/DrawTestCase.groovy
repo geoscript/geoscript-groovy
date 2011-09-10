@@ -16,7 +16,7 @@ class DrawTestCase {
     @Test void drawGeometry() {
         Symbolizer sym = new Stroke('black', 2) + new Fill('gray',0.75)
         Geometry geom = new Point(0,0).buffer(0.2)
-        Draw.draw([geom], sym, [250,250], "png")
+        Draw.draw([geom], sym, geom.bounds, [250,250], "png")
     }
 
     @Test void drawLayer() {
@@ -24,7 +24,7 @@ class DrawTestCase {
         File file = new File(getClass().getClassLoader().getResource("states.shp").toURI())
         Shapefile shapefile = new Shapefile(file)
         Symbolizer sym = new Stroke('black', 2) + new Fill('gray',0.75)
-        Draw.draw(shapefile, sym, [250,250], "png")
+        Draw.draw(shapefile, sym, shapefile.bounds, [250,250], "png")
     }
 
 }
