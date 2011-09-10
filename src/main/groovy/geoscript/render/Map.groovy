@@ -4,6 +4,7 @@ import geoscript.layer.Layer
 import geoscript.style.Style
 import geoscript.style.Symbolizer
 import geoscript.geom.Bounds
+import geoscript.geom.Point
 
 /**
  * The Map can render Layers and Styles using a Renderer.
@@ -68,6 +69,18 @@ class Map {
         this.renderer = lookup(format)
         if (this.title && !options.containsKey("title")) {
             options["title"] = this.title
+        }
+        if (bounds.width == 0 || bounds.height == 0) {
+            if (bounds.height > 0) {
+                double h = bounds.height / 2.0
+                bounds = new Bounds(bounds.west - h, bounds.south, bound.east + h, bounds.north, bounds.proj)
+            } else if (bounds.width > 0) {
+                double w = bounds.width / 2.0
+                bounds = new Bounds(bounds.west, bounds.south - w, bound.east, bounds.north + w, bounds.proj)
+            } else {
+                def e = new Point(bounds.west, bounds.south).buffer(0.1).envelopeInternal
+                bounds = new Bounds(e.minX, e.minY, e.maxX, e.maxY, bounds.proj)
+            }
         }
         renderer.render(this.layers, this.styles, bounds, size, options)
         renderer
