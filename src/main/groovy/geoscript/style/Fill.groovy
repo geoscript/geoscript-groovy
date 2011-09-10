@@ -87,7 +87,7 @@ class Fill extends Symbolizer {
      * @param size The size
      * @return This Fill
      */
-    Fill hatch(String name, Stroke stroke = null, def size = 8) {
+    Fill hatch(String name, Stroke stroke = new Stroke(), def size = 8) {
         this.hatch = new Hatch(name, stroke, size)
         this
     }
