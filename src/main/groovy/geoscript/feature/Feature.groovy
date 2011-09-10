@@ -127,7 +127,8 @@ class Feature {
     }
 
     /**
-     * Get a value by Field name
+     * Get a value by Field name.
+     * <p><code>String name = feature.get("name")</code></p>
      * @param name The Field name
      * @return The attribute value
      */
@@ -145,7 +146,7 @@ class Feature {
     /**
      * Get a value by Field name.  This method supports
      * a the following syntax:
-     * <p><code>feature["name"]</code></p>
+     * <p><code>String name = feature["name"]</code></p>
      * @param name The Field name
      * @return The Field value
      */
@@ -154,7 +155,8 @@ class Feature {
     }
 
     /**
-     * Set a value for a Field
+     * Set a value for a Field.
+     * <p><code>feature.set("name") = "lighthouse"</code></p>
      * @param name The Field name
      * @param value The new attribute value
      */
