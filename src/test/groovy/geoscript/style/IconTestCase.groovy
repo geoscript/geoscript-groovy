@@ -31,6 +31,20 @@ class IconTestCase {
         assertEquals "image/png", icon.format
         assertEquals "Icon(url = http://www.geotools.org/_static/img/geotools-logo.png, format = image/png)", icon.toString()
         assertEquals 32, icon.size.value
+
+        icon = new Icon("http://www.geotools.org/_static/img/geotools-logo.png")
+        assertEquals new URL("http://www.geotools.org/_static/img/geotools-logo.png"), icon.url
+        assertTrue icon.url instanceof URL
+        assertEquals "image/png", icon.format
+        assertEquals "Icon(url = http://www.geotools.org/_static/img/geotools-logo.png, format = image/png)", icon.toString()
+        assertEquals(-1, icon.size.value)
+
+        icon = new Icon("http://www.geotools.org/_static/img/geotools-logo.jpeg")
+        assertEquals new URL("http://www.geotools.org/_static/img/geotools-logo.jpeg"), icon.url
+        assertTrue icon.url instanceof URL
+        assertEquals "image/jpeg", icon.format
+        assertEquals "Icon(url = http://www.geotools.org/_static/img/geotools-logo.jpeg, format = image/jpeg)", icon.toString()
+        assertEquals(-1, icon.size.value)
     }
 
     @Test void apply() {

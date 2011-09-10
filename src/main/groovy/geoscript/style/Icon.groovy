@@ -53,11 +53,26 @@ class Icon extends Symbolizer {
      * @param format The image format (image/png)
      * @param size The size of the Icon (default to -1 which means auto-size)
      */
-    Icon(def url, String format, def size = -1) {
+    Icon(def url, String format = null, def size = -1) {
         super()
         this.url = toURL(url)
-        this.format = format
+        this.format = format ? format : guessMimeType(this.url)
         this.size = new Expression(size)
+    }
+
+    /**
+     * Try to guess the mime type for the URL
+     * @param url The URL
+     * @return A mime type or null
+     */
+    private static String guessMimeType(URL url) {
+        String path = url.path
+        int i = path.lastIndexOf(".")
+        if (i > -1) {
+            return "image/${path.substring(i + 1)}"
+        } else  {
+            return null
+        }
     }
 
     /**
