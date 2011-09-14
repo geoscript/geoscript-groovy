@@ -200,7 +200,6 @@ class Map {
             g.fillRect(0,0,width,height)
         }
         def b = getBounds()
-        println "Bounds set by user: ${b}"
         // If bounds is not set build it from all layers
         if (b == null || b.empty) {
             b = layers[0].bounds
