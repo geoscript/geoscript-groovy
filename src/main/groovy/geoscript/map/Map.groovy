@@ -203,7 +203,9 @@ class Map {
         // If bounds is not set build it from all layers
         if (b == null || b.empty) {
             b = layers[0].bounds
-            [1..layers.size()-1].each {i -> b.expand(layers[i].bounds)}
+            (1..layers.size()-1).each {i ->
+                b.expand(layers[i].bounds)
+            }
         }
         // Fix the aspect ratio (or not)
         if (fixAspectRatio) {
