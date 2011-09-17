@@ -17,6 +17,7 @@ import org.geotools.data.DefaultTransaction
 import org.geotools.feature.FeatureCollections
 import org.geotools.feature.FeatureCollection
 import org.geotools.feature.FeatureIterator
+import org.opengis.filter.sort.SortOrder
 import org.opengis.feature.simple.SimpleFeatureType
 import org.opengis.feature.simple.SimpleFeature
 import org.opengis.referencing.crs.CoordinateReferenceSystem
@@ -273,11 +274,13 @@ class Layer {
      * Get a List of Features
      * @param filer The Filter or Filter String to limit the Features used to construct the bounds. Defaults to null.
      * @param transform The Closure used to modify the Features.  Defaults to null.
+     * @param sort A List of Lists that define the sort order [[Field or Field name, "ASC" or "DESC"],...]. Not all Layers
+     * support sorting!
      * @return A List of Features
      */
-    List<Feature> getFeatures(def filter = null, Closure transform = null) {
+    List<Feature> getFeatures(def filter = null, Closure transform = null, List sort = null) {
         List<Feature> features = []
-        Cursor c = getCursor(filter)
+        Cursor c = getCursor(filter, sort)
         while(c.hasNext()) {
             Feature f = c.next()
             def result = null
@@ -298,17 +301,35 @@ class Layer {
     /**
      * Get a Cursor over the Features of the Layer.
      * @param filer The Filter or Filter String to limit the Features. Defaults to null.
+     * @param sort A List of Lists that define the sort order [[Field or Field name, "ASC" or "DESC"],...]. Not all Layers
+     * support sorting!
      * @return A Cursor
-     *
      */
-    Cursor getCursor(def filter = null) {
+    Cursor getCursor(def filter = null, List sort = null) {
         Filter f = (filter == null) ? Filter.PASS : new Filter(filter)
         DefaultQuery q = new DefaultQuery(getName(), f.filter)
         if (getProj()) {
             q.coordinateSystem = getProj().crs
         }
-        FeatureReader r = fs.dataStore.getFeatureReader(q, Transaction.AUTO_COMMIT)
-        return new Cursor(r, this)
+        // Add sorting to the Query
+        if (sort != null && sort.size() > 0) {
+            // Create a list of SortBy's
+            List sortBy = sort.collect{s ->
+                s = s instanceof List ? s : [s, "ASC"]
+                filterFactory.sort(s[0] instanceof Field ? s[0].name : s[0], SortOrder.valueOf(s[1]))
+            }
+            // Turn it into an array
+            def sortByArray = sortBy as org.geotools.filter.SortByImpl[]
+            // Only apply it if the FeatureSource supports it.
+            // Don't throw an Exception
+            if (fs.queryCapabilities.supportsSorting(sortByArray)) {
+                q.sortBy = sortByArray
+            } else {
+                println "This Layer does not support sorting!"
+            }
+        }
+        def col = fs.getFeatures(q)
+        return new Cursor(col, this)
     }
 
     /**

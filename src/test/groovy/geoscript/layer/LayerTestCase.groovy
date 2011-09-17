@@ -299,5 +299,33 @@ class LayerTestCase {
         assertEquals 72696.0, values[0], 0.1
         assertEquals 3792553.0, values[values.size() - 1], 0.1
     }
+
+    @Test void cursorSorting() {
+        Schema s = new Schema("facilities", [new Field("geom","Point", "EPSG:2927"), new Field("name","string"), new Field("price","float")])
+        Layer layer = new Layer("facilities", s)
+        layer.add(new Feature([new Point(111,-47), "A", 10], "house1", s))
+        layer.add(new Feature([new Point(112,-46), "B", 12], "house2", s))
+        layer.add(new Feature([new Point(113,-45), "C", 11], "house3", s))
+
+        Cursor c = layer.getCursor(Filter.PASS, [["name","ASC"]])
+        assertEquals "A", c.next()["name"]
+        assertEquals "B", c.next()["name"]
+        assertEquals "C", c.next()["name"]
+        c.close()
+
+        c = layer.getCursor(Filter.PASS, ["name"])
+        assertEquals "A", c.next()["name"]
+        assertEquals "B", c.next()["name"]
+        assertEquals "C", c.next()["name"]
+        c.close()
+
+        // @TODO MemoryDataStore doesn't actually sort!
+        /*c = layer.getCursor(Filter.PASS, [["name","DESC"]])
+        assertEquals "C", c.next()["name"]
+        assertEquals "B", c.next()["name"]
+        assertEquals "A", c.next()["name"]
+        c.close()*/
+    }
+
 }
 
