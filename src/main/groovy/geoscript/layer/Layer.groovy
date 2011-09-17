@@ -506,6 +506,121 @@ class Layer {
     }
 
     /**
+     * Calculates the minimum and maximum values for an attribute of the Layer.
+     * @param field The Field
+     * @param low The low/minimum value
+     * @param high The high/maximum value
+     * @return A Map with mininimum (min) and maximum (max) values
+     */
+    Map minmax(def field, def low = null, def high = null) {
+        String attr = field instanceof Field ? field.name : field
+        List filters = []
+        if (low != null) {
+            filters += "${attr} >= ${low}"
+        }
+        if (high != null) {
+            filters += "${attr} <= ${high}"
+        }
+        Filter filter = filters.size() > 0 ? new Filter(filters.join(" AND ")) : Filter.PASS
+        def query = new DefaultQuery(this.name)
+        query.filter = filter.filter
+        def min = null
+        def max = null
+        def fit = fs.getFeatures(query).features()
+        try {
+            while (fit.hasNext()) {
+                def f = fit.next()
+                def val = f.getAttribute(attr)
+                min = (min == null || val < min) ? val : min
+                max = (max == null || val > max) ? val : max
+            }
+        } finally {
+            fit.close()
+        }
+        [min: min, max:max]
+    }
+
+    /**
+     * Calculate a histogram of values for an attribute of the Layer.
+     * @param field The Field or field name
+     * @param classes The number of classes
+     * @return A List of Lists for each class
+     */
+    List histogram(def field, int classes = 10) {
+
+        // Calculate the high and low values
+        def minMax = minmax(field)
+        double low = minMax.min
+        double high = minMax.max
+
+        // Calculate the range
+        double range = high - low
+        float dx = range/(classes as float)
+
+        // See the list of values with zeros
+        List values = [0] * classes
+
+        // Query features from the Layer
+        String attr = field instanceof Field ? field.name : field
+        Filter filter = new Filter("${attr} BETWEEN ${low} AND ${high}")
+        def fit = fs.getFeatures(filter.filter).features()
+        try {
+            while (fit.hasNext()) {
+                def f = fit.next()
+                def val = f.getAttribute(attr)
+                int index = ((val-low)/((float)range) * classes) as int
+                values[Math.min(classes - 1, index)] += 1
+            }
+        } finally {
+            fit.close()
+        }
+        List keys = (0..classes).collect{x -> round2(low + x * dx)}.sort()
+        List vals = (1..keys.size() - 1).collect{i ->
+            [keys[i-1], keys[i]]
+        }
+        if (vals[vals.size() - 1][1] != high) {
+            vals[vals.size() - 1][1] = high
+        }
+        return vals
+    }
+
+    protected double round2(double num) {
+        Math.round(num * 100) / 100
+    }
+
+    /**
+     * Create a List of interpolated values for a Field
+     * @param field The Field of Field name
+     * @param classes The number of classes
+     * @param method The interpolation method: linear, exp(onential), log(arithmic)
+     * @return A List of values
+     */
+    List interpolate(def field, int classes = 10, String method="linear") {
+
+        // Calculate the high and low values
+        def minMax = minmax(field)
+        double min = minMax.min
+        double max = minMax.max
+        double delta = max - min
+
+        Closure fx
+        if (method.equalsIgnoreCase("linear")) {
+            fx = {x -> delta * x}
+        } else if (method.equalsIgnoreCase("exp") || method.equalsIgnoreCase("exponential")) {
+            fx = {x -> Math.exp(x * Math.log(1+delta)) - 1}
+        } else if (method.equalsIgnoreCase("log") || method.equalsIgnoreCase("logarithmic")) {
+            fx = {x -> delta * Math.log(x+1) / Math.log(2)}
+        } else {
+            throw new Exception("Interpolation method '${method}' is not supported!")
+        }
+
+        Closure fy = {x -> min + fx(x)}
+        (0..classes).collect{x ->
+            fy(x/(float)classes)
+        }
+    }
+
+    /**
      * The GML Layer Writer
      */
     private static final GmlWriter gmlWriter = new GmlWriter()

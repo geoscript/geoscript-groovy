@@ -257,5 +257,47 @@ class LayerTestCase {
         assertEquals 3, layer.count
     }
 
+    @Test void minmax() {
+        File file = new File(getClass().getClassLoader().getResource("states.shp").toURI())
+        Shapefile shp = new Shapefile(file)
+
+        // No high/low
+        def minMax = shp.minmax("SAMP_POP")
+        assertEquals 72696.0, minMax.min, 0.1
+        assertEquals 3792553.0, minMax.max, 0.1
+
+        // low
+        minMax = shp.minmax("SAMP_POP", 80000)
+        assertEquals 83202.0, minMax.min, 0.1
+        assertEquals 3792553.0, minMax.max, 0.1
+
+        // high
+        minMax = shp.minmax("SAMP_POP", null, 3000000)
+        assertEquals 72696.0, minMax.min, 0.1
+        assertEquals 2564485.0, minMax.max, 0.1
+
+        // high and low
+        minMax = shp.minmax("SAMP_POP", 80000, 3000000)
+        assertEquals 83202.0, minMax.min, 0.1
+        assertEquals 2564485.0, minMax.max, 0.1
+    }
+
+    @Test void histogram() {
+        File file = new File(getClass().getClassLoader().getResource("states.shp").toURI())
+        Shapefile shp = new Shapefile(file)
+        def h = shp.histogram("SAMP_POP")
+        assertEquals 10, h.size()
+        assertEquals 72696.0, h[0][0], 0.1
+        assertEquals 3792553.0, h[h.size() - 1][1], 0.1
+    }
+
+    @Test void interpolate() {
+        File file = new File(getClass().getClassLoader().getResource("states.shp").toURI())
+        Shapefile shp = new Shapefile(file)
+        def values = shp.interpolate("SAMP_POP")
+        assertEquals 11, values.size()
+        assertEquals 72696.0, values[0], 0.1
+        assertEquals 3792553.0, values[values.size() - 1], 0.1
+    }
 }
 
