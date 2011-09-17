@@ -314,6 +314,16 @@ class Label extends Symbolizer {
         options['graphic-margin'] = String.valueOf(margin)
         this
     }
+    
+    /**
+     * Set whether to use the Label as an obstacle or not
+     * @param bol Whether to use the Label as an obstacle 
+     * @return This Label
+     */
+    Label labelObstacle(boolean bol) {
+        options.labelObstacle = String.valueOf(bol)
+        this
+    }
 
     /**
      * Prepare the GeoTools Rule by applying this Symbolizer

@@ -102,6 +102,10 @@ class LabelTestCase {
         // Priority
         assertTrue label.priority("POP_SIZE") instanceof Label
         assertEquals label.priority.value, "POP_SIZE"
+            
+        // Label Obstacle
+        assertTrue label.labelObstacle(true) instanceof Label
+        assertTrue label.options.labelObstacle as boolean
 
         // Named parameters
         label = new Label(property: "name", font: new Font(size:16))
