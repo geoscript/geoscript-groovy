@@ -379,4 +379,11 @@ class GeometryTestCase {
         assertEquals "LineString", lineString.geometryType
     }
 
+    @Test void getOctagonalEnvelope() {
+        Geometry g = Geometry.fromWKT("POLYGON ((1254084.2451712033 681826.3362917757, 1255211.7905953382 677551.0598919304, 1247506.896863749 673651.6319667968, 1247459.9158044101 669047.4881515788, 1252392.9270350009 668859.563914223, 1260802.5366566745 668953.5260329009, 1260802.5366566745 678725.5863754044, 1259862.9154698953 685161.9915048417, 1255916.5064854226 685068.0293861638, 1254084.2451712033 681826.3362917757))")
+        Geometry octalEnvelope = g.octagonalEnvelope
+        assertNotNull octalEnvelope
+        assertTrue octalEnvelope.isValid()
+        assertFalse octalEnvelope.isEmpty()
+    }
 }

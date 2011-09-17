@@ -492,6 +492,15 @@ class Geometry {
     }
 
     /**
+     * Get the octagonal envelope for this Geometry
+     * @return the octagonal envelope for this Geometry
+     */
+    Geometry getOctagonalEnvelope() {
+        def oct = new com.vividsolutions.jts.geom.OctagonalEnvelope(g)
+        Geometry.wrap(oct.toGeometry(factory))
+    }
+
+    /**
      * Get Delaunay Triangle Diagram for this Geometry
      * @return A Delaunay Triangle Diagram Geometry
      */
