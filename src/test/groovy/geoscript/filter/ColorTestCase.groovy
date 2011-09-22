@@ -134,4 +134,70 @@ class ColorTestCase {
 
     }
 
+    @Test void getHex() {
+        Color c = new Color("red")
+        assertEquals "#ff0000", c.hex
+
+        c = new Color([0,255,0])
+        assertEquals "#00ff00", c.hex
+
+        c = new Color("blue")
+        assertEquals "#0000ff", c.hex
+
+        c = new Color("wheat")
+        assertEquals "#f5deb3", c.hex
+    }
+
+    @Test void getRgb() {
+        Color c = new Color("red")
+        def rgb = c.rgb
+        assertEquals 255, rgb[0]
+        assertEquals 0, rgb[1]
+        assertEquals 0, rgb[2]
+
+        c = new Color([0,255,0])
+        rgb = c.rgb
+        assertEquals 0, rgb[0]
+        assertEquals 255, rgb[1]
+        assertEquals 0, rgb[2]
+
+        c = new Color("blue")
+        rgb = c.rgb
+        assertEquals 0, rgb[0]
+        assertEquals 0, rgb[1]
+        assertEquals 255, rgb[2]
+
+        c = new Color("wheat")
+        rgb = c.rgb
+        assertEquals 245, rgb[0]
+        assertEquals 222, rgb[1]
+        assertEquals 179, rgb[2]
+    }
+
+    @Test void getHsl() {
+        Color c = new Color("red")
+        def hsl = c.hsl
+        assertEquals 0.0, hsl[0], 0.01
+        assertEquals 1.0, hsl[1], 0.01
+        assertEquals 0.5, hsl[2], 0.01
+
+        c = new Color([0,255,0])
+        hsl = c.hsl
+        assertEquals 0.333, hsl[0], 0.01
+        assertEquals 1.0, hsl[1], 0.01
+        assertEquals 0.5, hsl[2], 0.01
+
+        c = new Color("blue")
+        hsl = c.hsl
+        assertEquals 0.666,  hsl[0], 0.01
+        assertEquals 1.0, hsl[1], 0.01
+        assertEquals 0.5, hsl[2], 0.01
+
+        c = new Color("wheat")
+        hsl = c.hsl
+        assertEquals 0.108, hsl[0], 0.01
+        assertEquals 0.767, hsl[1], 0.01
+        assertEquals 0.831, hsl[2], 0.01
+    }
+
 }

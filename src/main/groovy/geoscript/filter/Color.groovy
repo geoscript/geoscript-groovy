@@ -17,6 +17,56 @@ class Color extends Expression {
     }
 
     /**
+     * Get this Color's hex value
+     * @return The hex value
+     */
+    String getHex() {
+        this.value
+    }
+
+    /**
+     * Get this Color's RGB value
+     * @return A List of RGB values
+     */
+    List getRgb() {
+        def color = getColor(this.value)
+        [color.red, color.green, color.blue]
+    }
+
+    /**
+     * Get this Color's HSL value
+     * @return A List of HSL values all between 0 and 1
+     */
+    List getHsl() {
+        def color = getColor(this.value)
+        double r = color.red / 255.0
+        double g = color.green / 255.0
+        double b = color.blue / 255.0
+        double lo = Math.min(Math.min(r,g),b)
+        double hi = Math.max(Math.max(r,g),b)
+        def (double h, double s, double l) = [(lo + hi) / 2.0] * 3
+        if (lo == hi) {
+            (h, s) = [0,0]
+        } else {
+            float d = (hi - lo) as float
+            s = l > 0.5 ? d / (2 - hi - lo) : d / (hi + lo)
+            switch (hi) {
+                case r:
+                    h = (g - b) / d + (g < b ? 6 : 0)
+                    break
+                case g:
+                    h = (b - r) / d + 2
+                    break
+                case b:
+                    h = (r - g) / d + 4
+                    break
+            }
+            h /= 6
+        }
+        return [h,s,l]
+    }
+
+    /**
      * Get a Color from an Object.  Handles CSS names (red, wheat),
      * hexadecimals Strings (#00FF00, #FFF), and RGB String ("255,255,0"), list ([0,255,0]), and map ([r: 255, g: 255, b: 0]).
      * @param color A Object convertable to a Color
