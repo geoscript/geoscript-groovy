@@ -32,6 +32,12 @@ class ColorTestCase {
         color = new Color([0,0,0])
         assertTrue color.expr instanceof org.opengis.filter.expression.Literal
         assertEquals "#000000", color.toString()
+
+        // Make sure HSL run trips
+        Color c1 = new Color("silver")
+        def hsl = c1.hsl
+        Color c2 = new Color([h: hsl[0], s: hsl[1], l: hsl[2]])
+        assertEquals hsl, c2.hsl
     }
 
     @Test void getColor() {
@@ -54,6 +60,9 @@ class ColorTestCase {
 
         // RGB As Map
         assertColorsEqual new java.awt.Color(0,255,0), Color.getColor([r: 0, g: 255, b: 0, a: 125])
+
+        // HSL as Map
+        assertColorsEqual new java.awt.Color(255,0,0), Color.getColor([h: 0, s: 1.0, l: 0.5])
 
         // Null
         assertNull Color.getColor("NOT A COLOR")
@@ -198,6 +207,25 @@ class ColorTestCase {
         assertEquals 0.108, hsl[0], 0.01
         assertEquals 0.767, hsl[1], 0.01
         assertEquals 0.831, hsl[2], 0.01
+    }
+
+    @Test void interpolate() {
+
+       Color c = new Color("red")
+       List colors = c.interpolate(new Color("blue"), 8)
+       assertEquals 8, colors.size()
+
+       c = new Color("white")
+       colors = c.interpolate(new Color("blue"), 10)
+       assertEquals 10, colors.size()
+    }
+
+    @Test void drawToImage() {
+        def colors = Color.interpolate(new Color("white"), new Color("red"))
+        def image = Color.drawToImage(colors)
+        File file = File.createTempFile("colors",".png")
+        println file
+        javax.imageio.ImageIO.write(image, "png", file)
     }
 
 }

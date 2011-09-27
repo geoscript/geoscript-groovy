@@ -1,6 +1,8 @@
 package geoscript.filter
 
 import org.geotools.brewer.color.ColorBrewer
+import java.awt.Graphics2D
+import java.awt.image.BufferedImage
 
 /**
  * A Color Expression and a set of Color Utilities.
@@ -67,6 +69,37 @@ class Color extends Expression {
     }
 
     /**
+     * Interpolate a List of Colors between this Color and the given Color
+     * @param color The other Color
+     * @param n The number of Colors
+     * @return A List of Colors
+     */
+    List interpolate(Color color, int n = 10) {
+        List hsl1 = this.hsl
+        List hsl2 = color.hsl
+        List dhsl = [hsl1, hsl2].transpose().collect{x -> x[1] - x[0] }
+        (0..n - 1).collect{r->
+            List hsl = (0..hsl1.size()-1).collect{i ->
+                double x = hsl1[i] as double
+                double y = dhsl[i] as double
+                x + (r / (float)n) * y
+            }
+            new Color([h: hsl[0], s: hsl[1], l: hsl[2]])
+        }
+    }
+
+    /**
+     * Interpolate a List Colors between the start and end Color
+     * @param start The start Color
+     * @param end The end Color
+     * @param n The number of Colors
+     * @return A List of Colors
+     */
+    static interpolate(Color start, Color end, int n = 10) {
+        start.interpolate(end, n)
+    }
+
+    /**
      * Get a Color from an Object.  Handles CSS names (red, wheat),
      * hexadecimals Strings (#00FF00, #FFF), and RGB String ("255,255,0"), list ([0,255,0]), and map ([r: 255, g: 255, b: 0]).
      * @param color A Object convertable to a Color
@@ -126,6 +159,11 @@ class Color extends Expression {
             int a = color.containsKey('a') ? color.a as int : 0
             return new java.awt.Color(r, g, b, a)
         }
+        // HSL as Map [h:0-1,s:0-1,l:0-1]
+        else if (color instanceof Map && color.containsKey("h") && color.containsKey("s") && color.containsKey("l")) {
+            Map rgb = hsl2rgb([color.h, color.s, color.l])
+            return new java.awt.Color(rgb.r, rgb.g, rgb.b)
+        }
         else {
             return null
         }
@@ -149,6 +187,42 @@ class Color extends Expression {
                 return null
             }
         }
+    }
+
+    /**
+     * Convert a HSL Color (as a List) into a Map of RGB values
+     * @param hsl The HSL List
+     * @return A Map of RGB values
+     */
+    private static Map hsl2rgb(List hsl) {
+        double r,g,b
+        def (double h, double s, double l) = hsl
+        if (s == 0) {
+            (r,g,b) = [l,l,l]
+        } else {
+            double q = l < 0.5 ? l * (1 + s) : l + s - l * s
+            double p = 2 * l - q
+            r = hue2rgb(p, q, h + 1/3)
+            g = hue2rgb(p, q, h)
+            b = hue2rgb(p, q, h - 1/3)
+        }
+        [
+            r: Math.round(r * 255) as int,
+            g: Math.round(g * 255) as int,
+            b: Math.round(b * 255) as int
+        ]
+    }
+
+    /**
+     * Convert Hue to RGB
+     */
+    private static double hue2rgb(double p, double q, double t) {
+        if (t < 0) t += 1
+        if (t > 1) t -= 1
+        if (t < 1/6) return p + (q - p) * 6.0 * t
+        if (t < 1/2) return q
+        if (t < 2/3) return p + (q - p) * (2/3.0 - t) * 6.0
+        return p
     }
 
     /**
@@ -386,4 +460,53 @@ class Color extends Expression {
         yellow: "#ffff00",
         yellowgreen: "#9acd32"
     ]
+
+    /**
+     * Draw a List of Colors to an Image
+     * @param colors The List of Colors
+     * @param orientation The orientation (vertical or horizontal)
+     * @param size The size of each Color swatch
+     * @return A BufferedImage
+     */
+    static BufferedImage drawToImage(List colors, String orientation = "vertical", int size = 50) {
+        int w = orientation == "vertical" ? size : colors.size() * size
+        int h = orientation == "vertical" ? colors.size() * size : size
+        BufferedImage image = new BufferedImage(w, h, BufferedImage.TYPE_INT_ARGB)
+        Graphics2D g2d = image.createGraphics()
+        colors.eachWithIndex{color,i ->
+            def c = Color.getColor(color)
+            g2d.color = c
+            int x = orientation == "vertical" ? 0 : i * size
+            int y = orientation == "vertical" ? i * size : 0
+            g2d.fillRect(x, y, w, size)
+        }
+        g2d.dispose()
+        image
+    }
+
+    /**
+     * Draw a List of Colors to a JFrame
+     * @param colors The List of Colors
+     * @param orientation The orientation (vertical or horizontal)
+     * @param size The size of each Color swatch
+     */
+    static void draw(List colors, String orientation = "vertical", int size = 50) {
+        def frame = new javax.swing.JFrame("GeoScript Colors")
+        try {
+            frame.defaultCloseOperation = javax.swing.JFrame.EXIT_ON_CLOSE
+        }
+        catch(SecurityException ex) {
+            frame.defaultCloseOperation = javax.swing.WindowConstants.HIDE_ON_CLOSE
+        }
+        def panel = new javax.swing.JPanel()
+        panel.add(new javax.swing.JLabel(new javax.swing.ImageIcon(drawToImage(colors, orientation, size))))
+        int w = orientation == "vertical" ? size : colors.size() * size
+        int h = orientation == "vertical" ? colors.size() * size : size
+        panel.preferredSize = new java.awt.Dimension(w,h)
+        frame.layout = new java.awt.BorderLayout()
+        frame.add(panel, java.awt.BorderLayout.CENTER)
+        frame.pack()
+        frame.visible = true
+    }
+
 }
