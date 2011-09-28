@@ -30,6 +30,7 @@ import org.jdom.output.*
 import org.jdom.input.*
 import geoscript.layer.io.GmlWriter
 import geoscript.layer.io.GeoJSONWriter
+import org.geotools.data.collection.ListFeatureCollection
 
 /**
  * A Layer is a source of spatial data
@@ -485,9 +486,10 @@ class Layer {
      * Reproject the Layer
      * @param p The Projection
      * @param newName The new name (defaults to a default new name)
+     * @param chunk The number of Features to reproject in one batch
      * @return The reprojected Layer
      */
-    Layer reproject(Projection p, String newName = newname()) {
+    Layer reproject(Projection p, String newName = newname(), int chunk=1000) {
         Schema s = schema.reproject(p, newName)
         Layer l = workspace.create(s)
         DefaultQuery q = new DefaultQuery(getName(), Filter.PASS.filter)
@@ -497,12 +499,32 @@ class Layer {
         q.coordinateSystemReproject = p.crs
         FeatureCollection fc = fs.getFeatures(q)
         FeatureIterator i = fc.features()
-        while(i.hasNext()) {
-           Feature f = new Feature(i.next())
-           l.add(f)
+        while (true) {
+            def features = readFeatures(i, fs.schema, chunk)
+            if (features.isEmpty()) {
+                break
+            }
+            l.fs.addFeatures(features)
         }
         i.close()
         l
+    }
+
+    /**
+     * Read Features from a FeatureIterator in batches
+     * @param it The FeatureIterator
+     * @param type The SimpleFeatureType
+     * @param chunk The number of Features to read in one batch
+     * @return A FeatureCollection
+     */
+    private FeatureCollection readFeatures(FeatureIterator it, SimpleFeatureType type, int chunk) {
+        int i = 0
+        def features = new ListFeatureCollection(type)
+        while (it.hasNext() && i < chunk) {
+            features.add(it.next())
+            i++
+        }
+        features
     }
 
     /**

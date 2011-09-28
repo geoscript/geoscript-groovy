@@ -1,12 +1,13 @@
 package geoscript.workspace
 
-import geoscript.layer.Layer
-import geoscript.geom.*
-import geoscript.feature.Feature
 import geoscript.feature.Field
 import geoscript.feature.Schema
+import geoscript.layer.Layer
 import org.geotools.data.DataStore
-import org.geotools.data.memory.MemoryDataStore
+import org.geotools.feature.FeatureIterator
+import org.geotools.feature.FeatureCollection
+import org.opengis.feature.simple.SimpleFeatureType
+import org.geotools.data.collection.ListFeatureCollection
 
 /**
  * A Workspace is a container of Layers.
@@ -104,9 +105,10 @@ class Workspace {
      * Add a Layer as a name to the Workspace
      * @param layer The Layer to add
      * @param name The new name of the Layer
+     * @param chunk The number of Features to add in one batch
      * @return The newly added Layer
      */
-    Layer add(Layer layer, String name) {
+    Layer add(Layer layer, String name, int chunk=1000) {
         List<Field> flds = layer.schema.fields.collect {
             if (it.isGeometry()) {
                 return new Field(it.name, it.typ, layer.proj)
@@ -116,8 +118,35 @@ class Workspace {
             }
         }
         Layer l = create(name, flds)
-        layer.features.each{l.add(it)}
+        FeatureIterator it = layer.fs.getFeatures().features()
+        try {
+            while(true) {
+                def features = readFeatures(it, layer.fs.schema, chunk)
+                if (features.isEmpty()) break
+                l.fs.addFeatures(features)
+            }
+        }
+        finally {
+            it.close()
+        }
         l
+    }
+
+    /**
+     * Read Features from a FeatureIterator in batches
+     * @param it The FeatureIterator
+     * @param type The SimpleFeatureType
+     * @param chunk The number of Features to read in one batch
+     * @return A FeatureCollection
+     */
+    private FeatureCollection readFeatures(FeatureIterator it, SimpleFeatureType type, int chunk) {
+        int i = 0
+        def features = new ListFeatureCollection(type)
+        while (it.hasNext() && i < chunk) {
+            features.add(it.next())
+            i++
+        }
+        features
     }
 
     /**
