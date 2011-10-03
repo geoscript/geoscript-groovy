@@ -1,7 +1,6 @@
 package geoscript.style
 
 import geoscript.filter.Filter
-import org.geotools.styling.Symbolizer as GtSymbolizer
 
 /**
  * A Composite is a Symbolizer that contains one of more Symbolizers.

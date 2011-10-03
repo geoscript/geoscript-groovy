@@ -22,7 +22,7 @@ import geoscript.filter.Color
  * A Base class for all Symbolizers
  * @author Jared Erickson
  */
-class Symbolizer implements Style {
+class Symbolizer implements Style, Cloneable {
 
     /**
      * The Filter
@@ -283,135 +283,6 @@ class Symbolizer implements Style {
             new Stroke(Color.toHex(darkerColor))
         }
         sym
-    }
-
-    /**
-     * Create a Symbolizer for every unique value of a Layer's Field
-     * @param layer The Layer
-     * @param field The Field name
-     * @param colors A Closure (which takes index based on 0 and a value), a Palette name, or a List of Colors
-     * @return A Symbolizer
-     */
-    static Symbolizer createUniqueValuesSymbolizer(Layer layer, String field, def colors = {index, value -> Color.getRandomPastel()}) {
-
-        // Collect the unique values
-        Set uniqueValueSet = new HashSet()
-
-        Cursor c = layer.cursor
-        while(c.hasNext()) {
-            Feature f = c.next()
-            uniqueValueSet.add(f.get(field))
-        }
-        c.close()
-
-        List uniqueValues = new ArrayList(uniqueValueSet)
-        Collections.sort(uniqueValues)
-
-        // If the colors argument is a String treat it
-        // like a Palette
-        if (colors instanceof String) {
-            colors = Color.getPaletteColors(colors)
-        }
-
-        // Create the list of Rules
-        int i = 0
-        List symbolizers = uniqueValues.collect{value ->
-
-            // Get the Color
-            def color
-            if (colors instanceof Closure) {
-                color = colors.call(i, value)
-            }
-            else {
-                // Set our counter back to 0 if
-                // it exceeds the number of colors
-                // in the List
-                if (i >= colors.size()) {
-                    i = 0
-                }
-                color = colors[i]
-            }
-
-            // Make sure color is a java.awt.Color
-            if (color instanceof String) {
-                color = Color.getColor(color)
-            }
-
-            // Increment our counter
-            i++
-
-            // Create the Symbolizer
-            // name: "${field} = ${value}",
-            // title: "${field} = ${value}",
-            Symbolizer.getDefault(layer.schema.geom.typ, color).where(new Filter(filterFactory.equals(filterFactory.property(field), filterFactory.literal(value))))
-        }
-
-        // Create our Composite Symbolizer with a Symbolizer for each unique value
-        new Composite(symbolizers)
-    }
-
-    /**
-     * Create a graduated Symbolizer
-     * @param layer The Layer
-     * @param field The Field name
-     * @param method The classification method (Quantile or EqualInterval)
-     * @param number The number of categories
-     * @param colors A Palette name, or a List of Colors
-     * @param elseMode The else mode (ignore, min, max)
-     * @return The graduated Symbolizer
-     */
-    static Symbolizer createGraduatedSymbolizer(Layer layer, String field, String method, int number, def colors, String elseMode = "ignore") {
-
-        org.opengis.filter.FilterFactory2 ff = org.geotools.factory.CommonFactoryFinder.getFilterFactory2(null)
-        org.opengis.filter.expression.Function function = ff.function(method, ff.property(field), ff.literal(number))
-        org.geotools.filter.function.Classifier classifier = (org.geotools.filter.function.Classifier) function.evaluate(layer.fs.features)
-
-        int elseModeInt
-        if (elseMode.equalsIgnoreCase("min")) {
-            elseModeInt = org.geotools.brewer.color.StyleGenerator.ELSEMODE_INCLUDEASMIN
-        } else if (elseMode.equalsIgnoreCase("max")) {
-            elseModeInt = org.geotools.brewer.color.StyleGenerator.ELSEMODE_INCLUDEASMAX
-        } else {
-            elseModeInt = org.geotools.brewer.color.StyleGenerator.ELSEMODE_IGNORE
-        }
-
-        // If the colors argument is a String treat it
-        // like a Palette
-        if (colors instanceof String) {
-            colors = Color.getPaletteColors(colors) as java.awt.Color[]
-        }
-        else {
-            colors = colors.collect{c ->
-                Color.getColor(c)
-            } as java.awt.Color[]
-        }
-
-        // Generate the FeatureTypeStyle
-        org.geotools.styling.FeatureTypeStyle featureTypeStyle = org.geotools.brewer.color.StyleGenerator.createFeatureTypeStyle(
-            classifier,
-            (org.geotools.filter.Expression) ff.property(field),
-            colors,
-                "test",
-            layer.fs.schema.geometryDescriptor,
-            elseModeInt,
-            0.5,
-            null);
-
-        String geometryType = layer.schema.geom.typ
-        List symbolizers = featureTypeStyle.rules().collect{rule ->
-            def sym = rule.symbolizers()[0]
-            if (geometryType.equalsIgnoreCase("polygon") || geometryType.equalsIgnoreCase("multipolygon")) {
-                return (new Fill(sym.fill.color.value) + new Stroke(sym.stroke.color.value)).where(new Filter(rule.filter))
-            } else if (geometryType.equalsIgnoreCase("line") || geometryType.equalsIgnoreCase("multiline")) {
-                return new Stroke(sym.stroke.color.value).where(new Filter(rule.filter))
-            }  else if (geometryType.equalsIgnoreCase("point") || geometryType.equalsIgnoreCase("multipoint")) {
-                return new Shape(sym.graphic.mark.fill.color.value, sym.graphic.size.value, sym.graphic.mark.wellKnownName.vallue).where(new Filter(rule.filter))
-            } else {
-                null
-            }
-        }
-
-        new Composite(symbolizers)
     }
 
     /**

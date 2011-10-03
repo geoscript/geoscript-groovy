@@ -4,7 +4,7 @@ import geoscript.style.*
 import geoscript.map.*
 
 def statesShp = new Shapefile("states.shp")
-statesShp.style = Symbolizer.createGraduatedSymbolizer(statesShp, "WORKERS", "Quantile", 5, "Greens")
+statesShp.style = new Gradient(statesShp, "WORKERS", "Quantile", 5, "Greens")
 
 def map = new Map(width: 600, height: 400, fixAspectRatio: true)
 map.proj = "EPSG:4326"

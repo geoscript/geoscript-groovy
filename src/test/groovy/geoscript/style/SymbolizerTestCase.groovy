@@ -253,47 +253,4 @@ class SymbolizerTestCase {
         assertEquals 1, rule2.symbolizers().size()
         assertTrue rule2.symbolizers()[0] instanceof PolygonSymbolizer
     }
-
-    @Test void createUniqueValuesSymbolizer() {
-
-        // Get states shapefile
-        File file = new File(getClass().getClassLoader().getResource("states.shp").toURI())
-        Shapefile shapefile = new Shapefile(file)
-
-        // Default is random colors
-        Symbolizer sym1 = Symbolizer.createUniqueValuesSymbolizer(shapefile, "STATE_ABBR")
-        assertNotNull(sym1)
-        assertEquals(49, sym1.parts.size())
-
-        // Color palette
-        Symbolizer sym2 = Symbolizer.createUniqueValuesSymbolizer(shapefile, "STATE_ABBR", "Greens")
-        assertNotNull(sym2)
-        assertEquals(49, sym2.parts.size())
-
-        // Color list
-        Symbolizer sym3 = Symbolizer.createUniqueValuesSymbolizer(shapefile, "STATE_ABBR", ["teal","slateblue","tan","wheat","salmon"])
-        assertNotNull(sym3)
-        assertEquals(49, sym3.parts.size())
-
-        // Color Closure
-        Symbolizer sym4 = Symbolizer.createUniqueValuesSymbolizer(shapefile, "STATE_ABBR", {i,v -> Color.getRandom()})
-        assertNotNull(sym4)
-        assertEquals(49, sym4.parts.size())
-    }
-
-    @Test void createGraduatedSymbolizer() {
-
-        // Get states shapefile
-        File file = new File(getClass().getClassLoader().getResource("states.shp").toURI())
-        Shapefile shapefile = new Shapefile(file)
-
-        Symbolizer sym1 = Symbolizer.createGraduatedSymbolizer(shapefile, "WORKERS", "Quantile", 5, "Greens")
-        assertNotNull(sym1)
-        assertEquals(5, sym1.parts.size())
-
-        Symbolizer sym2 = Symbolizer.createGraduatedSymbolizer(shapefile, "WORKERS", "EqualInterval", 7, ["#eee8aa","#98fb98","#afeeee","#d87093","#ffefd5","#ffdab9","#cd853f"])
-        assertNotNull(sym2)
-        assertEquals(7, sym2.parts.size())
-    }
-
 }

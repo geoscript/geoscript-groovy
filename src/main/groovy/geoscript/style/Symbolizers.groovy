@@ -1,6 +1,7 @@
 package geoscript.style
 
 import geoscript.filter.Function
+import geoscript.layer.Layer
 
 /**
  * The Symbolizers class is a collection of static methods that can be used
@@ -215,4 +216,45 @@ class Symbolizers {
     static Transform transform(String cql) {
         new Transform(cql)
     }
+
+    /**
+     * Create a new UniqueValues Composite.
+     * <p><code>UniqueValues values = uniqueValues(shp, "STATE_NAME")</code></p>
+     * @param layer The Layer
+     * @param field The Field or the Field's name
+     * @param colors A Closure (which takes index based on 0 and a value), a Palette name, or a List of Colors
+     */
+    static UniqueValues uniqueValues(Layer layer, def field, def colors = {index, value -> Color.getRandomPastel()}) {
+        new UniqueValues(layer, field, colors)
+    }
+
+    /**
+     * Create a new Gradient by interpolating between a List of values and styles.
+     * <p><code>Gradient g = gradient("PERSONS / LAND_KM",[0,200],[new Fill("#000066"), new Fill("red")],10,"exponential")</code></p>
+     * @param expression An Expression or a String expression.
+     * @param values A List of values
+     * @param styles A List of Styles
+     * @param classes The number of classes
+     * @param method The interpolation method (linear, exponential, logarithmic)
+     * @param inclusive Whether to include the last value of not
+     */
+    static Gradient gradient(def expression, List values, List styles, int classes = 5, String method="linear", boolean inclusive = true) {
+        new Gradient(expression, values, styles, classes, method, inclusive)
+    }
+
+    /**
+     * Create a new Gradient where the interpolation is based on a classification method based on values from the Layer's
+     * Field.
+     * <p><code>Gradient g = gradient(shapefile, "WORKERS", "Quantile", 5, "Greens")</code></p>
+     * @param layer The Layer
+     * @param field The Field or Field's name
+     * @param method The classification method (Quantile or EqualInterval)
+     * @param number The number of categories
+     * @param colors A Color Brewer palette name, or a List of Colors
+     * @param elseMode The else mode (ignore, min, max)
+     */
+    static Gradient gradient(Layer layer, def field, String method, int number, def colors, String elseMode = "ignore") {
+        new Gradient(layer, field, method, number, colors, elseMode)
+    }
+
 }
