@@ -1,9 +1,8 @@
-import geoscript.layer.*
-import geoscript.proj.*
-import geoscript.style.*
-import geoscript.map.*
-import geoscript.geom.Bounds
 import geoscript.filter.Function
+import geoscript.geom.Bounds
+import geoscript.layer.Shapefile
+import geoscript.style.*
+import geoscript.render.Map
 
 def statesShp = new Shapefile("states.shp")
 statesShp.style = new Fill("#E6E6E6") + new Stroke("#4C4C4C",0.5) +

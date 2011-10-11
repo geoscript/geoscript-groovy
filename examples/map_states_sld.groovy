@@ -1,6 +1,6 @@
 import geoscript.layer.Shapefile
+import geoscript.render.Map
 import geoscript.style.io.SLDReader
-import geoscript.map.Map
 
 def statesShp = new Shapefile("states.shp")
 statesShp.style = new SLDReader().read(new File("states.sld"))

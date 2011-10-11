@@ -1,6 +1,6 @@
 import geoscript.layer.Shapefile
+import geoscript.render.Map
 import geoscript.style.io.CSSReader
-import geoscript.map.Map
 
 def statesShp = new Shapefile("states.shp")
 statesShp.style = new CSSReader().read(new File("states.css"))

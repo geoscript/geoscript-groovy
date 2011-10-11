@@ -1,43 +1,50 @@
 package geoscript.render
 
-import java.awt.Graphics
+import java.awt.Graphics2D
 import java.awt.image.BufferedImage
 import javax.imageio.ImageIO
 
 /**
- * A Renderer that creates an image File
- * @author Jared Erickson
+ * A Renderer that draws a Map to a BufferedImage
  */
-class Image extends Renderer {
+class Image extends Renderer<BufferedImage> {
 
     /**
-     * The image format (png, jpeg, gif)
+     * The image type (png, gif, jpeg)
      */
-    String format
+    private String imageType
 
     /**
-     * Create a new Image Renderer
-     * @param format The image format (png, jpeg, gif)
+     * Create a new Image
+     * @param type The image type
      */
-    Image(String format) {
-        this.format = format
+    Image(String type) {
+        this.imageType = type
     }
 
     /**
-     * Encode the BufferedImage as an image File
-     * @param img The BufferedImage
-     * @param g The Java2D Graphics
-     * @param size The size of the image
-     * @param options A Map of options
+     * Render the Map to a BufferedImage
+     * @param map The Map
+     * @return A BufferedImage
      */
-    protected void encode(BufferedImage img, Graphics g, List size, java.util.Map options) {
-        File file
-        def f = options.get("file", "${options.title}.${format}")
-        if (f instanceof File) {
-            file = f
-        } else {
-            file = new File(f)
-        }
-        ImageIO.write(img, format, file)
+    @Override
+    public BufferedImage render(Map map) {
+        int imageType = (imageType.equalsIgnoreCase("jpeg") || imageType.equalsIgnoreCase("jpeg") ? BufferedImage.TYPE_INT_RGB : BufferedImage.TYPE_INT_ARGB)
+        BufferedImage image = new BufferedImage(map.width, map.height, imageType)
+        Graphics2D g = (Graphics2D) image.createGraphics()
+        map.render(g)
+        g.dispose()
+        return image
+    }
+
+    /**
+     * Render the Map to the OutputStream
+     * @param map The Map
+     * @param out The OuptuStream
+     */
+    @Override
+    public void render(Map map, OutputStream out) {
+        def image = render(map)
+        ImageIO.write(image, imageType, out)
     }
 }

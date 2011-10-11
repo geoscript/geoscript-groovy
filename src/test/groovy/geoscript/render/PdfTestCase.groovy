@@ -1,30 +1,26 @@
 package geoscript.render
 
-import org.junit.Test
-import static org.junit.Assert.*
 import geoscript.layer.Layer
 import geoscript.layer.Shapefile
-import geoscript.style.Stroke
 import geoscript.style.Fill
-import javax.imageio.ImageIO
+import geoscript.style.Stroke
+import org.junit.Test
+import static org.junit.Assert.assertNotNull
 
 /**
- * The Image UnitTest
+ * The Pdf UnitTest
  * @author Jared Erickson
  */
-class ImageTestCase {
+class PdfTestCase {
 
-    @Test void renderToImage() {
+    @Test void renderToDocument() {
         File shpFile = new File(getClass().getClassLoader().getResource("states.shp").toURI())
         Layer layer = new Shapefile(shpFile)
         layer.style = new Stroke('black', 0.1) + new Fill('gray', 0.75)
         Map map = new Map(layers: [layer])
-        Image image = new Image("png")
-        def img = image.render(map)
-        assertNotNull(img)
-        File file = File.createTempFile("image_",".png")
-        println file
-        ImageIO.write(img, "png", file)
+        Pdf pdf = new Pdf()
+        def doc = pdf.render(map)
+        assertNotNull(doc)
     }
 
     @Test void renderToOutputStream() {
@@ -32,11 +28,11 @@ class ImageTestCase {
         Layer layer = new Shapefile(shpFile)
         layer.style = new Stroke('black', 0.1) + new Fill('gray', 0.75)
         Map map = new Map(layers: [layer])
-        Image image = new Image("png")
-        File file = File.createTempFile("image_",".png")
+        Pdf pdf = new Pdf()
+        File file = File.createTempFile("pdf_",".pdf")
         println file
         OutputStream out = new FileOutputStream(file)
-        image.render(map, out)
+        pdf.render(map, out)
         out.close()
     }
 }

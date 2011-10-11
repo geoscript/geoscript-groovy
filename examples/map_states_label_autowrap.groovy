@@ -1,6 +1,6 @@
-import geoscript.layer.*
+import geoscript.layer.Shapefile
+import geoscript.render.Map
 import geoscript.style.*
-import geoscript.map.Map
 
 def statesShp = new Shapefile("states.shp")
 statesShp.style = new Fill("#E6E6E6") + new Stroke("#4C4C4C",0.5) +

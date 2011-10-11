@@ -317,6 +317,27 @@ class Bounds {
     }
 
     /**
+     * Ensure that the Bounds has a width and height.  Handle vertical and horizontal lines and points.
+     * @return A new Bounds with a width and height
+     */
+    Bounds ensureWidthAndHeight() {
+        Bounds b = new Bounds(env)
+        if (b.width == 0 || b.height == 0) {
+            if (b.height > 0) {
+                double h = b.height / 2.0
+                b = new Bounds(b.west - h, b.south, b.east + h, b.north, b.proj)
+            } else if (b.width > 0) {
+                double w = b.width / 2.0
+                b = new Bounds(b.west, b.south - w, b.east, b.north + w, b.proj)
+            } else {
+                def e = new Point(b.west, b.south).buffer(0.1).envelopeInternal
+                b = new Bounds(e.minX, e.minY, e.maxX, e.maxY, proj)
+            }
+        }
+        return b
+    }
+
+    /**
      * Get a value from this Bounds at the given index (west = 0, south = 1,
      * east = 2, north = 3).
      * <p><code>Bounds b = new Bounds(1,2,3,4)</code></p>

@@ -2,9 +2,9 @@ package geoscript.style
 
 import org.junit.Test
 import static org.junit.Assert.*
-import geoscript.filter.Color
+
 import geoscript.filter.Expression
-import geoscript.map.Map
+import geoscript.render.Map
 import geoscript.layer.Shapefile
 
 /**

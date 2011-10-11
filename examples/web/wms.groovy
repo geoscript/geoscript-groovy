@@ -1,4 +1,4 @@
-import geoscript.map.Map
+import geoscript.render.Map
 import geoscript.style.*
 import geoscript.layer.Shapefile
 import geoscript.geom.Bounds

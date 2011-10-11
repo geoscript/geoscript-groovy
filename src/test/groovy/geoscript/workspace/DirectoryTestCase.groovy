@@ -33,6 +33,7 @@ class DirectoryTestCase {
         assertNotNull(file)
         Directory dir = new Directory(file)
         assertNotNull(dir)
+        println dir.layers
         assertEquals 1, dir.layers.size()
         assertEquals "[states]", dir.layers.toString()
     }

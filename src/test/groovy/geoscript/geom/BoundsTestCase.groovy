@@ -257,4 +257,22 @@ class BoundsTestCase {
         assertTrue b1.intersection(b3).empty
     }
 
+    @Test void ensureWidthAndHeight() {
+
+        // Horizontal Line
+        def b1 = new LineString([0,0], [0,10]).bounds
+        assertEquals new Bounds(0,0,0,10), b1
+        assertEquals new Bounds(-5,0,5,10), b1.ensureWidthAndHeight()
+
+        // Vertical Line
+        def b2 = new LineString([0,0],[10,0]).bounds
+        assertEquals new Bounds(0.0,0.0,10.0,0.0), b2
+        assertEquals new Bounds(0.0,-5.0,10.0,5.0), b2.ensureWidthAndHeight()
+
+        // Point
+        def b3 = new Point(10,20).bounds
+        assertEquals new Bounds(10.0,20.0,10.0,20.0), b3
+        assertEquals new Bounds(9.9,19.9,10.1,20.1), b3.ensureWidthAndHeight()
+    }
+
 }

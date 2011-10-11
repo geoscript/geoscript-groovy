@@ -24,7 +24,7 @@ Geometry voronoiGeom = geomCol.voronoiDiagram
 diagramLayer.add(schema.feature([voronoiGeom]))
 
 // Import style and map
-import geoscript.map.Map
+import geoscript.render.Map
 import geoscript.style.*
 
 // Create a Map

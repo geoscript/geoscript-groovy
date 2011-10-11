@@ -10,7 +10,7 @@ import geoscript.layer.*
 import geoscript.filter.Filter
 import geoscript.geom.Bounds
 import geoscript.style.*
-import geoscript.map.Map
+import geoscript.render.Map
 
 void createImage(Layer layer, Symbolizer symbolizer, File file) {
     symbolizer.asSLD()

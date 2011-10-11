@@ -1,6 +1,6 @@
-import geoscript.layer.*
-import geoscript.style.*
-import geoscript.map.*
+import geoscript.render.Map
+import geoscript.layer.Shapefile
+import geoscript.style.UniqueValues
 
 def statesShp = new Shapefile("states.shp")
 statesShp.style = new UniqueValues(statesShp, "STATE_ABBR")

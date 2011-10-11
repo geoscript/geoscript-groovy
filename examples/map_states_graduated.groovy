@@ -1,7 +1,6 @@
-import geoscript.layer.*
-import geoscript.proj.*
-import geoscript.style.*
-import geoscript.map.*
+import geoscript.layer.Shapefile
+import geoscript.style.Gradient
+import geoscript.render.Map
 
 def statesShp = new Shapefile("states.shp")
 statesShp.style = new Gradient(statesShp, "WORKERS", "Quantile", 5, "Greens")
