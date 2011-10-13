@@ -1,12 +1,14 @@
 package geoscript.filter
 
-import org.geotools.factory.CommonFactoryFinder
 import org.opengis.filter.expression.Function as GtFunction
-import org.geotools.filter.FunctionImpl
-import org.geotools.filter.FunctionFactory
+
+import org.geotools.factory.CommonFactoryFinder
 import org.geotools.factory.FactoryIteratorProvider
 import org.geotools.factory.GeoTools
+import org.geotools.filter.FunctionFactory
+import org.geotools.filter.FunctionImpl
 import org.opengis.filter.expression.Literal
+import org.opengis.feature.type.Name
 
 /**
  * A GeoScript Function either wraps an existing GeoTools Function or an CQL String.
@@ -133,6 +135,9 @@ class Function extends Expression {
         List functions = []
         GtFunction function(String name, List args, Literal fallback) {
             functions.find{func -> func.name.equals(name) }
+        }
+        GtFunction function(Name name, List args, Literal fallback) {
+            functions.find{func -> func.name.equals(name.localPart)}
         }
         List getFunctionNames() {
             functions.collect{func -> func.name}
