@@ -1,5 +1,6 @@
 package geoscript.render
 
+import groovy.swing.SwingBuilder
 import java.awt.BorderLayout
 import javax.swing.ButtonGroup
 import javax.swing.JButton
@@ -8,35 +9,30 @@ import javax.swing.JToolBar
 import org.geotools.swing.JMapPane
 import org.geotools.swing.control.JMapStatusBar
 import org.geotools.swing.action.*
+import geoscript.layer.Shapefile
 
 /**
- * The MapFrame is a custom JFrame that creates the interactive
- * user interface.
+ * A complex GUI for viewing a Map.
  * @author Jared Erickson
  */
-class MapFrame extends JFrame {
+class MapWindow {
 
     /**
-     * Create a new MapFrame
-     * @param mapPane The JMapPane
+     * Open a complex GUI for viewing a Map
+     * @param map The Map
      */
-    MapFrame(Map map) {
-        super()
+    MapWindow(Map map) {
 
         // Prepare the Map for rendering
         map.setUpRendering()
 
-        // Create a new JMapPane
+        // Create the map
         JMapPane mapPane = new JMapPane(map.context)
         mapPane.setSize(map.width, map.height)
         mapPane.visible = true
 
-        // Add the Map pane to the center
-        add(mapPane, BorderLayout.CENTER)
-
-        // Create and add a statusbar to the south
+        // Create the status bar
         JMapStatusBar statusBar = JMapStatusBar.createDefaultStatusBar(mapPane)
-        add(statusBar, BorderLayout.SOUTH)
 
         // Create a toolbar
         JToolBar toolbar = new JToolBar()
@@ -78,10 +74,15 @@ class MapFrame extends JFrame {
         JButton infoBtn = new JButton(new InfoAction(mapPane))
         toolbar.add(infoBtn)
 
-        // Add the toolbar to the north
-        add(toolbar, BorderLayout.NORTH)
-
-        // Set the JFrame size and visibility
-        setSize(map.width, map.height)
+        // Use SwingBuilder to build the GUI
+        def swing = new SwingBuilder()
+        swing.edt {
+            frame(title:'Window', size:[map.width, map.height], defaultCloseOperation:JFrame.EXIT_ON_CLOSE, show:true) {
+                borderLayout()
+                container(toolbar, constraints: BorderLayout.NORTH)
+                container(mapPane, constraints:BorderLayout.CENTER)
+                container(statusBar, constraints: BorderLayout.SOUTH)
+            }
+        }
     }
 }

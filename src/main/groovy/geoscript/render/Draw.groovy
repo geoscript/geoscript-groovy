@@ -8,6 +8,8 @@ import geoscript.style.Style
 import geoscript.style.Symbolizer
 import geoscript.workspace.Memory
 import java.awt.image.BufferedImage
+import geoscript.layer.Shapefile
+import geoscript.geom.Point
 
 /**
  * Easily draw Geometry, Feature, and Layers to an image or interactive App.
@@ -62,6 +64,12 @@ class Draw {
         draw(layer, bounds, size, out, format)
     }
 
+    static void main(String[] args) {
+        //def shp = new Shapefile("/Users/jericks/Projects/GeoScript/scripts/states.shp")
+        def geom = new Point(10,10).buffer(10)
+        draw([geom.bounds.polygon, geom])
+    }
+
     /**
      * Draw a Layer
      * @param layer The Layer
@@ -80,9 +88,9 @@ class Draw {
                 height: size[1],
                 type: format
         )
-        // Display in a MapFrame
+        // Display in a Window
         if (out == null) {
-            map.display()
+            new Window(map)
         }
         // Draw to an OutputStream
         else if (out instanceof OutputStream) {

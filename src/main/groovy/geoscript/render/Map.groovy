@@ -234,9 +234,7 @@ class Map {
      * Display the Map in an interactive GUI
      */
     void display() {
-        setUpRendering()
-        MapFrame frame = new MapFrame(this)
-        frame.visible = true
+        new MapWindow(this)
     }
 
     /**
