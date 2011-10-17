@@ -53,8 +53,8 @@ class Gml3Reader implements Reader{
             return new LinearRing(getPoints(element.getChild("posList",ns).text))
         }
         else if (name.equalsIgnoreCase("Polygon")) {
-            LinearRing shell = read(element.getChild("exterior",ns).getChild("LinearRing",ns))
-            List<LinearRing> holes = element.getChildren("interior",ns).collect{e->read(e.getChild("LinearRing",ns))}
+            LinearRing shell = read(element.getChild("exterior",ns).getChild("LinearRing",ns)) as LinearRing
+            List<LinearRing> holes = element.getChildren("interior",ns).collect{e->read(e.getChild("LinearRing",ns)) as LinearRing}
             return new Polygon(shell, holes)
         }
         else if (name.equalsIgnoreCase("MultiPoint")) {
@@ -76,6 +76,9 @@ class Gml3Reader implements Reader{
         }
         else if (name.equalsIgnoreCase("GeometryCollection")) {
             return new GeometryCollection(element.getChildren("geometryMember",ns).collect{e->read(e.getChildren()[0])})
+        }
+        else {
+            return null
         }
     }
 

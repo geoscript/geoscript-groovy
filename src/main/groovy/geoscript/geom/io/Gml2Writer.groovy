@@ -29,7 +29,7 @@ class Gml2Writer implements Writer {
             return "<gml:LineString><gml:coordinates>${getCoordinatesAsString(geom.coordinates)}</gml:coordinates></gml:LineString>"
         }
         else if (geom instanceof Polygon) {
-            return "<gml:Polygon><gml:outerBoundaryIs><gml:LinearRing><gml:coordinates>${getCoordinatesAsString(geom.exteriorRing.coordinates)}</gml:coordinates></gml:LinearRing></gml:outerBoundaryIs>${geom.interiorRings.collect{r-> "<gml:innerBoundaryIs><gml:LinearRing><gml:coordinates>" + getCoordinatesAsString(r.coordinates) + "</gml:coordinates></gml:LinearRing></gml:innerBoundaryIs>"}.join()}</gml:Polygon>"
+            return "<gml:Polygon><gml:outerBoundaryIs><gml:LinearRing><gml:coordinates>${getCoordinatesAsString(geom.exteriorRing.coordinates)}</gml:coordinates></gml:LinearRing></gml:outerBoundaryIs>${geom.interiorRings.collect{r-> "<gml:innerBoundaryIs><gml:LinearRing><gml:coordinates>" + getCoordinatesAsString(r.coordinates) + "</gml:coordinates></gml:LinearRing></gml:innerBoundaryIs>"}.join('')}</gml:Polygon>"
         }
         if (geom instanceof MultiPoint) {
             return "<gml:MultiPoint>${geom.geometries.collect{g->"<gml:pointMember>" + write(g) + "</gml:pointMember>"}.join('')}</gml:MultiPoint>"

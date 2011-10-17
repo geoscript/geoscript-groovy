@@ -29,7 +29,7 @@ class KmlWriter implements Writer {
             return "<LineString><coordinates>${getCoordinatesAsString(geom.coordinates)}</coordinates></LineString>"
         }
         else if (geom instanceof Polygon) {
-            return "<Polygon><outerBoundaryIs><LinearRing><coordinates>${getCoordinatesAsString(geom.exteriorRing.coordinates)}</coordinates></LinearRing></outerBoundaryIs>${geom.interiorRings.collect{r-> "<innerBoundaryIs><LinearRing><coordinates>" + getCoordinatesAsString(r.coordinates) + "</coordinates></LinearRing></innerBoundaryIs>"}.join()}</Polygon>"
+            return "<Polygon><outerBoundaryIs><LinearRing><coordinates>${getCoordinatesAsString(geom.exteriorRing.coordinates)}</coordinates></LinearRing></outerBoundaryIs>${geom.interiorRings.collect{r-> "<innerBoundaryIs><LinearRing><coordinates>" + getCoordinatesAsString(r.coordinates) + "</coordinates></LinearRing></innerBoundaryIs>"}.join('')}</Polygon>"
         }
         if (geom instanceof MultiPoint) {
             return "<MultiGeometry>${geom.geometries.collect{g->write(g)}.join('')}</MultiGeometry>"

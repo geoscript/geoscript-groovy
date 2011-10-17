@@ -5,6 +5,7 @@ import org.geotools.xml.Parser
 import org.geotools.gml2.GMLConfiguration as GML2
 import org.geotools.gml3.GMLConfiguration as GML3
 import org.geotools.gml3.v3_2.GMLConfiguration as GML32
+import org.opengis.feature.simple.SimpleFeature
 
 /**
  * Read a Feature from a GML String.
@@ -35,9 +36,9 @@ class GmlReader implements Reader {
             if (!fid) {
                 fid = obj.remove("id")
             }
-            return new Feature(obj, fid)
+            return new Feature(obj, fid as String)
         } else {
-            return new Feature(obj)
+            return new Feature(obj as SimpleFeature)
         }
     }
 

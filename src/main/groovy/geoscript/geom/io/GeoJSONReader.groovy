@@ -71,6 +71,9 @@ class GeoJSONReader implements Reader {
             }
             return new GeometryCollection(geometries)
         }
+        else {
+            return null
+        }
     }
 
     /**

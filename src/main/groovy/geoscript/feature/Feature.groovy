@@ -133,7 +133,6 @@ class Feature {
      * @return The attribute value
      */
     Object get(String name) {
-        Field fld = schema.field(name)
         Object obj = f.getAttribute(name)
         if (obj instanceof JtsGeometry) {
             return Geometry.wrap((JtsGeometry)obj)
@@ -161,7 +160,6 @@ class Feature {
      * @param value The new attribute value
      */
     void set(String name, Object value) {
-        Field fld = schema.field(name)
         if (name.equalsIgnoreCase(schema.geom.name)) {
             f.defaultGeometry = ((Geometry)value).g
         } else {

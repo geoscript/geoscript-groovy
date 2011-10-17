@@ -680,7 +680,7 @@ class Layer {
      * Write the Layer as GML to a File
      * @param file The File
      */
-    String toGMLFile(File file) {
+    void toGMLFile(File file) {
         gmlWriter.write(this, file)
     }
 
@@ -709,7 +709,7 @@ class Layer {
      * Write the Layer as GeoJSON to a File
      * @param file The File
      */
-    String toJSONFile(File file) {
+    void toJSONFile(File file) {
         geoJSONWriter.write(this, file)
     }
 

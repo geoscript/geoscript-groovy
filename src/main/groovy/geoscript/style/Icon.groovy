@@ -39,7 +39,7 @@ class Icon extends Symbolizer {
     Icon(Map map) {
         super()
         map.each{k,v->
-            if(this.hasProperty(k)){
+            if(this.hasProperty(k as String)){
                 this."$k" = k.equals("url") ? toURL(v) : v
             }
         }

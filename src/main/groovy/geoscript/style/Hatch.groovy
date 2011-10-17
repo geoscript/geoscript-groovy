@@ -41,7 +41,7 @@ class Hatch extends Symbolizer {
     Hatch(Map map) {
         super()
         map.each{k,v->
-            if(this.hasProperty(k)){
+            if(this.hasProperty(k as String)){
                 this."$k" = v
             }
         }

@@ -21,7 +21,7 @@ class UniqueValues extends Composite {
      * @param colors A Closure (which takes index based on 0 and a value), a Palette name, or a List of Colors
      */
     UniqueValues(Layer layer, def field, def colors = {index, value -> Color.getRandomPastel()}) {
-        super(createSymbolizers(layer, field instanceof Field ? field.name : field, {index, value -> Color.getRandomPastel()}))
+        super(createSymbolizers(layer, field instanceof Field ? field.name : field as String, {index, value -> Color.getRandomPastel()}))
     }
 
     /**

@@ -183,7 +183,6 @@ class Stroke extends Symbolizer {
      * @return A GeoTools Stroke
      */
     protected GtStroke createStroke(GtSymbolizer sym) {
-        def ff = filterFactory
         GtStroke stroke = styleFactory.createStroke(color?.expr, width?.expr)
         if (dash) {
             if (dash instanceof List) {

@@ -53,7 +53,7 @@ class Viewer {
         if (!(geom instanceof List)) {
             geom = [geom]
         }
-        Panel panel = new Panel(geom)
+        Panel panel = new Panel(geom, randomColor())
         Dimension dim = new Dimension((int) (size[0] + 2 * buf), (int) (size[1] + 2 * buf))
         panel.preferredSize = dim
         panel.minimumSize = dim
@@ -266,7 +266,7 @@ private static class Panel extends JPanel {
     private List<Geometry> geoms
 
     private boolean drawCoordinates = false
-    private Color color = Viewer.randomColor()
+    private Color color = Color.black
     private String markerShape = "square"
     private double markerSize = 8
     private float opacity = 0.75
@@ -276,11 +276,12 @@ private static class Panel extends JPanel {
      * Create a new Panel with the List of Geometries to render
      * @param geoms The List of Geometries to render
      */
-    Panel(List<Geometry> geoms) {
+    Panel(List<Geometry> geoms, Color color) {
         super()
         background = Color.WHITE
         opaque = true
         this.geoms = geoms
+        this.color = color
     }
 
     /**

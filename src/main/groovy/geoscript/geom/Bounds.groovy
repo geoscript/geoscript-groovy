@@ -286,7 +286,7 @@ class Bounds {
      * @return Whether this Bounds and the other Bounds are equal
      */
     boolean equals(Object other) {
-        (other instanceof Bounds && env.equals(other.env)) ? true : false
+        other instanceof Bounds && env.equals(other.env)
     }
     
     /**

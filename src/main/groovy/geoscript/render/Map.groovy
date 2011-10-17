@@ -74,6 +74,9 @@ class Map {
      */
     private Projection projection
 
+    /**
+     * A lookup Map of Renderers by type
+     */
     private java.util.Map renderers = [
         "jpeg": new Image("jpeg"),
         "jpg": new Image("jpeg"),
@@ -295,7 +298,7 @@ class Map {
         double mapHeight = mapBounds.height
         double scaleX = w / mapWidth
         double scaleY = h / mapHeight
-        double scale = 1.0D
+        double scale
         if (scaleX < scaleY) {
             scale = scaleX
         } else {

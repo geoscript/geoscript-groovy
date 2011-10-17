@@ -37,7 +37,7 @@ class Gradient extends Composite {
      * @param elseMode The else mode (ignore, min, max)
      */
     Gradient(Layer layer, def field, String method, int number, def colors, String elseMode = "ignore") {
-        super(createGraduatedSymbolizer(layer, field instanceof Field ? field.name : field, method, number, colors, elseMode))
+        super(createGraduatedSymbolizer(layer, field instanceof Field ? field.name : field as String, method, number, colors, elseMode))
     }
 
     /**
