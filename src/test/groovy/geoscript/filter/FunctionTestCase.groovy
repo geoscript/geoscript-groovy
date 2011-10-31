@@ -12,21 +12,32 @@ import geoscript.layer.Shapefile
 class FunctionTestCase {
 
     @Test void constructors() {
+
         def maxFunction = new Function("max(2,4)")
         assertEquals 4, maxFunction(), 0.1
+        assertEquals "max([2], [4])", maxFunction.toString()
+        assertTrue maxFunction.expr instanceof org.opengis.filter.expression.Function
 
         def minFunction = new Function("min(2,4)")
         assertEquals 2, minFunction(), 0.1
+        assertTrue minFunction.expr instanceof org.opengis.filter.expression.Function
 
         def sinPiFunc = new Function("sin(pi()/4)")
         assertNotNull sinPiFunc
         assertEquals 0.7071, sinPiFunc(), 0.0001
+        assertTrue sinPiFunc.expr instanceof org.opengis.filter.expression.Function
 
         assertTrue new Function("greaterThan(3,2)")()
         assertFalse new Function("greaterThan(2,3)")()
-
+		
         // Fails because between is a key word in CQL and ECQL!
         //assertTrue new Function("'between'(4,2,6)")()
+
+        def timesTwo = new Function("timesTwo", {i -> i * 2})
+        assertEquals 4, timesTwo(2)
+        assertEquals 6, new Function("timesTwo()")(3)
+        assertEquals "timesTwo()", timesTwo.toString()
+        assertTrue timesTwo.expr instanceof org.opengis.filter.expression.Function
     }
 
     @Test void functionWithLayer() {

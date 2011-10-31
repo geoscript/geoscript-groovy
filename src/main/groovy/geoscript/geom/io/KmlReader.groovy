@@ -66,6 +66,8 @@ class KmlReader implements Reader {
             else {
                 return new GeometryCollection(geoms)
             }
+        } else {
+            return null
         }
     }
 

@@ -1,39 +1,29 @@
 package geoscript.viewer
 
-import java.awt.Color
-import java.awt.Graphics
-import java.awt.Graphics2D
-import java.awt.Composite
-import java.awt.Dimension
-import java.awt.BasicStroke
-import java.awt.RenderingHints
-import java.awt.AlphaComposite
-import java.awt.BorderLayout
-import java.awt.Rectangle
-import java.awt.Shape
+import com.vividsolutions.jts.geom.Geometry as JtsGeometry
+
+import com.vividsolutions.jts.awt.PointShapeFactory
+import com.vividsolutions.jts.awt.PointTransformation
+import com.vividsolutions.jts.awt.ShapeWriter
+import com.vividsolutions.jts.geom.Coordinate
+import geoscript.geom.Bounds
+import geoscript.geom.Geometry
+import geoscript.geom.GeometryCollection
+import geoscript.viewer.Panel
 import java.awt.geom.Point2D
+import java.awt.image.BufferedImage
+import java.util.List
+import javax.imageio.ImageIO
 import javax.swing.JFrame
 import javax.swing.JPanel
 import javax.swing.WindowConstants
-import java.awt.geom.AffineTransform
-import javax.imageio.ImageIO
-import java.awt.image.BufferedImage
-import com.vividsolutions.jts.awt.ShapeWriter
-import com.vividsolutions.jts.awt.PointTransformation
-import com.vividsolutions.jts.awt.SqarePointShapeFactory
-import com.vividsolutions.jts.geom.Coordinate
-import com.vividsolutions.jts.geom.Geometry as JtsGeometry
-import com.vividsolutions.jts.geom.Polygon as JtsPolygon
-import com.vividsolutions.jts.geom.Envelope
-import com.vividsolutions.jts.geom.MultiPolygon as JtsMultiPolygon
-import org.geotools.geometry.jts.LiteShape
 import org.geotools.renderer.chart.GeometryDataset
 import org.geotools.renderer.chart.GeometryRenderer
-import org.jfree.chart.JFreeChart
 import org.jfree.chart.ChartPanel
 import org.jfree.chart.ChartUtilities
+import org.jfree.chart.JFreeChart
 import org.jfree.chart.plot.XYPlot
-import geoscript.geom.*
+import java.awt.*
 
 /**
  * A Viewer can be used to visualize Geometry.
@@ -41,7 +31,7 @@ import geoscript.geom.*
  * import geoscript.geom.Point
  * import geoscript.viewer.Viewer
  * Point p = new Point(10,10)
- * Viewer.draw(p.buffer(100))
+ * Viewer.render(p.buffer(100))
  * </pre></code>
  * Or you can plot a List of Geometries.
  * <code<pre>
@@ -56,14 +46,14 @@ class Viewer {
 
     /**
      * Draw a Geometry (or List of Geometries) onto a GUI
-     * @param geom The Geomtry to List of Geometries to draw
+     * @param geom The Geomtry to List of Geometries to render
      * @param A List containing the size of the GUI (defaults to 500 by 500)
      */
     static void draw(def geom, List size=[500,500], double buf = 50) {
         if (!(geom instanceof List)) {
             geom = [geom]
         }
-        Panel panel = new Panel(geom)
+        Panel panel = new Panel(geom, randomColor())
         Dimension dim = new Dimension((int) (size[0] + 2 * buf), (int) (size[1] + 2 * buf))
         panel.preferredSize = dim
         panel.minimumSize = dim
@@ -143,8 +133,20 @@ class Viewer {
         int imageWidth = size[0]
         int imageHeight = size[1]
 
-        // @TODO Add support for other shapes when jts 1.11 comes out
-        def shapeFactory = new SqarePointShapeFactory(markerSize)
+        def shapeFactory
+        if (markerShape.equalsIgnoreCase("circle")) {
+            shapeFactory = new PointShapeFactory.Circle(markerSize)
+        } else if (markerShape.equalsIgnoreCase("cross")) {
+            shapeFactory = new PointShapeFactory.Cross(markerSize)
+        } else if (markerShape.equalsIgnoreCase("star")) {
+            shapeFactory = new PointShapeFactory.Star(markerSize)
+        } else if (markerShape.equalsIgnoreCase("Triangle")) {
+            shapeFactory = new PointShapeFactory.Triangle(markerSize)
+        } else if (markerShape.equalsIgnoreCase("X")) {
+            shapeFactory = new PointShapeFactory.X(markerSize)
+        } else /* if (markerShape.equalsIgnoreCase("square")) */ {
+            shapeFactory = new PointShapeFactory.Square(markerSize)
+        }
 
         ShapeWriter shapeWriter = new ShapeWriter({Coordinate mapCoordinate, Point2D shape ->
             double imageX = (1 - (bounds.r - mapCoordinate.x) / bounds.width) * imageWidth
@@ -254,35 +256,36 @@ class Viewer {
 }
 
 /**
- * The JPanel used to draw Geometry
+ * The JPanel used to render Geometry
  */
 private static class Panel extends JPanel {
 
     /**
-     * The List of Geometries to draw
+     * The List of Geometries to render
      */
     private List<Geometry> geoms
 
     private boolean drawCoordinates = false
-    private Color color = Viewer.randomColor()
+    private Color color = Color.black
     private String markerShape = "square"
     private double markerSize = 8
     private float opacity = 0.75
     private float strokeWidth = 1.0
 
     /**
-     * Create a new Panel with the List of Geometries to draw
-     * @param geoms The List of Geometries to draw
+     * Create a new Panel with the List of Geometries to render
+     * @param geoms The List of Geometries to render
      */
-    Panel(List<Geometry> geoms) {
+    Panel(List<Geometry> geoms, Color color) {
         super()
         background = Color.WHITE
         opaque = true
         this.geoms = geoms
+        this.color = color
     }
 
     /**
-     * Override the paintComponent method to draw the Geometries
+     * Override the paintComponent method to render the Geometries
      * @param gr The Graphics context
      */
     void paintComponent(Graphics gr) {

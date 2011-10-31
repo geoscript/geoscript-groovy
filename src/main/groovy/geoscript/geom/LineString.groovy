@@ -103,6 +103,56 @@ class LineString extends Geometry {
     }
 
     /**
+     * Interpolate a Point on this LineString at the given position from
+     * 0 to 1.
+     * @param position The position along the LineString from 0 to 1
+     * @return A Point on this LineString
+     */
+    Point interpolatePoint(double position) {
+        def indexedLine = new com.vividsolutions.jts.linearref.LengthIndexedLine(g)
+        double length = length
+        def c = indexedLine.extractPoint(position * length)
+        new Point(c.x, c.y)
+    }
+
+    /**
+     * Locate the position of the Point along this LineString.
+     * @param point The Point
+     * @return The position of the Point along this LineString.
+     */
+    double locatePoint(Point point) {
+        def indexedLine = new com.vividsolutions.jts.linearref.LengthIndexedLine(g)
+        double position = indexedLine.indexOf(point.g.coordinate)
+        double length = length
+        double percentAlong = position / length
+        percentAlong
+    }
+    
+    /**
+     * Place the Point on the LineString
+     * @param point The Point
+     * @return A new Point on the LineString
+     */
+    Point placePoint(Point point) {
+        def indexedLine = new com.vividsolutions.jts.linearref.LengthIndexedLine(g)
+        double position = indexedLine.indexOf(point.g.coordinate)
+        def c = indexedLine.extractPoint(position)
+        new Point(c.x, c.y)
+    }
+
+    /**
+     * Extract a sub LineString from this LineString from the start and end positions.
+     * @param start The start position.
+     * @param end The end position.
+     * @return A sub LineString
+     */
+    LineString subLine(double start, double end) {
+        def indexedLine = new com.vividsolutions.jts.linearref.LengthIndexedLine(g)
+        def length = length
+        Geometry.wrap(indexedLine.extractLine(start * length, end * length))
+    }
+
+    /**
      * Create a LineString from a List of List of Doubles.
      * <p> LineString line = new LineString([[1,2],[3,4],[4,5]])</p>
      * <p> LineString line = new LineString([new Point(111.0, -47), new Point(123.0, -48), new Point(110.0, -47)])</p>

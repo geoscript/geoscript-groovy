@@ -1,6 +1,7 @@
 package geoscript.proj
 
 import geoscript.geom.Geometry
+import geoscript.geom.Bounds
 import org.geotools.geometry.jts.GeometryCoordinateSequenceTransformer
 import org.geotools.referencing.CRS
 import org.opengis.referencing.crs.CoordinateReferenceSystem
@@ -70,6 +71,19 @@ class Projection {
      */
     String getWkt() {
         return crs.toString()
+    }
+
+    /**
+     * Get the valid geographic area for this Projection
+     * @return A Bounds
+     */
+    Bounds getBounds() {
+        def extent = CRS.getGeographicBoundingBox(crs)
+        if (extent != null) {
+            return new Bounds(extent.westBoundLongitude, extent.southBoundLatitude, extent.eastBoundLongitude, extent.northBoundLatitude, 'epsg:4326')
+        } else {
+            return null
+        }
     }
 
     /**

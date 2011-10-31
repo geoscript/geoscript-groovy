@@ -1,11 +1,10 @@
 package geoscript.layer
 
 import geoscript.feature.Feature
-import geoscript.filter.Filter
 import org.geotools.feature.FeatureIterator
-import org.geotools.data.FeatureReader
 import org.opengis.feature.simple.SimpleFeature
 import org.opengis.feature.simple.SimpleFeatureType
+import org.geotools.feature.FeatureCollection
 
 /**
  * A Cursor is a Iterator over a Feature objects.
@@ -28,17 +27,23 @@ class Cursor {
     private Layer layer
 
     /**
-     * The GeoTools FeatureReader
+     * The GeoTools FeatureIterator
      */
-    private FeatureReader<SimpleFeatureType, SimpleFeature> iter
-
+    private FeatureIterator<SimpleFeature> iter
+    
     /**
-     * Create a new Cursor with a FeatureReader and a Layer
-     * @param iter The GeoTools FeatureReader
+     * The GeoTools FeatureCollection
+     */
+    private FeatureCollection<SimpleFeatureType, SimpleFeature> col
+    
+    /**
+     * Create a new Cursor with a FeatureCollection and a Layer
+     * @param col The GeoTools FeatureCollection
      * @param layer The Geoscript Layer
      */
-    Cursor(FeatureReader<SimpleFeatureType, SimpleFeature> iter, Layer layer) {
-        this.iter = iter
+    Cursor(FeatureCollection<SimpleFeatureType, SimpleFeature> col, Layer layer) {
+        this.col = col
+        this.iter = col.features()
         this.layer = layer
     }
 
@@ -47,7 +52,9 @@ class Cursor {
      * @return The next Feature
      */
     Feature next() {
-        new Feature(iter.next())
+        Feature f = new Feature(iter.next())
+        f.layer = layer
+        f
     }
 
     /**

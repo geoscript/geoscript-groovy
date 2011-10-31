@@ -1,14 +1,11 @@
-import geoscript.map.Map
+import geoscript.render.Map
 import geoscript.style.*
 import geoscript.layer.Shapefile
 import geoscript.geom.Bounds
 
 def file = new File("states.shp")
 def shp = new Shapefile(file)
-shp.style =  new Style(new PolygonSymbolizer(
-    fillColor: "steelblue",
-    strokeColor: "wheat"
-))
+shp.style = new Fill("steelblue") + new Stroke("wheat", 0.1)
 
 def map = new Map(
     width: 256, 

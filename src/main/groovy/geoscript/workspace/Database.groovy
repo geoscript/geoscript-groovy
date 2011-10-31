@@ -73,6 +73,8 @@ class Database extends Workspace {
             return com.vividsolutions.jts.geom.MultiPolygon.class
         } else if (geometry.equalsIgnoreCase("geometrycollection")) {
             return com.vividsolutions.jts.geom.GeometryCollection.class
+        } else {
+            return com.vividsolutions.jts.geom.Geometry.class
         }
     }
 }

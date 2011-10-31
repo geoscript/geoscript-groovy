@@ -1,6 +1,7 @@
 package geoscript.geom
 
 import org.geotools.geometry.jts.ReferencedEnvelope
+import com.vividsolutions.jts.geom.Envelope
 import geoscript.proj.Projection
 
 /**
@@ -26,7 +27,17 @@ class Bounds {
     Bounds(ReferencedEnvelope env) {
         this.env = env
     }
-	
+
+    /**
+     * Create a new Bounds wrapping an Envelope.
+     * <p><code>Envelope e = new Envelope(1,3,2,4)</code></p>
+     * <p><code>Bounds b = new Bounds(e)</code></p>
+     * @param env The ReferencedEnvelope
+     */
+    Bounds(Envelope env) {
+        this(new ReferencedEnvelope(env, null))
+    }
+
     /**
      * Create a new Bounds with west, south, east, and north coordinates.
      * <p><code>Bounds b = new Bounds(1,2,3,4)</code></p>
@@ -123,6 +134,14 @@ class Bounds {
     }
 
     /**
+     * Get the area of this Bounds
+     * @return The area
+     */
+    double getArea() {
+        env.area
+    }
+
+    /**
      * Get the width
      * @return The width
      */
@@ -205,6 +224,117 @@ class Bounds {
      */
     Polygon getPolygon() {
         new Polygon([west, south], [west, north], [east, north], [east, south], [west, south])
+    }
+    
+    /**
+     * Partitions the bounding box into a set of smaller bounding boxes.
+     * @param res The resolution to tile at and should be in range 0-1.
+     * @return A List of smaller bounding boxes
+     */
+    List<Bounds> tile(double res) {
+        double dx = width * res
+        double dy = height * res
+        List bounds = []
+        double y = south
+        while (y < north) {
+            double x = west
+            while (x < east) {
+                bounds.add(new Bounds(x,y,Math.min(x + dx, east), Math.min(y+dy, north), proj))
+                x += dx
+            }
+            y += dy
+        }
+        bounds
+    }
+
+    /**
+     * Calculate a quad tree for this Bounds between the start and stop levels. The Closure
+     * is called for each new Bounds generated.
+     * @param start The start level
+     * @param stop The stop level
+     * @param closure The Closure called for each new Bounds
+     */
+    void quadTree(int start, int stop, Closure closure) {
+        Projection p = getProj()
+        for(int level = start; level < stop; level++) {
+            double factor = Math.pow(2, level)
+            double dx = (this.east - this.west) / factor
+            double dy = (this.north - this.south) / factor
+            double minx = this.west
+            for(int x = 0; x < factor; ++x) {
+                double miny = this.south
+                for(int y = 0; y < factor; ++y) {
+                    closure(new Bounds(minx, miny, minx + dx, miny + dy, p))
+                    miny += dy
+                }
+                minx += dx
+            }
+        }
+    }
+
+    /**
+     * Get whether the Bounds is empty (width and height are zero)
+     * @return Whether the Bounds is empty
+     */
+    boolean isEmpty() {
+       env.empty 
+    }
+    
+    /**
+     * Determine whether this Bounds equals another Bounds
+     * @param other The other Bounds
+     * @return Whether this Bounds and the other Bounds are equal
+     */
+    boolean equals(Object other) {
+        other instanceof Bounds && env.equals(other.env)
+    }
+    
+    /**
+     * Determine whether this Bounds contains the other Bounds
+     * @param other The other Bounds
+     * @return Whether this Bounds contains the other Bounds
+     */
+    boolean contains(Bounds other) {
+        env.contains(other.env)
+    }
+    
+    /**
+     * Determine whether this Bounds intersects with the other Bounds
+     * @param other The other Bounds
+     * @return Whether this Bounds intersects with the other Bounds
+     */
+    boolean intersects(Bounds other) {
+        env.intersects(other.env)
+    }
+    
+    /**
+     * Calculate the intersection between this Bounds and the other Bounds
+     * @param other The other Bounds
+     * @return The intersection Bounds between this and the other Bounds
+     */
+    Bounds intersection(Bounds other) {
+        new Bounds(env.intersection(other.env))
+    }
+
+    /**
+     * Ensure that the Bounds has a width and height.  Handle vertical and horizontal lines and points.
+     * @return A new Bounds with a width and height
+     */
+    Bounds ensureWidthAndHeight() {
+        Bounds b = new Bounds(env)
+        if (b.width == 0 || b.height == 0) {
+            if (b.height > 0) {
+                double h = b.height / 2.0
+                b = new Bounds(b.west - h, b.south, b.east + h, b.north, b.proj)
+            } else if (b.width > 0) {
+                double w = b.width / 2.0
+                b = new Bounds(b.west, b.south - w, b.east, b.north + w, b.proj)
+            } else {
+                def e = new Point(b.west, b.south).buffer(0.1).envelopeInternal
+                b = new Bounds(e.minX, e.minY, e.maxX, e.maxY, proj)
+            }
+        }
+        return b
     }
 
     /**

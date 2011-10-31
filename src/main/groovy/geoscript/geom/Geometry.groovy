@@ -4,12 +4,11 @@ import com.vividsolutions.jts.geom.Geometry as JtsGeometry
 import com.vividsolutions.jts.geom.GeometryFactory
 import com.vividsolutions.jts.geom.Coordinate
 import com.vividsolutions.jts.geom.prep.PreparedGeometryFactory
-import com.vividsolutions.jts.io.WKTReader
-import com.vividsolutions.jts.io.WKBReader
-import com.vividsolutions.jts.io.WKBWriter
 import com.vividsolutions.jts.geom.Envelope
 import com.vividsolutions.jts.geom.IntersectionMatrix
 import com.vividsolutions.jts.geom.util.AffineTransformation
+import com.vividsolutions.jts.operation.buffer.BufferParameters
+import com.vividsolutions.jts.operation.buffer.BufferOp
 import geoscript.geom.io.*
 
 /**
@@ -34,19 +33,24 @@ class Geometry {
     static PreparedGeometryFactory preparedFactory = new PreparedGeometryFactory()
 
     /**
-     * The JTS WKTReader
+     * The WKT Writer
      */
-    private static WKTReader wktReader = new WKTReader()
+    private static WktWriter wktWriter = new WktWriter()
 
     /**
-     * The JTS WKBWriter
+     * The WKT Reader
      */
-    private static WKBWriter wkbWriter = new WKBWriter()
+    private static WktReader wktReader = new WktReader()
 
     /**
-     * The JTS WKBReader
+     * The WKB Writer
      */
-    private static WKBReader wkbReader = new WKBReader()
+    private static WkbWriter wkbWriter = new WkbWriter()
+
+    /**
+     * The WKB Reader
+     */
+    private static WkbReader wkbReader = new WkbReader()
 
     /**
      * The KML Writer
@@ -116,10 +120,25 @@ class Geometry {
      * @param distance The buffer distance 
      * @param quadrantSegments The number of quadrant segments (the default is 8)
      * @param endCapStyle The end cap style (CAP_ROUND is default, also CAP_BUTT, or CAP_SQUARE)
-     *
+     * @return The buffer Geometry
      */
     Geometry buffer(double distance, int quadrantSegments = 8, int endCapStyle = CAP_ROUND) {
         wrap(g.buffer(distance, quadrantSegments, endCapStyle))
+    }
+
+    /**
+     * Create a single sided buffer (+ for right side, - for left side)
+     * @param distance The buffer distance
+     * @param quadrantSegments The number of quadrant segments (the default is 8)
+     * @param endCapStyle THe end cap style (CAP_ROUND is default, also CAP_BUTT, or CAP_SQUARE)
+     * @return The single sided buffer Geometry
+     */
+    Geometry singleSidedBuffer(double distance, int quadrantSegments = 8, int endCapStyle = CAP_ROUND) {
+        BufferParameters params = new BufferParameters()
+        params.singleSided = true
+        params.quadrantSegments = quadrantSegments
+        params.endCapStyle = endCapStyle
+        wrap(BufferOp.bufferOp(g, distance, params))
     }
 
     /**
@@ -205,8 +224,8 @@ class Geometry {
      * Get the boundary of this Geometry
      * @return The boundary of this Geometry
      */
-    double getBoundary() {
-        this.g.boundary
+    Geometry getBoundary() {
+        Geometry.wrap(this.g.boundary)
     }
 
     /**
@@ -214,7 +233,7 @@ class Geometry {
      * @return The centroid as a Point of this Geometry
      */
     Point getCentroid() {
-        wrap(this.g.centroid)
+        wrap(this.g.centroid) as Point
     }
 
     /**
@@ -230,7 +249,7 @@ class Geometry {
      * @return The Envelope of this Geometry
      */
     Envelope getEnvelope() {
-        this.g.envelope
+        this.g.envelopeInternal
     }
 
     /**
@@ -264,7 +283,7 @@ class Geometry {
      * @return The interior Point of this Geometry
      */
     Point getInteriorPoint() {
-        wrap(this.g.getInteriorPoint())
+        wrap(this.g.getInteriorPoint()) as Point
     }
 
     /**
@@ -373,6 +392,14 @@ class Geometry {
     }
 
     /**
+     * Get a normalized copy of this Geometry
+     * @return A new normalized copy of this Geometry
+     */
+    Geometry getNorm() {
+        wrap(g.norm())
+    }
+
+    /**
      * Normalize this Geometry
      */
     void normalize() {
@@ -465,6 +492,15 @@ class Geometry {
     }
 
     /**
+     * Get the octagonal envelope for this Geometry
+     * @return the octagonal envelope for this Geometry
+     */
+    Geometry getOctagonalEnvelope() {
+        def oct = new com.vividsolutions.jts.geom.OctagonalEnvelope(g)
+        Geometry.wrap(oct.toGeometry(factory))
+    }
+
+    /**
      * Get Delaunay Triangle Diagram for this Geometry
      * @return A Delaunay Triangle Diagram Geometry
      */
@@ -534,7 +570,15 @@ class Geometry {
         def minDiameter = new com.vividsolutions.jts.algorithm.MinimumDiameter(this.g)
         Geometry.wrap(minDiameter.diameter)
     }
-    
+
+    /**
+     * Get the minimum clearance of this Geometry as a LineString
+     * @return The minimum clearance of this Geometry
+     */
+    Geometry getMinimumClearance() {
+        Geometry.wrap(com.vividsolutions.jts.precision.MinimumClearance.getLine(g))
+    }
+
     /**
      * Translate the Geometry.
      * @param x The distance in the x direction
@@ -674,6 +718,7 @@ class Geometry {
                 return new Point(c.x, c.y)
             }
         }
+        return null
     }
 
     /**
@@ -681,15 +726,23 @@ class Geometry {
      * @return The WKT of this Geometry
      */
     String getWkt() {
-        g.toText()
+        wktWriter.write(this)
     }
     
     /**
      * Get the WKB of the Geometry
-     * @return The WKB of this Geometry
+     * @return The WKB hex string of this Geometry
      */
-    byte[] getWkb() {
-        wkbWriter.write(g)
+    String getWkb() {
+        wkbWriter.write(this)
+    }
+
+     /**
+     * Get the WKB of the Geometry
+     * @return The WKB byte array of this Geometry
+     */
+    byte[] getWkbBytes() {
+        wkbWriter.writeBytes(this)
     }
 
     /**
@@ -725,11 +778,53 @@ class Geometry {
     }
 
     /**
-     * The string reprensentation
-     * @return The string reprensentation
+     * The string representation
+     * @return The string representation
      */
     String toString() {
         return wkt
+    }
+
+    /**
+     * Whether this Geometry equals another Geometry after
+     * they are both normalized
+     * @param geometry The other Geometry
+     * @return Whether the two normalized Geometries equal
+     */
+    boolean equalsNorm(Geometry geometry) {
+        this.g.equalsNorm(geometry.g)
+    }
+
+    /**
+     * Whether this Geometry topologically equals another Geometry
+     * @param geometry The other Geometry
+     * @return Whether the two Geometries are topologically equal
+     */
+    boolean equalsTopo(Geometry geometry) {
+        this.g.equalsTopo(geometry.g)
+    }
+
+    /**
+     * Whether this Geometry equals another Object
+     * @param obj The Object
+     * @return Whether this Geometry and the Object are equals
+     */
+    @Override
+    boolean equals(Object obj) {
+        if (obj instanceof Geometry) {
+            this.g.equals(obj.g)
+        } else {
+            return false
+        }
+    }
+
+    /**
+     * Calculate this Geometry's hashCode
+     * @return The hashCode
+     */
+    @Override
+    int hashCode() {
+        this.g.hashCode()
     }
 
     /**
@@ -738,6 +833,14 @@ class Geometry {
      */
     PreparedGeometry prepare() {
         new PreparedGeometry(this)
+    }
+
+    /**
+     * Get the name of the Geometry type
+     * @return The name of the Geometry type
+     */
+    String getGeometryType() {
+        this.g.geometryType
     }
 
     /**
@@ -781,16 +884,25 @@ class Geometry {
      * @return A Geometry
      */
     static Geometry fromWKT(String wkt) {
-        wrap(wktReader.read(wkt))
+        wktReader.read(wkt)
     }
 
     /**
-     * Get a Geometry from WKB
-     * @param wkb The WKB
+     * Get a Geometry from WKB byte array
+     * @param wkb The WKB byte array
      * @return A Geometry
      */
     static Geometry fromWKB(byte[] wkb) {
-        wrap(wkbReader.read(wkb))
+        wkbReader.read(wkb)
+    }
+
+    /**
+     * Get a Geometry from WKB hex string
+     * @param wkb The WKB hex string
+     * @return A Geometry
+     */
+    static Geometry fromWKB(String wkb) {
+        wkbReader.read(wkb)
     }
 
     /**
@@ -836,5 +948,36 @@ class Geometry {
      */
     static PreparedGeometry prepare(Geometry g) {
         new PreparedGeometry(g)
+    }
+
+    /**
+     * Create the given number of randomly located points inside of the given Geometry
+     * @param geometry The Geometry that will contain the randomly located points
+     * @param number The number of points
+     * @return A MultiPoint
+     */
+    static Geometry createRandomPoints(Geometry geometry, int number) {
+        def builder = new com.vividsolutions.jts.shape.random.RandomPointsBuilder(factory)
+        builder.setExtent(geometry.g)
+        builder.numPoints = number
+        Geometry.wrap(builder.getGeometry())
+    }
+
+    /**
+     * Create the given number of randomly located points inside of the given Geometry and also constrained by the cells
+     * of a grid.  Often more points will be generated that the number given because of the required grid size.
+     * @param bounds The Bounds that will contain the randomly located points
+     * @param number The number of points
+     * @param constrainedToCircle Whether the points should be contrained to a circle or not
+     * @param gutterFraction The size of the gutter between cells
+     * @return A MultiPoint
+     */
+    static Geometry createRandomPointsInGrid(Bounds bounds, int number, boolean constrainedToCircle, double gutterFraction) {
+        def builder = new com.vividsolutions.jts.shape.random.RandomPointsInGridBuilder(factory)
+        builder.extent = bounds.env
+        builder.numPoints = number
+        builder.setConstrainedToCircle(constrainedToCircle)
+        builder.setGutterFraction(gutterFraction)
+        Geometry.wrap(builder.getGeometry())
     }
 }

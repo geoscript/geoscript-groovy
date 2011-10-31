@@ -75,6 +75,14 @@ class FeatureTestCase {
         assertEquals "House", f1.get("name")
     }
 
+    @Test void getAt() {
+        Schema s1 = new Schema("houses", [new Field("geom","Point"), new Field("name","string"), new Field("price","float")])
+        Feature f1 = new Feature([new Point(111,-47), "House", 12.5], "house1", s1)
+        assertEquals "POINT (111 -47)", f1["geom"].toString()
+        assertEquals 12.5, f1["price"], 0.1
+        assertEquals "House", f1["name"]
+    }
+
     @Test void set() {
         Schema s1 = new Schema("houses", [new Field("geom","Point"), new Field("name","string"), new Field("price","float")])
         Feature f1 = new Feature([new Point(111,-47), "House", 12.5], "house1", s1)
@@ -90,6 +98,23 @@ class FeatureTestCase {
         assertEquals "House", f1.get("name")
         f1.set("name", "Work")
         assertEquals "Work", f1.get("name")
+    }
+
+    @Test void putAt() {
+        Schema s1 = new Schema("houses", [new Field("geom","Point"), new Field("name","string"), new Field("price","float")])
+        Feature f1 = new Feature([new Point(111,-47), "House", 12.5], "house1", s1)
+
+        assertEquals "POINT (111 -47)", f1["geom"].toString()
+        f1["geom"] = new Point(121, -49)
+        assertEquals "POINT (121 -49)", f1["geom"].toString()
+
+        assertEquals 12.5, f1["price"], 0.1
+        f1["price"] =  23.9
+        assertEquals 23.9, f1["price"], 0.1
+
+        assertEquals "House", f1["name"]
+        f1["name"] = "Work"
+        assertEquals "Work", f1["name"]
     }
 
     @Test void getAttributes() {

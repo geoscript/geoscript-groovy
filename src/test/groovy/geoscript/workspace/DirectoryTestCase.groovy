@@ -33,6 +33,7 @@ class DirectoryTestCase {
         assertNotNull(file)
         Directory dir = new Directory(file)
         assertNotNull(dir)
+        println dir.layers
         assertEquals 1, dir.layers.size()
         assertEquals "[states]", dir.layers.toString()
     }
@@ -44,6 +45,17 @@ class DirectoryTestCase {
         assertNotNull(dir)
 
         Layer layer = dir.get("states")
+        assertNotNull(layer)
+        assertEquals "states", layer.name
+    }
+
+    @Test void getAt() {
+        File file = new File(getClass().getClassLoader().getResource("states.shp").toURI()).parentFile
+        assertNotNull(file)
+        Directory dir = new Directory(file)
+        assertNotNull(dir)
+
+        Layer layer = dir["states"]
         assertNotNull(layer)
         assertEquals "states", layer.name
     }

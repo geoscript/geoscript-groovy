@@ -29,7 +29,7 @@ class Gml3Writer implements Writer{
             return "<gml:LineString><gml:posList>${getCoordinatesAsString(geom.coordinates)}</gml:posList></gml:LineString>"
         }
         else if (geom instanceof Polygon) {
-            return "<gml:Polygon><gml:exterior><gml:LinearRing><gml:posList>${getCoordinatesAsString(geom.exteriorRing.coordinates)}</gml:posList></gml:LinearRing></gml:exterior>${geom.interiorRings.collect{r-> "<gml:interior><gml:LinearRing><gml:posList>" + getCoordinatesAsString(r.coordinates) + "</gml:posList></gml:LinearRing></gml:interior>"}.join()}</gml:Polygon>"
+            return "<gml:Polygon><gml:exterior><gml:LinearRing><gml:posList>${getCoordinatesAsString(geom.exteriorRing.coordinates)}</gml:posList></gml:LinearRing></gml:exterior>${geom.interiorRings.collect{r-> "<gml:interior><gml:LinearRing><gml:posList>" + getCoordinatesAsString(r.coordinates) + "</gml:posList></gml:LinearRing></gml:interior>"}.join('')}</gml:Polygon>"
         }
         if (geom instanceof MultiPoint) {
             return "<gml:MultiPoint>${geom.geometries.collect{g->"<gml:pointMember>" + write(g) + "</gml:pointMember>"}.join('')}</gml:MultiPoint>"

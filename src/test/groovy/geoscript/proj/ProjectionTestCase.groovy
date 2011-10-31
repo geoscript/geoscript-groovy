@@ -4,6 +4,7 @@ import org.junit.Test
 import static org.junit.Assert.*
 import geoscript.geom.Point
 import geoscript.proj.Projection
+import geoscript.geom.Bounds
 
 /**
  * The Projection UnitTest
@@ -49,6 +50,17 @@ class ProjectionTestCase {
         assertEquals expected, actual
 
     }
+    
+    @Test void getBounds() {
+        Bounds bounds = new Projection("EPSG:2927").bounds
+        assertNotNull(bounds)
+        assertEquals "EPSG:4326", bounds.proj.id
+        assertEquals(-124.5, bounds.west, 0.1)
+        assertEquals(45.55, bounds.south, 0.1)
+        assertEquals(-116.9, bounds.east, 0.1)
+        assertEquals(47.6, bounds.north, 0.1)
+    }
+    
 
     @Test void transform() {
         Point point = new Point(1181199.82, 652100.72)
@@ -79,7 +91,7 @@ class ProjectionTestCase {
     @Test void transform26916To4326() {
         Point point = new Point(776041.0, 3386618.0)
         Point projectedPoint = Projection.transform(point, "EPSG:26916", "EPSG:4326")
-        assertEquals "POINT (-84.12159978127191 30.580282514678835)", projectedPoint.wkt
+        assertEquals "POINT (-84.121611219545 30.58028618546373)", projectedPoint.wkt
     }
 }
 

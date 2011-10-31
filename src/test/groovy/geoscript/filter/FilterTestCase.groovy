@@ -17,6 +17,10 @@ class FilterTestCase {
 
         Filter f3 = new Filter(f1)
         assertEquals f1.toString(), f3.toString()
+
+        Filter f4 = new Filter("CARPOOL/PERSON > 0.06")
+        println f4.toString()
+        assertEquals "[ (CARPOOL/PERSON) > 0.06 ]", f4.toString()
     }
     
     @Test void getCql() {
@@ -73,7 +77,7 @@ class FilterTestCase {
 
     @Test void crosses() {
         Filter f1 = Filter.crosses("the_geom", Geometry.fromWKT("LINESTRING (-104 45, -95 45)"))
-        assertEquals "CROSS(the_geom, LINESTRING (-104 45, -95 45))", f1.cql
+        assertEquals "CROSSES(the_geom, LINESTRING (-104 45, -95 45))", f1.cql
 
         Layer layer = new Shapefile(new File(getClass().getClassLoader().getResource("states.shp").toURI()))
         def features = layer.getFeatures(Filter.crosses(Geometry.fromWKT("LINESTRING (-108 47.1005, -102 47.5421, -95.1251 46.7851)")))
@@ -86,7 +90,7 @@ class FilterTestCase {
 
     @Test void intersects() {
         Filter f1 = Filter.intersects(Geometry.fromWKT("POLYGON ((-104 45, -95 45, -95 50, -104 50, -104 45))"))
-        assertEquals "INTERSECT(the_geom, POLYGON ((-104 45, -95 45, -95 50, -104 50, -104 45)))", f1.cql
+        assertEquals "INTERSECTS(the_geom, POLYGON ((-104 45, -95 45, -95 50, -104 50, -104 45)))", f1.cql
 
         Layer layer = new Shapefile(new File(getClass().getClassLoader().getResource("states.shp").toURI()))
         def features = layer.getFeatures(Filter.intersects(Geometry.fromWKT("POLYGON ((-108 47.1005, -102 47.5421, -95.1251 46.7851,  -95.125 44.45, -107 43.5, -108 47.1005))")))
@@ -105,6 +109,53 @@ class FilterTestCase {
         assertTrue filter.evaluate(feature1)
         Feature feature2 = new Feature(['name':'test'], 'f2')
         assertFalse filter.evaluate(feature2)
+    }
+
+    @Test void equals() {
+        Filter f1 = new Filter("name='foobar'")
+        Filter f2 = new Filter("name='foobar'")
+        Filter f3 = new Filter("name='test'")
+        assertTrue f1 == f2
+        assertFalse f1 == f3
+        assertFalse f2 == f3
+    }
+
+    @Test void hashCodeTest() {
+        Filter f1 = new Filter("name='foobar'")
+        Filter f2 = new Filter("name='foobar'")
+        Filter f3 = new Filter("name='test'")
+        assertTrue f1.hashCode() == f2.hashCode()
+        assertFalse f1.hashCode() == f3.hashCode()
+        assertFalse f2.hashCode() == f3.hashCode()
+    }
+
+    @Test void plus() {
+        Filter f1 = new Filter("name='foo'")
+        Filter f2 = new Filter("name='bar'")
+        Filter f3 = Filter.PASS
+        assertEquals("[[ name = foo ] AND [ name = bar ]]", (f1 + f2).toString())
+        assertEquals("[ name = foo ]", (f3 + f1).toString())
+        // @TODO [[[ name = foo ] AND Filter.INCLUDE]]
+        // assertEquals("[ name = foo ]", (f1 + f3).toString())
+    }
+
+    @Test void and() {
+        Filter f1 = new Filter("name='foo'")
+        Filter f2 = new Filter("name='bar'")
+        Filter f3 = Filter.PASS
+        assertEquals("[[ name = foo ] AND [ name = bar ]]", (f1.and(f2)).toString())
+        assertEquals("[ name = foo ]", (f3.and(f1)).toString())
+    }
+
+    @Test void or() {
+        Filter f1 = new Filter("name='foo'")
+        Filter f2 = new Filter("name='bar'")
+        assertEquals("[[ name = foo ] OR [ name = bar ]]", (f1.or(f2)).toString())
+    }
+
+    @Test void getNot() {
+        Filter f1 = new Filter("name='foo'")
+        assertEquals new Filter("name <> 'foo'"), f1.not
     }
 }
 
