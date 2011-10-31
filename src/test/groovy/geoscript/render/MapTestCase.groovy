@@ -79,6 +79,25 @@ class MapTestCase {
         map.close()
     }
 
+    @Test void renderDemRaster() {
+        File file = new File(getClass().getClassLoader().getResource("raster.tif").toURI())
+        assertNotNull(file)
+
+        Raster raster = new GeoTIFF(file)
+        raster.style = new  geoscript.style.ColorMap([[color: "#008000", quantity:70], [color:"#663333", quantity:256]])
+
+        Map map = new Map()
+        map.addRaster(raster)
+        def image = map.renderToImage()
+        assertNotNull(image)
+
+        File out = File.createTempFile("raster",".png")
+        println("renderDemRaster: ${out}")
+        javax.imageio.ImageIO.write(image, "png", out);
+        assertTrue(out.exists())
+        map.close()
+    }
+
     @Test void renderToImageWithMapNoProjection() {
         File file = new File(getClass().getClassLoader().getResource("states.shp").toURI())
         assertNotNull(file)

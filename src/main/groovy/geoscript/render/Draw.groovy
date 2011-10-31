@@ -4,12 +4,11 @@ import geoscript.feature.Feature
 import geoscript.geom.Bounds
 import geoscript.geom.Geometry
 import geoscript.layer.Layer
+import geoscript.raster.Raster
 import geoscript.style.Style
 import geoscript.style.Symbolizer
 import geoscript.workspace.Memory
 import java.awt.image.BufferedImage
-import geoscript.layer.Shapefile
-import geoscript.geom.Point
 
 /**
  * Easily draw Geometry, Feature, and Layers to an image or interactive App.
@@ -64,16 +63,9 @@ class Draw {
         draw(layer, bounds, size, out, format)
     }
 
-    static void main(String[] args) {
-        //def shp = new Shapefile("/Users/jericks/Projects/GeoScript/scripts/states.shp")
-        def geom = new Point(10,10).buffer(10)
-        draw([geom.bounds.polygon, geom])
-    }
-
     /**
      * Draw a Layer
      * @param layer The Layer
-     * @param style A Style
      * @param bounds The Bounds
      * @param size The size of the canvas ([400,350])
      * @param out The OutputStream, File, or File name.  If null (which is the default) a GUI will be opened.
@@ -83,6 +75,39 @@ class Draw {
         if (!bounds) bounds = layer.bounds.scale(1.1)
         Map map = new Map(
                 layers: [layer],
+                bounds: bounds,
+                width: size[0],
+                height: size[1],
+                type: format
+        )
+        // Display in a Window
+        if (out == null) {
+            new Window(map)
+        }
+        // Draw to an OutputStream
+        else if (out instanceof OutputStream) {
+            map.render(out)
+        }
+        // Draw to a File
+        else {
+            File file = out instanceof File ? out : new File(out.toString())
+            map.render(file)
+        }
+    }
+
+    /**
+     * Draw a Raster
+     * @param raster The Raster
+     * @param style A Style
+     * @param bounds The Bounds
+     * @param size The size of the canvas ([400,350])
+     * @param out The OutputStream, File, or File name.  If null (which is the default) a GUI will be opened.
+     * @param format The format ("jpeg", "png", "pdf", "svg")
+     */
+    static void draw(Raster raster, Bounds bounds = null, List size = [500, 500], def out = null, String format = "png") {
+        if (!bounds) bounds = raster.bounds.scale(1.1)
+        Map map = new Map(
+                layers: [raster],
                 bounds: bounds,
                 width: size[0],
                 height: size[1],
@@ -162,6 +187,26 @@ class Draw {
         if (!bounds) bounds = layer.bounds.scale(1.1)
         Map map = new Map(
             layers: [layer],
+            bounds: bounds,
+            width: size[0],
+            height: size[1],
+            type: imageType
+        )
+        map.renderToImage()
+    }
+
+    /**
+     * Draw a Raster to an image
+     * @param raster The Raster
+     * @param bounds The Bounds
+     * @param size The Image size
+     * @param imageType The image type
+     * @return A BufferedImage
+     */
+    static BufferedImage drawToImage(Raster raster, Bounds bounds = null, List size = [500,500], String imageType = "png") {
+        if (!bounds) bounds = raster.bounds.scale(1.1)
+        Map map = new Map(
+            layers: [raster],
             bounds: bounds,
             width: size[0],
             height: size[1],

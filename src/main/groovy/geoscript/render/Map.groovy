@@ -255,7 +255,12 @@ class Map {
     protected void setUpRendering() {
         // Add Layers
         layers.each{layer ->
-            MapLayer mapLayer = new DefaultMapLayer(layer.fs, layer.style.style)
+            MapLayer mapLayer
+            if (layer instanceof Layer) {
+                mapLayer = new DefaultMapLayer(layer.fs, layer.style.style)
+            } else if (layer instanceof Raster) {
+                mapLayer = new DefaultMapLayer(layer.coverage, layer.style.style)
+            }
             context.addLayer(mapLayer)
         }
         // Set Bounds and Projections
@@ -294,21 +299,6 @@ class Map {
             b = new Bounds(b.l, b.b, b.r, b.t, p)
         }
         setBounds(b)
-        // Add Layers
-        layers.each{layer ->
-            MapLayer mapLayer
-            if (layer instanceof Layer) {
-                mapLayer = new DefaultMapLayer(layer.fs, layer.style.gtStyle)
-            } else if (layer instanceof Raster) {
-                mapLayer = new DefaultMapLayer(layer.coverage, layer.style.gtStyle)
-            }
-            context.addLayer(mapLayer)
-        }
-        renderer.paint(g, new Rectangle(0, 0, width, height), b.env)
-        g.dispose()
-        labelCache.clear()
-        context.clearLayerList()
-        return image
     }
 
     /**

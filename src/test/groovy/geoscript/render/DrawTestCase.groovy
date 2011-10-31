@@ -16,6 +16,8 @@ import geoscript.feature.Feature
 import geoscript.feature.Schema
 import geoscript.layer.Layer
 import geoscript.layer.Shapefile
+import geoscript.raster.Raster
+import geoscript.raster.GeoTIFF
 
 /**
  * The Draw UnitTest
@@ -59,6 +61,14 @@ class DrawTestCase {
         draw(layer, layer.bounds.scale(1.1), [250,250], file, "png")
     }
 
+    @Test void drawRaster() {
+        File tifFile = new File(getClass().getClassLoader().getResource("alki.tif").toURI())
+        Raster raster = new GeoTIFF(tifFile)
+        File file = File.createTempFile("draw_raster_",".png")
+        println "Drawing Raster: ${file}"
+        draw(raster, raster.bounds.scale(1.1), [250,250], file, "png")
+    }
+
     @Test void drawGeometryToImage() {
         Symbolizer sym = new Stroke('black', 2) + new Fill('gray',0.75)
         Geometry geom = new Point(0,0).buffer(0.2)
@@ -99,6 +109,16 @@ class DrawTestCase {
         File file = File.createTempFile("draw_layer_",".png")
         println "Drawing Layer to Image: ${file}"
         def image = drawToImage(layer, layer.bounds.scale(1.1), [250,250])
+        assertNotNull(image)
+        ImageIO.write(image, "png", file)
+    }
+
+    @Test void drawRasterToImage() {
+        File tifFile = new File(getClass().getClassLoader().getResource("alki.tif").toURI())
+        Raster raster = new GeoTIFF(tifFile)
+        File file = File.createTempFile("draw_raster_",".png")
+        println "Drawing Raster to Image: ${file}"
+        def image = drawToImage(raster, raster.bounds.scale(1.1), [250,250])
         assertNotNull(image)
         ImageIO.write(image, "png", file)
     }

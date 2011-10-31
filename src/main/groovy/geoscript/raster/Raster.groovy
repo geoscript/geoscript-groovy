@@ -4,7 +4,6 @@ import geoscript.proj.Projection
 import geoscript.geom.Bounds
 import geoscript.geom.Point
 import geoscript.style.Style
-import geoscript.style.RasterSymbolizer
 import org.geotools.factory.Hints
 import org.geotools.coverage.grid.AbstractGridCoverage
 import org.opengis.coverage.grid.GridCoverageReader
@@ -51,7 +50,7 @@ class Raster {
         this.gridFormat = format
         this.reader = gridFormat.getReader(file, hints)
         this.coverage = reader.read(null)
-        style = new Style(new RasterSymbolizer())
+        this.style = new geoscript.style.Raster()
     }
 
     /**
@@ -62,7 +61,7 @@ class Raster {
     Raster(AbstractGridCoverage coverage, AbstractGridFormat format) {
        this.coverage = coverage
        this.gridFormat = format
-       style = new Style(new RasterSymbolizer())
+       this.style = new geoscript.style.Raster()
     }
 
     /**

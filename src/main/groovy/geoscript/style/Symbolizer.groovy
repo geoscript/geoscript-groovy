@@ -16,6 +16,7 @@ import org.geotools.styling.PointSymbolizer
 import org.geotools.styling.LineSymbolizer
 import org.geotools.styling.PolygonSymbolizer
 import org.geotools.styling.TextSymbolizer
+import org.geotools.styling.RasterSymbolizer
 import geoscript.filter.Color
 
 /**
@@ -178,6 +179,8 @@ class Symbolizer implements Style, Cloneable {
             sym = styleBuilder.createLineSymbolizer()
         } else if (TextSymbolizer.isAssignableFrom(clazz)) {
             sym = styleBuilder.createTextSymbolizer()
+        } else if (RasterSymbolizer.isAssignableFrom(clazz)) {
+            sym = styleBuilder.createRasterSymbolizer()
         }
         sym
     }
