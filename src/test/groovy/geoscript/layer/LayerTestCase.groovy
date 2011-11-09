@@ -9,6 +9,8 @@ import geoscript.proj.Projection
 import geoscript.filter.Filter
 import geoscript.workspace.Memory
 import geoscript.geom.*
+import geoscript.style.Raster
+import geoscript.raster.Raster
 
 /**
  * The Layer UnitTest
@@ -327,6 +329,16 @@ class LayerTestCase {
         assertEquals "B", c.next()["name"]
         assertEquals "A", c.next()["name"]
         c.close()*/
+    }
+
+    @Test void toRaster() {
+        File file = new File(getClass().getClassLoader().getResource("states.shp").toURI())
+        Shapefile shp = new Shapefile(file)
+        Raster raster = shp.toRaster("SAMP_POP", [800,600], shp.bounds, "SAMP_POP")
+        assertNotNull raster
+        File rasterFile = File.createTempFile("states_pop_",".tif")
+        println rasterFile
+        raster.write(rasterFile)
     }
 
 }

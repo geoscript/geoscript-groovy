@@ -9,6 +9,15 @@ import org.geotools.coverage.grid.AbstractGridCoverage
 import org.opengis.coverage.grid.GridCoverageReader
 import org.geotools.coverage.grid.io.AbstractGridFormat
 import org.geotools.coverage.processing.DefaultProcessor
+import geoscript.layer.Layer
+import org.geotools.process.raster.gs.ContourProcess
+import geoscript.workspace.Memory
+import geoscript.feature.Schema
+import org.geotools.process.raster.gs.PolygonExtractionProcess
+import org.geotools.process.raster.gs.RasterAsPointCollectionProcess
+import org.geotools.process.raster.gs.AddCoveragesProcess
+import org.geotools.process.raster.gs.MultiplyCoveragesProcess
+import org.jaitools.numeric.Range
 
 /**
  * The Raster base class
@@ -55,7 +64,7 @@ class Raster {
 
     /**
      * Create a Raster from a GeoTools AbstractGridCoverage and an AbstractGridFormat.
-     * @param coverage The GeoTools AbstractGridFormat
+     * @param coverage The GeoTools AbstractGridCoverage
      * @param format The GeoTools AbstractGridFormat
      */
     Raster(AbstractGridCoverage coverage, AbstractGridFormat format) {
@@ -189,6 +198,105 @@ class Raster {
      */
     def evaluate(Point point) {
         coverage.evaluate(new org.geotools.geometry.GeneralDirectPosition(point.x, point.y))
+    }
+
+    /**
+     * Add this Raster with another Raster
+     * @param other Another a Raster
+     * @return A new Raster
+     */
+    Raster add(Raster other) {
+        def process = new AddCoveragesProcess()
+        def cov = process.execute(this.coverage, other.coverage, null)
+        return new GeoTIFF(cov)
+    }
+
+    /**
+     * Add this Raster with another Raster
+     * <p><code>def r3 = r1 + r2</code></p>
+     * @param other Another a Raster
+     * @return A new Raster
+     */
+    Raster plus(Raster other) {
+        add(other)
+    }
+
+    /**
+     * Multiple this Raster with another Raster
+     * <p><code>def r3 = r1 * r2</code></p>
+     * @param other Another a Raster
+     * @return A new Raster
+     */
+    Raster multiply(Raster other) {
+        def process = new MultiplyCoveragesProcess()
+        def cov = process.execute(this.coverage, other.coverage, null)
+        return new GeoTIFF(cov)
+    }
+
+    /**
+     * Create contours
+     * @param band The Raster band
+     * @param intervalOrLevels The contour interval or a List of levels
+     * @param simplify Whether to simplify the contours
+     * @param smooth Whether to smooth the contours
+     * @return A Layer
+     */
+    Layer contours(int band, def intervalOrLevels, boolean simplify = true, boolean smooth = true, Bounds bounds = null) {
+        def levels = null
+        def interval = null
+        if (intervalOrLevels instanceof Collection) {
+            levels = intervalOrLevels as double[]
+        } else {
+            interval = intervalOrLevels as double
+        }
+        def fc = ContourProcess.process(coverage, band, levels, interval, simplify, smooth, bounds.geometry.g, null)
+        Schema s = new Schema(fc.schema)
+        Schema schema =  new Schema("contours", s.fields)
+        Layer layer = new Memory().create(schema)
+        layer.add(fc)
+        layer
+    }
+
+    /**
+     * Extract Polygons.
+     * @param band The band
+     * @param insideEdges Whether to include the inside edges or not
+     * @param bounds The geographic Bounds
+     * @param noData The List of no data values
+     * @param range A List of range Maps with min, minIncluded, max, and maxIncluded keys
+     * @return A Layer
+     */
+    Layer toPolygons(int band, boolean insideEdges = true, Bounds bounds = null, List noData = null, List ranges = null) {
+        if (noData != null) {
+            noData = noData as Number[]
+        }
+        List rangeList = null
+        if (ranges != null) {
+            rangeList = ranges.collect{rng ->
+                Range.create(rng.get("min"), rng.get("minIncluded", true), rng.get("max"), rng.get("maxIncluded", true))
+            }
+        }
+        PolygonExtractionProcess process = new PolygonExtractionProcess()
+        def fc = process.execute(coverage, band, insideEdges, bounds.geometry.g, noData, rangeList, null)
+        Schema s = new Schema(fc.schema)
+        Schema schema =  new Schema("polygons", s.fields)
+        Layer layer = new Memory().create(schema)
+        layer.add(fc)
+        layer
+    }
+
+    /**
+     * Convert this Raster into a Layer of Points
+     * @return A Layer
+     */
+    Layer toPoints() {
+        def process = new RasterAsPointCollectionProcess()
+        def fc = process.execute(coverage)
+        Schema s = new Schema(fc.schema)
+        Schema schema =  new Schema("points", s.fields)
+        Layer layer = new Memory().create(schema)
+        layer.add(fc)
+        layer
     }
 }
 

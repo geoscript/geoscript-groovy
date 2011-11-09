@@ -4,6 +4,9 @@ import geoscript.geom.*
 import geoscript.proj.Projection
 import org.junit.Test
 import static org.junit.Assert.*
+import geoscript.layer.Layer
+import geoscript.layer.Shapefile
+import geoscript.workspace.Directory
 
 /**
  * The Raster unit test
@@ -109,5 +112,62 @@ class RasterTestCase {
         assertEquals(-30, value[0])
         assertEquals(-22, value[1])
         assertEquals(-46, value[2])
+    }
+
+    @Test void add() {
+        File file = new File(getClass().getClassLoader().getResource("raster.tif").toURI())
+        Raster raster = new GeoTIFF(file)
+        MapAlgebra mapAlgebra = new MapAlgebra()
+        Raster r1 = mapAlgebra.calculate("dest = src > 200;", [src:raster], "dest", [600,400])
+        Raster r2 = mapAlgebra.calculate("dest = src > 100;", [src:raster], "dest", [600,400])
+        Raster r3 = r1 + r2
+        assertNotNull r3
+    }
+
+    @Test void multiply() {
+        File file = new File(getClass().getClassLoader().getResource("raster.tif").toURI())
+        Raster raster = new GeoTIFF(file)
+        MapAlgebra mapAlgebra = new MapAlgebra()
+        Raster r1 = mapAlgebra.calculate("dest = src > 200;", [src:raster], "dest", [600,400])
+        Raster r2 = mapAlgebra.calculate("dest = src > 100;", [src:raster], "dest", [600,400])
+        Raster r3 = r1 * r2
+        assertNotNull r3
+    }
+
+    @Test void contours() {
+        File file = new File(getClass().getClassLoader().getResource("raster.tif").toURI())
+        Raster raster = new GeoTIFF(file)
+        Bounds b = raster.bounds
+        List bounds = b.tile(0.25)
+        Layer layer = raster.contours(0, 10, true, true, bounds[0])
+        assertNotNull layer
+        assertTrue layer.count > 0
+        layer = raster.contours(0, [10,50,100], true, true, bounds[0])
+        assertNotNull layer
+        assertTrue layer.count > 0
+    }
+
+    @Test void toPolygons() {
+        File file = new File(getClass().getClassLoader().getResource("raster.tif").toURI())
+        Raster raster = new GeoTIFF(file)
+        Bounds b = raster.bounds
+        List bounds = b.tile(0.25)
+        Layer layer = raster.toPolygons(0, true, bounds[0])
+        assertNotNull layer
+        assertTrue layer.count > 0
+
+        layer = raster.toPolygons(0, true, bounds[1], [-1,0], [[min: 100, max:200]])
+        assertNotNull layer
+        assertTrue layer.count > 0
+    }
+
+    @Test void toPoints() {
+        File file = new File(getClass().getClassLoader().getResource("raster.tif").toURI())
+        Raster raster = new GeoTIFF(file)
+        Bounds b = raster.bounds
+        List bounds = b.tile(0.25)
+        Layer layer = raster.crop(bounds[0]).toPoints()
+        assertNotNull layer
+        assertTrue layer.count > 0
     }
 }

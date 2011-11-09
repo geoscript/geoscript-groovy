@@ -4,6 +4,7 @@ import geoscript.proj.Projection
 import org.geotools.gce.geotiff.GeoTiffFormat
 import org.geotools.gce.geotiff.GeoTiffReader
 import org.geotools.coverage.grid.io.imageio.IIOMetadataDumper
+import org.geotools.coverage.grid.AbstractGridCoverage
 
 /**
  * A GeoTIFF Raster.
@@ -20,6 +21,15 @@ class GeoTIFF extends Raster {
      */
     GeoTIFF(File file, Projection proj = null) {
         super(new GeoTiffFormat(), file, proj)
+    }
+
+    /**
+     * Create a new GeoTIFF
+     * @param coverage The GeoTools AbstractGridCoverage
+     * @param proj The optional Projection
+     */
+    GeoTIFF(AbstractGridCoverage coverage) {
+        super(coverage, new GeoTiffFormat())
     }
 
     /**

@@ -31,6 +31,15 @@ import org.jdom.input.*
 import geoscript.layer.io.GmlWriter
 import geoscript.layer.io.GeoJSONWriter
 import org.geotools.data.collection.ListFeatureCollection
+import geoscript.style.Raster
+import org.geotools.process.raster.VectorToRasterProcess
+import java.awt.Dimension
+import org.geotools.coverage.grid.GridCoverage2D
+import geoscript.raster.Raster
+import org.geotools.gce.geotiff.GeoTiffFormat
+import org.opengis.coverage.grid.GridCoverageWriter
+import org.geotools.gce.geotiff.GeoTiffWriter
+import geoscript.raster.GeoTIFF
 
 /**
  * A Layer is a source of spatial data
@@ -408,6 +417,24 @@ class Layer {
                 fs.transaction = Transaction.AUTO_COMMIT
             }
         }
+        // Else if it is a FeatureCollection
+        else if (o instanceof FeatureCollection) {
+            Transaction t = new DefaultTransaction("addTransaction")
+            try {
+                FeatureStore<SimpleFeatureType, SimpleFeature> store = (FeatureStore)fs
+                store.transaction = t
+                store.addFeatures(o as FeatureCollection)
+                t.commit()
+            }
+            catch (Exception e) {
+                e.printStackTrace()
+                t.rollback()
+            }
+            finally {
+                t.close()
+                fs.transaction = Transaction.AUTO_COMMIT
+            }
+        }
         // Otherwise its a Feature or a List of values
         else {
             Feature f
@@ -661,6 +688,26 @@ class Layer {
         (0..classes).collect{x ->
             fy(x/(float)classes)
         }
+    }
+
+    /**
+     * Convert this Layer into a Raster
+     * @param field The numeric Field or Field name from which to get values
+     * @param gridSize The grid size (width and height)
+     * @param bounds The Bounds of the Raster
+     * @param name The name of the Raster
+     * @return A Raster
+     */
+    Raster toRaster(def field, List gridSize, Bounds bounds, String rasterName) {
+        def dim = new Dimension(gridSize[0] as int, gridSize[1] as int)
+        def fld =  filterFactory.property(field instanceof Field ? field.name : field)
+        def cov = VectorToRasterProcess.process(fs.features, fld, dim, bounds.env, rasterName, null)
+        /*File file = File.createTempFile(rasterName, ".tif")
+        def writer = new GeoTiffWriter(file, null)
+        writer.write(cov, null)
+        def tif = new GeoTIFF(file, this.proj)*/
+        def tif = new GeoTIFF(cov)
+        return tif
     }
 
     /**

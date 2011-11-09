@@ -126,6 +126,21 @@
             <artifactId>gt-imageio-ext-gdal</artifactId>
             <version>${gt.version}</version>
         </dependency>
+		<dependency>
+            <groupId>org.geotools</groupId>
+            <artifactId>gt-process-raster</artifactId>
+            <version>${gt.version}</version>
+        </dependency>
+		<dependency>
+			<groupId>org.jaitools</groupId>
+			<artifactId>jt-jiffleop</artifactId>
+			<version>0.2.0</version>
+		</dependency>
+		<dependency>
+			<groupId>org.jaitools</groupId>
+			<artifactId>jt-jiffle-language</artifactId>
+			<version>0.2.0</version>
+		</dependency>
         <dependency>
             <groupId>org.codehaus.groovy</groupId>
             <artifactId>groovy</artifactId>
