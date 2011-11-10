@@ -18,6 +18,7 @@ import org.geotools.process.raster.gs.RasterAsPointCollectionProcess
 import org.geotools.process.raster.gs.AddCoveragesProcess
 import org.geotools.process.raster.gs.MultiplyCoveragesProcess
 import org.jaitools.numeric.Range
+import org.geotools.process.raster.gs.ScaleCoverage
 
 /**
  * The Raster base class
@@ -168,6 +169,18 @@ class Raster {
     }
 
     /**
+     * Scale this Raster
+     * @param x The scale factor along the x axis
+     * @param y The scale factor along the y axis
+     * @return A new scaled Raster
+     */
+    Raster scale(double x, double y) {
+        def process = new ScaleCoverage()
+        def grid = process.execute(coverage, x, y, 0, 0, null)
+        new Raster(grid, gridFormat)
+    }
+
+    /**
      * Reproject this Raster to another Projection creating a new Raster
      * @param proj The Projection
      * @return A new Raster
@@ -208,7 +221,7 @@ class Raster {
     Raster add(Raster other) {
         def process = new AddCoveragesProcess()
         def cov = process.execute(this.coverage, other.coverage, null)
-        return new GeoTIFF(cov)
+        new Raster(cov, gridFormat)
     }
 
     /**
@@ -230,7 +243,7 @@ class Raster {
     Raster multiply(Raster other) {
         def process = new MultiplyCoveragesProcess()
         def cov = process.execute(this.coverage, other.coverage, null)
-        return new GeoTIFF(cov)
+        new Raster(cov, gridFormat)
     }
 
     /**

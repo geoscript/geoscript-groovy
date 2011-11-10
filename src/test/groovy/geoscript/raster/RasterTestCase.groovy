@@ -170,4 +170,11 @@ class RasterTestCase {
         assertNotNull layer
         assertTrue layer.count > 0
     }
+
+    @Test void scale() {
+        File file = new File(getClass().getClassLoader().getResource("raster.tif").toURI())
+        Raster raster = new GeoTIFF(file)
+        Raster scaled = raster.scale(10, 10)
+        assertNotNull scaled
+    }
 }
