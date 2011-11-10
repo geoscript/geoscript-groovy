@@ -1,10 +1,10 @@
 package geoscript.raster
 
-import org.jaitools.jiffle.JiffleBuilder
-import java.awt.image.RenderedImage
-import org.geotools.coverage.grid.GridCoverageFactory
 import geoscript.geom.Bounds
+import java.awt.image.RenderedImage
+import org.jaitools.jiffle.JiffleBuilder
 import org.geotools.coverage.grid.GridCoverage2D
+import org.geotools.coverage.grid.GridCoverageFactory
 
 /**
  * The MapAlgebra uses Jiffle to perform Map Algebra for Rasters.
@@ -12,7 +12,21 @@ import org.geotools.coverage.grid.GridCoverage2D
  */
 class MapAlgebra {
 
-    Raster calculate(String script, Map<String, Raster> inputRasters, String outputName = "dest", List size = [500,500], Bounds bounds = null) {
+    /**
+     * Calculate a new Raster by peforming the map algebra specified by the Jiffle/MapCalc script.
+     * @param script The Jiffle/MapCalc script.  This can be a File, a URL, or a String
+     * @param inputRasters A Map of the input Rasters and their names.
+     * @param outputName The output Raster name.
+     * @param size The size of the output Raster
+     * @param bounds The geographic Bounds of the output Raster
+     * @return A new Raster
+     */
+    Raster calculate(def script, Map<String, Raster> inputRasters, String outputName = "dest", List size = [500,500], Bounds bounds = null) {
+        if (script instanceof File) {
+            script = script.text
+        } else if (script instanceof URL) {
+            script = script.text
+        }
         JiffleBuilder builder = new JiffleBuilder()
         builder.script(script)
         inputRasters.each {input ->
