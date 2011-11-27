@@ -1,5 +1,6 @@
 package geoscript.raster
 
+import geoscript.geom.Bounds
 import geoscript.proj.Projection
 import org.geotools.gce.geotiff.GeoTiffFormat
 import org.geotools.gce.geotiff.GeoTiffReader
@@ -30,6 +31,15 @@ class GeoTIFF extends Raster {
      */
     GeoTIFF(AbstractGridCoverage coverage) {
         super(coverage, new GeoTiffFormat())
+    }
+
+    /**
+     * Create a new GeoTIFF from a List of data values
+     * @param data The List of data values
+     * @param bounds The geographic Bounds
+     */
+    GeoTIFF(List data, Bounds bounds) {
+        super(data, bounds, new GeoTiffFormat())
     }
 
     /**

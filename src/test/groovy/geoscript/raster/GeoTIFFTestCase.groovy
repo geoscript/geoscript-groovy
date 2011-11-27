@@ -4,6 +4,7 @@ import geoscript.geom.Bounds
 import org.junit.Test
 import static org.junit.Assert.assertEquals
 import static org.junit.Assert.assertNotNull
+import geoscript.geom.Point
 
 /**
  * The Raster unit test
@@ -48,5 +49,24 @@ class GeoTIFFTestCase {
 
         geoTIFF.dump()
     }
-	
+
+    @Test void createFromList() {
+
+        List data = [
+            [0,0,0,0,0,0,0],
+            [0,1,1,1,1,1,0],
+            [0,1,2,3,2,1,0],
+            [0,1,1,1,1,1,0],
+            [0,0,0,0,0,0,0]
+        ]
+        Bounds bounds = new Bounds(0, 0, 7, 5, "EPSG:4326")
+
+        GeoTIFF tiff = new GeoTIFF(data, bounds)
+        assertNotNull tiff
+        assertNotNull tiff.bounds
+        assertEquals 0, tiff.evaluate(new Point(0.5,0.5))[0], 0.1
+        assertEquals 1, tiff.evaluate(new Point(1.5,1.5))[0], 0.1
+        assertEquals 2, tiff.evaluate(new Point(2.5,2.5))[0], 0.1
+        assertEquals 3, tiff.evaluate(new Point(3.5,2.5))[0], 0.1
+    }
 }

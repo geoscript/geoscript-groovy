@@ -19,6 +19,7 @@ import org.geotools.process.raster.gs.AddCoveragesProcess
 import org.geotools.process.raster.gs.MultiplyCoveragesProcess
 import org.jaitools.numeric.Range
 import org.geotools.process.raster.gs.ScaleCoverage
+import org.geotools.coverage.grid.GridCoverageFactory
 
 /**
  * The Raster base class
@@ -45,6 +46,24 @@ class Raster {
      * The Style
      */
     Style style
+
+    /**
+     * Create a new Raster from a List of List of float values
+     * @param data A List of Lists of float values
+     * @param bounds The geographic Bounds
+     * @param format The GeoTools AbstractGridFormat
+     */
+    Raster(List data, Bounds bounds, AbstractGridFormat format) {
+        def matrix = data.collect{datum ->
+            datum.collect{
+                it as float
+            } as float[]
+        } as float[][]
+        def factory = new GridCoverageFactory()
+        this.coverage = factory.create("Raster", matrix, bounds.env)
+        this.gridFormat = format
+        this.style = new geoscript.style.Raster()
+    }
 
     /**
      * Create a new Raster using a given Format to read the File.

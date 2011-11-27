@@ -7,6 +7,7 @@ import static org.junit.Assert.*
 import geoscript.layer.Layer
 import geoscript.layer.Shapefile
 import geoscript.workspace.Directory
+import org.geotools.gce.geotiff.GeoTiffFormat
 
 /**
  * The Raster unit test
@@ -115,58 +116,108 @@ class RasterTestCase {
     }
 
     @Test void add() {
-        File file = new File(getClass().getClassLoader().getResource("raster.tif").toURI())
-        Raster raster = new GeoTIFF(file)
-        MapAlgebra mapAlgebra = new MapAlgebra()
-        Raster r1 = mapAlgebra.calculate("dest = src > 200;", [src:raster], "dest", [600,400])
-        Raster r2 = mapAlgebra.calculate("dest = src > 100;", [src:raster], "dest", [600,400])
-        Raster r3 = r1 + r2
-        assertNotNull r3
+        Bounds bounds = new Bounds(0, 0, 7, 5, "EPSG:4326")
+        List data1 = [
+            [0,0,0,0,0,0,0],
+            [0,1,1,1,1,1,0],
+            [0,1,2,3,2,1,0],
+            [0,1,1,1,1,1,0],
+            [0,0,0,0,0,0,0]
+        ]
+        Raster raster1 = new Raster(data1, bounds, new GeoTiffFormat())
+
+        List data2 = [
+            [1,1,1,1,1,1,1],
+            [1,2,2,2,2,2,1],
+            [1,2,3,4,3,2,1],
+            [1,2,2,2,2,2,1],
+            [1,1,1,1,1,1,1]
+        ]
+        Raster raster2 = new Raster(data2, bounds, new GeoTiffFormat())
+
+        Raster raster3 = raster1 + raster2
+        assertEquals 1, raster3.evaluate(new Point(0.5,0.5))[0], 0.1
+        assertEquals 3, raster3.evaluate(new Point(1.5,1.5))[0], 0.1
+        assertEquals 5, raster3.evaluate(new Point(2.5,2.5))[0], 0.1
+        assertEquals 7, raster3.evaluate(new Point(3.5,2.5))[0], 0.1
     }
 
     @Test void multiply() {
-        File file = new File(getClass().getClassLoader().getResource("raster.tif").toURI())
-        Raster raster = new GeoTIFF(file)
-        MapAlgebra mapAlgebra = new MapAlgebra()
-        Raster r1 = mapAlgebra.calculate("dest = src > 200;", [src:raster], "dest", [600,400])
-        Raster r2 = mapAlgebra.calculate("dest = src > 100;", [src:raster], "dest", [600,400])
-        Raster r3 = r1 * r2
-        assertNotNull r3
+        Bounds bounds = new Bounds(0, 0, 7, 5, "EPSG:4326")
+        List data1 = [
+            [0,0,0,0,0,0,0],
+            [0,1,1,1,1,1,0],
+            [0,1,2,3,2,1,0],
+            [0,1,1,1,1,1,0],
+            [0,0,0,0,0,0,0]
+        ]
+        Raster raster1 = new Raster(data1, bounds, new GeoTiffFormat())
+
+        List data2 = [
+            [1,1,1,1,1,1,1],
+            [1,2,2,2,2,2,1],
+            [1,2,3,4,3,2,1],
+            [1,2,2,2,2,2,1],
+            [1,1,1,1,1,1,1]
+        ]
+        Raster raster2 = new Raster(data2, bounds, new GeoTiffFormat())
+
+        Raster raster3 = raster1 * raster2
+        assertEquals 0, raster3.evaluate(new Point(0.5,0.5))[0], 0.1
+        assertEquals 2, raster3.evaluate(new Point(1.5,1.5))[0], 0.1
+        assertEquals 6, raster3.evaluate(new Point(2.5,2.5))[0], 0.1
+        assertEquals 12, raster3.evaluate(new Point(3.5,2.5))[0], 0.1
     }
 
     @Test void contours() {
-        File file = new File(getClass().getClassLoader().getResource("raster.tif").toURI())
-        Raster raster = new GeoTIFF(file)
-        Bounds b = raster.bounds
-        List bounds = b.tile(0.25)
-        Layer layer = raster.contours(0, 10, true, true, bounds[0])
+        Bounds bounds = new Bounds(0, 0, 7, 5, "EPSG:4326")
+        List data = [
+            [0,0,0,0,0,0,0],
+            [0,1,1,1,1,1,0],
+            [0,1,2,3,2,1,0],
+            [0,1,1,1,1,1,0],
+            [0,0,0,0,0,0,0]
+        ]
+        Raster raster = new Raster(data, bounds, new GeoTiffFormat())
+        Layer layer = raster.contours(0, 0.25, true, true, bounds)
         assertNotNull layer
         assertTrue layer.count > 0
-        layer = raster.contours(0, [10,50,100], true, true, bounds[0])
+
+        layer = raster.contours(0, [0.25,0.5,0.75], true, true, bounds)
         assertNotNull layer
         assertTrue layer.count > 0
     }
 
     @Test void toPolygons() {
-        File file = new File(getClass().getClassLoader().getResource("raster.tif").toURI())
-        Raster raster = new GeoTIFF(file)
-        Bounds b = raster.bounds
-        List bounds = b.tile(0.25)
-        Layer layer = raster.toPolygons(0, true, bounds[0])
+        Bounds bounds = new Bounds(0, 0, 7, 5, "EPSG:4326")
+        List data = [
+            [0,0,0,0,0,0,0],
+            [0,1,1,1,1,1,0],
+            [0,1,2,3,2,1,0],
+            [0,1,1,1,1,1,0],
+            [0,0,0,0,0,0,0]
+        ]
+        Raster raster = new Raster(data, bounds, new GeoTiffFormat())
+        Layer layer = raster.toPolygons(0, true, bounds)
         assertNotNull layer
         assertTrue layer.count > 0
 
-        layer = raster.toPolygons(0, true, bounds[1], [-1,0], [[min: 100, max:200]])
+        layer = raster.toPolygons(0, true, bounds, [-1,0], [[min: 1, max: 3]])
         assertNotNull layer
         assertTrue layer.count > 0
     }
 
     @Test void toPoints() {
-        File file = new File(getClass().getClassLoader().getResource("raster.tif").toURI())
-        Raster raster = new GeoTIFF(file)
-        Bounds b = raster.bounds
-        List bounds = b.tile(0.25)
-        Layer layer = raster.crop(bounds[0]).toPoints()
+        Bounds bounds = new Bounds(0, 0, 7, 5, "EPSG:4326")
+        List data = [
+            [0,0,0,0,0,0,0],
+            [0,1,1,1,1,1,0],
+            [0,1,2,3,2,1,0],
+            [0,1,1,1,1,1,0],
+            [0,0,0,0,0,0,0]
+        ]
+        Raster raster = new Raster(data, bounds, new GeoTiffFormat())
+        Layer layer = raster.toPoints()
         assertNotNull layer
         assertTrue layer.count > 0
     }
