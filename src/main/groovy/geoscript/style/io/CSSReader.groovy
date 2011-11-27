@@ -17,12 +17,21 @@ import org.geotools.styling.Style as GtStyle
 class CSSReader implements Reader {
 
     /**
-     * Read a GeoScript Style from a CSS InputStream
-     * @param input A CSS InputStream
+     * Read a GeoScript Style from a CSS java.io.Reader
+     * @param reader A java.io.Reader
      * @return A GeoScript Style
      */
-    Style read(InputStream input) {
-        GtStyle style = CSS2SLD.convert(input)
+    Style read(InputStream inputStream) {
+        read(new InputStreamReader(inputStream))
+    }
+
+    /**
+     * Read a GeoScript Style from a CSS java.io.Reader
+     * @param reader A java.io.Reader
+     * @return A GeoScript Style
+     */
+    Style read(java.io.Reader reader) {
+        GtStyle style = CSS2SLD.convert(reader)
         new CSSStyle(style)
     }
 
@@ -32,7 +41,7 @@ class CSSReader implements Reader {
      * @return A GeoScript Style
      */
     Style read(File file) {
-        read(new FileInputStream(file))
+        read(new FileReader(file))
     }
 	
     /**
@@ -41,7 +50,7 @@ class CSSReader implements Reader {
      * @return A GeoScript Style
      */
     Style read(String str) {
-        read(new ByteArrayInputStream(str.getBytes("UTF-8")))
+        read(new StringReader(str))
     }
 	
     /**
