@@ -25,4 +25,4 @@ for jar in `ls $LIBDIR`; do
   CLASSPATH=$CLASSPATH:$LIBDIR/$jar
 done
 
-$GROOVY -cp $CLASSPATH
+$GROOVY -cp $CLASSPATH "$@"
