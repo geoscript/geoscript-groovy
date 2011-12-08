@@ -8,7 +8,6 @@ import geoscript.style.Style
 import geoscript.style.Symbolizer
 import geoscript.workspace.Memory
 import java.awt.image.BufferedImage
-import geoscript.layer.Shapefile
 import geoscript.geom.Point
 
 /**
