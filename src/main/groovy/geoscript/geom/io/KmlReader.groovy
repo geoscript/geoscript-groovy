@@ -35,20 +35,21 @@ class KmlReader implements Reader {
     private Geometry read(Element element) {
         
         String name = element.name
+        def ns = element.namespace
 
         if (name.equalsIgnoreCase("Point")) {
-            return getPoints(element.getChild("coordinates").text)[0]
+            return getPoints(element.getChild("coordinates",ns).text)[0]
         }
         else if (name.equalsIgnoreCase("LineString")) {
-            return new LineString(getPoints(element.getChild("coordinates").text))
+            return new LineString(getPoints(element.getChild("coordinates",ns).text))
         }
         else if (name.equalsIgnoreCase("LinearRing")) {
-            return new LinearRing(getPoints(element.getChild("coordinates").text))
+            return new LinearRing(getPoints(element.getChild("coordinates",ns).text))
         }
         else if (name.equalsIgnoreCase("Polygon")) {
-            LinearRing shell = new LinearRing(getPoints(element.getChild("outerBoundaryIs").getChild("LinearRing").getChild("coordinates").text))
-            List<LinearRing> holes = element.getChildren("innerBoundaryIs").collect{e ->
-                new LinearRing(getPoints(e.getChild("LinearRing").getChild("coordinates").text))
+            LinearRing shell = new LinearRing(getPoints(element.getChild("outerBoundaryIs",ns).getChild("LinearRing",ns).getChild("coordinates",ns).text))
+            List<LinearRing> holes = element.getChildren("innerBoundaryIs",ns).collect{e ->
+                new LinearRing(getPoints(e.getChild("LinearRing",ns).getChild("coordinates",ns).text))
             }
             return new Polygon(shell, holes)
         }
@@ -84,4 +85,3 @@ class KmlReader implements Reader {
     }
 
 }
-
