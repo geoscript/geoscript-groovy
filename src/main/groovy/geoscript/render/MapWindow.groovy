@@ -76,13 +76,22 @@ class MapWindow {
 
         // Use SwingBuilder to build the GUI
         def swing = new SwingBuilder()
+        def frame = swing.frame(title:'Window', size:[map.width, map.height], show:false) {
+            borderLayout()
+            container(toolbar, constraints: BorderLayout.NORTH)
+            container(mapPane, constraints:BorderLayout.CENTER)
+            container(statusBar, constraints: BorderLayout.SOUTH)
+        }
+        // If we are opening Windows from the GroovyConsole, we can't use EXIT_ON_CLOSE because the GroovyConsole
+        // itself will exit
+        if (java.awt.Frame.frames.find{it.title.contains("GroovyConsole")}) {
+            frame.defaultCloseOperation = JFrame.DISPOSE_ON_CLOSE
+        } else {
+            // The Groovy Shell has a special SecurityManager that doesn't allow EXIT_ON_CLOSE
+            try { frame.defaultCloseOperation = JFrame.EXIT_ON_CLOSE } catch (SecurityException ex) {frame.defaultCloseOperation = JFrame.HIDE_ON_CLOSE}
+        }
         swing.edt {
-            frame(title:'Window', size:[map.width, map.height], defaultCloseOperation:JFrame.EXIT_ON_CLOSE, show:true) {
-                borderLayout()
-                container(toolbar, constraints: BorderLayout.NORTH)
-                container(mapPane, constraints:BorderLayout.CENTER)
-                container(statusBar, constraints: BorderLayout.SOUTH)
-            }
+            frame.visible = true
         }
     }
 }
