@@ -20,6 +20,7 @@ import org.geotools.process.raster.gs.MultiplyCoveragesProcess
 import org.jaitools.numeric.Range
 import org.geotools.process.raster.gs.ScaleCoverage
 import org.geotools.coverage.grid.GridCoverageFactory
+import org.geotools.process.raster.gs.RasterZonalStatistics
 
 /**
  * The Raster base class
@@ -287,6 +288,19 @@ class Raster {
         Layer layer = new Memory().create(schema)
         layer.add(fc)
         layer
+    }
+
+    /**
+     * Calculate the zonal statistics of this Raster
+     * @param band The band
+     * @param zones A Layer of polygons representing the zones
+     * @param classification An optional Raster whose values are used as classes
+     * @return A Layer with statistics (count, min, max, sum, avg, stddev, and optionally classification)
+     */
+    Layer zonalStatistics(int band, Layer zones, Raster classification = null) {
+        def calculator = new RasterZonalStatistics()
+        def fc = calculator.execute(this.coverage, band, zones.fs.features, classification?.coverage)
+        new Layer("${zones.name}ZonalStatistics", fc)
     }
 
     /**

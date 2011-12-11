@@ -8,6 +8,8 @@ import geoscript.layer.Layer
 import geoscript.layer.Shapefile
 import geoscript.workspace.Directory
 import org.geotools.gce.geotiff.GeoTiffFormat
+import geoscript.workspace.Memory
+import geoscript.feature.Field
 
 /**
  * The Raster unit test
@@ -228,4 +230,31 @@ class RasterTestCase {
         Raster scaled = raster.scale(10, 10)
         assertNotNull scaled
     }
+
+    @Test void zonalStatistics() {
+        Bounds bounds = new Bounds(0, 0, 7, 5, "EPSG:4326")
+        List data = [
+            [0,0,0,0,0,0,0],
+            [0,1,1,1,1,1,0],
+            [0,1,2,3,2,1,0],
+            [0,1,1,1,1,1,0],
+            [0,0,0,0,0,0,0]
+        ]
+        Raster raster = new Raster(data, bounds, new GeoTiffFormat())
+        Layer zones = new Memory().create("zones", [new Field("geom","Geometry","EPSG:4326")])
+        bounds.tile(0.5).each{b -> zones.add([b.geometry])}
+        Layer stats = raster.zonalStatistics(0, zones)
+        assertEquals 4, stats.count
+        stats.features.each{f ->
+            assertNotNull f.geom
+            assertNotNull f.get("count")
+            assertNotNull f.get("min")
+            assertNotNull f.get("max")
+            assertNotNull f.get("sum")
+            assertNotNull f.get("avg")
+            assertNotNull f.get("stddev")
+            assertNull f.get("classification")
+        }
+    }
+
 }

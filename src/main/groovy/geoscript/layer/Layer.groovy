@@ -101,6 +101,29 @@ class Layer {
     }
 
     /**
+     * Create a new Layer from a GeoTools FeatureCollection
+     * @param name The name of the new Layer
+     * @param fc The GeoTools FeatureCollection
+     */
+    Layer(String name, FeatureCollection fc) {
+        this(createLayerFromFeatureCollection(name, fc))
+    }
+
+    /**
+     * Create a Layer from a name and FeatureCollection
+     * @param name The name of the new Layer
+     * @param fc The FeatureCollection
+     * @return A new Layer
+     */
+    private static Layer createLayerFromFeatureCollection(String name, FeatureCollection fc) {
+        Schema s = new Schema(fc.schema)
+        Schema schema =  new Schema(name, s.fields)
+        Layer layer = new Memory().create(schema)
+        layer.add(fc)
+        layer
+    }
+
+    /**
      * Create a new Layer from an existing Layer
      * @param layer Another Layer
      */
