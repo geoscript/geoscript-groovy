@@ -60,8 +60,10 @@ class MultiPoint extends GeometryCollection {
      */
     public MultiPoint plus(Point point) {
         List<Point> points = []
-        (0..numGeometries-1).each{index ->
-            points.add(getGeometryN(index))
+        if (!empty) {
+            (0..numGeometries-1).each{index ->
+                points.add(getGeometryN(index))
+            }
         }
         points.add(point)
         new MultiPoint(*points)

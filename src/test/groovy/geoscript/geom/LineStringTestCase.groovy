@@ -28,6 +28,11 @@ class LineStringTestCase {
         def multi = line + new LineString([7,8],[9,10],[11,12])
         println("Multi: ${multi.wkt}")
         assertEquals "MULTILINESTRING ((1 2, 3 4, 5 6), (7 8, 9 10, 11 12))", multi.wkt
+
+        def m2 = new MultiLineString([])
+        assertEquals "MULTILINESTRING EMPTY", m2.wkt
+        def m3 = m2 + new LineString([1,2],[3,4])
+        assertEquals "MULTILINESTRING ((1 2, 3 4))", m3.wkt
     }
 
     @Test void startEndPoint() {

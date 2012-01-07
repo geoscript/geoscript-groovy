@@ -63,8 +63,10 @@ class MultiPolygon extends GeometryCollection {
      */
     MultiPolygon plus(Polygon poly) {
         List<Polygon> polygons = []
-        (0..numGeometries-1).each{index ->
-            polygons.add(getGeometryN(index))
+        if(!empty) {
+            (0..numGeometries-1).each{index ->
+                polygons.add(getGeometryN(index))
+            }
         }
         polygons.add(poly)
         new MultiPolygon(polygons)
@@ -86,7 +88,11 @@ class MultiPolygon extends GeometryCollection {
         List<Polygon> p = polygons.collect{
             poly -> new Polygon(poly)
         }
-        create(*p)
+        if (p.size() > 0) {
+            create(*p)
+        } else {
+            create(new Polygon())
+        }
     }
 
     /**

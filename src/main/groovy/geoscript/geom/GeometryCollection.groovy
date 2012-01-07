@@ -49,8 +49,10 @@ class GeometryCollection extends Geometry {
      */
     public GeometryCollection plus(Geometry geometry) {
         List<Geometry> geometries = []
-        (0..numGeometries-1).each{index ->
-            geometries.add(getGeometryN(index))
+        if (!empty) {
+            (0..numGeometries-1).each{index ->
+                geometries.add(getGeometryN(index))
+            }
         }
         geometries.add(geometry)
         new GeometryCollection(geometries)
