@@ -41,7 +41,7 @@ class Raster {
     /**
      * The GeoTools GridCoverageReader
      */
-    protected GridCoverageReader reader
+    GridCoverageReader reader
 
     /**
      * The Style

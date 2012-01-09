@@ -9,6 +9,14 @@ import org.geotools.filter.FunctionFactory
 import org.geotools.filter.FunctionImpl
 import org.opengis.filter.expression.Literal
 import org.opengis.feature.type.Name
+import org.geotools.feature.FeatureCollection
+import geoscript.layer.Layer
+import org.geotools.coverage.grid.AbstractGridCoverage
+import geoscript.raster.Raster
+import org.geotools.gce.geotiff.GeoTiffFormat
+import org.geotools.filter.function.RenderingTransformation
+import org.geotools.data.Query
+import org.opengis.coverage.grid.GridGeometry
 
 /**
  * A GeoScript Function either wraps an existing GeoTools Function or an CQL String.
@@ -92,15 +100,40 @@ class Function extends Expression {
     /**
      * A GeoTools Function that delegates to a Groovy Closure.
      */
-    private static class ClosureFunction extends FunctionImpl {
+    private static class ClosureFunction extends FunctionImpl implements RenderingTransformation {
         private final Closure closure
         ClosureFunction(String name, Closure closure) {
             setName(name)
             this.closure = closure
             functionFactory.functions.add(this)
         }
+        // We may need to convert input and outputs to/from GeoTools or GeoScript
+        // objects to Rendering Transformations to work.
         def evaluate(def obj) {
-            closure(obj)
+            def input = obj
+            // If the input is a GeoTools FeatureCollection wrap it as a GeoScript Layer
+            if (obj instanceof FeatureCollection) {
+                input = new Layer(obj.schema.name.localPart, obj)
+            } else if (obj instanceof AbstractGridCoverage) {
+                input = new Raster(obj, new GeoTiffFormat())
+            }
+            // Call the Groovy Closure
+            def output = closure(input)
+            // If the output is a GeoScript Layer convert it back to a GeoTools FeatureCollection
+            if (output instanceof Layer) {
+                output = output.fs.features
+            } else if (output instanceof Raster) {
+                output = output.coverage
+            }
+            return output
+        }
+        Query invertQuery(Query targetQuery, GridGeometry gridGeometry) {
+            //targetQuery
+            return null
+        }
+        GridGeometry invertGridGeometry(Query targetQuery, GridGeometry targetGridGeometry) {
+            //targetGridGeometry
+            return null
         }
         String toString() {
             "${name}()"
