@@ -9,6 +9,7 @@ import com.vividsolutions.jts.geom.IntersectionMatrix
 import com.vividsolutions.jts.geom.util.AffineTransformation
 import com.vividsolutions.jts.operation.buffer.BufferParameters
 import com.vividsolutions.jts.operation.buffer.BufferOp
+import com.vividsolutions.jts.awt.FontGlyphReader
 import geoscript.geom.io.*
 
 /**
@@ -979,5 +980,16 @@ class Geometry {
         builder.setConstrainedToCircle(constrainedToCircle)
         builder.setGutterFraction(gutterFraction)
         Geometry.wrap(builder.getGeometry())
+    }
+    
+    /**
+     * Create a Geometry from a text and font.
+     * @param text The text
+     * @param fontName The font name
+     * @param size The font size
+     * @return A Geometry
+     */
+    static Geometry createFromText(String text, String fontName = FontGlyphReader.FONT_SANSERIF, int size = 24) {
+        Geometry.wrap(FontGlyphReader.read(text, fontName, size, factory))
     }
 }
