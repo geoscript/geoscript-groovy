@@ -122,4 +122,38 @@ class TransformTestCase {
         assertTrue(out.exists())
         map.close()
     }
+
+    @Test void layerToRasterTransform() {
+
+        Function f = new Function("points2Raster", { Layer layer ->
+            def raster = layer.toRaster("SAMP_POP", [800,600], layer.bounds, "SAMP_POP")
+            raster
+        })
+        Transform t = new Transform(f, Transform.RENDERING)
+
+        def fts = Symbolizer.styleFactory.createFeatureTypeStyle()
+        def rule = Symbolizer.styleFactory.createRule()
+        assertNull fts.transformation
+        t.prepare(fts, rule)
+        assertNotNull fts.transformation
+
+        File file = new File(getClass().getClassLoader().getResource("states.shp").toURI())
+        assertNotNull(file)
+
+        def shp = new geoscript.layer.Shapefile(file)
+        shp.style = new geoscript.style.Raster() + t
+
+        def shp2 = new geoscript.layer.Shapefile(file)
+        shp2.style = new Stroke("black")
+
+        def map = new geoscript.render.Map()
+        map.addLayer(shp)
+        map.addLayer(shp2)
+        File out = File.createTempFile("layerToRaster",".png")
+        println("layerToRaster: ${out}")
+        map.render(out)
+        assertTrue(out.exists())
+        map.close()
+    }
+
 }
