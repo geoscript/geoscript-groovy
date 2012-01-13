@@ -23,6 +23,10 @@ class MultiPolygonTestCase {
         def mp1 = new MultiPolygon(new Polygon([1,2],[3,4],[5,6],[1,2]), new Polygon([7,8],[9,10],[11,12],[7,8]))
         def mp2 = mp1 + new Polygon([11,12],[13,14],[15,16],[11,12])
         assertEquals "MULTIPOLYGON (((1 2, 3 4, 5 6, 1 2)), ((7 8, 9 10, 11 12, 7 8)), ((11 12, 13 14, 15 16, 11 12)))", mp2.wkt
+        def mp3 = new MultiPolygon([])
+        assertEquals "MULTIPOLYGON EMPTY", mp3.wkt
+        def mp4 = mp3 + new Polygon([1,2],[3,4],[4,5],[1,2])
+        assertEquals "MULTIPOLYGON (((1 2, 3 4, 4 5, 1 2)))", mp4.wkt
     }
 
 }

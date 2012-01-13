@@ -160,9 +160,11 @@ class Viewer {
         geometries.each{geometry->
             Shape shp = shapeWriter.toShape(geometry.g)
             // Fill
-            g2d.setComposite(fillComposite)
-            g2d.setColor(fillColor)
-            g2d.fill(shp)
+            if (!(geometry.g instanceof com.vividsolutions.jts.geom.Lineal)) {
+                g2d.setComposite(fillComposite)
+                g2d.setColor(fillColor)
+                g2d.fill(shp)
+            }
             // Stroke
             g2d.setComposite(strokeComposite)
             g2d.setStroke(new BasicStroke(strokeWidth))

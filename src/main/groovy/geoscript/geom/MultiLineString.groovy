@@ -63,8 +63,10 @@ class MultiLineString extends GeometryCollection {
      */
     MultiLineString plus(LineString line) {
         List<LineString> lines = []
-        (0..numGeometries-1).each{index ->
-            lines.add(getGeometryN(index))
+        if (!empty) {
+            (0..numGeometries-1).each{index ->
+                lines.add(getGeometryN(index))
+            }
         }
         lines.add(line)
         new MultiLineString(lines)

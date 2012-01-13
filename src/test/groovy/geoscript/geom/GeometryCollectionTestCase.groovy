@@ -23,6 +23,11 @@ class GeometryCollectionTestCase {
 
         def gc3 = gc1 + new Point(7,8)
         assertEquals "GEOMETRYCOLLECTION (POINT (1 2), POINT (3 4), POINT (7 8))", gc3.wkt
+
+        def gc4 = new GeometryCollection([])
+        assertEquals "GEOMETRYCOLLECTION EMPTY", gc4.wkt
+        def gc5 = gc4 + new Point(8,9)
+        assertEquals "GEOMETRYCOLLECTION (POINT (8 9))", gc5.wkt
     }
 	
 }
