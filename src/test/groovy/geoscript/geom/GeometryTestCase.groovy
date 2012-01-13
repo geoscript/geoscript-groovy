@@ -387,11 +387,11 @@ class GeometryTestCase {
         assertFalse octalEnvelope.isEmpty()
     }
     
-    @Test void createFromText() {
+    /*@Test void createFromText() {
         Geometry g = Geometry.createFromText("B")
         assertEquals "Polygon", g.geometryType
         
         g = Geometry.createFromText("BAJ")
         assertEquals "MultiPolygon", g.geometryType
-    }
+    }*/
 }
