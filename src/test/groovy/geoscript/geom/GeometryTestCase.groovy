@@ -394,4 +394,16 @@ class GeometryTestCase {
         g = Geometry.createFromText("BAJ")
         assertEquals "MultiPolygon", g.geometryType
     }*/
+    
+    @Test void createSierpinskiCarpet() {
+        Geometry g = Geometry.createSierpinskiCarpet(new Bounds(0,0,10,10), 200)
+        assertNotNull g
+        assertEquals "Polygon", g.geometryType
+    }
+    
+    @Test void createKochSnowflake() {
+        Geometry g = Geometry.createKochSnowflake(new Bounds(0,0,10,10), 200)
+        assertNotNull g
+        assertEquals "Polygon", g.geometryType
+    }
 }

@@ -992,4 +992,30 @@ class Geometry {
     static Geometry createFromText(String text, String fontName = FontGlyphReader.FONT_SANSERIF, int size = 24) {
         Geometry.wrap(FontGlyphReader.read(text, fontName, size, factory))
     }
+    
+    /**
+     * Create a Sierpinski Carpet Geometry
+     * @param Bounds The Bounds
+     * @param numberOfPoints The number of points
+     * @return A Geometry
+     */
+    static Geometry createSierpinskiCarpet(Bounds bounds, int numberOfPoints) {
+        def builder = new com.vividsolutions.jts.shape.fractal.SierpinskiCarpetBuilder(factory)
+        builder.extent = bounds.env
+        builder.numPoints = numberOfPoints
+        Geometry.wrap(builder.geometry)
+    }
+    
+    /**
+     * Create a Koch Snowflake Geometry
+     * @param Bounds The Bounds
+     * @param numberOfPoints The number of points
+     * @return A Geometry
+     */
+    static Geometry createKochSnowflake(Bounds bounds, int numberOfPoints) {
+        def builder = new com.vividsolutions.jts.shape.fractal.KochSnowflakeBuilder(factory)
+        builder.extent = bounds.env
+        builder.numPoints = numberOfPoints
+        Geometry.wrap(builder.geometry)
+    }
 }
