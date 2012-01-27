@@ -3,6 +3,7 @@ package geoscript.filter
 import org.geotools.brewer.color.ColorBrewer
 import java.awt.Graphics2D
 import java.awt.image.BufferedImage
+import javax.swing.JFrame
 
 /**
  * A Color Expression and a set of Color Utilities.
@@ -492,11 +493,13 @@ class Color extends Expression {
      */
     static void draw(List colors, String orientation = "vertical", int size = 50) {
         def frame = new javax.swing.JFrame("GeoScript Colors")
-        try {
-            frame.defaultCloseOperation = javax.swing.JFrame.EXIT_ON_CLOSE
-        }
-        catch(SecurityException ex) {
-            frame.defaultCloseOperation = javax.swing.WindowConstants.HIDE_ON_CLOSE
+        // If we are opening Windows from the GroovyConsole, we can't use EXIT_ON_CLOSE because the GroovyConsole
+        // itself will exit
+        if (java.awt.Frame.frames.find{it.title.contains("GroovyConsole")}) {
+            frame.defaultCloseOperation = JFrame.DISPOSE_ON_CLOSE
+        } else {
+            // The Groovy Shell has a special SecurityManager that doesn't allow EXIT_ON_CLOSE
+            try { frame.defaultCloseOperation = JFrame.EXIT_ON_CLOSE } catch (SecurityException ex) {frame.defaultCloseOperation = JFrame.HIDE_ON_CLOSE}
         }
         def panel = new javax.swing.JPanel()
         panel.add(new javax.swing.JLabel(new javax.swing.ImageIcon(drawToImage(colors, orientation, size))))
