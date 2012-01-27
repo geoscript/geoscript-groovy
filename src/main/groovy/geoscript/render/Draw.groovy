@@ -63,12 +63,6 @@ class Draw {
         draw(layer, bounds, size, out, format)
     }
 
-    static void main(String[] args) {
-        //def shp = new Shapefile("/Users/jericks/Projects/GeoScript/scripts/states.shp")
-        def geom = new Point(10,10).buffer(10)
-        draw([geom.bounds.polygon, geom])
-    }
-
     /**
      * Draw a Layer
      * @param layer The Layer
