@@ -167,6 +167,37 @@ class Layer {
     }
 
     /**
+     * Create a new Layer from a GeoTools FeatureCollection.
+     * @param fc The GeoTools FeatureCollection
+     */
+    Layer(FeatureCollection fc) {
+        this(fc.schema.name.localPart, fc)
+    }
+
+    /**
+     * Create a new Layer from a GeoTools FeatureCollection
+     * @param name The name of the new Layer
+     * @param fc The GeoTools FeatureCollection
+     */
+    Layer(String name, FeatureCollection fc) {
+        this(createLayerFromFeatureCollection(name, fc))
+    }
+
+    /**
+     * Create a Layer from a name and FeatureCollection
+     * @param name The name of the new Layer
+     * @param fc The FeatureCollection
+     * @return A new Layer
+     */
+    private static Layer createLayerFromFeatureCollection(String name, FeatureCollection fc) {
+        Schema s = new Schema(fc.schema)
+        Schema schema =  new Schema(name, s.fields)
+        Layer layer = new Memory().create(schema)
+        layer.add(fc)
+        layer
+    }
+
+    /**
      * Set the default Symbolizer based on the geometry type
      * @param geometryType The geometry type
      * @return A default Symbolizer
@@ -397,6 +428,24 @@ class Layer {
                     fc.add(f.f)
                     store.addFeatures(fc)
                 }
+                t.commit()
+            }
+            catch (Exception e) {
+                e.printStackTrace()
+                t.rollback()
+            }
+            finally {
+                t.close()
+                fs.transaction = Transaction.AUTO_COMMIT
+            }
+        }
+        // Else if it is a FeatureCollection
+        else if (o instanceof FeatureCollection) {
+            Transaction t = new DefaultTransaction("addTransaction")
+            try {
+                FeatureStore<SimpleFeatureType, SimpleFeature> store = (FeatureStore)fs
+                store.transaction = t
+                store.addFeatures(o as FeatureCollection)
                 t.commit()
             }
             catch (Exception e) {
