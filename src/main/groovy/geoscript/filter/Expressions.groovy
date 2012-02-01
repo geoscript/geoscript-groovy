@@ -93,11 +93,11 @@ class Expressions {
 
     /**
      * Create a new Function from a Closure
-     * @param name The name of the new Function
+     * @param cql The CQL statement
      * @param closure A Closure
      * @return A new Function
      */
-    static Function function(String name, Closure closure) {
-        new Function(name, closure)
+    static Function function(String cql, Closure closure) {
+        new Function(cql, closure)
     }
 }

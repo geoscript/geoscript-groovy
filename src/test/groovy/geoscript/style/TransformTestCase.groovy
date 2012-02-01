@@ -16,9 +16,9 @@ class TransformTestCase {
         assertNotNull transform.function
         assertEquals "Transform(function = centroid([the_geom]))", transform.toString()
 
-        Transform transform1 = new Transform(new Function("myCentroid", {g -> g.centroid}))
+        Transform transform1 = new Transform(new Function("myCentroid(the_geom)", {g -> g.centroid}))
         assertNotNull transform1.function
-        assertEquals "Transform(function = myCentroid())", transform1.toString()
+        assertEquals "Transform(function = myCentroid([the_geom]))", transform1.toString()
 
         Transform transform3 = new Transform(new Function("centroid(the_geom)"))
         assertNotNull transform3.function
@@ -27,14 +27,14 @@ class TransformTestCase {
 
     @Test void appy() {
         def pointSym = Symbolizer.styleFactory.createPointSymbolizer();
-        Transform centroidTransform = new Transform(new Function("myCentroid", {g -> g.centroid}))
+        Transform centroidTransform = new Transform(new Function("myCentroid(the_geom)", {g -> g.centroid}))
         centroidTransform.apply(pointSym)
-        assertTrue pointSym.geometry instanceof org.geotools.filter.FunctionImpl
+        assertTrue pointSym.geometry instanceof org.opengis.filter.expression.Function
 
         def textSym = Symbolizer.styleFactory.createTextSymbolizer()
-        Transform upperCaseTransform = new Transform(new Function("myUpperCase", {str -> str.toUpperCase()}))
+        Transform upperCaseTransform = new Transform(new Function("myUpperCase(NAME)", {str -> str.toUpperCase()}))
         upperCaseTransform.apply(textSym)
-        assertTrue textSym.label instanceof org.geotools.filter.FunctionImpl
+        assertTrue textSym.label instanceof org.opengis.filter.expression.Function
     }
 
     @Test void prepare() {
@@ -42,13 +42,13 @@ class TransformTestCase {
         rule.symbolizers().add(Symbolizer.styleFactory.createPointSymbolizer())
         rule.symbolizers().add(Symbolizer.styleFactory.createTextSymbolizer())
 
-        Transform centroidTransform = new Transform(new Function("myCentroid", {g -> g.centroid}))
-        Transform upperCaseTransform = new Transform(new Function("myUpperCase", {str -> str.toUpperCase()}))
+        Transform centroidTransform = new Transform(new Function("myCentroid(the_geom)", {g -> g.centroid}))
+        Transform upperCaseTransform = new Transform(new Function("myUpperCase(NAME)", {str -> str.toUpperCase()}))
         centroidTransform.prepare(rule)
         upperCaseTransform.prepare(rule)
 
-        assertTrue rule.symbolizers()[0].geometry instanceof org.geotools.filter.FunctionImpl
-        assertTrue rule.symbolizers()[1].label instanceof org.geotools.filter.FunctionImpl
+        assertTrue rule.symbolizers()[0].geometry instanceof org.opengis.filter.expression.Function
+        assertTrue rule.symbolizers()[1].label instanceof org.opengis.filter.expression.Function
     }
 
 }
