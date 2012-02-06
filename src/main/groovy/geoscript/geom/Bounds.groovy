@@ -3,6 +3,8 @@ package geoscript.geom
 import org.geotools.geometry.jts.ReferencedEnvelope
 import com.vividsolutions.jts.geom.Envelope
 import geoscript.proj.Projection
+import com.vividsolutions.jts.util.GeometricShapeFactory
+import com.vividsolutions.jts.geom.util.SineStarFactory
 
 /**
  * A Bounds is an Envelope with a Projection.
@@ -64,7 +66,36 @@ class Bounds {
     Bounds(double west, double south, double east, double north, def proj) {
         this(new ReferencedEnvelope(west, east, south, north, new Projection(proj).crs))
     }
-	
+
+    /**
+     * Create a new Bounds from a Point (which can either be the origin/lower left or center) and a width and height
+     * @param point The Point origin or center
+     * @param width The width
+     * @param height The height
+     * @param isOrigin Whether the Point is the origin (true) or the center (false)
+     */
+    Bounds(Point point, double width, double height, boolean isOrigin = true) {
+        this(createBounds(point, width, height, isOrigin).env)
+    }
+
+    /**
+     * Create a new Bounds from a Point (which can either be the origin/lower left or center) and a width and height
+     * @param point The Point origin or center
+     * @param width The width
+     * @param height The height
+     * @param isOrigin Whether the Point is the origin (true) or the center (false)
+     */
+    private static Bounds createBounds(Point point, double width, double height, boolean isOrigin = true) {
+        // Lower left
+        if (isOrigin) {
+            return new Bounds(point.x, point.y, point.x + width, point.y + height)
+        }
+        // Center
+        else {
+            return new Bounds(point.x - width / 2, point.y - height / 2, point.x + width / 2, point.y + height / 2)
+        }
+    }
+
     /**
      * Get the left most coordinate (minX)
      * @return The left most coordinate (minX)
@@ -357,6 +388,103 @@ class Bounds {
         } else {
             null
         }
+    }
+
+    /**
+     * Create a rectangle or square based on this Bound's extent with the given number of points and rotation.
+     * @param numPoints The number of points
+     * @param rotation The rotation angle
+     * @return The rectangular Geometry
+     */
+    Polygon createRectangle(int numPoints = 20, double rotation = 0) {
+        Geometry.wrap(createGeometricShapeFactory(numPoints, rotation).createRectangle()) as Polygon
+    }
+
+    /**
+     * Create an ellipse or circle based on this Bound's extent with the given number of points and rotation.
+     * @param numPoints The number of points
+     * @param rotation The rotation angle
+     * @return The elliptical or circular Geometry
+     */
+    Polygon createEllipse(int numPoints = 20, double rotation = 0) {
+        Geometry.wrap(createGeometricShapeFactory(numPoints, rotation).createEllipse()) as Polygon
+    }
+
+    /**
+     * Create a squircle based on this Bound's extent with the given number of points and rotation.
+     * @param numPoints The number of points
+     * @param rotation The rotation angle
+     * @return The squircular Geometry
+     */
+    Polygon createSquircle(int numPoints = 20, double rotation = 0) {
+        Geometry.wrap(createGeometricShapeFactory(numPoints, rotation).createSquircle()) as Polygon
+    }
+
+    /**
+     * Create a super circle based on this Bound's extent with the given number of points and rotation.
+     * @param power The positive power
+     * @param numPoints The number of points
+     * @param rotation The rotation angle
+     * @return The super circular Geometry
+     */
+    Polygon createSuperCircle(double power, int numPoints = 20, double rotation = 0) {
+        Geometry.wrap(createGeometricShapeFactory(numPoints, rotation).createSupercircle(power)) as Polygon
+    }
+
+    /**
+     * Create a LineString arc based on this Bound's extent from the start angle (in radians) for the given angle extent
+     * (also in radians) with the given number of points and rotation.
+     * @param startAngle The start angle (in radians)
+     * @param angleExtent The extent of the angle (in radians)
+     * @param numPoints The number of points
+     * @param rotation The rotation angle
+     * @return The LineString arc
+     */
+    LineString createArc(double startAngle, double angleExtent, int numPoints = 20, double rotation = 0) {
+        Geometry.wrap(createGeometricShapeFactory(numPoints, rotation).createArc(startAngle, angleExtent)) as LineString
+    }
+
+    /**
+     * Create a Polygon arc based on this Bound's extent from the start angle (in radians) for the given angle extent
+     * (also in radians) with the given number of points and rotation.
+     * @param startAngle The start angle (in radians)
+     * @param angleExtent The extent of the angle (in radians)
+     * @param numPoints The number of points
+     * @param rotation The rotation angle
+     * @return The Polygon arc
+     */
+    Polygon createArcPolygon(double startAngle, double angleExtent, int numPoints = 20, double rotation = 0) {
+        Geometry.wrap(createGeometricShapeFactory(numPoints, rotation).createArcPolygon(startAngle, angleExtent)) as Polygon
+    }
+
+    /**
+     * Create a sine star based on this Bound's extent with the given number of arms and arm length ratio with the
+     * given number of points and rotation.
+     * @param numberOfArms The number of arms
+     * @param armLengthRatio The arm length ratio
+     * @param numPoints The number of points
+     * @param rotation The rotation angle
+     * @return The sine star Polygon
+     */
+    Polygon createSineStar(int numberOfArms, double armLengthRatio, int numPoints = 20, double rotation = 0) {
+        def shapeFactory = createGeometricShapeFactory(numPoints, rotation, new SineStarFactory())  as SineStarFactory
+        shapeFactory.setArmLengthRatio(armLengthRatio)
+        shapeFactory.setNumArms(numberOfArms)
+        Geometry.wrap(shapeFactory.createSineStar()) as Polygon
+    }
+
+    /**
+     * Create a GeometricShapeFactory and initialize it with number of points and a rotation.
+     * @param numPoints The number of points
+     * @param rotation The rotation
+     * @param shapeFactory The GeometricShapeFactory
+     * @return The initialized GeometricShapeFactory
+     */
+    private GeometricShapeFactory createGeometricShapeFactory(int numPoints = 100, double rotation = 0.0, GeometricShapeFactory shapeFactory = new GeometricShapeFactory()) {
+        shapeFactory.numPoints = numPoints
+        shapeFactory.rotation = rotation
+        shapeFactory.envelope = env
+        shapeFactory
     }
 
     /**
