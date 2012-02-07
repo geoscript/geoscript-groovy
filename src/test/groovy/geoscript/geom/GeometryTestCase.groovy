@@ -406,4 +406,13 @@ class GeometryTestCase {
         assertNotNull g
         assertEquals "Polygon", g.geometryType
     }
+    
+    @Test void snap() {
+        Geometry g1 = Geometry.fromWKT("POLYGON ((0 0, 0 10, 10 10, 10 0, 0 0))")
+        Geometry g2 = Geometry.fromWKT("POLYGON ((11 0, 11 10, 20 10, 20 0, 11 0))")
+        Geometry snapped = g1.snap(g2, 1.2)
+        assertEquals "GEOMETRYCOLLECTION (" +
+                "POLYGON ((0 0, 0 10, 11 10, 11 0, 0 0)), " +
+                "POLYGON ((11 0, 11 10, 20 10, 20 0, 11 0)))", snapped.wkt
+    }
 }

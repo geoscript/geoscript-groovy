@@ -10,6 +10,7 @@ import com.vividsolutions.jts.geom.util.AffineTransformation
 import com.vividsolutions.jts.operation.buffer.BufferParameters
 import com.vividsolutions.jts.operation.buffer.BufferOp
 import com.vividsolutions.jts.awt.FontGlyphReader
+import com.vividsolutions.jts.operation.overlay.snap.GeometrySnapper
 import geoscript.geom.io.*
 
 /**
@@ -682,6 +683,16 @@ class Geometry {
         Geometry.wrap(AffineTransformation.reflectionInstance(x1, y1, x2, y2).transform(g))
     }
 
+    /**
+     * Snap this Geometry to the other Geometry within the given distance
+     * @param other The other Geometry
+     * @param distance The snap distance
+     * @return The snapped Geometries as a GeometryCollection
+     */
+    Geometry snap(Geometry other, double distance) {
+        new GeometryCollection(GeometrySnapper.snap(this.g, other.g, distance).collect{Geometry.wrap(it)})
+    }
+    
     /**
      * Get the sub Geometry at the specified index.  This
      * allows support for Groovy's multiple assignment.
