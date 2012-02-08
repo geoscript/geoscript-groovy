@@ -2,6 +2,10 @@ package geoscript.geom
 
 import com.vividsolutions.jts.geom.MultiLineString as JtsMultiLineString
 import com.vividsolutions.jts.geom.LineString as JtsLineString
+import com.vividsolutions.jts.geom.PrecisionModel
+import com.vividsolutions.jts.noding.snapround.GeometryNoder
+import com.vividsolutions.jts.operation.linemerge.LineMerger
+import com.vividsolutions.jts.operation.polygonize.Polygonizer as JtsPolygonizer
 
 /**
  * A MultiLineString Geometry.
@@ -70,6 +74,39 @@ class MultiLineString extends GeometryCollection {
         }
         lines.add(line)
         new MultiLineString(lines)
+    }
+
+    /**
+     * Node the LineStrings in this MultiLineString
+     * @param numberOfDecimalPlaces The number of decimal places to use in the PrecisionModel
+     * @return A new MultiLineString
+     */
+    MultiLineString node(int numberOfDecimalPlaces = 5) {
+        def pm = new PrecisionModel(numberOfDecimalPlaces)
+        def noder = new GeometryNoder(pm)
+        def nodedLines = noder.node(this.geometries.collect{line -> line.g})
+        new MultiLineString(nodedLines.collect{line -> new LineString(line)})
+    }
+
+    /**
+     * Merge the LineStrings of this MultiLineString together
+     * @return A new MultiLineString
+     */
+    MultiLineString merge() {
+        def merger = new LineMerger()
+        this.geometries.each{line -> merger.add(line.g) }
+        new MultiLineString(merger.mergedLineStrings.collect{line -> new LineString(line)})
+    }
+
+    /**
+     * Polygonize the LineStrings of this MultiLineString
+     * @return A MultiPolygon
+     */
+    MultiPolygon polygonize() {
+        def polygonizer = new JtsPolygonizer()
+        this.geometries.each{line -> polygonizer.add(line.g)}
+        def polygons = polygonizer.polygons
+        new MultiPolygon(polygons.collect{p -> new Polygon(p)})
     }
 
     /**
