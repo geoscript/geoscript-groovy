@@ -167,6 +167,13 @@ class Layer {
     }
 
     /**
+     * Create a new Layer with the given name, a simple Schema with just a Geometry Field in the Memory Workspace
+     */
+    Layer(String name) {
+        this(name, new Schema("features", [new Field("geom","Geometry")]))
+    }
+
+    /**
      * Create a new Layer from a GeoTools FeatureCollection.
      * @param fc The GeoTools FeatureCollection
      */

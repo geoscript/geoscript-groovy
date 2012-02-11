@@ -177,6 +177,16 @@ class LayerTestCase {
         layer2.add([new Point(1,2)])
         layer2.add([new Point(3,4)])
         assertEquals 2, layer2.count()
+
+        Layer layer3 = new Layer("points")
+        layer3.add([new Point(0,0)])
+        layer3.add([new Point(1,1)])
+        layer3.add([new Point(2,2)])
+        layer3.add([new Point(3,3)])
+        layer3.add([new Point(4,4)])
+
+        assertEquals 5, layer3.count
+        assertEquals "(0.0,0.0,4.0,4.0)", layer3.bounds.toString()
     }
 
     @Test void updateFeatures() {
