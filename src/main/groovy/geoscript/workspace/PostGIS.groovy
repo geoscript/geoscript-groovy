@@ -30,7 +30,7 @@ class PostGIS extends Database {
      * @param options The options for connecting to a PostGIS database (host, port, schema, user, password, estimatedExtent)
      * @param name The database name
      */
-    PostGIS (Map options, String name) {
+    PostGIS (Map options = [:], String name) {
         this(name, options.get("host","localhost"), options.get("port","5432"), options.get("schema","public"), options.get("user",System.getProperty("user.name")), options.get("password",null), options.get("estimatedExtent",false) as boolean)
     }
 
