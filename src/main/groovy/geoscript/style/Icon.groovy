@@ -43,6 +43,9 @@ class Icon extends Symbolizer {
                 this."$k" = k.equals("url") ? toURL(v) : v
             }
         }
+        if (format == null) {
+            format = guessMimeType(url)
+        }
     }
 
 
@@ -56,7 +59,7 @@ class Icon extends Symbolizer {
     Icon(def url, String format = null, def size = -1) {
         super()
         this.url = toURL(url)
-        this.format = format ? format : guessMimeType(this.url)
+        setFormat(format ? format : guessMimeType(this.url))
         this.size = new Expression(size)
     }
 
@@ -89,6 +92,17 @@ class Icon extends Symbolizer {
      */
     void setUrl(def url) {
         this.url = toURL(url)
+    }
+
+    /**
+     * Set the format
+     * @param fmt The format
+     */
+    void setFormat(String fmt) {
+        if (!fmt.startsWith("image/")) {
+            fmt = "image/${fmt}"
+        }
+        this.format = fmt
     }
 
     /**

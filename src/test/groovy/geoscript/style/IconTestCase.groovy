@@ -25,6 +25,30 @@ class IconTestCase {
         assertEquals "Icon(url = http://www.geotools.org/_static/img/geotools-logo.png, format = image/png)", icon.toString()
         assertEquals 32, icon.size.value
 
+        // No format
+        icon = new Icon(url: "http://www.geotools.org/_static/img/geotools-logo.png", size: 32)
+        assertEquals new URL("http://www.geotools.org/_static/img/geotools-logo.png"), icon.url
+        assertTrue icon.url instanceof URL
+        assertEquals "image/png", icon.format
+        assertEquals "Icon(url = http://www.geotools.org/_static/img/geotools-logo.png, format = image/png)", icon.toString()
+        assertEquals 32, icon.size.value
+
+        // Short hand format with named parameters
+        icon = new Icon(url: "http://www.geotools.org/_static/img/geotools-logo.png", format: "png", size: 32)
+        assertEquals new URL("http://www.geotools.org/_static/img/geotools-logo.png"), icon.url
+        assertTrue icon.url instanceof URL
+        assertEquals "image/png", icon.format
+        assertEquals "Icon(url = http://www.geotools.org/_static/img/geotools-logo.png, format = image/png)", icon.toString()
+        assertEquals 32, icon.size.value
+
+        // Short hand format with full constructor
+        icon = new Icon("http://www.geotools.org/_static/img/geotools-logo.png", "png", 32)
+        assertEquals new URL("http://www.geotools.org/_static/img/geotools-logo.png"), icon.url
+        assertTrue icon.url instanceof URL
+        assertEquals "image/png", icon.format
+        assertEquals "Icon(url = http://www.geotools.org/_static/img/geotools-logo.png, format = image/png)", icon.toString()
+        assertEquals 32, icon.size.value
+
         icon = new Icon(url: "http://www.geotools.org/_static/img/geotools-logo.png", format: "image/png", size: new Expression(32))
         assertEquals new URL("http://www.geotools.org/_static/img/geotools-logo.png"), icon.url
         assertTrue icon.url instanceof URL
