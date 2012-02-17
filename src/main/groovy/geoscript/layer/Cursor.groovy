@@ -19,7 +19,7 @@ import org.geotools.feature.FeatureCollection
  * </pre></code>
  * @author Jared Erickson
  */
-class Cursor {
+class Cursor implements Iterator{
 
     /**
      * The Layer
@@ -58,6 +58,13 @@ class Cursor {
     }
 
     /**
+     * This method is unsupported and throws an UnsupportedOperationException
+     */
+    void remove() {
+        throw new UnsupportedOperationException()
+    }
+
+    /**
      * Read n features into a List
      * @param n The number of features to read
      * @return A List of Features
@@ -75,7 +82,12 @@ class Cursor {
      * @return Whether there are Features remaining
      */
     boolean hasNext() {
-        iter.hasNext()
+        boolean b = iter.hasNext()
+        // Auto close
+        if (!b) {
+            close()
+        }
+        b
     }
 
     /**
