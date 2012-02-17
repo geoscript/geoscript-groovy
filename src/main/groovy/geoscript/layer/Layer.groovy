@@ -310,6 +310,42 @@ class Layer {
     }
 
     /**
+     * Call the Closure for each Feature optionally filtered by the Filter
+     * @param filter The Filter which is optional
+     * @param closure A Closure which takes a Feature
+     */
+    void eachFeature(def filter = null, Closure closure) {
+        Cursor c = getCursor(filter)
+        try {
+            while(c.hasNext()) {
+                Feature f = c.next()
+                closure.call(f)
+            }
+        } finally {
+            c.close()
+        }
+    }
+
+    /**
+     * Collect values from the Features of a Layer
+     * @param filter The Filter which is optional
+     * @param closure A Closure which takes a Feature and returns a value
+     */
+    List collectFromFeature(def filter = null, Closure closure) {
+        List results = []
+        Cursor c = getCursor(filter)
+        try {
+            while(c.hasNext()) {
+                Feature f = c.next()
+                results.add(closure.call(f))
+            }
+        } finally {
+            c.close()
+        }
+        results
+    }
+    
+    /**
      * Get a List of Features
      * @param filer The Filter or Filter String to limit the Features used to construct the bounds. Defaults to null.
      * @param transform The Closure used to modify the Features.  Defaults to null.
