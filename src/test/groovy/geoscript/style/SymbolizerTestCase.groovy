@@ -45,6 +45,30 @@ class SymbolizerTestCase {
         sym.asSLD()
     }
 
+    @Test void range() {
+
+        // Both named parameters
+        Symbolizer sym = new Symbolizer().range(min: 100, max:200)
+        assertEquals 100, sym.scale[0], 0.1
+        assertEquals 200, sym.scale[1], 0.1
+
+        // Just one named parameters (min)
+        sym = new Symbolizer().range(min: 100)
+        assertEquals 100, sym.scale[0], 0.1
+        assertEquals(-1, sym.scale[1], 0.1)
+
+        // Just one named parameters (max)
+        sym = new Symbolizer().range(max: 1000)
+        assertEquals(-1, sym.scale[0], 0.1)
+        assertEquals 1000, sym.scale[1], 0.1
+
+        // Constructor
+        sym = new Symbolizer().range(100, 200)
+        assertEquals 100, sym.scale[0], 0.1
+        assertEquals 200, sym.scale[1], 0.1
+
+    }
+    
     @Test void plus() {
         def composite = new Fill("red") + new Stroke("#ffffff")
         assertTrue composite instanceof Composite

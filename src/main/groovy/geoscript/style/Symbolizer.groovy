@@ -69,7 +69,7 @@ class Symbolizer implements Style, Cloneable {
     }
 
     /**
-     * Apply a filte to the symbolizer.  The Filter can be a CQL string
+     * Apply a filter to the symbolizer.  The Filter can be a CQL string
      * or a geoScript.filter.Filter
      * @param filter A CQL String or a Filter
      * @return The Symbolizer
@@ -90,6 +90,23 @@ class Symbolizer implements Style, Cloneable {
         this
     }
 
+    /**
+     * Apply min/max scale denominator using keywords.
+     * <pre>
+     * {@code
+     * new Fill('black').range(min: '100', max: '2000')
+     * new Stroke('teal').range(min: '1000')
+     * }
+     * </pre>
+     * @param min The min scale (defaults to -1)
+     * @param max The max scale (defaults to -1)
+     * @return The Symbolizer
+     */
+    Symbolizer range(Map minMax) {
+        scale = new Scale(minMax.get("min",-1), minMax.get("max",-1))
+        this
+    }
+    
     /**
      * Apply a z-index.  Symbolizers with higher z-index are drawn on
      * the top of those with smaller z-index
