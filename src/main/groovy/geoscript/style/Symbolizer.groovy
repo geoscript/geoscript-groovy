@@ -98,8 +98,7 @@ class Symbolizer implements Style, Cloneable {
      * new Stroke('teal').range(min: '1000')
      * }
      * </pre>
-     * @param min The min scale (defaults to -1)
-     * @param max The max scale (defaults to -1)
+     * @param minMax A Map of named parameters (min, max)
      * @return The Symbolizer
      */
     Symbolizer range(Map minMax) {
