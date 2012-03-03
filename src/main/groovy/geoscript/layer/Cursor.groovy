@@ -34,8 +34,17 @@ class Cursor implements Iterator{
     /**
      * The GeoTools FeatureCollection
      */
-    private FeatureCollection<SimpleFeatureType, SimpleFeature> col
-    
+    FeatureCollection<SimpleFeatureType, SimpleFeature> col
+
+    /**
+     * Create a new Cursor with a FeatureCollection
+     * @param col The GeoTools FeatureCollection
+     */
+    Cursor(FeatureCollection<SimpleFeatureType, SimpleFeature> col) {
+        this.col = col
+        this.iter = col.features()
+    }
+
     /**
      * Create a new Cursor with a FeatureCollection and a Layer
      * @param col The GeoTools FeatureCollection
@@ -97,4 +106,10 @@ class Cursor implements Iterator{
         iter.close()
     }
 
+    /**
+     * Reset and read the Features again.
+     */
+    void reset() {
+        iter = col.features()
+    }
 }
