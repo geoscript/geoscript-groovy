@@ -17,6 +17,8 @@ import org.geotools.renderer.label.LabelCacheImpl
 import org.geotools.renderer.lite.LabelCache
 import org.geotools.renderer.lite.RendererUtilities
 import org.geotools.renderer.lite.StreamingRenderer
+import org.geotools.referencing.factory.epsg.CartesianAuthorityFactory
+import org.geotools.referencing.crs.DefaultGeographicCRS
 
 /**
  * The GeoScript Map for rendering Layers as Images
@@ -281,6 +283,12 @@ class Map {
                         return
                     }
                 }
+            }
+            // Apply a default Projection or GeoTools will throw Exceptions
+            // Should this be EPSG:4326 or
+            // CartesianAuthorityFactory.GENERIC_2D
+            if (p == null || p.crs == null) {
+                p = new Projection(DefaultGeographicCRS.WGS84)
             }
             b = new Bounds(b.l, b.b, b.r, b.t, p)
         }
