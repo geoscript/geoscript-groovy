@@ -483,12 +483,16 @@ class Layer {
             }
         }
         // Else if it is a FeatureCollection
-        else if (o instanceof FeatureCollection) {
+        else if (o instanceof FeatureCollection || o instanceof Cursor) {
             Transaction t = new DefaultTransaction("addTransaction")
             try {
                 FeatureStore<SimpleFeatureType, SimpleFeature> store = (FeatureStore)fs
                 store.transaction = t
-                store.addFeatures(o as FeatureCollection)
+                if (o instanceof FeatureCollection) {
+                    store.addFeatures(o as FeatureCollection)
+                } else {
+                    store.addFeatures((o as Cursor).col)
+                }
                 t.commit()
             }
             catch (Exception e) {
