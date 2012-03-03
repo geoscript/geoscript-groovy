@@ -254,15 +254,15 @@ class Color extends Expression {
     /**
      * The shared ColorBrewer instance
      */
-    private static ColorBrewer colorBrewer;
+    private static ColorBrewer colorBrewer
 
     /**
      * Initiate and load ColorBrewer if necessary
      */
     private static void loadColorBrewer() {
         if (colorBrewer == null) {
-            colorBrewer = new ColorBrewer();
-            colorBrewer.loadPalettes();
+            colorBrewer = new ColorBrewer()
+            colorBrewer.loadPalettes()
         }
     }
 
