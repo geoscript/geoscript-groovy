@@ -101,6 +101,21 @@
             <artifactId>gt-swing</artifactId>
             <version>${gt.version}</version>
         </dependency>
+		<dependency>
+			<groupId>org.geotools</groupId>
+			<artifactId>gt-process</artifactId>
+			<version>${gt.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.geotools</groupId>
+			<artifactId>gt-process-feature</artifactId>
+			<version>${gt.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.geotools</groupId>
+			<artifactId>gt-process-geometry</artifactId>
+			<version>${gt.version}</version>
+		</dependency>
         <dependency>
             <groupId>org.geoscript</groupId>
             <artifactId>geocss_2.9.1</artifactId>
