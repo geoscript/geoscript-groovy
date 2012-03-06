@@ -23,7 +23,27 @@ import geoscript.geom.GeometryCollection
 import geoscript.geom.Point
 
 /**
- * A Process
+ * A Process is a way of packaging spatial algorithms.  You can create a GeoScript Process by name and get access
+ * to all of the built in GeoTool's Processes:
+ * <code><pre>
+ * def p = new Process("gs:Bounds")
+ * Map results = p.execute(["features": layer])
+ * </pre></code>
+ * Or you can create a new Process using a Groovy Closure:
+ * <code><pre>
+ * Process p = new Process("convexhull",
+ *   "Create a convexhull around the features",
+ *   [features: geoscript.layer.Cursor],
+ *   [result: geoscript.layer.Cursor],
+ *   { inputs ->
+ *       def geoms = new GeometryCollection(inputs.features.collect{f -> f.geom})
+ *       def output = new Layer()
+ *       output.add([geoms.convexHull])
+ *       [result: output]
+ *   }
+ * )
+ * Map results = p.execute(["features": layer])
+ * </pre></code>
  * @author Jared Erickson
  */
 class Process {
