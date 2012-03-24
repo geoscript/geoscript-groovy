@@ -6,7 +6,31 @@ import java.awt.image.BufferedImage
 import javax.swing.JFrame
 
 /**
- * A Color Expression and a set of Color Utilities.
+ * A Color Expression and a set of Color Utilities used in the Style module.
+ * You can create a Color from an RGB String
+ * <pre><code>
+ * new Color("0,255,0")
+ * </code></pre>
+ * or from a CSS color name:
+ * <pre><code>
+ * new Color("silver")
+ * </code></pre>
+ * or from a hexadecimal:
+ * <pre><code>
+ * new Color("#00ff00")
+ * </code></pre>
+ * or from a RGB List:
+ * <pre><code>
+ * new Color([0,255,0])
+ * </code></pre>
+ * or from a RGB Map:
+ * <pre><code>
+ * new Color([r: 0, g: 255, b: 0, a: 125])
+ * </code></pre>
+ * or from a HSL Map:
+ * <pre><code>
+ * new Color([h: 0, s: 1.0, l: 0.5])
+ * </code></pre>
  * @author Jared Erickson
  */
 class Color extends Expression {

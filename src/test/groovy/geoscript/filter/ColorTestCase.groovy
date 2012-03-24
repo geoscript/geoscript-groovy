@@ -42,7 +42,7 @@ class ColorTestCase {
 
     @Test void getColor() {
 
-        // ColorUtil
+        // java.awt.Color
         assertColorsEqual java.awt.Color.BLACK, Color.getColor(java.awt.Color.BLACK)
 
         // RGB String
