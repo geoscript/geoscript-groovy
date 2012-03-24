@@ -119,12 +119,12 @@ class ProcessTestCase {
         Map results = p.execute(["features": layer])
         assertTrue results.containsKey("result")
         assertTrue results.result instanceof geoscript.geom.Geometry
-        assertEquals 95, (results.result as Geometry).numGeometries
+        assertEquals 39, (results.result as Geometry).numGeometries
 
         results = p.execute(["features": layer.getCursor("STATE_NAME = 'Washington' OR STATE_NAME = 'Oregon'")])
         assertTrue results.containsKey("result")
         assertTrue results.result instanceof geoscript.geom.Geometry
-        assertEquals 4, (results.result as Geometry).numGeometries
+        assertEquals 3, (results.result as Geometry).numGeometries
     }
     
     @Test void convexHullClosureProcess() {
