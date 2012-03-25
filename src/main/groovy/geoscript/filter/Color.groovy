@@ -94,6 +94,22 @@ class Color extends Expression {
     }
 
     /**
+     * Create a new darker Color
+     * @return A new Color
+     */
+    Color darker() {
+        new Color(getColor(this.value).darker())
+    }
+
+    /**
+     * Create a new brighter Color
+     * @return A new Color
+     */
+    Color brighter() {
+        new Color(getColor(this.vaule).brighter())
+    }
+    
+    /**
      * Interpolate a List of Colors between this Color and the given Color
      * @param color The other Color
      * @param n The number of Colors
@@ -114,13 +130,21 @@ class Color extends Expression {
     }
 
     /**
+     * Get a java.awt.Color for this Color
+     * @return A java.awt.Color
+     */
+    java.awt.Color asColor() {
+        java.awt.Color.decode(this.value)
+    }
+    
+    /**
      * Interpolate a List Colors between the start and end Color
      * @param start The start Color
      * @param end The end Color
      * @param n The number of Colors
      * @return A List of Colors
      */
-    static interpolate(Color start, Color end, int n = 10) {
+    static List interpolate(Color start, Color end, int n = 10) {
         start.interpolate(end, n)
     }
 
@@ -130,7 +154,7 @@ class Color extends Expression {
      * @param color A Object convertable to a Color
      * @return a Color or null
      */
-    static java.awt.Color getColor(def color) {
+    private static java.awt.Color getColor(def color) {
         // Color: Color.BLACK, new Color(255,255,255)
         if (color instanceof java.awt.Color) {
             return color
@@ -254,25 +278,25 @@ class Color extends Expression {
      * Generate a random color
      * @return A Color
      */
-    static java.awt.Color getRandom() {
+    static Color getRandom() {
         def random = new java.util.Random()
         int red = random.nextInt(256)
         int green = random.nextInt(256)
         int blue = random.nextInt(256)
-        new java.awt.Color(red,green,blue)
+        new Color([red,green,blue])
     }
 
     /**
      * Get a random pastel color
      * @return A Color
      */
-    static java.awt.Color getRandomPastel() {
+    static Color getRandomPastel() {
         java.util.Random random = new java.util.Random()
         int i = 128
         int r = random.nextInt(i)
         int g = random.nextInt(i)
         int b = random.nextInt(i)
-        new java.awt.Color(r,g,b)
+        new Color([r,g,b])
     }
 
     /**
@@ -335,7 +359,7 @@ class Color extends Expression {
             count = palette.maxColors
         }
         if (palette != null) {
-            colors.addAll(palette.getColors(Math.min(palette.maxColors, count)).toList())
+            colors.addAll(palette.getColors(Math.min(palette.maxColors, count)).toList().collect{c -> new Color(c)})
         }
         colors
     }

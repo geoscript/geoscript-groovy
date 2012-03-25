@@ -73,7 +73,7 @@ class UniqueValues extends Composite {
 
             // Make sure color is a java.awt.Color
             if (color instanceof String) {
-                color = Color.getColor(color)
+                color = new Color(color)
             }
 
             // Increment our counter

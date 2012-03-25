@@ -225,7 +225,7 @@ class Map {
             backgroundColor = "white"
         }
         if (backgroundColor != null) {
-            g.color = Color.getColor(backgroundColor)
+            g.color = new Color(backgroundColor).asColor()
             g.fillRect(0,0,width,height)
         }
         setUpRendering()

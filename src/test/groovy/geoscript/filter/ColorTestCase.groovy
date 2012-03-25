@@ -85,25 +85,25 @@ class ColorTestCase {
     }
 
     @Test void getRandom() {
-        java.awt.Color c1 = Color.getRandom()
+        Color c1 = Color.getRandom()
         assertNotNull c1
-        assertTrue c1 instanceof java.awt.Color
+        assertTrue c1 instanceof Color
 
-        java.awt.Color c2 = Color.getRandom()
+        Color c2 = Color.getRandom()
         assertNotNull c2
-        assertTrue c2 instanceof java.awt.Color
+        assertTrue c2 instanceof Color
 
         assertFalse c1.equals(c2)
     }
 
     @Test void getRandomPastel() {
-        java.awt.Color c1 = Color.getRandomPastel()
+        Color c1 = Color.getRandomPastel()
         assertNotNull c1
-        assertTrue c1 instanceof java.awt.Color
+        assertTrue c1 instanceof Color
 
-        java.awt.Color c2 = Color.getRandomPastel()
+        Color c2 = Color.getRandomPastel()
         assertNotNull c2
-        assertTrue c2 instanceof java.awt.Color
+        assertTrue c2 instanceof Color
 
         assertFalse c1.equals(c2)
     }
@@ -131,6 +131,7 @@ class ColorTestCase {
 
         // 5 Greens
         List colors = Color.getPaletteColors("Greens", 5)
+        colors.each{c -> assertTrue c instanceof Color}
         assertTrue(colors.size() == 5)
 
         // 11 RdYlGn

@@ -68,11 +68,11 @@ class Gradient extends Composite {
         // If the colors argument is a String treat it
         // like a Palette
         if (colors instanceof String) {
-            colors = Color.getPaletteColors(colors) as java.awt.Color[]
+            colors = Color.getPaletteColors(colors).collect{c -> c.asColor()} as java.awt.Color[]
         }
         else {
             colors = colors.collect{c ->
-                Color.getColor(c)
+                new Color(c).asColor()
             } as java.awt.Color[]
         }
 
