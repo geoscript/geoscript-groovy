@@ -12,6 +12,8 @@ import com.vividsolutions.jts.operation.buffer.BufferOp
 import com.vividsolutions.jts.awt.FontGlyphReader
 import com.vividsolutions.jts.operation.overlay.snap.GeometrySnapper
 import geoscript.geom.io.*
+import com.vividsolutions.jts.geom.PrecisionModel
+import com.vividsolutions.jts.precision.GeometryPrecisionReducer
 
 /**
  * The base class for other Geomtries.
@@ -692,7 +694,31 @@ class Geometry {
     Geometry snap(Geometry other, double distance) {
         new GeometryCollection(GeometrySnapper.snap(this.g, other.g, distance).collect{Geometry.wrap(it)})
     }
-    
+
+    /**
+     * Reduce the precision of this Geometry.
+     * @param options Options can include scale (used when type is 'fixed'), pointwise (whether the reductions occurs
+     * pointwise or not), or removecollapsed (whether collapsed geometries should be removed)
+     * @param type The precision model type (fixed, floating, or floating_single)
+     * @return A new Geometry
+     */
+    Geometry reducePrecision(Map options = [:], String type = "floating") {
+        def precisionModel = null;
+        if (type.equalsIgnoreCase("fixed")) {
+            precisionModel = new PrecisionModel(options.get("scale",100))
+        } else if (type.equalsIgnoreCase("floating")) {
+            precisionModel = new PrecisionModel(PrecisionModel.FLOATING)
+        } else if (type.equalsIgnoreCase("floating_single")) {
+            precisionModel = new PrecisionModel(PrecisionModel.FLOATING_SINGLE)
+        } else {
+            throw new IllegalArgumentException("Unsupported Precision Model Type: '" + type + "'!");
+        }
+        def reducer = new GeometryPrecisionReducer(precisionModel)
+        reducer.setPointwise(options.get("pointwise", false))
+        reducer.setRemoveCollapsedComponents(options.get("removecollapsed", false))
+        Geometry.wrap(reducer.reduce(this.g))
+    }
+
     /**
      * Get the sub Geometry at the specified index.  This
      * allows support for Groovy's multiple assignment.
