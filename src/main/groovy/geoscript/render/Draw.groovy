@@ -8,7 +8,6 @@ import geoscript.style.Style
 import geoscript.style.Symbolizer
 import geoscript.workspace.Memory
 import java.awt.image.BufferedImage
-import geoscript.geom.Point
 
 /**
  * Easily draw Geometry, Feature, and Layers to an image or interactive App.

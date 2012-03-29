@@ -123,7 +123,7 @@ class Feature {
      */
     Bounds getBounds() {
         Bounds b = getGeom().bounds
-        new Bounds(b.west, b.south, b.east, b.north, schema.proj)
+        new Bounds(b.minX, b.minY, b.maxX, b.maxY, schema.proj)
     }
 
     /**

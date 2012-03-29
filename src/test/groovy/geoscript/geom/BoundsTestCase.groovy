@@ -40,44 +40,24 @@ class BoundsTestCase {
         assertNull b7.proj
     }
 	
-    @Test void l() {
+    @Test void minX() {
         Bounds b = new Bounds(1,2,3,4)
-        assertEquals 1.0, b.l, 0.0
+        assertEquals 1.0, b.minX, 0.0
     }
 
-    @Test void west() {
+    @Test void minY() {
         Bounds b = new Bounds(1,2,3,4)
-        assertEquals 1.0, b.west, 0.0
+        assertEquals 2.0, b.minY, 0.0
     }
 
-    @Test void b() {
+    @Test void maxX() {
         Bounds b = new Bounds(1,2,3,4)
-        assertEquals 2.0, b.b, 0.0
-    }
-
-    @Test void south() {
-        Bounds b = new Bounds(1,2,3,4)
-        assertEquals 2.0, b.south, 0.0
-    }
-
-    @Test void r() {
-        Bounds b = new Bounds(1,2,3,4)
-        assertEquals 3.0, b.r, 0.0
-    }
-
-    @Test void east() {
-        Bounds b = new Bounds(1,2,3,4)
-        assertEquals 3.0, b.east, 0.0
+        assertEquals 3.0, b.maxX, 0.0
     }
 	
-    @Test void t() {
+    @Test void maxY() {
         Bounds b = new Bounds(1,2,3,4)
-        assertEquals 4.0, b.t, 0.0
-    }
-
-    @Test void north() {
-        Bounds b = new Bounds(1,2,3,4)
-        assertEquals 4.0, b.north, 0.0
+        assertEquals 4.0, b.maxY, 0.0
     }
 
     @Test void getWidth() {
@@ -126,10 +106,10 @@ class BoundsTestCase {
 
         int c = 0;
         b.quadTree(0,2,{bounds ->
-            assertEquals(bounds.west, quads[c][0], 0.1)
-            assertEquals(bounds.south, quads[c][1], 0.1)
-            assertEquals(bounds.east, quads[c][2], 0.1)
-            assertEquals(bounds.north, quads[c][3], 0.1)
+            assertEquals(bounds.minX, quads[c][0], 0.1)
+            assertEquals(bounds.minY, quads[c][1], 0.1)
+            assertEquals(bounds.maxX, quads[c][2], 0.1)
+            assertEquals(bounds.maxY, quads[c][3], 0.1)
             c++
         })
     }
@@ -138,10 +118,10 @@ class BoundsTestCase {
         Bounds b = new Bounds(1,2,3,4)
         Bounds b2 = b.expandBy(10)
         assertEquals b, b2
-        assertEquals(-9, b.west, 0.0)
-        assertEquals(-8, b.south, 0.0)
-        assertEquals(13, b.east, 0.0)
-        assertEquals(14, b.north, 0.0)
+        assertEquals(-9, b.minX, 0.0)
+        assertEquals(-8, b.minY, 0.0)
+        assertEquals(13, b.maxX, 0.0)
+        assertEquals(14, b.maxY, 0.0)
     }
 
     @Test void expand() {
@@ -149,19 +129,19 @@ class BoundsTestCase {
         Bounds b2 = new Bounds(8,8,20,20)
         Bounds b3 = b1.expand(b2)
         assertEquals b1, b3
-        assertEquals(1, b3.west, 0.0)
-        assertEquals(1, b3.south, 0.0)
-        assertEquals(20, b3.east, 0.0)
-        assertEquals(20, b3.north, 0.0)
+        assertEquals(1, b3.minX, 0.0)
+        assertEquals(1, b3.minY, 0.0)
+        assertEquals(20, b3.maxX, 0.0)
+        assertEquals(20, b3.maxY, 0.0)
     }
 
     @Test void scale() {
         Bounds b1 = new Bounds(5,5,10,10)
         Bounds b2 = b1.scale(2)
-        assertEquals(2.5, b2.west, 0.0)
-        assertEquals(2.5, b2.south, 0.0)
-        assertEquals(12.5, b2.east, 0.0)
-        assertEquals(12.5, b2.north, 0.0)
+        assertEquals(2.5, b2.minX, 0.0)
+        assertEquals(2.5, b2.minY, 0.0)
+        assertEquals(12.5, b2.maxX, 0.0)
+        assertEquals(12.5, b2.maxY, 0.0)
 
     }
 
@@ -180,10 +160,10 @@ class BoundsTestCase {
     @Test void reproject() {
         Bounds b1 = new Bounds(-111, 44.7, -110, 44.9, "EPSG:4326")
         Bounds b2 = b1.reproject("EPSG:26912")
-        assertEquals(500000, b2.west as int)
-        assertEquals(4949625, b2.south as int)
-        assertEquals(579225, b2.east as int)
-        assertEquals(4972328, b2.north as int)
+        assertEquals(500000, b2.minX as int)
+        assertEquals(4949625, b2.minY as int)
+        assertEquals(579225, b2.maxX as int)
+        assertEquals(4972328, b2.maxY as int)
     }
 
     @Test void string() {

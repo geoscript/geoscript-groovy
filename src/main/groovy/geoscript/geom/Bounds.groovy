@@ -41,30 +41,30 @@ class Bounds {
     }
 
     /**
-     * Create a new Bounds with west, south, east, and north coordinates.
+     * Create a new Bounds with minX, minY, maxX, and maxY coordinates.
      * <p><code>Bounds b = new Bounds(1,2,3,4)</code></p>
-     * @param west The left/west most coordinate (minX)
-     * @param south the bottom/south most coordinate (minY)
-     * @param east The right/east most coordinate (maxX)
-     * @param north The top/north most coordinate (maxY)
+     * @param minX The left/west most coordinate (minX)
+     * @param minY the bottom/minY most coordinate (minY)
+     * @param maxX The right/maxX most coordinate (maxX)
+     * @param maxY The top/maxY most coordinate (maxY)
      */
-    Bounds(double west, double south, double east, double north) {
-        this(west, south, east, north, null)
+    Bounds(double minX, double minY, double maxX, double maxY) {
+        this(minX, minY, maxX, maxY, null)
     }
 	
     /**
-     * Create a new Bounds with west, south, east, and north coordinates
+     * Create a new Bounds with minX, minY, maxX, and maxY coordinates
      * and a Projection.
      * <p><code>Bounds b = new Bounds(1,2,3,4, new Projection("EPSG:2927"))</code></p>
      * <p><code>Bounds b = new Bounds(1,2,3,4, "EPSG:2927")</code></p>
-     * @param west The left/west most coordinate (minX)
-     * @param south the bottom/south most coordinate (minY)
-     * @param east The right/east most coordinate (maxX)
-     * @param north The top/north most coordinate (maxY)
+     * @param minX The left/minX most coordinate (minX)
+     * @param minY the bottom/minY most coordinate (minY)
+     * @param maxX The right/maxX most coordinate (maxX)
+     * @param maxY The top/maxY most coordinate (maxY)
      * @param proj The Projection can either be a Projection or a String
      */
-    Bounds(double west, double south, double east, double north, def proj) {
-        this(new ReferencedEnvelope(west, east, south, north, new Projection(proj).crs))
+    Bounds(double minX, double minY, double maxX, double maxY, def proj) {
+        this(new ReferencedEnvelope(minX, maxX, minY, maxY, new Projection(proj).crs))
     }
 
     /**
@@ -97,19 +97,10 @@ class Bounds {
     }
 
     /**
-     * Get the left most coordinate (minX)
-     * @return The left most coordinate (minX)
-     */
-    @Deprecated
-    double getL() {
-        west
-    }
-	
-    /**
      * Get the left/west most coordinate (minX)
      * @return The left/west most coordinate (minX)
      */
-    double getWest() {
+    double getMinX() {
         env.minX()
     }
 
@@ -117,16 +108,7 @@ class Bounds {
      * Get the right/east most coordinate (maxX)
      * @return The right/east most coordinate (maxX)
      */
-    @Deprecated
-    double getR() {
-        east
-    }
-
-    /**
-     * Get the right/east most coordinate (maxX)
-     * @return The right/east most coordinate (maxX)
-     */
-    double getEast() {
+    double getMaxX() {
         env.maxX()
     }
 
@@ -134,16 +116,7 @@ class Bounds {
      * Get the bottom/south most coordinate (minY)
      * @return The bottom/south most coordinate (minY)
      */
-    @Deprecated
-    double getB() {
-        south
-    }
-
-    /**
-     * Get the bottom/south most coordinate (minY)
-     * @return The bottom/south most coordinate (minY)
-     */
-    double getSouth() {
+    double getMinY() {
         env.minY()
     }
 
@@ -151,16 +124,7 @@ class Bounds {
      * Get the top/north most coordinate (maxY)
      * @return The top/north most coordinate (maxY)
      */
-    @Deprecated
-    double getT() {
-        north
-    }
-
-    /**
-     * Get the top/north most coordinate (maxY)
-     * @return The top/north most coordinate (maxY)
-     */
-    double getNorth() {
+    double getMaxY() {
         env.maxY()
     }
 
@@ -216,7 +180,7 @@ class Bounds {
     Bounds scale(double factor) {
         double w = width * (factor - 1) / 2
         double h = height * (factor - 1) / 2
-        new Bounds(west - w, south - h, east + w, north + h)
+        new Bounds(minX - w, minY - h, maxX + w, maxY + h)
     }
 
 
@@ -254,7 +218,7 @@ class Bounds {
      * @return A Polygon
      */
     Polygon getPolygon() {
-        new Polygon([west, south], [west, north], [east, north], [east, south], [west, south])
+        new Polygon([minX, minY], [minX, maxY], [maxX, maxY], [maxX, minY], [minX, minY])
     }
     
     /**
@@ -266,11 +230,11 @@ class Bounds {
         double dx = width * res
         double dy = height * res
         List bounds = []
-        double y = south
-        while (y < north) {
-            double x = west
-            while (x < east) {
-                bounds.add(new Bounds(x,y,Math.min(x + dx, east), Math.min(y+dy, north), proj))
+        double y = minY
+        while (y < maxY) {
+            double x = minX
+            while (x < maxX) {
+                bounds.add(new Bounds(x,y,Math.min(x + dx, maxX), Math.min(y+dy, maxY), proj))
                 x += dx
             }
             y += dy
@@ -289,11 +253,11 @@ class Bounds {
         Projection p = getProj()
         for(int level = start; level < stop; level++) {
             double factor = Math.pow(2, level)
-            double dx = (this.east - this.west) / factor
-            double dy = (this.north - this.south) / factor
-            double minx = this.west
+            double dx = (this.maxX - this.minX) / factor
+            double dy = (this.maxY - this.minY) / factor
+            double minx = this.minX
             for(int x = 0; x < factor; ++x) {
-                double miny = this.south
+                double miny = this.minY
                 for(int y = 0; y < factor; ++y) {
                     closure(new Bounds(minx, miny, minx + dx, miny + dy, p))
                     miny += dy
@@ -356,12 +320,12 @@ class Bounds {
         if (b.width == 0 || b.height == 0) {
             if (b.height > 0) {
                 double h = b.height / 2.0
-                b = new Bounds(b.west - h, b.south, b.east + h, b.north, b.proj)
+                b = new Bounds(b.minX - h, b.minY, b.maxX + h, b.maxY, b.proj)
             } else if (b.width > 0) {
                 double w = b.width / 2.0
-                b = new Bounds(b.west, b.south - w, b.east, b.north + w, b.proj)
+                b = new Bounds(b.minX, b.minY - w, b.maxX, b.maxY + w, b.proj)
             } else {
-                def e = new Point(b.west, b.south).buffer(0.1).envelopeInternal
+                def e = new Point(b.minX, b.minY).buffer(0.1).envelopeInternal
                 b = new Bounds(e.minX, e.minY, e.maxX, e.maxY, proj)
             }
         }
@@ -369,8 +333,8 @@ class Bounds {
     }
 
     /**
-     * Get a value from this Bounds at the given index (west = 0, south = 1,
-     * east = 2, north = 3).
+     * Get a value from this Bounds at the given index (minX = 0, minY = 1,
+     * maxX = 2, maxY = 3).
      * <p><code>Bounds b = new Bounds(1,2,3,4)</code></p>
      * <p><code>def w = b[0]</code></p>
      * <p><code>def (w,s,e,n) = b</code></p>
@@ -378,13 +342,13 @@ class Bounds {
      */
     Object getAt(int index) {
         if (index == 0) {
-            west
+            minX
         } else if (index == 1) {
-            south
+            minY
         } else if (index == 2) {
-            east
+            maxX
         } else if (index == 3) {
-            north
+            maxY
         } else {
             null
         }
@@ -492,6 +456,6 @@ class Bounds {
      * @return The string representation
      */
     String toString() {
-        "(${west},${south},${east},${north}${if (proj != null){',' + proj.id } else {''}})"
+        "(${minX},${minY},${maxX},${maxY}${if (proj != null){',' + proj.id } else {''}})"
     }
 }

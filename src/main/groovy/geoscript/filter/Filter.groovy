@@ -210,7 +210,7 @@ class Filter {
      * @return A Filter
      */
     static Filter bbox(String fieldName = "the_geom", Bounds bounds) {
-        new Filter("BBOX(${fieldName}, ${bounds.l},${bounds.b},${bounds.r},${bounds.t})")
+        new Filter("BBOX(${fieldName}, ${bounds.minX},${bounds.minY},${bounds.maxX},${bounds.maxY})")
     }
 
     /**

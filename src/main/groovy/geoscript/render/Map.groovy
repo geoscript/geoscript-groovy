@@ -155,7 +155,7 @@ class Map {
         // If the Bounds doesn't have a Projection
         // assume it's the same as the Map
         if (bounds.proj == null) {
-            bounds = new Bounds(bounds.l, bounds.b, bounds.r, bounds.t, getProj())
+            bounds = new Bounds(bounds.minX, bounds.minY, bounds.maxX, bounds.maxY, getProj())
         }
         context.setAreaOfInterest(bounds.env, bounds.proj?.crs)
     }
@@ -290,7 +290,7 @@ class Map {
             if (p == null || p.crs == null) {
                 p = new Projection(DefaultGeographicCRS.WGS84)
             }
-            b = new Bounds(b.l, b.b, b.r, b.t, p)
+            b = new Bounds(b.minX, b.minY, b.maxX, b.maxY, p)
         }
         setBounds(b)
     }
@@ -314,11 +314,11 @@ class Map {
         }
         double deltaX = w / scale - mapWidth
         double deltaY = h / scale - mapHeight
-        double l = mapBounds.l - deltaX / 2D
-        double r = mapBounds.r + deltaX / 2D
-        double b = mapBounds.b - deltaY / 2D
-        double t = mapBounds.t + deltaY / 2D
-        return new Bounds(l, b, r, t, mapBounds.proj)
+        double minX = mapBounds.minX - deltaX / 2D
+        double maxX = mapBounds.maxX + deltaX / 2D
+        double minY = mapBounds.minY - deltaY / 2D
+        double maxY = mapBounds.maxY + deltaY / 2D
+        return new Bounds(minX, minY, maxX, maxY, mapBounds.proj)
     }
 
     /**

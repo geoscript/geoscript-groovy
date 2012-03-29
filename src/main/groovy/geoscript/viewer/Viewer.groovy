@@ -151,8 +151,8 @@ class Viewer {
         }
 
         ShapeWriter shapeWriter = new ShapeWriter({Coordinate mapCoordinate, Point2D shape ->
-            double imageX = (1 - (bounds.r - mapCoordinate.x) / bounds.width) * imageWidth
-            double imageY = ((bounds.t - mapCoordinate.y) / bounds.height) * imageHeight
+            double imageX = (1 - (bounds.maxX - mapCoordinate.x) / bounds.width) * imageWidth
+            double imageY = ((bounds.maxY - mapCoordinate.y) / bounds.height) * imageHeight
             shape.setLocation(imageX,imageY);
         } as PointTransformation, shapeFactory)
 
