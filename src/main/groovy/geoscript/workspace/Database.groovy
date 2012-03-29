@@ -7,7 +7,7 @@ import geoscript.layer.Layer
 
 /**
  * A Workspace that is a Database
- * @author jericks
+ * @author Jared Erickson
  */
 class Database extends Workspace {
 
