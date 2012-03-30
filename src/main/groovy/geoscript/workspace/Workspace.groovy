@@ -47,10 +47,18 @@ class Workspace {
      * Get a List of Layer names
      * @return A List of Layer names
      */
-    List<String> getLayers() {
+    List<String> getNames() {
         ds.typeNames.collect{it.toString()}
     }
 
+    /**
+     * Get a List of Layers
+     * @return A List of Layers
+     */
+    List<Layer> getLayers() {
+        getNames().collect{name -> get(name)}
+    }
+    
     /**
      * Get a Layer by name
      * @param The Layer name

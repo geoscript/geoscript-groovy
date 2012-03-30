@@ -17,5 +17,5 @@ println("Field name: ${f.name} Field Type: ${f.typ}")
 // Every Layer has a workspace which is a collection of layers
 def ws = shp.workspace
 println("Workspace: ${ws}")
-println("Layers: ${ws.layers}")
+println("Layers: ${ws.names}")
 

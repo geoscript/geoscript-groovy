@@ -28,6 +28,17 @@ class DirectoryTestCase {
 
     }
 
+    @Test void getNames() {
+        File file = new File(getClass().getClassLoader().getResource("states.shp").toURI()).parentFile
+        assertNotNull(file)
+        Directory dir = new Directory(file)
+        assertNotNull(dir)
+        println dir.names
+        assertEquals 1, dir.names.size()
+        assertEquals "[states]", dir.names.toString()
+        assertTrue dir.names[0] instanceof String
+    }
+
     @Test void getLayers() {
         File file = new File(getClass().getClassLoader().getResource("states.shp").toURI()).parentFile
         assertNotNull(file)
@@ -36,8 +47,9 @@ class DirectoryTestCase {
         println dir.layers
         assertEquals 1, dir.layers.size()
         assertEquals "[states]", dir.layers.toString()
+        assertTrue dir.layers[0] instanceof Layer
     }
-
+    
     @Test void get() {
         File file = new File(getClass().getClassLoader().getResource("states.shp").toURI()).parentFile
         assertNotNull(file)

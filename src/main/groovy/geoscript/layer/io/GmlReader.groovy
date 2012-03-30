@@ -34,7 +34,7 @@ class GmlReader implements Reader {
         def fc = parser.parse(input)
         Workspace ws = new Memory()
         fc.feature.each{f -> ws.ds.addFeatures(f)}
-        List<Layer> layers = ws.layers.collect {name -> ws.get(name)}
+        List<Layer> layers = ws.layers
         if (layers.size() > 1) {
             return layers
         } else {

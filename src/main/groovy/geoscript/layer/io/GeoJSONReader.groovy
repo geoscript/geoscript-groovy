@@ -23,7 +23,7 @@ class GeoJSONReader implements Reader {
         def featureCollection = featureJSON.readFeatureCollection(input)
         geoscript.workspace.Workspace ws = new geoscript.workspace.Memory()
         ws.ds.addFeatures(featureCollection)
-        return ws.get(ws.layers[0])
+        return ws.layers[0]
     }
 
     /**
