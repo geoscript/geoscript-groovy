@@ -28,7 +28,7 @@ class DrawTestCase {
         Geometry geom = new Point(0,0).buffer(0.2)
         File file = File.createTempFile("draw_geometry_",".png")
         println "Drawing Geometry: ${file}"
-        draw(geom, sym, geom.bounds.scale(1.1), [250,250], file, "png")
+        draw(geom, style: sym, bounds: geom.bounds.scale(1.1), size: [250,250], out: file, format: "png")
     }
 
     @Test void drawGeometries() {
@@ -37,7 +37,7 @@ class DrawTestCase {
         List geometries = (1..10).collect{geom.buffer(it)}
         File file = File.createTempFile("draw_geometries_",".png")
         println "Drawing Geometries: ${file}"
-        draw(geometries, sym, new GeometryCollection(geometries).bounds.scale(1.1), [250,250], file, "png")
+        draw(geometries, style: sym, bounds: new GeometryCollection(geometries).bounds.scale(1.1), size: [250,250], out: file, format: "png")
     }
 
     @Test void drawFeature() {
@@ -46,7 +46,7 @@ class DrawTestCase {
         Symbolizer sym = new Stroke('navy', 0.1)
         File file = File.createTempFile("draw_feature_",".png")
         println "Drawing Feature: ${file}"
-        draw(feature, sym, feature.geom.bounds.scale(1.1), [250,250], file, "png")
+        draw(feature, style: sym, bounds: feature.geom.bounds.scale(1.1), size: [250,250], out: file, format: "png")
     }
 
     @Test void drawLayer() {
@@ -56,7 +56,7 @@ class DrawTestCase {
         layer.style = sym
         File file = File.createTempFile("draw_layer_",".png")
         println "Drawing Layer: ${file}"
-        draw(layer, layer.bounds.scale(1.1), [250,250], file, "png")
+        draw(layer, bounds: layer.bounds.scale(1.1), size: [250,250], out: file, format: "png")
     }
 
     @Test void drawGeometryToImage() {
@@ -64,7 +64,7 @@ class DrawTestCase {
         Geometry geom = new Point(0,0).buffer(0.2)
         File file = File.createTempFile("draw_geometry_",".png")
         println "Drawing Geometry to Image: ${file}"
-        def image = drawToImage(geom, sym, geom.bounds.scale(1.1), [250,250])
+        def image = drawToImage(geom, style: sym, bounds: geom.bounds.scale(1.1), size: [250,250])
         assertNotNull(image)
         ImageIO.write(image, "png", file)
     }
@@ -75,7 +75,7 @@ class DrawTestCase {
         List geometries = (1..10).collect{geom.buffer(it)}
         File file = File.createTempFile("draw_geometries_",".png")
         println "Drawing Geometries to Image: ${file}"
-        def image = drawToImage(geometries, sym, new GeometryCollection(geometries).bounds.scale(1.1), [250,250])
+        def image = drawToImage(geometries, style: sym, bounds: new GeometryCollection(geometries).bounds.scale(1.1), size: [250,250])
         assertNotNull(image)
         ImageIO.write(image, "png", file)
     }
@@ -86,7 +86,7 @@ class DrawTestCase {
         Symbolizer sym = new Stroke('navy', 0.1)
         File file = File.createTempFile("draw_feature_",".png")
         println "Drawing Feature to Image: ${file}"
-        def image = drawToImage(feature, sym, feature.geom.bounds.scale(1.1), [250,250])
+        def image = drawToImage(feature, style: sym, bounds: feature.geom.bounds.scale(1.1), size: [250,250])
         assertNotNull(image)
         ImageIO.write(image, "png", file)
     }
@@ -98,7 +98,7 @@ class DrawTestCase {
         layer.style = sym
         File file = File.createTempFile("draw_layer_",".png")
         println "Drawing Layer to Image: ${file}"
-        def image = drawToImage(layer, layer.bounds.scale(1.1), [250,250])
+        def image = drawToImage(layer, bounds: layer.bounds.scale(1.1), size: [250,250])
         assertNotNull(image)
         ImageIO.write(image, "png", file)
     }
