@@ -127,6 +127,24 @@ class Symbolizer implements Style, Cloneable {
     }
 
     /**
+     * Write this Symbolizer to a SLD File
+     * @param file The SLD File
+     */
+    void asSLD(File file) {
+        def writer = new SLDWriter()
+        writer.write(this, file)
+    }
+
+    /**
+     * Get this Symbolizer as an SLD String
+     * @return An SLD String
+     */
+    String getSld() {
+        def writer = new SLDWriter()
+        writer.write(this)
+    }
+
+    /**
      * Combine this Symbolizer with another.
      * @param other The other Symbolizer
      * @return A new Composite Symbolizer
