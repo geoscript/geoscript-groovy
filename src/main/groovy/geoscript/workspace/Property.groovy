@@ -43,6 +43,6 @@ class Property extends Workspace {
      */
     @Override
     String toString() {
-        return "Property[${ds.info.source.path}]"
+        return "Property[${new File(ds.info.source.path).absolutePath}]"
     }
 }

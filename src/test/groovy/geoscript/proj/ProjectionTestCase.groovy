@@ -43,9 +43,9 @@ class ProjectionTestCase {
   UNIT["degree", 0.017453292519943295], 
   AXIS["Geodetic longitude", EAST], 
   AXIS["Geodetic latitude", NORTH], 
-  AUTHORITY["EPSG","4326"]]"""
+  AUTHORITY["EPSG","4326"]]""".replaceAll(" ","").replaceAll("\n","")
 
-        String actual = p1.wkt
+        String actual = p1.wkt.replaceAll(" ","").replaceAll(System.getProperty("line.separator"),"")
         
         assertEquals expected, actual
 

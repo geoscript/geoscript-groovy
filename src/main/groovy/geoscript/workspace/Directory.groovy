@@ -40,7 +40,7 @@ class Directory extends Workspace {
      * @return The string representation
      */
     String toString() {
-        return "Directory[${ds.getInfo().getSource().getPath()}]"
+        return "Directory[${new File(ds.info.source.path).absolutePath}]"
     }
 
 }

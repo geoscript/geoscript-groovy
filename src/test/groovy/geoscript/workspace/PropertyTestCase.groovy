@@ -20,7 +20,7 @@ class PropertyTestCase {
         Property property = new Property(dir)
         assertNotNull(property)
         assertEquals "Property", property.format
-        assertEquals "Property[${dir}/]".toString(), property.toString()
+        assertEquals "Property[${dir}]".toString(), property.toString()
 
         assertEquals 1, property.layers.size()
         assertEquals "[points]", property.layers.toString()

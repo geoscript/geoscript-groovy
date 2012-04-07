@@ -19,12 +19,12 @@ class DirectoryTestCase {
         Directory dir = new Directory(file)
         assertNotNull(dir)
         assertEquals "Directory", dir.format
-        assertEquals "Directory[${file}/]".toString(), dir.toString()
+        assertEquals "Directory[${file}]".toString(), dir.toString()
 
         Directory dir2 = new Directory(file.absolutePath)
         assertNotNull(dir2)
         assertEquals "Directory", dir2.format
-        assertEquals "Directory[${file}/]".toString(), dir2.toString()
+        assertEquals "Directory[${file}]".toString(), dir2.toString()
 
     }
 
