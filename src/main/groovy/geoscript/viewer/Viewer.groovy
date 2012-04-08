@@ -34,7 +34,7 @@ import java.awt.*
  * Viewer.render(p.buffer(100))
  * </pre></code>
  * Or you can plot a List of Geometries.
- * <code<pre>
+ * <code><pre>
  * import geoscript.geom.Point
  * import geoscript.viewer.Viewer
  * Point p = new Point(10,10)
