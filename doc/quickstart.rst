@@ -35,7 +35,7 @@ Install GeoScript
 
      unzip geoscript-groovy0.97.zip
 
-#. Add the geoscript-groovy0.95\bin directory to your path::
+#. Add the geoscript-groovy0.97\bin directory to your path::
 
      export PATH=geoscript-groovy0.97\bin:$PATH
 
