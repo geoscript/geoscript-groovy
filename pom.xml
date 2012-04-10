@@ -202,11 +202,18 @@
                     </execution>
                 </executions>
             </plugin>
+			<!-- Code quality: mvn codenarc:codenarc -->
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>codenarc-maven-plugin</artifactId>
                 <version>0.17-1</version>
             </plugin>
+			<!-- Unit test covoerage: mvn cobertura:cobertura -->
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>cobertura-maven-plugin</artifactId>
+				<version>2.5.1</version>
+			</plugin>
         </plugins>
     </build>
     <reporting>
@@ -216,6 +223,11 @@
                 <artifactId>codenarc-maven-plugin</artifactId>
                 <version>0.17-1</version>
             </plugin>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>cobertura-maven-plugin</artifactId>
+				<version>2.5.1</version>
+			</plugin>
         </plugins>
     </reporting>
     <properties>
