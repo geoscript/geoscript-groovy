@@ -2,7 +2,6 @@ package geoscript.geom
 
 import com.vividsolutions.jts.geom.Polygon as JtsPolygon
 import com.vividsolutions.jts.geom.LinearRing as JtsLinearRing
-import com.vividsolutions.jts.geom.Coordinate
 
 /**
  * A Polygon Geometry.

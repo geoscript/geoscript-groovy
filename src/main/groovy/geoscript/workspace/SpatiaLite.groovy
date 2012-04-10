@@ -1,6 +1,5 @@
 package geoscript.workspace
 
-import java.io.File
 import org.geotools.data.DataStore
 import org.geotools.data.spatialite.SpatiaLiteDataStoreFactory
 

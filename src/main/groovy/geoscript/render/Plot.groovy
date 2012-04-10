@@ -7,7 +7,6 @@ import geoscript.geom.Geometry
 import geoscript.layer.Layer
 import java.awt.image.BufferedImage
 import javax.swing.JFrame
-import javax.swing.WindowConstants
 import org.geotools.renderer.chart.GeometryDataset
 import org.geotools.renderer.chart.GeometryRenderer
 import org.jfree.chart.ChartPanel
@@ -193,7 +192,7 @@ class Plot {
             ChartUtilities.writeChartAsJPEG(out, chart, size[0] as int, size[1] as int)
         }
         else {
-            throw new Exception("Unsupported image format! Only PNGs and JPEGs are supported!")
+            throw new IllegalArgumentException("Unsupported image format! Only PNGs and JPEGs are supported!")
         }
     }
 

@@ -1,10 +1,10 @@
 package geoscript.filter
 
 import geoscript.feature.Field
-import geoscript.filter.Expression
 
 /**
  * Property is an Expression that is a Field value
+ * @author Jared Erickson
  */
 class Property extends Expression {
 

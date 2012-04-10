@@ -6,8 +6,6 @@ import org.opengis.feature.type.GeometryDescriptor
 import org.geotools.feature.NameImpl
 import org.geotools.feature.simple.SimpleFeatureTypeBuilder
 import org.geotools.data.DataUtilities
-import com.vividsolutions.jts.geom.Geometry as JtsGeometry
-import geoscript.geom.*
 import geoscript.proj.Projection
 
 /**
@@ -143,7 +141,7 @@ class Schema {
                 return new Field(ad.localName, Schema.lookUpAlias(ad.type.binding.name))
             }
         }
-        throw new Exception("No such field ${name}".toString())
+        throw new IllegalArgumentException("No such field ${name}".toString())
     }
 
     /**

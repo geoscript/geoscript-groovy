@@ -12,7 +12,6 @@ import org.geotools.data.FeatureSource
 import org.geotools.data.DefaultQuery
 import org.geotools.data.Transaction
 import org.geotools.data.FeatureStore
-import org.geotools.data.FeatureReader
 import org.geotools.data.DefaultTransaction
 import org.geotools.feature.FeatureCollections
 import org.geotools.feature.FeatureCollection
@@ -750,7 +749,7 @@ class Layer {
         } else if (method.equalsIgnoreCase("log") || method.equalsIgnoreCase("logarithmic")) {
             fx = {x -> delta * Math.log(x+1) / Math.log(2)}
         } else {
-            throw new Exception("Interpolation method '${method}' is not supported!")
+            throw new IllegalArgumentException("Interpolation method '${method}' is not supported!")
         }
 
         Closure fy = {x -> min + fx(x)}

@@ -124,10 +124,20 @@ class Projection {
      * Does this Projection equal the other?
      * @return Whether this Projection equal the other?
      */
+    @Override
     boolean equals(Object other) {
         if (!(other instanceof Projection))
         return false;
         return CRS.equalsIgnoreMetadata(crs, other.crs)
+    }
+
+    /**
+     * Get the hashcode of this Projection
+     * @return The hashcode
+     */
+    @Override
+    int hashCode() {
+        crs.hashCode()
     }
 
     /**

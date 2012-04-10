@@ -1,7 +1,5 @@
 package geoscript.workspace
 
-import java.net.URI
-import java.io.File
 import org.geotools.data.directory.DirectoryDataStore
 import org.geotools.data.shapefile.ShapefileDataStoreFactory
 

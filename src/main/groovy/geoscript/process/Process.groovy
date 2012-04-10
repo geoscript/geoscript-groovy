@@ -12,15 +12,8 @@ import org.geotools.data.Parameter
 import java.awt.RenderingHints
 import org.opengis.util.ProgressListener
 import org.geotools.factory.GeoTools
-import geoscript.layer.Shapefile
 import geoscript.layer.Layer
-import com.vividsolutions.jts.geom.Geometry as JtsGeometry
-import org.geotools.geometry.jts.ReferencedEnvelope
 import geoscript.geom.Bounds
-import geoscript.geom.Geometry
-import org.geotools.feature.FeatureCollection
-import geoscript.geom.GeometryCollection
-import geoscript.geom.Point
 
 /**
  * A Process is a way of packaging spatial algorithms.  You can create a GeoScript Process by name and get access

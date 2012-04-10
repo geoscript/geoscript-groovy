@@ -6,7 +6,6 @@ import org.jdom.Document
 import org.jdom.Element
 import org.jdom.Namespace
 import java.util.regex.Pattern
-import java.util.regex.Pattern
 import java.util.regex.Matcher
 
 /**

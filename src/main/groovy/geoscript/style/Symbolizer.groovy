@@ -1,8 +1,5 @@
 package geoscript.style
 
-import geoscript.feature.Feature
-import geoscript.layer.Layer
-import geoscript.layer.Cursor
 import geoscript.filter.Filter
 import geoscript.style.io.SLDWriter
 import org.geotools.styling.Style as GtStyle
@@ -167,6 +164,7 @@ class Symbolizer implements Style, Cloneable {
      * @param rule The GeoTools Rule
      */
     protected void prepare(Rule rule) {
+        // This is usually override by subclasses
     }
 
     /**

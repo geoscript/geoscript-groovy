@@ -280,10 +280,20 @@ class Bounds {
      * @param other The other Bounds
      * @return Whether this Bounds and the other Bounds are equal
      */
+    @Override
     boolean equals(Object other) {
         other instanceof Bounds && env.equals(other.env)
     }
-    
+
+    /**
+     * Get the hash code for this Bounds
+     * @return The hash code for this Bounds
+     */
+    @Override
+    int hashCode() {
+        env.hashCode()
+    }
+
     /**
      * Determine whether this Bounds contains the other Bounds
      * @param other The other Bounds

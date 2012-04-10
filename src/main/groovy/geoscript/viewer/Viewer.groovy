@@ -10,6 +10,13 @@ import geoscript.geom.Bounds
 import geoscript.geom.Geometry
 import geoscript.geom.GeometryCollection
 import geoscript.viewer.Panel
+import org.geotools.renderer.chart.GeometryDataset
+import org.geotools.renderer.chart.GeometryRenderer
+import org.jfree.chart.ChartPanel
+import org.jfree.chart.ChartUtilities
+import org.jfree.chart.JFreeChart
+import org.jfree.chart.plot.XYPlot
+
 import java.awt.geom.Point2D
 import java.awt.image.BufferedImage
 import java.util.List
@@ -17,12 +24,6 @@ import javax.imageio.ImageIO
 import javax.swing.JFrame
 import javax.swing.JPanel
 import javax.swing.WindowConstants
-import org.geotools.renderer.chart.GeometryDataset
-import org.geotools.renderer.chart.GeometryRenderer
-import org.jfree.chart.ChartPanel
-import org.jfree.chart.ChartUtilities
-import org.jfree.chart.JFreeChart
-import org.jfree.chart.plot.XYPlot
 import java.awt.*
 
 /**
@@ -31,7 +32,7 @@ import java.awt.*
  * import geoscript.geom.Point
  * import geoscript.viewer.Viewer
  * Point p = new Point(10,10)
- * Viewer.render(p.buffer(100))
+ * Viewer.draw(p.buffer(100))
  * </pre></code>
  * Or you can plot a List of Geometries.
  * <code><pre>
@@ -61,7 +62,7 @@ class Viewer {
      * @param geom The Geometry to List of Geometries to render
      */
     static void draw(java.util.Map options = [:], def geom) {
-        if (!(geom instanceof List)) {
+        if (!(geom instanceof java.util.List)) {
             geom = [geom]
         }
         Panel panel = new Panel(options, geom)
@@ -108,7 +109,7 @@ class Viewer {
         Graphics2D g2d = image.createGraphics()
         Bounds bounds = new GeometryCollection(geom).bounds
         bounds.expandBy(bounds.width * 0.10)
-        geom = geom instanceof List ? geom : [geom]
+        geom = geom instanceof java.util.List ? geom : [geom]
         draw(options, g2d, geom)
         g2d.dispose()
         image
@@ -205,7 +206,7 @@ class Viewer {
             g2d.draw(shp)
             if (drawCoordinates) {
                 g2d.setStroke(new BasicStroke(strokeWidth))
-                List coords = geometry.coordinates
+                java.util.List coords = geometry.coordinates
                 if (coords.size() > 1) {
                     coords.each{c ->
                         Shape coordinateShp = shapeWriter.toShape(geometry.g.getFactory().createPoint(c))
@@ -236,7 +237,7 @@ class Viewer {
      * @param geom A Geometry (or List of Geometries)
      */
     static void plot(java.util.Map options = [:], def geom) {
-        List size = options.get("size", [500,500])
+        java.util.List size = options.get("size", [500,500])
         def panel = new ChartPanel(createPlot(geom))
         def frame = new JFrame("GeoScript Geometry Plot")
         try {
@@ -264,7 +265,7 @@ class Viewer {
      */
     static BufferedImage plotToImage(java.util.Map options = [:], def geom) {
         def chart = createPlot(options, geom)
-        List size = options.get("size", [500,500])
+        java.util.List size = options.get("size", [500,500])
         chart.createBufferedImage(size[0] as int, size[1] as int)
     }
 
@@ -282,7 +283,7 @@ class Viewer {
      * @param file The File
      */
     static void plotToFile(java.util.Map options = [:], def geom, File file) {
-        List size = options.get("size", [500,500])
+        java.util.List size = options.get("size", [500,500])
         def chart = createPlot(options, geom)
         String fileName = file.absolutePath
         String imageFormat = fileName.substring(fileName.lastIndexOf(".")+1)
@@ -293,7 +294,7 @@ class Viewer {
             ChartUtilities.saveChartAsJPEG(file, chart, size[0] as int, size[1] as int)
         }
         else {
-            throw new Exception("Unsupported image format! Only PNGs and JPEGs are supported!")
+            throw new IllegalArgumentException("Unsupported image format! Only PNGs and JPEGs are supported!")
         }
     }
 
@@ -312,7 +313,7 @@ class Viewer {
      * @return The JFreeChart
      */
     private static JFreeChart createPlot(java.util.Map options = [:], def geom) {
-        if (!(geom instanceof List)) {
+        if (!(geom instanceof java.util.List)) {
             geom = [geom]
         }
         def dataset = new GeometryDataset(geom.collect{g->g.g} as JtsGeometry[])
@@ -334,7 +335,7 @@ private static class Panel extends JPanel {
     /**
      * The List of Geometries to render
      */
-    private List<Geometry> geoms
+    private java.util.List<Geometry> geoms
 
     /**
      * The Map of options
@@ -345,7 +346,7 @@ private static class Panel extends JPanel {
      * Create a new Panel with the List of Geometries to render
      * @param geoms The List of Geometries to render
      */
-    Panel(java.util.Map options = [:], List<Geometry> geoms) {
+    Panel(java.util.Map options = [:], java.util.List<Geometry> geoms) {
         super()
         // Geometries
         this.geoms = geoms
@@ -359,7 +360,6 @@ private static class Panel extends JPanel {
      */
     void paintComponent(Graphics gr) {
         super.paintComponent(gr)
-        List size = [getWidth(), getHeight()]
         Graphics2D g2d = (Graphics2D)gr
         Bounds bounds = new GeometryCollection(geoms).bounds
         bounds.expandBy(bounds.width * 0.10)

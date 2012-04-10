@@ -9,7 +9,6 @@ import javax.swing.JToolBar
 import org.geotools.swing.JMapPane
 import org.geotools.swing.control.JMapStatusBar
 import org.geotools.swing.action.*
-import geoscript.layer.Shapefile
 
 /**
  * A complex GUI for viewing a Map.
