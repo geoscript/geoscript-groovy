@@ -22,7 +22,11 @@ fi
 
 CLASSPATH=""
 for jar in `ls $LIBDIR`; do
-  CLASSPATH=$CLASSPATH:$LIBDIR/$jar
+  if [ "$CLASSPATH" == "" ]; then
+    CLASSPATH=$LIBDIR/$jar
+  else
+    CLASSPATH=$CLASSPATH:$LIBDIR/$jar
+  fi
 done
 
-$GROOVY -cp $CLASSPATH "$@"
+"$GROOVY" -cp $CLASSPATH "$@"
