@@ -30,7 +30,7 @@ class Gml2Reader implements Reader {
         SAXBuilder builder = new SAXBuilder()
         Document document = builder.build(new StringReader(prepareXmlString(str)))
         Element root = document.rootElement
-        read(root)
+        readElement(root)
     }
 
     /**
@@ -38,7 +38,7 @@ class Gml2Reader implements Reader {
      * @param The JDOM Element
      * @return A Geometry
      */
-    private Geometry read(Element element) {
+    private Geometry readElement(Element element) {
 
         String name = element.name
 
@@ -52,21 +52,21 @@ class Gml2Reader implements Reader {
             return new LinearRing(getPoints(element.getChild("coordinates",ns).text))
         }
         else if (name.equalsIgnoreCase("Polygon")) {
-            LinearRing shell = read(element.getChild("outerBoundaryIs",ns).getChild("LinearRing",ns)) as LinearRing
-            List<LinearRing> holes = element.getChildren("innerBoundaryIs",ns).collect{e->read(e.getChild("LinearRing",ns)) as LinearRing}
+            LinearRing shell = readElement(element.getChild("outerBoundaryIs",ns).getChild("LinearRing",ns)) as LinearRing
+            List<LinearRing> holes = element.getChildren("innerBoundaryIs",ns).collect{e->readElement(e.getChild("LinearRing",ns)) as LinearRing}
             return new Polygon(shell, holes)
         }
         else if (name.equalsIgnoreCase("MultiPoint")) {
-            return new MultiPoint(element.getChildren("pointMember",ns).collect{e->read(e.getChild("Point",ns))})
+            return new MultiPoint(element.getChildren("pointMember",ns).collect{e->readElement(e.getChild("Point",ns))})
         }
         else if (name.equalsIgnoreCase("MultiLineString")) {
-            return new MultiLineString(element.getChildren("lineStringMember",ns).collect{e->read(e.getChild("LineString",ns))})
+            return new MultiLineString(element.getChildren("lineStringMember",ns).collect{e->readElement(e.getChild("LineString",ns))})
         }
         else if (name.equalsIgnoreCase("MultiPolygon")) {
-            return new MultiPolygon(element.getChildren("polygonMember",ns).collect{e->read(e.getChild("Polygon",ns))})
+            return new MultiPolygon(element.getChildren("polygonMember",ns).collect{e->readElement(e.getChild("Polygon",ns))})
         }
         else if (name.equalsIgnoreCase("GeometryCollection")) {
-            return new GeometryCollection(element.getChildren("geometryMember",ns).collect{e->read(e.getChildren()[0])})
+            return new GeometryCollection(element.getChildren("geometryMember",ns).collect{e->readElement(e.getChildren()[0])})
         }
         else {
             return null

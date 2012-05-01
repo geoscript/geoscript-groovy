@@ -24,7 +24,7 @@ class KmlReader implements Reader {
         SAXBuilder builder = new SAXBuilder()
         Document document = builder.build(new StringReader(str))
         Element root = document.rootElement
-        read(root)
+        readElement(root)
     }
 
     /**
@@ -32,7 +32,7 @@ class KmlReader implements Reader {
      * @param The JDOM Element
      * @return A Geometry
      */
-    private Geometry read(Element element) {
+    private Geometry readElement(Element element) {
         
         String name = element.name
         def ns = element.namespace
@@ -54,7 +54,7 @@ class KmlReader implements Reader {
             return new Polygon(shell, holes)
         }
         else if (name.equalsIgnoreCase("MultiGeometry")) {
-            List<Geometry> geoms = element.getChildren().collect{e->read(e)}
+            List<Geometry> geoms = element.getChildren().collect{e->readElement(e)}
             if (!(false in geoms.collect{g -> g instanceof Point})) {
                 return new MultiPoint(geoms)
             }

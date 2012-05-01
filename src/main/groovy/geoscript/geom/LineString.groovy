@@ -110,7 +110,7 @@ class LineString extends Geometry {
      */
     Point interpolatePoint(double position) {
         def indexedLine = new com.vividsolutions.jts.linearref.LengthIndexedLine(g)
-        double length = length
+        double length = getLength()
         def c = indexedLine.extractPoint(position * length)
         new Point(c.x, c.y)
     }
@@ -123,8 +123,8 @@ class LineString extends Geometry {
     double locatePoint(Point point) {
         def indexedLine = new com.vividsolutions.jts.linearref.LengthIndexedLine(g)
         double position = indexedLine.indexOf(point.g.coordinate)
-        double length = length
-        double percentAlong = position / length
+        double len = getLength()
+        double percentAlong = position / len
         percentAlong
     }
     

@@ -9,7 +9,6 @@ import com.vividsolutions.jts.geom.Coordinate
 import geoscript.geom.Bounds
 import geoscript.geom.Geometry
 import geoscript.geom.GeometryCollection
-import geoscript.viewer.Panel
 import org.geotools.renderer.chart.GeometryDataset
 import org.geotools.renderer.chart.GeometryRenderer
 import org.jfree.chart.ChartPanel
@@ -325,44 +324,45 @@ class Viewer {
         def plot = new XYPlot(dataset, dataset.domain, dataset.range, renderer)
         new JFreeChart(plot)
     }
-}
 
-/**
- * The JPanel used to render Geometry
- */
-private static class Panel extends JPanel {
 
     /**
-     * The List of Geometries to render
+     * The JPanel used to render Geometry
      */
-    private java.util.List<Geometry> geoms
+    private static class Panel extends JPanel {
 
-    /**
-     * The Map of options
-     */
-    private Map options
+        /**
+         * The List of Geometries to render
+         */
+        private java.util.List<Geometry> geoms
 
-    /**
-     * Create a new Panel with the List of Geometries to render
-     * @param geoms The List of Geometries to render
-     */
-    Panel(java.util.Map options = [:], java.util.List<Geometry> geoms) {
-        super()
-        // Geometries
-        this.geoms = geoms
-        // Options
-        this.options = options
-    }
+        /**
+         * The Map of options
+         */
+        private Map options
 
-    /**
-     * Override the paintComponent method to render the Geometries
-     * @param gr The Graphics context
-     */
-    void paintComponent(Graphics gr) {
-        super.paintComponent(gr)
-        Graphics2D g2d = (Graphics2D)gr
-        Bounds bounds = new GeometryCollection(geoms).bounds
-        bounds.expandBy(bounds.width * 0.10)
-        Viewer.draw(options, g2d, geoms)
+        /**
+         * Create a new Panel with the List of Geometries to render
+         * @param geoms The List of Geometries to render
+         */
+        Panel(java.util.Map options = [:], java.util.List<Geometry> geoms) {
+            super()
+            // Geometries
+            this.geoms = geoms
+            // Options
+            this.options = options
+        }
+
+        /**
+         * Override the paintComponent method to render the Geometries
+         * @param gr The Graphics context
+         */
+        void paintComponent(Graphics gr) {
+            super.paintComponent(gr)
+            Graphics2D g2d = (Graphics2D)gr
+            Bounds bounds = new GeometryCollection(geoms).bounds
+            bounds.expandBy(bounds.width * 0.10)
+            Viewer.draw(options, g2d, geoms)
+        }
     }
 }
