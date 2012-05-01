@@ -251,6 +251,12 @@
         <system>github</system>
         <url>https://github.com/jericks/geoscript-groovy/issues</url>
     </issueManagement>
+    <mailingLists>
+		<mailingList>
+			<name>GeoScript Google Group</name>
+			<archive>http://groups.google.com/group/geoscript</archive>
+		</mailingList>
+	</mailingLists>
     <developers>
         <developer>
             <id>jericks</id>
