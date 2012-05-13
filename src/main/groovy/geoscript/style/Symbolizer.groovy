@@ -14,6 +14,7 @@ import org.geotools.styling.LineSymbolizer
 import org.geotools.styling.PolygonSymbolizer
 import org.geotools.styling.TextSymbolizer
 import geoscript.filter.Color
+import org.geotools.styling.FeatureTypeStyle
 
 /**
  * A Base class for all Symbolizers
@@ -168,6 +169,15 @@ class Symbolizer implements Style, Cloneable {
     }
 
     /**
+     * Prepare the GeoTools FeatureTypeStyle and Rule by applying this Symbolizer.
+     * @param fts The GeoTools FeatureTypeStyle
+     * @param rule The GeoTools Rule
+     */
+    protected void prepare(FeatureTypeStyle fts, Rule rule) {
+        prepare(rule)
+    }
+
+    /**
      * Apply this Symbolizer to the GeoTools Symbolizer
      * @param sym The GeoTools Symbolizer
      */
@@ -270,7 +280,7 @@ class Symbolizer implements Style, Cloneable {
                     rule.filter = fil.filter
 
                     syms.each {Symbolizer sym ->
-                        sym.prepare(rule)
+                        sym.prepare(fts, rule)
                     }
                 }
             }

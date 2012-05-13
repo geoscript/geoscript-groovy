@@ -10,6 +10,7 @@ import org.geotools.filter.FunctionExpressionImpl
 import org.geotools.filter.FunctionFactory
 import org.opengis.feature.type.Name
 import org.opengis.filter.expression.Literal
+import org.geotools.feature.NameImpl
 
 /**
  * A GeoScript Function either wraps an existing GeoTools Function or an CQL String.
@@ -76,6 +77,28 @@ class Function extends Expression {
      */
     Function(String cql, Closure closure) {
         this(registerAndCreateFunction(cql, closure))
+    }
+
+    /**
+     * Create a Rendering Transformation Function from a Process and a variable List of Functions.
+     * @param process The GeoScript Process
+     * @param functions A variable List of Functions
+     */
+    Function(geoscript.process.Process process, Function... functions) {
+        this(createProcessFunction(process, functions))
+    }
+
+    /**
+     * Create a Rendering Transformation Function from a Process and a variable List of Functions.
+     * @param process The GeoScript Process
+     * @param functions A variable List of Functions
+     */
+    private static GtFunction createProcessFunction(geoscript.process.Process process, Function... functions) {
+        def pff = new org.geotools.process.function.ProcessFunctionFactory()
+        def names = process.name.split(":")
+        def nm = new NameImpl(names[0], names[1])
+        def f = pff.function(nm, functions.collect{it.expr}, null)
+        f
     }
 
     /**

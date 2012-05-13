@@ -9,6 +9,9 @@ import geoscript.style.Shape
 import geoscript.style.Transform
 import geoscript.style.Label
 import geoscript.style.Font
+import geoscript.process.Process
+import geoscript.geom.GeometryCollection
+import geoscript.layer.Layer
 
 /**
  * The Function UnitTest
@@ -90,6 +93,36 @@ class FunctionTestCase {
         statesShp.style = (new Fill("#E6E6E6") + new Stroke("#4C4C4C",0.5)) +
                 (new Shape("#66CCff", 6, "circle").stroke("#004080") + new Transform("my_centroid(the_geom)")).zindex(1) +
                 (new Label("STATE_ABBR").font(new Font("normal", "bold", 10, "serif")).fill(new Fill("#004080")) + new Transform("lcase(STATE_ABBR)")).zindex(2)
+
+        def map = new geoscript.render.Map(width: 600, height: 400, fixAspectRatio: true)
+        map.proj = "EPSG:4326"
+        map.addLayer(statesShp)
+        map.bounds = statesShp.bounds
+        map.render(imgFile)
+    }
+    
+    @Test void processFunction() {
+        Process p = new Process("convexhull",
+                "Create a convexhull around the features",
+                [features: geoscript.layer.Cursor],
+                [result: geoscript.layer.Cursor],
+                { inputs ->
+                    def geoms = new GeometryCollection(inputs.features.collect{f -> f.geom})
+                    def output = new Layer()
+                    output.add([geoms.convexHull])
+                    [result: output]
+                }
+        )
+        Function f = new Function(p, new Function("parameter", new Expression("features")))
+
+        File imgFile = File.createTempFile("states_function", ".png")
+        println "Rendering map with Rendering Function: ${imgFile}"
+        File file = new File(getClass().getClassLoader().getResource("states.shp").toURI())
+        def statesShp = new Shapefile(file)
+
+        def sym = (new Stroke("red",0.4) + new Transform(f, Transform.RENDERING)).zindex(1) + (new Fill("#E6E6E6") + new Stroke("#4C4C4C",0.5)).zindex(2)
+        assertTrue sym.sld.contains("<ogc:Function name=\"convexhull\">")
+        statesShp.style = sym
 
         def map = new geoscript.render.Map(width: 600, height: 400, fixAspectRatio: true)
         map.proj = "EPSG:4326"
