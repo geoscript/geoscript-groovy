@@ -93,6 +93,10 @@ class SymbolizerTestCase {
         def polygonSym = Symbolizer.getDefault("polygon")
         assertTrue polygonSym instanceof Composite
         assertEquals 2, polygonSym.parts.size()
+
+        def pointSym2 = Symbolizer.getDefault("point", "black")
+        assertTrue pointSym instanceof Shape
+        assertEquals pointSym2.color.hex, "#000000"
     }
 
     @Test void buildString() {

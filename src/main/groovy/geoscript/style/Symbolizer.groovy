@@ -296,23 +296,23 @@ class Symbolizer implements Style, Cloneable {
      */
     static Symbolizer getDefault(String geometryType, def color = Color.getRandomPastel()) {
         def sym;
-        java.awt.Color baseColor = Color.getColor(color)
-        java.awt.Color darkerColor = baseColor.darker()
+        Color baseColor = new Color(color)
+        Color darkerColor = baseColor.darker()
         if (geometryType.toLowerCase().endsWith("point")) {
-            sym = new Shape(Color.toHex(baseColor))
+            sym = new Shape(baseColor)
         }
         else if (geometryType.toLowerCase().endsWith("linestring") 
             || geometryType.toLowerCase().endsWith("linearring")
             || geometryType.toLowerCase().endsWith("curve")) {
-            sym = new Stroke(Color.toHex(baseColor))
+            sym = new Stroke(baseColor)
         }
         else if (geometryType.toLowerCase().endsWith("polygon")) {
-            sym = new Fill(Color.toHex(baseColor)) + new Stroke(Color.toHex(darkerColor))
+            sym = new Fill(baseColor) + new Stroke(darkerColor)
         }
         else {
-            sym = new Shape(Color.toHex(baseColor)) +
-            new Fill(Color.toHex(baseColor)) +
-            new Stroke(Color.toHex(darkerColor))
+            sym = new Shape(baseColor) +
+            new Fill(baseColor) +
+            new Stroke(darkerColor)
         }
         sym
     }
