@@ -17,5 +17,5 @@ Experimental
 
    The latest development release of GeoScript Groovy is 0.98.
 
-   `GeoScript Groovy 0.97 <http://github.com/downloads/jericks/geoscript-groovy/geoscript-groovy-0.98.zip>`_
+   `GeoScript Groovy 0.98 <http://github.com/downloads/jericks/geoscript-groovy/geoscript-groovy-0.98.zip>`_
 
