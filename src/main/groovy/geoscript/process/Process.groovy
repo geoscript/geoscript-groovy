@@ -52,7 +52,7 @@ class Process {
     private NameImpl name
 
     /**
-     * The cache GeoTools ProcessFactory
+     * The cached GeoTools ProcessFactory
      */
     private ProcessFactory factory;
 
