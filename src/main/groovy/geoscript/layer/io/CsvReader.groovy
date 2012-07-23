@@ -5,6 +5,8 @@ import au.com.bytecode.opencsv.CSVReader
 import geoscript.feature.Schema
 import geoscript.feature.Field
 import geoscript.geom.Point
+import geoscript.proj.DecimalDegrees
+import geoscript.geom.Geometry
 
 /**
  * Read a CSV String, File, or InputStream and create a Layer
@@ -85,11 +87,39 @@ class CsvReader implements Reader {
      * @return A GeoScript Layer
      */
     Layer read(InputStream input) {
-        CSVReader reader = new CSVReader(new InputStreamReader(input), separator as char, quote as char)
+        readFromReader(new InputStreamReader(input))
+    }
+
+    /**
+     * Read a GeoScript Layer from a File
+     * @param file A File
+     * @return A GeoScript Layer
+     */
+    Layer read(File file) {
+        readFromReader(new FileReader(file))
+    }
+
+    /**
+     * Read a GeoScript Layer from a String
+     * @param str A String
+     * @return A GeoScript Layer
+     */
+    Layer read(String str) {
+        readFromReader(new StringReader(str))
+    }
+
+    /**
+     * Read from java.io.Reader, parse the CSV data, and create a Layer
+     * @param input The input java.io.Reader
+     * @return A Layer
+     */
+    private Layer readFromReader(java.io.Reader input) {
+        CSVReader reader = new CSVReader(input, separator as char, quote as char)
         def cols = reader.readNext() as List
         Layer layer = null
         int xCol
         int yCol
+        boolean isWkt = false
         if (type.equalsIgnoreCase("xy")) {
             List fields = cols.collect{name ->
                 new Field(name, "String")
@@ -102,37 +132,53 @@ class CsvReader implements Reader {
         def values
         while((values = reader.readNext()) != null) {
             if (!layer) {
-                Schema schema = new Schema("csv", values.collect {v ->
-                    new Field(v, isWKT(v) ? getGeometryTypeFromWKT(v) : "String")
-                })
+                List fields = []
+                cols.eachWithIndex { c, i ->
+                    def v = values[i]
+                    def type = "String"
+                    // The user specified a column but it isn't WKT it's XY
+                    if (wktColumn && c.equalsIgnoreCase(wktColumn) && !isWKT(v)) {
+                        type = "Point"
+                    }
+                    // The user either specified a column for WKT or didn't but it
+                    // looks like wkt
+                    else if((wktColumn && c.equalsIgnoreCase(wktColumn)) || isWKT(v)) {
+                        isWkt = true
+                        wktColumn = c
+                        type = getGeometryTypeFromWKT(v)
+                    }
+                    fields.add(new Field(c, type))
+                }
+                Schema schema = new Schema("csv", fields)
                 layer = new Layer("csv", schema)
             }
-            List v = []
-            v.addAll(values)
-            if (type.equalsIgnoreCase("xy")) {
-                v.add(new Point(values[xCol] as double, values[yCol] as double))
+            // Try to turn the CSV values into a Feature, but fail
+            // gracefully by logging the error and moving to the next line
+            try {
+                Map valueMap = [:]
+                cols.eachWithIndex {c,i ->
+                    def v = values[i]
+                    if (type.equalsIgnoreCase("wkt") && c.equalsIgnoreCase(wktColumn)) {
+                        if (isWkt) {
+                            v = Geometry.fromWKT(v)
+                        } else {
+                            // Parse XY values including longitude/latitude in DMS, DDM formats
+                            v = new DecimalDegrees(v.trim()).point
+                        }
+                    }
+                    valueMap.put(c,v)
+                }
+                if (type.equalsIgnoreCase("xy")) {
+                    // Parse XY values including longitude/latitude in DMS, DDM formats
+                    Point p = new DecimalDegrees(values[xCol], values[yCol]).point
+                    valueMap.put("geom", p)
+                }
+                layer.add(valueMap)
+            } catch(Exception ex) {
+                System.err.println("Error parsing CSV: ${values}")
             }
-            layer.add(v)
         }
         return layer
-    }
-
-    /**
-     * Read a GeoScript Layer from a File
-     * @param file A File
-     * @return A GeoScript Layer
-     */
-    Layer read(File file) {
-        read(new FileInputStream(file))
-    }
-
-    /**
-     * Read a GeoScript Layer from a String
-     * @param str A String
-     * @return A GeoScript Layer
-     */
-    Layer read(String str) {
-        read(new ByteArrayInputStream(str.getBytes("UTF-8")))
     }
 
     /**

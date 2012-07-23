@@ -65,7 +65,16 @@ class CsvWriter implements Writer {
      * @param out The OutputStream
      */
     void write(Layer layer, OutputStream out) {
-        CSVWriter writer = new CSVWriter(new OutputStreamWriter(out), separator as char, quote as char)
+         writeToWriter(layer, new OutputStreamWriter(out))
+    }
+
+    /**
+     * Write the Layer to the java.io.Writer
+     * @param layer The Layer
+     * @param out The java.io.Writer
+     */
+    private void writeToWriter(Layer layer, java.io.Writer out) {
+        CSVWriter writer = new CSVWriter(out, separator as char, quote as char)
         List fields = layer.schema.fields
         def columns = []
         fields.each {fld ->
@@ -100,9 +109,9 @@ class CsvWriter implements Writer {
      * @param file The File
      */
     void write(Layer layer, File file) {
-        FileOutputStream out = new FileOutputStream(file)
-        write(layer, out)
-        out.close()
+        FileWriter writer = new FileWriter(file)
+        writeToWriter(layer, writer)
+        writer.close()
     }
 
     /**
@@ -111,10 +120,9 @@ class CsvWriter implements Writer {
      * @return A String
      */
     String write(Layer layer) {
-        ByteArrayOutputStream out = new ByteArrayOutputStream()
-        write(layer, out);
-        out.close()
-        return out.toString()
+        StringWriter writer = new StringWriter()
+        writeToWriter(layer, writer);
+        writer.close()
+        return writer.toString()
     }
-
 }

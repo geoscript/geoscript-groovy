@@ -18,7 +18,35 @@ class CsvReaderTestCase {
 """
         CsvReader reader = new CsvReader()
         Layer layer = reader.read(csv)
-        assertEquals("csv POINT (111 -47): Point, House: String, 12.5: String", layer.schema.toString())
+        assertEquals("csv geom: Point, name: String, price: String", layer.schema.toString())
+        assertEquals(2, layer.count)
+        layer.eachFeature { f ->
+            assertTrue(f.geom instanceof geoscript.geom.Point)
+        }
+    }
+
+    @Test void readWKTLines() {
+        String csv = """"geom","name","price"
+"LINESTRING (0 0, 5 5)","House","12.5"
+"LINESTRING (3 3, 12 12)","School","22.7"
+"""
+        CsvReader reader = new CsvReader("geom")
+        Layer layer = reader.read(csv)
+        assertEquals("csv geom: LineString, name: String, price: String", layer.schema.toString())
+        assertEquals(2, layer.count)
+        layer.eachFeature { f ->
+            assertTrue(f.geom instanceof geoscript.geom.LineString)
+        }
+    }
+
+    @Test void readXYInOneField() {
+        String csv = """"name","price","xy"
+"House","12.5", 111 -47
+"School","22.7",121 -45
+"""
+        CsvReader reader = new CsvReader("xy")
+        Layer layer = reader.read(csv)
+        assertEquals("csv name: String, price: String, xy: Point", layer.schema.toString())
         assertEquals(2, layer.count)
         layer.eachFeature { f ->
             assertTrue(f.geom instanceof geoscript.geom.Point)
@@ -43,6 +71,20 @@ class CsvReaderTestCase {
         String csv = """"lon"|"lat"|"name"|"price"
 "111.0"|"-47.0"|"House"|"12.5"
 "121.0"|"-45.0"|"School"|"22.7"
+"""
+        CsvReader reader = new CsvReader("lon","lat", separator: "|")
+        Layer layer = reader.read(csv)
+        assertEquals("csv lon: String, lat: String, name: String, price: String, geom: Point", layer.schema.toString())
+        assertEquals(2, layer.count)
+        layer.eachFeature { f ->
+            assertTrue(f.geom instanceof geoscript.geom.Point)
+        }
+    }
+
+    @Test void readDMS() {
+        String csv = """"lon"|"lat"|"name"|"price"
+"-122\u00B0 31' 32.2284\\" W"|"47\u00B0 12' 43.2828\\" N"|"House"|"12.5"
+"-123\u00B0 15' 21.4821\\" W"|"43\u00B0 34' 12.9857\\" N"|"School"|"22.7"
 """
         CsvReader reader = new CsvReader("lon","lat", separator: "|")
         Layer layer = reader.read(csv)
@@ -81,6 +123,20 @@ ak,10501917,?,"Thursday, June 28, 2012 02:30:58 UTC",60.0233,-152.9946,2,2.9,?,"
         Layer layer = reader.read(csv)
         assertEquals("csv FEATURE_ID: String, FEATURE_NAME: String, FEATURE_CLASS: String, STATE_ALPHA: String, STATE_NUMERIC: String, COUNTY_NAME: String, COUNTY_NUMERIC: String, PRIMARY_LAT_DMS: String, PRIM_LONG_DMS: String, PRIM_LAT_DEC: String, PRIM_LONG_DEC: String, SOURCE_LAT_DMS: String, SOURCE_LONG_DMS: String, SOURCE_LAT_DEC: String, SOURCE_LONG_DEC: String, ELEV_IN_M: String, ELEV_IN_FT: String, MAP_NAME: String, DATE_CREATED: String, DATE_EDITED: String, geom: Point", layer.schema.toString())
         assertEquals(5, layer.count)
+        layer.eachFeature { f ->
+            assertTrue(f.geom instanceof geoscript.geom.Point)
+        }
+    }
+
+    @Test void readOpenLayersText() {
+        String csv = """lat	lon	title	description	icon	iconSize	iconOffset
+48.9459301	9.6075669	Title One	Description one<br>Second line.<br><br>(click again to close)	Ol_icon_blue_example.png	24,24	0,-24
+48.9899851	9.5382032	Title Two	Description two.	Ol_icon_red_example.png	16,16	-8,-8
+"""
+        CsvReader reader = new CsvReader("lon","lat", separator: "\t")
+        Layer layer = reader.read(csv)
+        assertEquals("csv lat: String, lon: String, title: String, description: String, icon: String, iconSize: String, iconOffset: String, geom: Point", layer.schema.toString())
+        assertEquals(2, layer.count)
         layer.eachFeature { f ->
             assertTrue(f.geom instanceof geoscript.geom.Point)
         }
