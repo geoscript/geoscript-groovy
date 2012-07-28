@@ -92,8 +92,8 @@ class DecimalDegreesTestCase {
 
     @Test void toDdm() {
         def dd = new DecimalDegrees(-122.525619, 47.212023)
-        assertEquals("122\u00B0 31.5371' W, 47\u00B0 12.7214' N", dd.toDdm())
-        assertEquals("122d 31.5371m W, 47d 12.7214m N", dd.toDdm(false))
+        assertEquals("-122\u00B0 31.5371' W, 47\u00B0 12.7214' N", dd.toDdm())
+        assertEquals("-122d 31.5371m W, 47d 12.7214m N", dd.toDdm(false))
     }
 
     @Test void getPoint() {

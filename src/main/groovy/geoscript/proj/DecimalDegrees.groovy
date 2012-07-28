@@ -35,7 +35,6 @@ class DecimalDegrees {
      */
     private static final Map<String, NumberFormat> formats = [
         zero: new DecimalFormat("#"),
-        two: new DecimalFormat("#.00"),
         four: new DecimalFormat("0.0000")
     ]
 
@@ -226,8 +225,9 @@ class DecimalDegrees {
      * @return The DecimalDegrees to a DDM string
      */
     String toDdm(boolean useGlyphs = true) {
-        "${formats.zero.format(trunc(longitude))}${useGlyphs ? glyphs.degree : 'd'} ${formats.four.format(splitNumber(longitude)[1] * 60)}${useGlyphs ? glyphs.minute : 'm'} W, " +
-        "${formats.zero.format(trunc(latitude))}${useGlyphs ? glyphs.degree : 'd'} ${formats.four.format(splitNumber(latitude)[1] * 60)}${useGlyphs ? glyphs.minute : 'm'} N"
+        Map dmsMap = getDms()
+        "${formats.zero.format(dmsMap.longitude.degrees)}${useGlyphs ? glyphs.degree : 'd'} ${formats.four.format(splitNumber(longitude)[1] * 60)}${useGlyphs ? glyphs.minute : 'm'} W, " +
+        "${formats.zero.format(dmsMap.latitude.degrees)}${useGlyphs ? glyphs.degree : 'd'} ${formats.four.format(splitNumber(latitude)[1] * 60)}${useGlyphs ? glyphs.minute : 'm'} N"
     }
 
     /**
@@ -251,14 +251,5 @@ class DecimalDegrees {
         } else {
             [Integer.parseInt(n), 0.0]
         }
-    }
-
-    /**
-     * Truncate the number
-     * @param value The number
-     * @return The truncated number
-     */
-    private double trunc(double value) {
-        Math.floor(Math.abs(value))
     }
 }
