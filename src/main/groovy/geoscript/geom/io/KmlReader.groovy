@@ -7,10 +7,13 @@ import org.jdom.Document
 import org.jdom.Element
 
 /**
- * Read a Geometry from a KML String.
- * <p><code>KmlReader reader= new KmlReader()</code></p>
- * <p><code>Point point = reader.read("&lt;Point&gt;&lt;coordinates&gt;111.0,-47.0&lt;/coordinates&gt;&lt;/Point&gt;")</code></p>
- * <p><code>POINT (111 -47)</code></p>
+ * Read a {@link geoscript.geom.Geometry Geometry} from a KML String.
+ * <p><blockquote><pre>
+ * KmlReader reader = new KmlReader()
+ * {@link geoscript.geom.Point Point} point = reader.read("&lt;Point&gt;&lt;coordinates&gt;111.0,-47.0&lt;/coordinates&gt;&lt;/Point&gt;")
+ *
+ * POINT (111 -47)
+ * </pre></blockquote></p>
  * @author Jared Erickson
  */
 class KmlReader implements Reader {

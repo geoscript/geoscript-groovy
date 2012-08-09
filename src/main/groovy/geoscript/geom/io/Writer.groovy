@@ -3,7 +3,7 @@ package geoscript.geom.io
 import geoscript.geom.Geometry
 
 /**
- * Write a Geometry to a String
+ * Write a {@link geoscript.geom.Geometry Geometry} to a String
  * @author Jared Erickson
  */
 interface Writer {

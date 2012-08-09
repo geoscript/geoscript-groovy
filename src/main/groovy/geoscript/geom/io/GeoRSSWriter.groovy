@@ -33,7 +33,8 @@ import com.vividsolutions.jts.geom.Coordinate
  * will return a null value.
  * <p><blockquote><pre>
  * GeoRSSWriter writer = new GeoRSSWriter()
- * String georss = writer.write(new {@geoscript.geom.Point Point}(-71.92, 45.256))
+ * String georss = writer.write(new {@link geoscript.geom.Point Point}(-71.92, 45.256))
+ *
  * &lt;georss:point&gt;45.256 -71.92&lt;/georss:point&gt;
  * </pre></blockquote></p>
  * @author Jared Erickson

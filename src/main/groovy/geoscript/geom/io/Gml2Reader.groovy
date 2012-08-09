@@ -9,10 +9,13 @@ import java.util.regex.Pattern
 import java.util.regex.Matcher
 
 /**
- * Read a Geometry from a GML Version 2 String.
- * <p><code>Gml2Reader reader = new Gml2Reader()</code></p>
- * <p><code>Point p = reader.read("&lt;gml:Point&gt;&lt;gml:coordinates&gt;111.0,-47.0&lt;/gml:coordinates&gt;&lt;/gml:Point&gt;")</code></p>
- * <p><code>POINT (111 -47)</code></p>
+ * Read a {@link geoscript.geom.Geometry Geometry} from a GML Version 2 String.
+ * <p><blockquote><pre>
+ * Gml2Reader reader = new Gml2Reader()
+ * {@link geoscript.geom.Point Point} p = reader.read("&lt;gml:Point&gt;&lt;gml:coordinates&gt;111.0,-47.0&lt;/gml:coordinates&gt;&lt;/gml:Point&gt;")
+ *
+ * POINT (111 -47)
+ * </pre></blockquote></p>
  * @author Jared Erickson
  */
 class Gml2Reader implements Reader {

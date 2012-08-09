@@ -4,10 +4,13 @@ import geoscript.geom.Geometry
 import com.vividsolutions.jts.io.WKBWriter
 
 /**
- * Write a Geometry to a WKB hex String or byte array.
- * <p><code>WkbWriter writer = new WkbWriter()</code></p>
- * <p><code>String wkb = writer.write(new Point(111,-47)</code></p>
- * <p><code>"0000000001405BC00000000000C047800000000000"</code></p>
+ * Write a {@link geoscript.geom.Geometry Geometry} to a WKB hex String or byte array.
+ * <p><blockquote><pre>
+ * WkbWriter writer = new WkbWriter()
+ * String wkb = writer.write(new {@link geoscript.geom.Point Point}(111,-47)
+ *
+ * "0000000001405BC00000000000C047800000000000"
+ * </pre></blockquote></p>
  */
 class WkbWriter implements Writer {
 
