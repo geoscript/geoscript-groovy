@@ -87,7 +87,8 @@ class FillTestCase {
 
     @Test void recode() {
         Fill fill = new Fill(new Function("Recode(SUB_REGION,'N Eng','#6495ED')"))
-        println fill
+        assertNotNull fill
+        assertTrue(fill.color instanceof Function)
     }
 
 }
