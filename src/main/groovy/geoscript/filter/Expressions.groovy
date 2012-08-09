@@ -5,12 +5,12 @@ import org.opengis.filter.expression.Function as GtFunction
 import org.opengis.filter.expression.Expression as GtExpression
 
 /**
- * The Expressions class holds static methods for creating new Expressions (Expression, Color, Function, Property).
- * <p><pre><code>
+ * The Expressions class holds static methods for creating new Expressions ({@link Expression}, {@link Color}, {@link Function}, {@link Property}).
+ * <p><blockquote><pre>
  * import static geoscript.filter.Expressions.*
  * Expression e = expression(12)
  * Property p = property("NAME")
- * </code></pre></p>
+ * </pre></blockquote></p>
  * @author Jared Erickson
  */
 class Expressions {

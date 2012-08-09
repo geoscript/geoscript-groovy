@@ -10,6 +10,25 @@ import org.geotools.gml3.v3_2.GMLConfiguration as GML32
 
 /**
  * Write a Feature to GML.
+ * <p><blockquote><pre>
+ * {@link geoscript.feature.Schema Schema} schema = new {@link geoscript.feature.Schema Schema}("houses", [new {@link geoscript.feature.Field Field}("geom","Point"), new {@link geoscript.feature.Field Field}("name","string"), new {@link geoscript.feature.Field Field}("price","float")])
+ * {@link geoscript.feature.Feature Feature} feature = new {@link geoscript.feature.Feature Feature}([new Point(111,-47), "House", 12.5], "house1", schema)
+ * GmlWriter writer = new GmlWriter()
+ * String gml = writer.write(feature)
+ *
+ * &lt;gml:houses fid="house1" xmlns:gml="http://www.opengis.net/gml" xmlns:xlink="http://www.w3.org/1999/xlink"&gt;
+ *    &lt;gml:name&gt;House&lt;/gml:name&gt;
+ *    &lt;gml:geom&gt;
+ *       &lt;gml:Point&gt;
+ *           &lt;gml:coord&gt;
+ *               &lt;gml:X&gt;111.0&lt;/gml:X&gt;
+ *               &lt;gml:Y&gt;-47.0&lt;/gml:Y&gt;
+ *           &lt;/gml:coord&gt;
+ *       &lt;/gml:Point&gt;
+ *    &lt;/gml:geom&gt;
+ *    &lt;gml:price&gt;12.5&lt;/gml:price&gt;
+ * &lt;/gml:houses&gt;
+ * </pre></blockquote></p>
  * @author Jared Erickson
  */
 class GmlWriter implements Writer {

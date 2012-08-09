@@ -33,10 +33,13 @@ import java.util.regex.Pattern
 import java.util.regex.Matcher
 
 /**
- * A GeoRSS Simple Reader. See http://www.georss.org/simple for more details.
- * <p><code>GeoRSSReader reader = new GeoRSSReader()</code></p>
- * <p><code>Point p = reader.read("&lt;georss:point&gt;45.256 -71.92&lt;/georss:point&gt;")</code></p>
- * <p><code>POINT (-71.92 45.256)</code></p>
+ * A GeoRSS Simple Reader. See the <a href="http://www.georss.org/simple">GeoRSS spec</a> for more details.
+ * <p><blockquote><pre>
+ * GeoRSSReader reader = new GeoRSSReader()
+ * {@link geoscript.geom.Point Point} p = reader.read("&lt;georss:point&gt;45.256 -71.92&lt;/georss:point&gt;")
+ *
+ * POINT (-71.92 45.256)
+ * </pre></blockquote></p>
  * @author Jared Erickson
  */
 class GeoRSSReader implements Reader {

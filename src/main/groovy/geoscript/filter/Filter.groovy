@@ -17,15 +17,15 @@ import org.geotools.factory.GeoTools
 import org.opengis.filter.FilterFactory2
 
 /**
- * A Filter is a predicate or constraint used to match or filter Feature objects.
+ * A Filter is a predicate or constraint used to match or filter {@link geoscript.feature.Feature Feature} objects.
  * <p>You can create Filters from CQL:</p>
- * <code>
+ * <p><blockquote><pre>
  * Filter f = new Filter("name='foobar')
- * </code>
+ * </pre></blockquote></p>
  * <p>Or you can create Filters from XML:</p>
- * <code>
+ * <p><blockquote><pre>
  * Filter f = new Filter('&lt;Filter&gt;&lt;PropertyIsEqualTo&gt;&lt;PropertyName&gt;name&lt;/PropertyName&gt;&lt;Literal&gt;foobar&lt;/Literal&gt;&lt;/PropertyIsEqualTo&gt;&lt;/Filter&gt;')
- * </code>
+ * </pre></blockquote></p>
  * @author Jared Erickson
  */
 class Filter {

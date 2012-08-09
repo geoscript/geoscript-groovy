@@ -9,20 +9,20 @@ import geoscript.layer.Layer
 /**
  * A Feature contains a set of named attributes with values.
  * <p>A Feature is created from a Map of name value pairs and an identifier.</p>
- * <p><i>Without a Schema (see below) the data types are inferred).</i></p>
- * <code>
+ * <p><i>Without a {@link Schema} (see below) the data types are inferred).</i></p>
+ * <p><blockquote><pre>
  * Feature f = new Feature(['name': 'anvil', 'price': 100.0], 'widgets.1')
- * </code>
+ * </pre></blockquote></p>
  * <p>A Feature can also be created from a list of values, an identifier, and a {@link Schema}</p>
- * <code>
- * Schema s = new Schema('widgets', [['name','string'],['price','float']])
+ * <p><blockquote><pre>
+ * {@link Schema} s = new {@link Schema}('widgets', [['name','string'],['price','float']])
  * Feature f = new Feature(['anvil', 100.0], '1', s)
- * </code>
+ * </pre></blockquote></p>
  * <p>A Feature can also be created from a Map of name value pairs, an identifier, and a {@link Schema}</p>
- * <code>
- * Schema s = new Schema('widgets', [['name','string'],['price','float']])
+ * <p><blockquote><pre>
+ * {@link Schema} s = new {@link Schema}('widgets', [['name','string'],['price','float']])
  * Feature f = new Feature(['name': 'anvil', 'price': 100.0], '1', s)
- * </code>
+ * </pre></blockquote></p>
  * @author Jared Erickson
  */
 class Feature {

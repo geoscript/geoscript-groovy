@@ -15,10 +15,14 @@ import org.geotools.feature.NameImpl
 /**
  * A GeoScript Function either wraps an existing GeoTools Function or an CQL String.
  * <p>You can create a Function from CQL:</p>
- * <p><code>
+ * <p><blockquote><pre>
  * Function f = new Function("centroid(the_geom)")
- * </code></p>
- * See http://docs.geoserver.org/2.0.x/en/user/filter/function_reference.html for more
+ * </pre></blockquote></p>
+ * <p>You can also create a Function from CQL and a Closure:</p>
+ * <p><blockquote><pre>
+ * Function f = new Function("my_centroid(the_geom)", {g-> g.centroid})
+ * </pre></blockquote></p>
+ * See <a href="http://docs.geoserver.org/2.1.x/en/user/filter/function_reference.html">GeoServer's Function Reference</a> for more
  * details.
  * @author Jared Erickson
  */

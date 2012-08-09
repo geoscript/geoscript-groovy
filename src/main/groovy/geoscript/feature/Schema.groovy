@@ -11,9 +11,9 @@ import geoscript.proj.Projection
 /**
  * A Schema describes the structure of a Feature.  It is contains a name, and
  * a set of Fields.
- * <p> You can create a Schema from a name and a List of Fields</p>
+ * <p> You can create a Schema from a name and a List of {@link Field}s</p>
  * <code>
- * Schema s1 = new Schema("widgets", [new Field("geom","Point"), new Field("name","string"), new Field("price","float")])
+ * Schema s1 = new Schema("widgets", [new {@link Field}("geom","Point"), new {@link Field}("name","string"), new {@link Field}("price","float")])
  * </code>
  * <p> You can create a Schema from a name and a List of Lists which contain a name and type</p>
  * <code>

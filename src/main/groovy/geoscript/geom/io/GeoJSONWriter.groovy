@@ -5,9 +5,12 @@ import com.vividsolutions.jts.geom.Coordinate
 
 /**
  * Write a Geometry to a GeoJSON String.
- * <p><code>GeoJSONWriter writer = new GeoJSONWriter()</code></p>
- * <p><code>writer.write(new Point(111,-47))</code></p>
- * <p><code>{ "type": "Point", "coordinates": [111.0, -47.0] }</code></p>
+ * <p><blockquote><pre>
+ * GeoJSONWriter writer = new GeoJSONWriter()
+ * writer.write(new {@link geoscript.geom.Point Point}(111,-47))
+ *
+ * { "type": "Point", "coordinates": [111.0, -47.0] }
+ * </pre></blockquote></p>
  * @author Jared Erickson
  */
 class GeoJSONWriter implements Writer {

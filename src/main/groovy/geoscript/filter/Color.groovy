@@ -8,29 +8,29 @@ import javax.swing.JFrame
 /**
  * A Color Expression and a set of Color Utilities used in the Style module.
  * You can create a Color from an RGB String
- * <pre><code>
+ * <p><blockquote><pre>
  * new Color("0,255,0")
- * </code></pre>
+ * </pre></blockquote></p>
  * or from a CSS color name:
- * <pre><code>
+ * <p><blockquote><pre>
  * new Color("silver")
- * </code></pre>
+ * </pre></blockquote></p>
  * or from a hexadecimal:
- * <pre><code>
+ * <p><blockquote><pre>
  * new Color("#00ff00")
- * </code></pre>
+ * </pre></blockquote></p>
  * or from a RGB List:
- * <pre><code>
+ * <p><blockquote><pre>
  * new Color([0,255,0])
- * </code></pre>
+ * </pre></blockquote></p>
  * or from a RGB Map:
- * <pre><code>
+ * <p><blockquote><pre>
  * new Color([r: 0, g: 255, b: 0, a: 125])
- * </code></pre>
+ * </pre></blockquote></p>
  * or from a HSL Map:
- * <pre><code>
+ * <p><blockquote><pre>
  * new Color([h: 0, s: 1.0, l: 0.5])
- * </code></pre>
+ * </pre></blockquote></p>
  * @author Jared Erickson
  */
 class Color extends Expression {
