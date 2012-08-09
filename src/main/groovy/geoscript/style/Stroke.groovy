@@ -20,7 +20,7 @@ class Stroke extends Symbolizer {
     /**
      * The color in hexadecimal format (#00FF00)
      */
-    Color color
+    Expression color
 
     /**
      * The width (1, 2, 5, ect...)
@@ -69,7 +69,7 @@ class Stroke extends Symbolizer {
      */
     Stroke(def color = "#000000", def width = 1, List dash = null, def cap = null, def join = null, def opacity = 1.0) {
         super()
-        this.color = new Color(color)
+        this.color = color instanceof Expression ? color : new Color(color)
         this.width = new Expression(width)
         this.dash = dash
         this.cap = new Expression(cap)
@@ -96,7 +96,7 @@ class Stroke extends Symbolizer {
      * @param color  The color (#ffffff, red)
      */
     void setColor(def color) {
-        this.color = new Color(color)
+        this.color = color instanceof Expression ? color : new Color(color)
     }
 
     /**

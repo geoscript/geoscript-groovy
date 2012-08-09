@@ -24,7 +24,7 @@ class Shape extends Symbolizer {
     /**
      * The color (#ff000, blue, [255,255,0])
      */
-    Color color
+    Expression color
 
     /**
      * The size (6, 10, 12, ect...)
@@ -83,7 +83,7 @@ class Shape extends Symbolizer {
      */
     Shape(def color, def size = 6, def type = "circle", def opacity = 1.0, def angle = 0) {
         super()
-        this.color = new Color(color)
+        this.color = color instanceof Expression ? color : new Color(color)
         this.opacity = new Expression(opacity)
         this.size = new Expression(size)
         this.type = new Expression(type)
@@ -95,7 +95,7 @@ class Shape extends Symbolizer {
      * @param color  The color (#ffffff, red)
      */
     void setColor(def color) {
-        this.color = new Color(color)
+        this.color = color instanceof Expression ? color : new Color(color)
     }
 
     /**

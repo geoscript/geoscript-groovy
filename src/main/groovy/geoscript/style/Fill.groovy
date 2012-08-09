@@ -20,7 +20,7 @@ class Fill extends Symbolizer {
     /**
      * The Color (#ff0000, red, [0,0.,255])
      */
-    Color color
+    Expression color
 
     /**
      * The opacity (1.0 = opaque to 0.0 = transparent)
@@ -61,7 +61,7 @@ class Fill extends Symbolizer {
      */
     Fill(def color, def opacity = 1.0) {
         super()
-        this.color = new Color(color)
+        this.color = color instanceof Expression ? color : new Color(color)
         this.opacity = new Expression(opacity)
         this.icon = null
         this.hatch = null
@@ -97,7 +97,7 @@ class Fill extends Symbolizer {
      * @param color  The color (#ffffff, red)
      */
     void setColor(def color) {
-        this.color = new Color(color)
+        this.color = color instanceof Expression ? color : new Color(color)
     }
 
     /**

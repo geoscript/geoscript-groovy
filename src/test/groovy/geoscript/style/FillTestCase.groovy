@@ -4,6 +4,7 @@ import org.junit.Test
 import static org.junit.Assert.*
 import geoscript.filter.Expression
 import geoscript.filter.Color
+import geoscript.filter.Function
 
 /**
  * The Fill Unit Test
@@ -82,6 +83,11 @@ class FillTestCase {
         assertNotNull(sym.fill.graphicFill)
         assertEquals new URL("http://www.geotools.org/_static/img/geotools-logo.png"), sym.fill.graphicFill.graphicalSymbols()[0].location
         assertEquals "image/png", sym.fill.graphicFill.graphicalSymbols()[0].format
+    }
+
+    @Test void recode() {
+        Fill fill = new Fill(new Function("Recode(SUB_REGION,'N Eng','#6495ED')"))
+        println fill
     }
 
 }
