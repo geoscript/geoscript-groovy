@@ -27,4 +27,11 @@ class ExpressionTestCase {
         assertEquals "12", e.toString()
     }
 
+    @Test void fromCQL() {
+        Expression e = Expression.fromCQL("12")
+        assertTrue e.expr instanceof org.opengis.filter.expression.Literal
+        assertEquals "12", e.toString()
+
+    }
+
 }
