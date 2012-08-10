@@ -5,14 +5,22 @@ import com.vividsolutions.jts.geom.Point as JtsPoint
 
 /**
  * A MultiPoint Geometry.
- * <p>You can create a MultiPoint from a variable List of Points:</p>
- * <code>MultiPoint m = new MultiPoint(new Point(1,2),new Point(3,4))</code>
+ * <p>You can create a MultiPoint from a variable List of {@link Point}s:</p>
+ * <p><blockquote><pre>
+ * MultiPoint m = new MultiPoint(new Point(1,2),new Point(3,4))
+ * </pre></blockquote></p>
  * <p>Or from a variable List of List of Doubles:</p>
- * <code>MultiPoint m = new MultiPoint([1,2],[3,4])</code>
- * <p>Or fom a List of Points:</p>
- * <code>MultiPoint m = new MultiPoint([new Point(1,2),new Point(3,4)])</code>
+ * <p><blockquote><pre>
+ * MultiPoint m = new MultiPoint([1,2],[3,4])
+ * </pre></blockquote></p>
+ * <p>Or fom a List of {@link Point}s:</p>
+ * <p><blockquote><pre>
+ * MultiPoint m = new MultiPoint([new Point(1,2),new Point(3,4)])
+ * </pre></blockquote></p>
  * <p>Or from a List of List of Doubles:</p>
- * <code>MultiPoint m = new MultiPoint([[1,2],[3,4]])</code>
+ * <p><blockquote><pre>
+ * MultiPoint m = new MultiPoint([[1,2],[3,4]])
+ * </pre></blockquote></p>
  * @author Jared Erickson
  */
 class MultiPoint extends GeometryCollection {
@@ -26,8 +34,10 @@ class MultiPoint extends GeometryCollection {
     }
 
     /**
-     * Create a MultiPoint from a List of Points
-     * <p><code>def m = new MultiPoint(new Point(1,2),new Point(3,4))</code></p>
+     * Create a MultiPoint from a List of {@link Point}s
+     * <p><blockquote><pre>
+     * def m = new MultiPoint(new Point(1,2),new Point(3,4))
+     * </pre></blockquote></p>
      * @param points A variable List of Points
      */
     MultiPoint(Point... points) {
@@ -36,7 +46,9 @@ class MultiPoint extends GeometryCollection {
 
     /**
      * Create a MultiPoint from a List of List of Doubles
-     * <p><code>def m = new MultiPoint([1,2],[3,4])</code></p>
+     * <p><blockquote><pre>
+     * def m = new MultiPoint([1,2],[3,4])
+     * </pre></blockquote></p>
      * @param points A variable List of List of Doubles
      */
     MultiPoint(List<Double>... points) {
@@ -44,9 +56,11 @@ class MultiPoint extends GeometryCollection {
     }
 
     /**
-     * Create a MultiPoint from a List of List of Doble or a List of Points
-     * <p><code>def m = new MultiPoint([new Point(1,2),new Point(3,4)])</code></p>
-     * <p><code>def m = new MultiPoint([[1,2],[3,4]])</code></p>
+     * Create a MultiPoint from a List of List of Double or a List of {@link Point}s
+     * <p><blockquote><pre>
+     * def m = new MultiPoint([new Point(1,2),new Point(3,4)])
+     * def m = new MultiPoint([[1,2],[3,4]])
+     * </pre></blockquote></p>
      * @param points Either a List of List of Doubles of a List of Points
      */
     MultiPoint(List points) {
@@ -54,7 +68,7 @@ class MultiPoint extends GeometryCollection {
     }
 
     /**
-     * Add a Point to this MultiPoint to create another MultiPoint.
+     * Add a {@link Point} to this MultiPoint to create another MultiPoint.
      * @param point The other Point
      * @return A new MultiPoint constructed of this Point and the other Point
      */

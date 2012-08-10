@@ -6,22 +6,28 @@ import com.vividsolutions.jts.geom.LinearRing as JtsLinearRing
 /**
  * A Polygon Geometry.
  *
- * <p>You can create a Polygon with no holes by providing a LinearRing:</p>
- * <code>Polygon p = new Polygon(new LinearRing([[1,1],[4,1],[4,4],[1,1]]))</code>
- *
- * <p>Or you can create a Polygon with an exterior LinearRing and a List of hole LinearRings:</p>
- * <code>Polygon p = new Polygon(new LinearRing([1,1], [10,1], [10,10], [1,10], [1,1]), [new LinearRing([2,2], [4,2], [4,4], [2,4], [2,2]), new LinearRing([5,5], [6,5], [6,6], [5,6], [5,5])])</code>
- *
+ * <p>You can create a Polygon with no holes by providing a {@link LinearRing}:</p>
+ * <p><blockquote><pre>
+ * Polygon p = new Polygon(new LinearRing([[1,1],[4,1],[4,4],[1,1]]))
+ * </pre></blockquote></p>
+ * <p>Or you can create a Polygon with an exterior {@link LinearRing} and a List of hole {@link LinearRing}s:</p>
+ * <p><blockquote><pre>
+ * Polygon p = new Polygon(new LinearRing([1,1], [10,1], [10,10], [1,10], [1,1]), [new LinearRing([2,2], [4,2], [4,4], [2,4], [2,2]), new LinearRing([5,5], [6,5], [6,6], [5,6], [5,5])])
+ * </pre></blockquote></p>
  * <p>Or you can create a Polygon with no holes by providing a variable List of Doubles:<p>
- * <code>Polygon p = new Polygon([1,2],[3,4],[5,6],[1,2])</code>
- *
+ * <p><blockquote><pre>
+ * Polygon p = new Polygon([1,2],[3,4],[5,6],[1,2])
+ * </pre></blockquote></p>
  * <p>Or you can create a Polygon a List of a List of a List of Doubles. The first List of
- * List of Doubles is the exterion ring.  Others are holes.</p>
- * <code>Polygon p = new Polygon([[[1,2],[3,4],[5,6],[1,2]]])</code>
- *
- * <p>Or you can create a Polygon a List LinearRings. The first List of
- * List of Doubles is the exterion ring.  Others are holes.</p>
- * <code>Polygon p = new Polygon([new LinearRing([1,1], [10,1], [10,10], [1,10], [1,1]), new LinearRing([2,2], [4,2], [4,4], [2,4], [2,2]), new LinearRing([5,5], [6,5], [6,6], [5,6], [5,5])])</code>
+ * List of Doubles is the exterior ring.  Others are holes.</p>
+ * <p><blockquote><pre>
+ * Polygon p = new Polygon([[[1,2],[3,4],[5,6],[1,2]]])
+ * </pre></blockquote></p>
+ * <p>Or you can create a Polygon a List {@link LinearRing}s. The first List of
+ * List of Doubles is the exterior ring.  Others are holes.</p>
+ * <p><blockquote><pre>
+ * Polygon p = new Polygon([new LinearRing([1,1], [10,1], [10,10], [1,10], [1,1]), new LinearRing([2,2], [4,2], [4,4], [2,4], [2,2]), new LinearRing([5,5], [6,5], [6,6], [5,6], [5,5])])
+ * </pre></blockquote></p>
  * @author Jared Erickson
  */
 class Polygon extends Geometry {
@@ -36,7 +42,9 @@ class Polygon extends Geometry {
 	
     /**
      * Create a Polygon with no holes.
-     * <p><code>Polygon p = new Polygon(new LinearRing([[1,1],[4,1],[4,4],[1,1]]))</code></p>
+     * <p><blockquote><pre>
+     * Polygon p = new Polygon(new LinearRing([[1,1],[4,1],[4,4],[1,1]]))
+     * </pre></blockquote></p>
      * @param ring A LinearRing
      */
     Polygon(LinearRing ring) {
@@ -46,7 +54,9 @@ class Polygon extends Geometry {
     /**
      * Create a new Polygon with an exterior ring and a List
      * of holes.
-     * <p><code>Polygon p = new Polygon(new LinearRing([1,1], [10,1], [10,10], [1,10], [1,1]), [new LinearRing([2,2], [4,2], [4,4], [2,4], [2,2]), new LinearRing([5,5], [6,5], [6,6], [5,6], [5,5])])</code></p>
+     * <p><blockquote><pre>
+     * Polygon p = new Polygon(new LinearRing([1,1], [10,1], [10,10], [1,10], [1,1]), [new LinearRing([2,2], [4,2], [4,4], [2,4], [2,2]), new LinearRing([5,5], [6,5], [6,6], [5,6], [5,5])])
+     * </pre></blockquote></p>
      * @param ring A LinearRing for the exterior shell
      * @param holes A List of LinearRings for the holes
      */
@@ -55,8 +65,10 @@ class Polygon extends Geometry {
     }
 	
     /**
-     * Create a new Polygon with an exterion ring as a List of List of Doubles
-     * <p><code>Polygon p = new Polygon([1,2],[3,4],[5,6],[1,2])</code></p>
+     * Create a new Polygon with an exterior ring as a List of List of Doubles
+     * <p><blockquote><pre>
+     * Polygon p = new Polygon([1,2],[3,4],[5,6],[1,2])
+     * </pre></blockquote></p>
      * @param ring A variable List of List of Doubles
      */
     Polygon(List<Double>... ring) {
@@ -64,10 +76,12 @@ class Polygon extends Geometry {
     }
 
     /**
-     * Create a new Polygon from a List of a List of a List of Doubles or LinearRings. The
-     * first List of List of Doubles is the exterion ring.  Others are holes.
-     * <p><code>Polygon p = new Polygon([[[1,2],[3,4],[5,6],[1,2]]])</code></p>
-     * <p><code>Polygon p = new Polygon([new LinearRing([1,1], [10,1], [10,10], [1,10], [1,1]), new LinearRing([2,2], [4,2], [4,4], [2,4], [2,2]), new LinearRing([5,5], [6,5], [6,6], [5,6], [5,5])])</code></p>
+     * Create a new Polygon from a List of a List of a List of Doubles or {@link LinearRing}s. The
+     * first List of List of Doubles is the exterior ring.  Others are holes.
+     * <p><blockquote><pre>
+     * Polygon p = new Polygon([[[1,2],[3,4],[5,6],[1,2]]])
+     * Polygon p = new Polygon([new LinearRing([1,1], [10,1], [10,10], [1,10], [1,1]), new LinearRing([2,2], [4,2], [4,4], [2,4], [2,2]), new LinearRing([5,5], [6,5], [6,6], [5,6], [5,5])])
+     * </pre></blockquote></p>
      * @param rings A List of LinearRings or a List of List of Doubles
      */
     Polygon(List rings) {
@@ -76,7 +90,7 @@ class Polygon extends Geometry {
 
     /**
      * Get the exterior ring or shell 
-     * @return The exterion ring or shell
+     * @return The exterior ring or shell
      */
     LineString getExteriorRing() {
         Geometry.wrap(g.exteriorRing)
@@ -114,7 +128,7 @@ class Polygon extends Geometry {
     }
 
     /**
-     * Add this Polygon with another to create a MultiPolygon.
+     * Add this {@link Polygon} with another to create a MultiPolygon.
      * @param poly The other Polygon
      * @return A new MultiPolygon containing this Polygon and the other Polygon
      */

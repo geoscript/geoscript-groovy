@@ -7,10 +7,10 @@ import com.vividsolutions.jts.util.GeometricShapeFactory
 import com.vividsolutions.jts.geom.util.SineStarFactory
 
 /**
- * A Bounds is an Envelope with a Projection.
- * <p><code>
- * Bounds b = new Bounds(1,2,3,4, new Projection("EPSG:2927"))
- * </p></code>
+ * A Bounds is an Envelope with a {@link geoscript.proj.Projection Projection}.
+ * <p><blockquote><pre>
+ * Bounds b = new Bounds(1,2,3,4, new {@link geoscript.proj.Projection Projection}("EPSG:2927"))
+ * </pre></blockquote></p>
  * @author Jared Erickson
  */
 class Bounds {
@@ -44,9 +44,9 @@ class Bounds {
      * Create a new Bounds with minX, minY, maxX, and maxY coordinates.
      * <p><code>Bounds b = new Bounds(1,2,3,4)</code></p>
      * @param minX The left/west most coordinate (minX)
-     * @param minY the bottom/minY most coordinate (minY)
-     * @param maxX The right/maxX most coordinate (maxX)
-     * @param maxY The top/maxY most coordinate (maxY)
+     * @param minY the bottom/south most coordinate (minY)
+     * @param maxX The right/east most coordinate (maxX)
+     * @param maxY The top/north most coordinate (maxY)
      */
     Bounds(double minX, double minY, double maxX, double maxY) {
         this(minX, minY, maxX, maxY, null)

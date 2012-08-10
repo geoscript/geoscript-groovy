@@ -4,13 +4,19 @@ import com.vividsolutions.jts.geom.prep.PreparedGeometry as JtsPreparedGeometry
 import com.vividsolutions.jts.geom.prep.PreparedGeometryFactory
 
 /**
- * A Prepared Geometry make repeated spatial operations more efficient.
- * <p>You can create a PreparedGeometry by wrapping an existing Geometry:</p>
- * <code>def p1 = new PreparedGeometry(new Point(1,4))</code>
- * <p>Or by calling the prepare() method on a Geometry:<p>
- * <code>def prep = Geometry.fromWKT('POLYGON ((0 0, 5 0, 5 5, 0 5, 0 0))').prepare()</code>
+ * A PreparedGeometry makes repeated spatial operations more efficient.
+ * <p>You can create a PreparedGeometry by wrapping an existing {@link Geometry}:</p>
+ * <p><blockquote><pre>
+ * def p1 = new PreparedGeometry(new Point(1,4))
+ * </pre></blockquote></p>
+ * <p>Or by calling the prepare() method on a {@link Geometry}:<p>
+ * <p><blockquote><pre>
+ * def prep = Geometry.fromWKT('POLYGON ((0 0, 5 0, 5 5, 0 5, 0 0))').prepare()
+ * </pre></blockquote></p>
  * <p>Or by using the Geometry.prepare() static method:</p>
- * <code>def prep = Geometry.prepared(Geometry.fromWKT('POLYGON ((0 0, 5 0, 5 5, 0 5, 0 0))'))<code>
+ * <p><blockquote><pre>
+ * def prep = Geometry.prepared(Geometry.fromWKT('POLYGON ((0 0, 5 0, 5 5, 0 5, 0 0))'))
+ * </pre></blockquote></p>
  * @author Jared Erickson
  */
 class PreparedGeometry {
@@ -138,6 +144,5 @@ class PreparedGeometry {
     String toString() {
         geometry.toString()
     }
-
 }
 

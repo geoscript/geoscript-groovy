@@ -9,14 +9,22 @@ import com.vividsolutions.jts.operation.polygonize.Polygonizer as JtsPolygonizer
 
 /**
  * A MultiLineString Geometry.
- * <p>You can create a MultiLineString from a variable List of LineString:</p>
- * <code>MultiLineString m = new MultiLineString(new LineString([1,2],[3,4]), new LineString([5,6],[7,8]))</code>
+ * <p>You can create a MultiLineString from a variable List of {@link LineString}:</p>
+ * <p><blockquote><pre>
+ * MultiLineString m = new MultiLineString(new LineString([1,2],[3,4]), new LineString([5,6],[7,8]))
+ * </pre></blockquote></p>
  * <p>Or from a variable List of List of Doubles:</p>
- * <code>MultiLineString m = new MultiLineString([[1,2],[3,4]], [[5,6],[7,8]])</code>
- * <p>Or from a List of LineStrings:</p>
- * <code>MultiLineString m = new MultiLineString([new LineString([1,2],[3,4]), new LineString([5,6],[7,8])])</code>
+ * <p><blockquote><pre>
+ * MultiLineString m = new MultiLineString([[1,2],[3,4]], [[5,6],[7,8]])
+ * </pre></blockquote></p>
+ * <p>Or from a List of {@link LineString}s:</p>
+ * <p><blockquote><pre>
+ * MultiLineString m = new MultiLineString([new LineString([1,2],[3,4]), new LineString([5,6],[7,8])])
+ * </pre></blockquote></p>
  * <p>Or from a List of List of List of Doubles:</p>
- * <code>MultiLineString m = new MultiLineString([[[1,2],[3,4]], [[5,6],[7,8]]])</code>
+ * <p><blockquote><pre>
+ * MultiLineString m = new MultiLineString([[[1,2],[3,4]], [[5,6],[7,8]]])
+ * </pre></blockquote></p>
  * @author Jared Erickson
  */
 class MultiLineString extends GeometryCollection {
@@ -31,7 +39,9 @@ class MultiLineString extends GeometryCollection {
 
     /**
      * Create a MultiLineString from a variable List of LineStrings
-     * <p><code>MultiLineString m = new MultiLineString(new LineString([1,2],[3,4]), new LineString([5,6],[7,8]))</code></p>
+     * <p><blockquote><pre>
+     * MultiLineString m = new MultiLineString(new LineString([1,2],[3,4]), new LineString([5,6],[7,8]))
+     * </pre></blockquote></p>
      * @param lineString A variable List of LineStrings
      */
     MultiLineString(LineString... lineStrings) {
@@ -40,7 +50,9 @@ class MultiLineString extends GeometryCollection {
 
     /**
      * Create a MultiLineString from a variable List of List of Doubles
-     * <p><code>MultiLineString m = new MultiLineString([[1,2],[3,4]], [[5,6],[7,8]])</code></p>
+     * <p><blockquote><pre>
+     * MultiLineString m = new MultiLineString([[1,2],[3,4]], [[5,6],[7,8]])
+     * </pre></blockquote></p>
      * @param lineString A variable List of List of Doubles
      */
     MultiLineString(List<List<Double>>... lineStrings) {
@@ -49,8 +61,10 @@ class MultiLineString extends GeometryCollection {
 
     /**
      * Create a MultiLineString from a List of LineString or a List of List of Doubles
-     * <p><code>MultiLineString m = new MultiLineString([new LineString([1,2],[3,4]), new LineString([5,6],[7,8])])</code></p>
-     * <p><code>MultiLineString m = new MultiLineString([[[1,2],[3,4]], [[5,6],[7,8]]])</code></p>
+     * <p><blockquote><pre>
+     * MultiLineString m = new MultiLineString([new LineString([1,2],[3,4]), new LineString([5,6],[7,8])])
+     * MultiLineString m = new MultiLineString([[[1,2],[3,4]], [[5,6],[7,8]]])
+     * </pre></blockquote></p>
      * @param lineString Either a List of List of Doubles or a List of LineStrings
      */
     MultiLineString(List lineStrings) {
@@ -59,9 +73,12 @@ class MultiLineString extends GeometryCollection {
 
     /**
      * Add a LineString to this MultiLineString to create another MultiLineString
-     * <p><code>def m1 = new MultiLineString(new LineString([1,2],[3,4]), new LineString([5,6],[7,8]))</code></p>
-     * <p><code>def m2 = m1 + new LineString([11,12],[13,14])</code></p>
-     * <p><code>MULTILINESTRING ((1 2, 3 4), (5 6, 7 8), (11 12, 13 14))</code></p>
+     * <p><blockquote><pre>
+     * def m1 = new MultiLineString(new LineString([1,2],[3,4]), new LineString([5,6],[7,8]))
+     * def m2 = m1 + new LineString([11,12],[13,14])
+     *
+     * MULTILINESTRING ((1 2, 3 4), (5 6, 7 8), (11 12, 13 14))
+     * </pre></blockquote></p>
      * @param line A LineString
      * @return A new MultiLineString with this LineString and the other
      */

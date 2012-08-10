@@ -6,10 +6,14 @@ import com.vividsolutions.jts.geom.Geometry as JtsGeometry
 /**
  * A GeometryCollection is a heterogenerous collection of other Geometries.
  * <p>You can create a GeometryCollection by passing in a variable number of Geometries:</p>
- * <code>def gc = new GeometryCollection(new Point(1,2),new Point(3,4))</code>
+ * <p><blockquote><pre>
+ * def gc = new GeometryCollection(new Point(1,2),new Point(3,4))
+ * </pre></blockquote></p>
  * <p>Or you can pass in a List of Geometries:</p>
- * <p><code>def pts = [new Point(1,2),new Point(3,4)]</code></p>
- * <p><code>def gc2 = new GeometryCollection(pts)</code></p>
+ * <p><blockquote><pre>
+ * def pts = [new Point(1,2),new Point(3,4)]
+ * def gc2 = new GeometryCollection(pts)
+ * </pre></blockquote></p>
  * @author Jared Erickson
  */
 class GeometryCollection extends Geometry {
@@ -24,7 +28,9 @@ class GeometryCollection extends Geometry {
 
     /**
      * Create a GeometryCollection from a List of Geometries.
-     * <p><code>def gc = new GeometryCollection(new Point(1,2),new Point(3,4))</code></p>
+     * <p><blockquote><pre>
+     * def gc = new GeometryCollection(new Point(1,2),new Point(3,4))
+     * </pre></blockquote></p>
      * @param points A variable List of Points
      */
     GeometryCollection(Geometry... geometries) {
@@ -33,8 +39,10 @@ class GeometryCollection extends Geometry {
 
     /**
      * Create a GeometryCollection from a List of Geometries.
-     * <p><code>def pts = [new Point(1,2),new Point(3,4)]</code></p>
-     * <p><code>def gc2 = new GeometryCollection(pts)</code></p>
+     * <p><blockquote><pre>
+     * def pts = [new Point(1,2),new Point(3,4)]
+     * def gc2 = new GeometryCollection(pts)
+     * </pre></blockquote></p>
      * @param geometries A List of Geometries
      */
     GeometryCollection(List<Geometry> geometries) {
@@ -58,7 +66,6 @@ class GeometryCollection extends Geometry {
         new GeometryCollection(geometries)
     }
 
-
     /**
      * Create a GeometryCollection from a List of Geometries
      */
@@ -72,6 +79,4 @@ class GeometryCollection extends Geometry {
     private static create(Geometry... geometries) {
         Geometry.factory.createGeometryCollection(geometries.collect{geom -> geom.g}.toArray() as JtsGeometry[])
     }
-
 }
-

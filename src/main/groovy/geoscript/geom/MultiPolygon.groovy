@@ -5,14 +5,22 @@ import com.vividsolutions.jts.geom.Polygon as JtsPolygon
 
 /**
  * A MultiPolygon Geometry.
- * <p>You can create a MultiPolygon from a variable List of Polygons:</p>
- * <code>MultiPolygon mp = new MultiPolygon(new Polygon([1,2],[3,4],[5,6],[1,2]), new Polygon([7,8],[9,10],[11,12],[7,8]))</code>
+ * <p>You can create a MultiPolygon from a variable List of {@link Polygon}s:</p>
+ * <p><blockquote><pre>
+ * MultiPolygon mp = new MultiPolygon(new Polygon([1,2],[3,4],[5,6],[1,2]), new Polygon([7,8],[9,10],[11,12],[7,8]))
+ * </pre></blockquote></p>
  * <p>Or from a variable List of List of Doubles:</p>
- * <code>MultiPolygon mp = new MultiPolygon([[[1,2],[3,4],[5,6],[1,2]]], [[[7,8],[9,10],[11,12],[7,8]]])</code>
- * <p>Or from a List of Polygons: </p>
- * <code>MultiPolygon mp = new MultiPolygon([new Polygon([1,2],[3,4],[5,6],[1,2]), new Polygon([7,8],[9,10],[11,12],[7,8])])</code>
+ * <p><blockquote><pre>
+ * MultiPolygon mp = new MultiPolygon([[[1,2],[3,4],[5,6],[1,2]]], [[[7,8],[9,10],[11,12],[7,8]]])
+ * </pre></blockquote></p>
+ * <p>Or from a List of {@link Polygon}s: </p>
+ * <p><blockquote><pre>
+ * MultiPolygon mp = new MultiPolygon([new Polygon([1,2],[3,4],[5,6],[1,2]), new Polygon([7,8],[9,10],[11,12],[7,8])])
+ * </pre></blockquote></p>
  * <p>Or form a List of List of List of Doubles:</p>
- * <code>MultiPolygon mp = new MultiPolygon([[[[1,2],[3,4],[5,6],[1,2]]], [[[7,8],[9,10],[11,12],[7,8]]]])</code>
+ * <p><blockquote><pre>
+ * MultiPolygon mp = new MultiPolygon([[[[1,2],[3,4],[5,6],[1,2]]], [[[7,8],[9,10],[11,12],[7,8]]]])
+ * </pre></blockquote></p>
  * @author Jared Erickson
  */ 
 class MultiPolygon extends GeometryCollection {
@@ -26,8 +34,10 @@ class MultiPolygon extends GeometryCollection {
     }
 	
     /**
-     * Create a MultiPolygon from a variable List of Polygons
-     * <p><code>MultiPolygon mp = new MultiPolygon(new Polygon([1,2],[3,4],[5,6],[1,2]), new Polygon([7,8],[9,10],[11,12],[7,8]))</code></p>
+     * Create a MultiPolygon from a variable List of {@link Polygon}s
+     * <p><blockquote><pre>
+     * MultiPolygon mp = new MultiPolygon(new Polygon([1,2],[3,4],[5,6],[1,2]), new Polygon([7,8],[9,10],[11,12],[7,8]))
+     * </pre></blockquote></p>
      * @param polygons A variable List of Polygons
      */
     MultiPolygon(Polygon... polygons) {
@@ -36,7 +46,9 @@ class MultiPolygon extends GeometryCollection {
 	
     /**
      * Create a MultiPolygon from a variable List of List of List of Doubles
-     * <p><code>MultiPolygon mp = new MultiPolygon([[[1,2],[3,4],[5,6],[1,2]]], [[[7,8],[9,10],[11,12],[7,8]]])</code></p>
+     * <p><blockquote><pre>
+     * MultiPolygon mp = new MultiPolygon([[[1,2],[3,4],[5,6],[1,2]]], [[[7,8],[9,10],[11,12],[7,8]]])
+     * </pre></blockquote></p>
      * @param polygons A variable List of List of Doubles
      */
     MultiPolygon(List<List<List<Double>>>... polygons) {
@@ -44,9 +56,11 @@ class MultiPolygon extends GeometryCollection {
     }
     
     /**
-     * Create a MultiPolygon from a List of Polygons or a List of List of List of Doubles
-     * <p><code>MultiPolygon mp = new MultiPolygon([new Polygon([1,2],[3,4],[5,6],[1,2]), new Polygon([7,8],[9,10],[11,12],[7,8])])</code></p>
-     * <p><code>MultiPolygon mp = new MultiPolygon([[[[1,2],[3,4],[5,6],[1,2]]], [[[7,8],[9,10],[11,12],[7,8]]]])</code></p>
+     * Create a MultiPolygon from a List of {@link Polygon}s or a List of List of List of Doubles
+     * <p><blockquote><pre>
+     * MultiPolygon mp = new MultiPolygon([new Polygon([1,2],[3,4],[5,6],[1,2]), new Polygon([7,8],[9,10],[11,12],[7,8])])
+     * MultiPolygon mp = new MultiPolygon([[[[1,2],[3,4],[5,6],[1,2]]], [[[7,8],[9,10],[11,12],[7,8]]]])
+     * </pre></blockquote></p>
      * @param polygons A List of Polygons or a List of List of List of Doubles
      */
     MultiPolygon(List polygons) {
@@ -54,10 +68,13 @@ class MultiPolygon extends GeometryCollection {
     }
 
     /**
-     * Add a Polygon to this MultiPolygon to create another MultiPolygon
-     * <p><code>def mp1 = new MultiPolygon(new Polygon([1,2],[3,4],[5,6],[1,2]), new Polygon([7,8],[9,10],[11,12],[7,8]))</code></p>
-     * <p><code>def mp2 = mp1 + new Polygon([11,12],[13,14],[15,16],[11,12])</code></p>
-     * <p><code>MULTIPOLYGON (((1 2, 3 4, 5 6, 1 2)), ((7 8, 9 10, 11 12, 7 8)), ((11 12, 13 14, 15 16, 11 12)))</code></p>
+     * Add a {@link Polygon} to this MultiPolygon to create another MultiPolygon
+     * <p><blockquote><pre>
+     * def mp1 = new MultiPolygon(new Polygon([1,2],[3,4],[5,6],[1,2]), new Polygon([7,8],[9,10],[11,12],[7,8]))
+     * def mp2 = mp1 + new Polygon([11,12],[13,14],[15,16],[11,12])
+     *
+     * MULTIPOLYGON (((1 2, 3 4, 5 6, 1 2)), ((7 8, 9 10, 11 12, 7 8)), ((11 12, 13 14, 15 16, 11 12)))
+     * </pre></blockquote></p>
      * @param poly The Polygon to add to this Polygon
      * @return A new MultiPolygon containing this Polygon and the other Polygon
      */
