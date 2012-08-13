@@ -6,14 +6,22 @@ import geoscript.layer.Layer
 /**
  * The Symbolizers class is a collection of static methods that can be used
  * to create Symbolizers.
+ * <p><blockquote><pre>
+ * import static geoscript.style.Symbolizers.*
+ *
+ * Fill fill = fill("#003300", 0.65)
+ * Stroke stroke = stroke("wheat", 1.2, [5,2], "square", "bevel",0.45)
+ * </pre></blockquote></p>
  */
 class Symbolizers {
 
     /**
      * Create a new Fill.
-     * <p><code>def f = fill('#ff0000', 0.5)</code></p>
-     * <p><code>def f = fill('red', 0.5)</code></p>
-     * <p><code>def f = fill([255,0,0], 0.5)</code></p>
+     * <p><blockquote><pre>
+     * def f = fill('#ff0000', 0.5)
+     * def f = fill('red', 0.5)
+     * def f = fill([255,0,0], 0.5)
+     * </pre></blockquote></p>
      * @param color The Color
      * @param opacity The opacity (1 opaque to 0 transparent)
      * @return A Fill
@@ -24,7 +32,9 @@ class Symbolizers {
 
     /**
      * Create a new Fill.
-     * <p><code>def f = fill(color: '#ff0000', opacity: 0.25)</code></p>
+     * <p><blockquote><pre>
+     * def f = fill(color: '#ff0000', opacity: 0.25)
+     * </pre></blockquote></p>
      * @param properties A Map of named parameters.
      * @return A Fill
      */
@@ -34,7 +44,9 @@ class Symbolizers {
 
     /**
      * Create a new Stroke.
-     * <p><code>def stroke = stroke("#ff0000", 0.25, [5,2], "round", "bevel")</code></p>
+     * <p><blockquote><pre>
+     * def stroke = stroke("#ff0000", 0.25, [5,2], "round", "bevel")
+     * </pre></blockquote></p>
      * @param color The color
      * @param width The width
      * @param dash The dash pattern
@@ -48,7 +60,9 @@ class Symbolizers {
 
     /**
      * Create a new Stroke with named parameters.
-     * <p><code>def stroke = stroke(width: 1.2, dash: [5,2], color: "#ff00ff", opacity: 0.75)</code></p>
+     * <p><blockquote><pre>
+     * def stroke = stroke(width: 1.2, dash: [5,2], color: "#ff00ff", opacity: 0.75)
+     * </pre></blockquote></p>
      * @param properties A Map of named parameters.
      * @return A Stroke
      */
@@ -58,7 +72,9 @@ class Symbolizers {
 
     /**
      * Create a new Font.
-     * <p><code>def f = font("normal", "bold", 12, "Arial")</code></p>
+     * <p><blockquote><pre>
+     * def f = font("normal", "bold", 12, "Arial")
+     * </pre></blockquote></p>
      * @param style The Font style (normal, italic, oblique)
      * @param weight The Font weight (normal, bold)
      * @param size The Font size (8,10,12,24,ect...)
@@ -71,7 +87,9 @@ class Symbolizers {
 
     /**
      * Create a new Font with named parameters.
-     * <p><code>def f = font(weight: "bold", size: 32)</code></p>
+     * <p><blockquote><pre>
+     * def f = font(weight: "bold", size: 32)
+     * </pre></blockquote></p>
      * @param properties A Map of named parameters.
      * @return A Font
      */
@@ -81,7 +99,9 @@ class Symbolizers {
 
     /**
      * Create a new Halo with a Fill and radius.
-     * <p><code>def h = halo(new Fill("navy"), 2.5)</code></p>
+     * <p><blockquote><pre>
+     * def h = halo(new Fill("navy"), 2.5)
+     * </pre></blockquote></p>
      * @param fill The Fill
      * @param radius The radius
      * @return A Halo
@@ -92,7 +112,9 @@ class Symbolizers {
 
     /**
      * Create a new Halo with named parameters.
-     * <p><code>def h = halo(fill: new Fill("navy"), radius: 2.5)</code></p>
+     * <p><blockquote><pre>
+     * def h = halo(fill: new Fill("navy"), radius: 2.5)
+     * </pre></blockquote></p>
      * @param properties A Map of named parameters.
      * @return A Halo
      */
@@ -102,7 +124,9 @@ class Symbolizers {
 
     /**
      * Create a new Hatch.
-     * <p><code>def hatch = hatch("times", new Stroke("wheat", 1.2, [5,2], "square", "bevel"), 12.2)</code></p>
+     * <p><blockquote><pre>
+     * def hatch = hatch("times", new Stroke("wheat", 1.2, [5,2], "square", "bevel"), 12.2)
+     * </pre></blockquote></p>
      * @param name (vertline, horline, slash, backslash, plus, times)
      * @param stroke A Stroke
      * @param size The size
@@ -114,7 +138,9 @@ class Symbolizers {
 
     /**
      * Create a new Hatch with named parameters.
-     * <p><code>def hatch = hatch(size: 10, stroke: new Stroke("wheat",1.0), name: "slash")</code></p>
+     * <p><blockquote><pre>
+     * def hatch = hatch(size: 10, stroke: new Stroke("wheat",1.0), name: "slash")
+     * </pre></blockquote></p>
      * @param map A Map of named parameters.
      * @return A Hatch
      */
@@ -124,7 +150,9 @@ class Symbolizers {
 
     /**
      * Create a new Icon with named parameters.
-     * <p><code>def i = icon(format: "image/png", url: "images/star.png")</code></p>
+     * <p><blockquote><pre>
+     * def i = icon(format: "image/png", url: "images/star.png")
+     * </pre></blockquote></p>
      * @param map A Map of named parameters.
      * @return An Icon
      */
@@ -134,7 +162,9 @@ class Symbolizers {
 
     /**
      * Create a new Icon.
-     * <p><code>def i = icon("images/star.png", "image/png")</code></p>
+     * <p><blockquote><pre>
+     * def i = icon("images/star.png", "image/png")
+     * </pre></blockquote></p>
      * @param url The file or url of the icon
      * @param format The image format (image/png)
      * @param size The size of the Icon (default to -1 which means auto-size)
@@ -147,7 +177,9 @@ class Symbolizers {
     /**
      * Create a new Label with a property which is a field or attribute with which
      * to generate labels form.
-     * <p><code>def l = label("STATE_ABBR")</code></p>
+     * <p><blockquote><pre>
+     * def l = label("STATE_ABBR")
+     * </pre></blockquote></p>
      * @param property The field or attribute
      * @return A Label
      */
@@ -157,7 +189,9 @@ class Symbolizers {
 
     /**
      * Create a new Label with named parameters.
-     * <p><code>def l = label(property: "name", font: new Font(weight: "bold")))</code></p>
+     * <p><blockquote><pre>
+     * def l = label(property: "name", font: new Font(weight: "bold")))
+     * </pre></blockquote></p>
      * @param map A Map of named parameters.
      * @return A Label
      */
@@ -175,7 +209,9 @@ class Symbolizers {
 
     /**
      * Create a new Shape with named parameters.
-     * <p><code>def s = shape(type: "star", size: 4, color: "#ff00ff")</code></p>
+     * <p><blockquote><pre>
+     * def s = shape(type: "star", size: 4, color: "#ff00ff")
+     * </pre></blockquote></p>
      * @param map A Map of named parameters.
      * @return A Shape
      */
@@ -185,7 +221,9 @@ class Symbolizers {
 
     /**
      * Create a new Shape.
-     * <p><code>def s = shape("#ff0000", 8, "circle", 0.55, 0)</code></p>
+     * <p><blockquote><pre>
+     * def s = shape("#ff0000", 8, "circle", 0.55, 0)
+     * </pre></blockquote></p>
      * @param color The color
      * @param size The size
      * @param type The type
@@ -199,7 +237,9 @@ class Symbolizers {
 
     /**
      * Create a new Transform from a Function.
-     * <p><code>Transform t = transform(new Function("myCentroid", {g -> g.centroid}))</code></p>
+     * <p><blockquote><pre>
+     * Transform t = transform(new Function("myCentroid", {g -> g.centroid}))
+     * </pre></blockquote></p>
      * @param function The geoscript.filter.Function
      * @return A Transform
      */
@@ -209,7 +249,9 @@ class Symbolizers {
 
     /**
      * Create a new Transform from a CQL filter function.
-     * <p><code>Transform t = transform("centroid(the_geom)")</code></p>
+     * <p><blockquote><pre>
+     * Transform t = transform("centroid(the_geom)")
+     * </pre></blockquote></p>
      * @param cql A CQL string
      * @return A Transform
      */
@@ -219,7 +261,9 @@ class Symbolizers {
 
     /**
      * Create a new UniqueValues Composite.
-     * <p><code>UniqueValues values = uniqueValues(shp, "STATE_NAME")</code></p>
+     * <p><blockquote><pre>
+     * UniqueValues values = uniqueValues(shp, "STATE_NAME")
+     * </pre></blockquote></p>
      * @param layer The Layer
      * @param field The Field or the Field's name
      * @param colors A Closure (which takes index based on 0 and a value), a Palette name, or a List of Colors
@@ -230,7 +274,9 @@ class Symbolizers {
 
     /**
      * Create a new Gradient by interpolating between a List of values and styles.
-     * <p><code>Gradient g = gradient("PERSONS / LAND_KM",[0,200],[new Fill("#000066"), new Fill("red")],10,"exponential")</code></p>
+     * <p><blockquote><pre>
+     * Gradient g = gradient("PERSONS / LAND_KM",[0,200],[new Fill("#000066"), new Fill("red")],10,"exponential")
+     * </pre></blockquote></p>
      * @param expression An Expression or a String expression.
      * @param values A List of values
      * @param styles A List of Styles
@@ -245,7 +291,9 @@ class Symbolizers {
     /**
      * Create a new Gradient where the interpolation is based on a classification method based on values from the Layer's
      * Field.
-     * <p><code>Gradient g = gradient(shapefile, "WORKERS", "Quantile", 5, "Greens")</code></p>
+     * <p><blockquote><pre>
+     * Gradient g = gradient(shapefile, "WORKERS", "Quantile", 5, "Greens")
+     * </pre></blockquote></p>
      * @param layer The Layer
      * @param field The Field or Field's name
      * @param method The classification method (Quantile or EqualInterval)
@@ -256,5 +304,4 @@ class Symbolizers {
     static Gradient gradient(Layer layer, def field, String method, int number, def colors, String elseMode = "ignore") {
         new Gradient(layer, field, method, number, colors, elseMode)
     }
-
 }

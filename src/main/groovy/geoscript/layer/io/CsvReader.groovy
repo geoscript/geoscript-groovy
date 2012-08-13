@@ -9,7 +9,15 @@ import geoscript.proj.DecimalDegrees
 import geoscript.geom.Geometry
 
 /**
- * Read a CSV String, File, or InputStream and create a Layer
+ * Read a CSV String, File, or InputStream and create a {@geoscript.layer.Layer Layer}.
+ * <p><blockquote><pre>
+ * String csv = """"geom","name","price"
+ * "POINT (111 -47)","House","12.5"
+ * "POINT (121 -45)","School","22.7"
+ * """
+ * CsvReader reader = new CsvReader()
+ * Layer layer = reader.read(csv)
+ * </pre></blockquote></p>
  * @author Jared Erickson
  */
 class CsvReader implements Reader {

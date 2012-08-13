@@ -15,7 +15,13 @@ import org.jfree.chart.JFreeChart
 import org.jfree.chart.plot.XYPlot
 
 /**
- * Plot a Geometry, Feature, or Layer.
+ * Plot a {@link geoscript.geom.Geometry Geometry}, {@link geoscript.feature.Feature Feature}, or {@geoscript.layer.Layer Layer}.
+ * <p><blockquote><pre>
+ * import static geoscript.render.Plot.*
+ * import geoscript.geom.Point
+ *
+ * plot(new Point(1,1).buffer(10.0))
+ * </pre></blockquote></p>
  * @author Jared Erickson
  */
 class Plot {

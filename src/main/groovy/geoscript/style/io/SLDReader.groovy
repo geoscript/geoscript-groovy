@@ -8,12 +8,10 @@ import org.geotools.styling.SLDParser
 
 /**
  * Read a Geoscript Style from a SLD File, InputStream or String
- * <p>
- * <pre><code>
+ * <p><blockquote><pre>
  * Reader reader = new SLDReader()
  * Style style = reader.read("states.sld")
- * </code></pre>
- * </p>
+ * </pre></blockquote></p>
  * @author Jared Erickson
  */
 class SLDReader implements Reader {

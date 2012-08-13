@@ -8,9 +8,13 @@ import org.geotools.styling.Symbolizer as GtSymbolizer
 /**
  * A Symbolizer for label background.
  * You can create a Halo from a Fill and radius:
- * <p><code>def halo = new Halo(new Fill("navy"), 2.5)</code></p>
+ * <p><blockquote><pre>
+ * def halo = new Halo(new Fill("navy"), 2.5)
+ * </pre></blockquote></p>
  * Or with named parameters:
- * <p><code>def halo = new Halo(fill: new Fill("navy"), radius: 2.5)</code></p>
+ * <p><blockquote><pre>
+ * def halo = new Halo(fill: new Fill("navy"), radius: 2.5)
+ * </pre></blockquote></p>
  * @author Jared Erickson
  */
 class Halo extends Symbolizer {
@@ -27,7 +31,9 @@ class Halo extends Symbolizer {
 
     /**
      * Create a new Halo with named parameters.
-     * <p><code>def halo = new Halo(fill: new Fill("navy"), radius: 2.5)</code></p>
+     * <p><blockquote><pre>
+     * def halo = new Halo(fill: new Fill("navy"), radius: 2.5)
+     * </pre></blockquote></p>
      * @param map A Map of named parameters.
      */
     Halo(Map map) {
@@ -41,7 +47,9 @@ class Halo extends Symbolizer {
 
     /**
      * Create a new Halo with a Fill and radius.
-     * <p><code>def halo = new Halo(new Fill("navy"), 2.5)</code></p>
+     * <p><blockquote><pre>
+     * def halo = new Halo(new Fill("navy"), 2.5)
+     * </pre></blockquote></p>
      * @param fill The Fill
      * @param radius The radius
      */

@@ -5,6 +5,10 @@ import org.geotools.data.shapefile.ShapefileDataStoreFactory
 
 /**
  * A Directory Workspace can contain one or more Shapefiles.
+ * <p><blockquote><pre>
+ * Directory dir = new Directory("shapefiles")
+ * Layer layer = dir.get("states")
+ * </pre></blockquote></p>
  * @author Jared Erickson
  */
 class Directory extends Workspace {

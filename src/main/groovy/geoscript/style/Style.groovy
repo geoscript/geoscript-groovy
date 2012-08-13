@@ -3,7 +3,7 @@ package geoscript.style
 import org.geotools.styling.Style as GtStyle
 
 /**
- * The based Style interface
+ * The Style interface
  */
 public interface Style {
 

@@ -11,7 +11,15 @@ import org.geotools.swing.control.JMapStatusBar
 import org.geotools.swing.action.*
 
 /**
- * A complex GUI for viewing a Map.
+ * A complex GUI for viewing a {@link geoscript.render.Map Map}.
+ * <p><blockquote><pre>
+ * import geoscript.render.*
+ * import geoscript.layer.*
+ * import geoscript.style.*
+ *
+ * Map map = new Map(layers:[new Shapefile("states.shp")])
+ * new MapWindow(map)
+ * </pre></blockquote></p>
  * @author Jared Erickson
  */
 class MapWindow {

@@ -21,7 +21,15 @@ import org.geotools.referencing.factory.epsg.CartesianAuthorityFactory
 import org.geotools.referencing.crs.DefaultGeographicCRS
 
 /**
- * The GeoScript Map for rendering Layers as Images
+ * The GeoScript Map for rendering {@link geoscript.layer.Layer Layers}.
+ * <p><blockquote><pre>
+ * import geoscript.render.*
+ * import geoscript.layer.*
+ * import geoscript.style.*
+ *
+ * Map map = new Map(layers:[new Shapefile("states.shp")])
+ * map.renderToImage()
+ * </pre></blockquote></p>
  * @author Jared Erickson
  */
 class Map {

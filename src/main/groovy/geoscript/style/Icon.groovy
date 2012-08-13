@@ -9,9 +9,13 @@ import geoscript.filter.Expression
 /**
  * A Symbolizer for an external image or glyph.
  * <p>You can create an Icon from a File/URL/URI and a mime type:</p>
- * <p><code>def icon = new Icon("images/star.png", "image/png")</code></p>
+ * <p><blockquote><pre>
+ * def icon = new Icon("images/star.png", "image/png")
+ * </pre></blockquote></p>
  * Or with named parameters:
- * <p><code>def icon = new Icon(format: "image/png", url: "images/star.png")</code></p>
+ * <p><blockquote><pre>
+ * def icon = new Icon(format: "image/png", url: "images/star.png")
+ * </pre></blockquote></p>
  * @author Jared Erickson
  */
 class Icon extends Symbolizer {
@@ -33,7 +37,9 @@ class Icon extends Symbolizer {
 
     /**
      * Create a new Icon with named parameters.
-     * <p><code>def icon = new Icon(format: "image/png", url: "images/star.png")</code></p>
+     * <p><blockquote><pre>
+     * def icon = new Icon(format: "image/png", url: "images/star.png")
+     * </pre></blockquote></p>
      * @param map A Map of named parameters.
      */
     Icon(Map map) {
@@ -51,7 +57,9 @@ class Icon extends Symbolizer {
 
     /**
      * Create a new Icon.
-     * <p><code>def icon = new Icon("images/star.png", "image/png")</code></p>
+     * <p><blockquote><pre>
+     * def icon = new Icon("images/star.png", "image/png")
+     * </pre></blockquote></p>
      * @param url The file or url of the icon
      * @param format The image format (image/png)
      * @param size The size of the Icon (default to -1 which means auto-size)

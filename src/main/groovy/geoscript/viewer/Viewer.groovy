@@ -27,19 +27,19 @@ import java.awt.*
 
 /**
  * A Viewer can be used to visualize Geometry.
- * <code><pre>
+ * <p><blockquote><pre>
  * import geoscript.geom.Point
  * import geoscript.viewer.Viewer
  * Point p = new Point(10,10)
  * Viewer.draw(p.buffer(100))
- * </pre></code>
+ * </pre></blockquote></p>
  * Or you can plot a List of Geometries.
- * <code><pre>
+ * <p><blockquote><pre>
  * import geoscript.geom.Point
  * import geoscript.viewer.Viewer
  * Point p = new Point(10,10)
  * Viewer.plot([p, p.buffer(50), p.buffer(100)])
- * </pre></code>
+ * </pre></blockquote></p>
  * @author Jared Erickson
  */
 class Viewer {

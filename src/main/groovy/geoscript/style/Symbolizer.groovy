@@ -17,7 +17,13 @@ import geoscript.filter.Color
 import org.geotools.styling.FeatureTypeStyle
 
 /**
- * A Base class for all Symbolizers
+ * A Base class for all Symbolizers.   All Symbolizers can have a Filter, min and max scales, and a z-index.
+ * <p><blockquote><pre>
+ * Symbolizer sym = new Fill("white")
+ * sym.where(new Filter("name='Washington'"))
+ * sym.range(100, 500)
+ * sym.zindex(5)
+ * </pre></blockquote></p>
  * @author Jared Erickson
  */
 class Symbolizer implements Style, Cloneable {

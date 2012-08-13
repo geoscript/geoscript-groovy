@@ -7,6 +7,15 @@ import java.text.NumberFormat
 
 /**
  * A DecimalDegrees class that can parse and format DD, DMS, and DDM.
+ * <p><blockquote><pre>
+ * def dd = new DecimalDegrees(-122.525619, 47.212023)
+ * println dd.dms.longitude.degress
+ * -122
+ * println dd.dms.longitude.minutes
+ * 31
+ * println dd.dms.longitude.seconds
+ * 32.22839
+ * </pre></blockquote></p>
  * @author Jared Erickson
  */
 class DecimalDegrees {
@@ -251,5 +260,13 @@ class DecimalDegrees {
         } else {
             [Integer.parseInt(n), 0.0]
         }
+    }
+
+    /**
+     * The string representation
+     * @return The string representation
+     */
+    String toString() {
+        toDms()
     }
 }

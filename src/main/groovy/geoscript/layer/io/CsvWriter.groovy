@@ -7,7 +7,12 @@ import geoscript.proj.DecimalDegrees
 import org.jfree.chart.annotations.XYAnnotation
 
 /**
- * Write a Layer to a CSV String.
+ * Write a {@geoscript.layer.Layer Layer} to a CSV String.
+ * <p><blockquote><pre>
+ * def layer = new Shapefile("states.shp")
+ * CsvWriter writer = new CsvWriter()
+ * String csv = writer.write(layer)
+ * </pre></blockquote></p>
  * @author Jared Erickson
  */
 class CsvWriter implements Writer {

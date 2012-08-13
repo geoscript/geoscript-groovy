@@ -5,6 +5,13 @@ import geoscript.geom.Bounds
 
 /**
  * Create a SpatialIndex using the Quad Tree spatial index.
+ * <p><blockquote><pre>
+ * def index = new Quadtree()
+ * index.insert(new Bounds(0,0,10,10), new Point(5,5))
+ * index.insert(new Bounds(2,2,6,6), new Point(4,4))
+ *
+ * def results = index.query(new Bounds(4,4,7,7))
+ * </pre></blockquote></p>
  * @author Jared Erickson
  */
 class Quadtree extends SpatialIndex {
@@ -18,6 +25,7 @@ class Quadtree extends SpatialIndex {
 
     /**
      * Get a List of all entries in the spatial index
+     * @param The List of results
      */
     List queryAll() {
         index.queryAll()

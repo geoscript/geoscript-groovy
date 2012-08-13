@@ -5,7 +5,18 @@ import java.awt.image.BufferedImage
 import javax.imageio.ImageIO
 
 /**
- * A Renderer that draws a Map to a BufferedImage
+ * A Renderer that draws a {@link geoscript.render.Map Map} to a BufferedImage.
+ * <p><blockquote><pre>
+ * import java.awt.image.*
+ * import geoscript.render.*
+ * import geoscript.layer.*
+ * import geoscript.style.*
+ *
+ * Map map = new Map(layers:[new Shapefile("states.shp")])
+ * Image image = new Image("png")
+ * BufferedImage img = image.render(map)
+ * </pre></blockquote></p>
+ * @author Jared Erickson
  */
 class Image extends Renderer<BufferedImage> {
 

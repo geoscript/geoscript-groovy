@@ -10,9 +10,13 @@ import org.geotools.styling.Symbolizer as GtSymbolizer
 /**
  * A Symbolizer for labeling a geometry.
  * <p>You can create a Label with a Field or a Field name:</p>
- * <p><code>def label = new Label("STATE_ABBR")</code></p>
+ * <p><blockquote><pre>
+ * def label = new Label("STATE_ABBR")
+ * </pre></blockquote></p>
  * Or with named parameters:
- * <p><code>def label = new Label(property: "name", font: new Font(weight: "bold")))</code></p>
+ * <p><blockquote><pre>
+ * def label = new Label(property: "name", font: new Font(weight: "bold")))
+ * </pre></blockquote></p>
  * @author Jared Erickson
  */
 class Label extends Symbolizer {
@@ -55,7 +59,9 @@ class Label extends Symbolizer {
     /**
      * Create a new Label with a property which is a field or attribute with which
      * to generate labels form.
-     * <p><code>def label = new Label("STATE_ABBR")</code></p>
+     * <p><blockquote><pre>
+     * def label = new Label("STATE_ABBR")
+     * </pre></blockquote></p>
      * @param property The field or attribute
      */
     Label(def property) {
@@ -65,7 +71,9 @@ class Label extends Symbolizer {
 
     /**
      * Create a new Label with named parameters.
-     * <p><code>def label = new Label(property: "name", font: new Font(weight: "bold")))</code></p>
+     * <p><blockquote><pre>
+     * def label = new Label(property: "name", font: new Font(weight: "bold")))
+     * </pre></blockquote></p>
      * @param map A Map of named parameters.
      */
     Label(Map map) {

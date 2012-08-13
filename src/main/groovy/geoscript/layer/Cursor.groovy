@@ -9,17 +9,17 @@ import org.geotools.feature.FeatureCollection
 /**
  * A Cursor is a Iterator over a Feature objects.
  * <p>Most often you will get a Cursor by calling the getCursor() method of a Layer</p>
- * <code><pre>
+ * <p><blockquote><pre>
  * Shapefile shp = new Shapefile('states.shp')
  * Cursor c = shp.cursor
  * while(c.hasNext()) {
  *      Feature f = c.next()
  * }
  * c.close()
- * </pre></code>
+ * </pre></blockquote></p>
  * @author Jared Erickson
  */
-class Cursor implements Iterator{
+class Cursor implements Iterator {
 
     /**
      * The Layer

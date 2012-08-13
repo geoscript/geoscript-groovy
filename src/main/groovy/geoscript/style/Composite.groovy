@@ -5,12 +5,16 @@ import geoscript.filter.Filter
 /**
  * A Composite is a Symbolizer that contains one of more Symbolizers.
  * You can create a Composite by combining two Symbolizers:
- * <p><code>def composite = new Fill("wheat") + new Stroke("brown")</code></p>
+ * <p><blockquote><pre>
+ * def composite = new Fill("wheat") + new Stroke("brown")
+ * </pre></blockquote></p>
  * Or you can create a Composite from a List of Symbolizers:
- * <p><code>def composite = new Composite([
+ * <p><blockquote><pre>
+ * def composite = new Composite([
  *   new Fill("wheat"),
  *   new Stroke("brown")
- * ])</code></p>
+ * ])
+ * </pre></blockquote></p>
  * @author Jared Erickson
  */
 class Composite extends Symbolizer {

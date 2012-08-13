@@ -6,7 +6,16 @@ import org.w3c.dom.DOMImplementation
 import org.w3c.dom.Document
 
 /**
- * Render a Map to an SVG Document
+ * Render a {@link geoscript.render.Map Map} to an SVG Document.
+ * <p><blockquote><pre>
+ * import geoscript.render.*
+ * import geoscript.layer.*
+ * import geoscript.style.*
+
+ * Map map = new Map(layers:[new Shapefile("states.shp")])
+ * Svg svg = new Svg()
+ * svg.render(map, new FileOutputStream(new File("states.svg")))
+ * </pre></blockquote></p>
  * @author Jared Ericksons
  */
 class Svg extends Renderer<Document> {

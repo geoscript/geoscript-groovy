@@ -11,7 +11,12 @@ import org.geotools.wfs.v2_0.WFSConfiguration as WFS20
 import net.opengis.wfs.FeatureCollectionType
 
 /**
- * Write a GeoScript Layer to a GeoJSON InputStream, File, or String.
+ * Write a {@geoscript.layer.Layer Layer} to a GeoJSON InputStream, File, or String.
+ * <p><blockquote><pre>
+ * def layer = new Shapefile("states.shp")
+ * GmlWriter writer = new GmlWriter()
+ * String gml = writer.write(layer)
+ * </pre></blockquote></p>
  * @author Jared Erickson
  */
 class GmlWriter implements Writer {

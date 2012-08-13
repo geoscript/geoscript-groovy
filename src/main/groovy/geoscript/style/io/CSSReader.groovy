@@ -6,12 +6,10 @@ import org.geotools.styling.Style as GtStyle
 
 /**
  * Read a Geoscript Style from a CSS File, InputStream or String
- * <p>
- * <pre><code>
+ * <p><blockquote><pre>
  * Reader reader = new CSSReader()
  * Style style = reader.read("states.css")
- * </code></pre>
- * </p>
+ * </pre></blockquote></p>
  * @author Jared Erickson
  */
 class CSSReader implements Reader {

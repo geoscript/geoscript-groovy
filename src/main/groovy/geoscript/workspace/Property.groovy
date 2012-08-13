@@ -5,6 +5,10 @@ import org.geotools.data.property.PropertyDataStoreFactory
 
 /**
  * A Workspace based on a directory of java style property files.
+ * <p><blockquote><pre>
+ * Property property = new Property("files")
+ * Layer layer = property.get("points")
+ * </pre></blockquote></p>
  * @author Jared Erickson
  */
 class Property extends Workspace {

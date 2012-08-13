@@ -10,9 +10,13 @@ import org.opengis.referencing.operation.MathTransform
 /**
  * A Projection is a cartographic projection or coordinate reference system.
  * <p>You can create a Projection with an EPSG Code:</p>
- * <code>Projection p = new Projection("EPSG:4326")</code>
+ * <p><blockquote><pre>
+ * Projection p = new Projection("EPSG:4326")
+ * </pre></blockquote></p>
  * <p>Or with WKT:</p>
- * <code>Projection p = new Projection("""GEOGCS["GCS_WGS_1984",DATUM["D_WGS_1984",SPHEROID["WGS_1984",6378137,298.257223563]],PRIMEM["Greenwich",0],UNIT["Degree",0.017453292519943295]]""")</cod>
+ * <p><blockquote><pre>
+ * Projection p = new Projection("""GEOGCS["GCS_WGS_1984",DATUM["D_WGS_1984",SPHEROID["WGS_1984",6378137,298.257223563]],PRIMEM["Greenwich",0],UNIT["Degree",0.017453292519943295]]""")
+ * </pre></blockquote></p>
  * @author Jared Erickson
  */
 class Projection {

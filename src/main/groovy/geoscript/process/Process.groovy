@@ -18,12 +18,12 @@ import geoscript.geom.Bounds
 /**
  * A Process is a way of packaging spatial algorithms.  You can create a GeoScript Process by name and get access
  * to all of the built in GeoTool's Processes:
- * <code><pre>
+ * <p><blockquote><pre>
  * def p = new Process("gs:Bounds")
  * Map results = p.execute(["features": layer])
- * </pre></code>
+ * </pre></blockquote></p>
  * Or you can create a new Process using a Groovy Closure:
- * <code><pre>
+ * <p><blockquote><pre>
  * Process p = new Process("convexhull",
  *   "Create a convexhull around the features",
  *   [features: geoscript.layer.Cursor],
@@ -36,7 +36,7 @@ import geoscript.geom.Bounds
  *   }
  * )
  * Map results = p.execute(["features": layer])
- * </pre></code>
+ * </pre></blockquote></p>
  * @author Jared Erickson
  */
 class Process {

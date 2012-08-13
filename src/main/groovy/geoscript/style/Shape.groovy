@@ -14,9 +14,13 @@ import geoscript.filter.Color
 /**
  * A Symbolizer for point geometries that consists of a color and size.
  * <p>You can create a new Shape with a color, size, type, opacity, and rotation angle:</p>
- * <p><code>def shape = new Shape("#ff0000", 8, "circle", 0.55, 0)</code></p>
+ * <p><blockquote><pre>
+ * def shape = new Shape("#ff0000", 8, "circle", 0.55, 0)
+ * </pre></blockquote></p>
  * Or with named parameters:
- * <p><code>def shape = new Shape(type: "star", size: 4, color: "#ff00ff")</code></p>
+ * <p><blockquote><pre>
+ * def shape = new Shape(type: "star", size: 4, color: "#ff00ff")
+ * </pre></blockquote></p>
  * @author Jared Erickson
  */
 class Shape extends Symbolizer {
@@ -60,7 +64,9 @@ class Shape extends Symbolizer {
 
     /**
      * Create a new Shape with named parameters.
-     * <p><code>def shape = new Shape(type: "star", size: 4, color: "#ff00ff")</code></p>
+     * <p><blockquote><pre>
+     * def shape = new Shape(type: "star", size: 4, color: "#ff00ff")
+     * </pre></blockquote></p>
      * @param map A Map of named parameters.
      */
     Shape(Map map) {
@@ -74,7 +80,9 @@ class Shape extends Symbolizer {
 
     /**
      * Create a new Shape.
-     * <p><code>def shape = new Shape("#ff0000", 8, "circle", 0.55, 0)</code></p>
+     * <p><blockquote><pre>
+     * def shape = new Shape("#ff0000", 8, "circle", 0.55, 0)
+     * </pre></blockquote></p>
      * @param color The color
      * @param size The size
      * @param type The type

@@ -5,7 +5,15 @@ import java.awt.BorderLayout
 import javax.swing.JFrame
 
 /**
- * A simple GUI for viewing a Map.
+ * A simple GUI for viewing a {@link geoscript.render.Map Map}.
+ * <p><blockquote><pre>
+ * import geoscript.render.*
+ * import geoscript.layer.*
+ * import geoscript.style.*
+ *
+ * Map map = new Map(layers:[new Shapefile("states.shp")])
+ * new Window(map)
+ * </pre></blockquote></p>
  * @author Jared Erickson
  */
 class Window {

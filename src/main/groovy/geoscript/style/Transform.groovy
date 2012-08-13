@@ -11,9 +11,13 @@ import org.geotools.process.function.ProcessFunction
  * A Symbolizer that wraps a geoscript.filter.Function generally
  * used for transforming Geometry or String or Date formatting.
  * <p>You can create a Transform from a CQL statement:</p>
- * <p><code>Transform transform = new Transform("centroid(the_geom)")</code></p>
+ * <p><blockquote><pre>
+ * Transform transform = new Transform("centroid(the_geom)")
+ * </pre></blockquote></p>
  * <p>Or from a geoscript.filter.Function:</p>
- * <p><code>Transform transform1 = new Transform(new Function("myCentroid", {g -> g.centroid}))</code></p>
+ * <p><blockquote><pre>
+ * Transform transform1 = new Transform(new Function("myCentroid", {g -> g.centroid}))
+ * </pre></blockquote></p>
  * @author Jared Erickson
  */
 class Transform extends Symbolizer {
@@ -44,7 +48,9 @@ class Transform extends Symbolizer {
 
     /**
      * Create a new Transform from a Function.
-     * <p><code>Transform transform1 = new Transform(new Function("myCentroid", {g -> g.centroid}))</code></p>
+     * <p><blockquote><pre>
+     * Transform transform1 = new Transform(new Function("myCentroid", {g -> g.centroid}))
+     * </pre></blockquote></p>
      * @param function The geoscript.filter.Function
      */
     Transform(Function function, Type type = Type.NORMAL) {
@@ -55,7 +61,9 @@ class Transform extends Symbolizer {
     
     /**
      * Create a new Transform from a CQL filter function.
-     * <p><code>Transform transform = new Transform("centroid(the_geom)")</code></p>
+     * <p><blockquote><pre>
+     * Transform transform = new Transform("centroid(the_geom)")
+     * </pre></blockquote></p>
      * @param cql A CQL string 
      */
     Transform(String cql, Type type = Type.NORMAL) {

@@ -11,9 +11,13 @@ import org.geotools.styling.Mark
  * A Symbolizer that repeats a pattern. A hatch can be applied to linear and area
  * geometries.
  * <p>You can create a Hatch by specifying the name, Stroke, and size:<p>
- * <p><code>def hatch = new Hatch("times", new Stroke("wheat", 1.2, [5,2], "square", "bevel"), 12.2)</code></p>
+ * <p><blockquote><pre>
+ * def hatch = new Hatch("times", new Stroke("wheat", 1.2, [5,2], "square", "bevel"), 12.2)
+ * </pre></blockquote></p>
  * Or with named parameters:
- * <p><code>def hatch = new Hatch(size: 10, stroke: new Stroke("wheat",1.0), name: "slash")</code></p>
+ * <p><blockquote><pre>
+ * def hatch = new Hatch(size: 10, stroke: new Stroke("wheat",1.0), name: "slash")
+ * </pre></blockquote></p>
  * @author Jared Erickson
  */
 class Hatch extends Symbolizer {
@@ -35,7 +39,9 @@ class Hatch extends Symbolizer {
 
     /**
      * Create a new Hatch with named parameters.
-     * <p><code>def hatch = new Hatch(size: 10, stroke: new Stroke("wheat",1.0), name: "slash")</code></p>
+     * <p><blockquote><pre>
+     * def hatch = new Hatch(size: 10, stroke: new Stroke("wheat",1.0), name: "slash")
+     * </pre></blockquote></p>
      * @param map A Map of named parameters.
      */
     Hatch(Map map) {
@@ -49,7 +55,9 @@ class Hatch extends Symbolizer {
 
     /**
      * Create a new Hatch.
-     * <p><code>def hatch = new Hatch("times", new Stroke("wheat", 1.2, [5,2], "square", "bevel"), 12.2)</code></p>
+     * <p><blockquote><pre>
+     * def hatch = new Hatch("times", new Stroke("wheat", 1.2, [5,2], "square", "bevel"), 12.2)
+     * </pre></blockquote></p>
      * @param name (vertline, horline, slash, backslash, plus, times)
      * @param stroke A Stroke
      * @param size The size

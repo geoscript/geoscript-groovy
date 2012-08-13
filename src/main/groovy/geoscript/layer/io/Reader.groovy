@@ -3,7 +3,7 @@ package geoscript.layer.io
 import geoscript.layer.Layer
 
 /**
- * Read a GeoScript Layer from an InputStream, File, or String.
+ * Read a {@geoscript.layer.Layer Layer} from an InputStream, File, or String.
  * @author Jared Erickson
  */
 interface Reader {

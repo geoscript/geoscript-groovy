@@ -15,6 +15,7 @@ class SpatialIndex {
 
     /**
      * Create a new SpatialIndex with a JTS SpatialIndex
+     * @param the JTS SpatialIndex
      */
     SpatialIndex(JtsSpatialIndex index) {
         this.index = index
@@ -38,6 +39,7 @@ class SpatialIndex {
 
     /**
      * Get the number of items indexed
+     * @return The number of items indexed
      */
     int getSize() {
         index.size()
@@ -45,6 +47,8 @@ class SpatialIndex {
 
     /**
      * Insert a Bounds and Item
+     * @param bounds The Bounds
+     * @param item The value
      */
     void insert(Bounds bounds, def item) {
         index.insert(bounds.env, item)
@@ -52,10 +56,10 @@ class SpatialIndex {
 
     /**
      * Query the index by the Bounds
+     * @param bounds The Bounds
+     * @return The List of values
      */
     List query(Bounds bounds) {
         index.query(bounds.env)
     }
-
 }
-

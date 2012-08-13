@@ -32,7 +32,19 @@ import geoscript.layer.io.GeoJSONWriter
 import org.geotools.data.collection.ListFeatureCollection
 
 /**
- * A Layer is a source of spatial data
+ * A Layer is a source of spatial data that contains a collection of Features.  Most often Layers are accessed from
+ * a {@link geoscript.workspace.Workspace Workspace} but you can create an in memory Layer by simply passing a name
+ * and a {@link geoscript.feature.Schema Schema}:
+ * <p><blockquote><pre>
+ * Schema schema = new Schema("facilities", [new Field("geom","Point", "EPSG:2927"), new Field("name","string"), new Field("address","string")])
+ * Layer layer = new Layer("facilities", schema)
+ * </pre></blockquote></p>
+ * If, all you want to store in a Layer is {@link geoscript.geom.Geometry Geometry}, you can just pass a layer name:
+ * <p><blockquote><pre>
+ * Layer layer = new Layer("points")
+ * layer.add([new Point(0,0)])
+ * layer.add([new Point(1,1)])
+ * </pre></blockquote></p>
  * @author Jared Erickson
  */
 class Layer {
