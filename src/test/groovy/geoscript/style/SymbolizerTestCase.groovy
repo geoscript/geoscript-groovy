@@ -135,7 +135,7 @@ class SymbolizerTestCase {
 
         // Simple Symbolizer :: Fill
         Symbolizer sym = new Fill("teal")
-        Style style = sym.style
+        Style style = sym.gtStyle
         assertNotNull style
         assertEquals 1, style.featureTypeStyles().size()
         assertEquals 1, style.featureTypeStyles()[0].rules().size()
@@ -151,7 +151,7 @@ class SymbolizerTestCase {
 
         // Simple Composite: Fill and Hatch
         sym = new Fill("teal").hatch("slash",new Stroke("navy"),6)
-        style = sym.style
+        style = sym.gtStyle
         assertNotNull style
         assertEquals 1, style.featureTypeStyles().size()
         assertEquals 1, style.featureTypeStyles()[0].rules().size()
@@ -172,7 +172,7 @@ class SymbolizerTestCase {
 
         // Simple Composite :: Fill and Stroke
         sym = new Fill("teal") + new Stroke("navy")
-        style = sym.style
+        style = sym.gtStyle
         assertNotNull style
         assertEquals 1, style.featureTypeStyles().size()
         assertEquals 1, style.featureTypeStyles()[0].rules().size()
@@ -195,7 +195,7 @@ class SymbolizerTestCase {
     @Test void getStyleWithZindex() {
 
         Symbolizer sym = (new Fill("red") + new Stroke("blue")) + new Fill("green").zindex(1)
-        Style style = sym.style
+        Style style = sym.gtStyle
 
         // There should be 2 FeatureTypeStyles
         assertEquals 2, style.featureTypeStyles().size()
@@ -233,7 +233,7 @@ class SymbolizerTestCase {
     @Test void getStyleWithScale() {
 
         Symbolizer sym = (new Fill("red") + new Stroke("blue")).range(-1, 1000) + new Fill("green").range(1000, -1)
-        Style style = sym.style
+        Style style = sym.gtStyle
 
         // There should only be one FeatureTypeStyle
         assertEquals 1, style.featureTypeStyles().size()
@@ -260,7 +260,7 @@ class SymbolizerTestCase {
     @Test void getScaleWithFilter() {
 
         Symbolizer sym = (new Fill("red") + new Stroke("blue")).where("FOO = 'foo'") + new Fill("green").where("BAR = 'bar'")
-        Style style = sym.style
+        Style style = sym.gtStyle
 
         // There should only be one FeatureTypeStyle
         assertEquals 1, style.featureTypeStyles().size()

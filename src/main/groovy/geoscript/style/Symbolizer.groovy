@@ -234,7 +234,7 @@ class Symbolizer implements Style, Cloneable {
      * Get the GeoTools Style from this Symbolizer
      * @return The GeoTools Style
      */
-    GtStyle getStyle() {
+    GtStyle getGtStyle() {
 
         // First level groups by zindex
         Map ztbl = [:]

@@ -29,7 +29,7 @@ class SLDWriter implements Writer {
         if (format) {
             transformer.indentation = 2
         }
-        transformer.transform(style.style, out)
+        transformer.transform(style.gtStyle, out)
     }
 
     /**

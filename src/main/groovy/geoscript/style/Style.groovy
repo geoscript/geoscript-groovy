@@ -11,6 +11,6 @@ public interface Style {
      * Get a GeoTools Style
      * @return A GeoTools Style
      */
-    GtStyle getStyle()
+    GtStyle getGtStyle()
 
 }

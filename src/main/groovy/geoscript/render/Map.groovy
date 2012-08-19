@@ -256,7 +256,7 @@ class Map {
     protected void setUpRendering() {
         // Add Layers
         layers.each{layer ->
-            MapLayer mapLayer = new DefaultMapLayer(layer.fs, layer.style.style)
+            MapLayer mapLayer = new DefaultMapLayer(layer.fs, layer.style.gtStyle)
             context.addLayer(mapLayer)
         }
         // Set Bounds and Projections
