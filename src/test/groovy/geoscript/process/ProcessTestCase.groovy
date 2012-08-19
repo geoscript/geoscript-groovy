@@ -50,8 +50,8 @@ class ProcessTestCase {
     @Test void boundsGeoToolsProcess() {
         def p = new Process("gs:Bounds")
         assertEquals "gs:Bounds", p.name
-        assertEquals "Computes the overlall bounds of the input features", p.title
-        assertEquals "Computes the overlall bounds of the input features", p.description
+        assertEquals "Bounds", p.title
+        assertEquals "Computes the bounding box of the input features.", p.description
         assertEquals "1.0.0", p.version
         assertEquals "gs:Bounds", p.toString()
         
@@ -76,8 +76,8 @@ class ProcessTestCase {
     @Test void countGeoToolsProcess() {
         Process p = new Process("gs:Count")
         assertEquals "gs:Count", p.name
-        assertEquals "Counts the number of features in the specified collection", p.title
-        assertEquals "Counts the number of features in the specified collection", p.description
+        assertEquals "Count Features", p.title
+        assertEquals "Computes the number of features in a feature collection.", p.description
         assertEquals "1.0.0", p.version
         assertEquals "gs:Count", p.toString()
 
@@ -102,8 +102,8 @@ class ProcessTestCase {
     @Test void collectGeometriesGeoToolsProcess() {
         Process p = new Process("gs:CollectGeometries")
         assertEquals "gs:CollectGeometries", p.name
-        assertEquals "Collects all the default geometries in the feature collection and returns them as a single geometry collection", p.title
-        assertEquals "Collects all the default geometries in the feature collection and returns them as a single geometry collection", p.description
+        assertEquals "Collect Geometries", p.title
+        assertEquals "Collects the deafult geometries of the input features and combines them into a single geometry collection", p.description
         assertEquals "1.0.0", p.version
         assertEquals "gs:CollectGeometries", p.toString()
 
