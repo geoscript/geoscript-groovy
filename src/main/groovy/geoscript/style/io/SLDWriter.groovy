@@ -5,13 +5,11 @@ import org.geotools.styling.SLDTransformer
 
 /**
  * Write a Style to an SLD document
- * <p>
- * <code><pre>
+ * <p><blockquote><pre>
  * def sym = new Fill("#ff00FF") + new Stroke("#ffff00", 0.25")
  * def writer = new SLDWriter()
  * writer.write(sym)
- * </pre></code>
- * </p>
+ * </pre></blockquote></p>
  * @author Jared Erickson
  */
 class SLDWriter implements Writer {
@@ -31,7 +29,7 @@ class SLDWriter implements Writer {
         if (format) {
             transformer.indentation = 2
         }
-        transformer.transform(style.style, out)
+        transformer.transform(style.createGtStyle(), out)
     }
 
     /**

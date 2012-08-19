@@ -5,20 +5,28 @@ import com.vividsolutions.jts.geom.Coordinate
 
 /**
  * A LineString Geometry.
- * <p>You  can create a LineString from a List of List of Doubles or a List of Points.</p>
- * <code>LineString line = new LineString([[1,2],[3,4],[4,5]])</code>
- * <code>LineString line = new LineString([new Point(111.0, -47), new Point(123.0, -48), new Point(110.0, -47)])</code>
+ * <p>You  can create a LineString from a List of List of Doubles or a List of {@link Point}s.</p>
+ * <p><blockquote><pre>
+ * LineString line = new LineString([[1,2],[3,4],[4,5]])
+ * LineString line = new LineString([new Point(111.0, -47), new Point(123.0, -48), new Point(110.0, -47)])
+ * </pre></blockquote></p>
  * <p>Or you an create a LineString from a repeated List of Doubles.</p>
- * <code>LineString line = new LineString([1,2],[3,4],[4,5])</code>
- * <p>Or you can create a LineString from a List of repeated Points.</p>
- * <code>LineString line = new LineString(new Point(1,2), new Point(3,4), new Point(4,5))</code>
+ * <p><blockquote><pre>
+ * LineString line = new LineString([1,2],[3,4],[4,5])
+ * </pre></blockquote></p>
+ * <p>Or you can create a LineString from a List of repeated {@link Point}s.</p>
+ * <p><blockquote><pre>
+ * LineString line = new LineString(new Point(1,2), new Point(3,4), new Point(4,5))
+ * </pre></blockquote></p>
  * @author Jared Erickson
  */ 
 class LineString extends Geometry { 
 	
     /**
      * Create a LineString from a JTS LineString.
-     * <p><code>LineString line = new LineString(jtsLineString)</code></p>
+     * <p><blockquote><pre>
+     * LineString line = new LineString(jtsLineString)
+     * </pre></blockquote></p>
      * @param line The JTS LineString
      */
     LineString (JtsLineString line) {
@@ -26,9 +34,11 @@ class LineString extends Geometry {
     }
 	
     /**
-     * Create a LineString from a List of List of Doubles or a List of Points.
-     * <p><code>LineString line = new LineString([[1,2],[3,4],[4,5]])</code></p>
-     * <p><code>LineString line = new LineString([new Point(111.0, -47), new Point(123.0, -48), new Point(110.0, -47)])</code></p>
+     * Create a LineString from a List of List of Doubles or a List of {@link Point}s.
+     * <p><blockquote><pre>
+     * LineString line = new LineString([[1,2],[3,4],[4,5]])
+     * LineString line = new LineString([new Point(111.0, -47), new Point(123.0, -48), new Point(110.0, -47)])
+     * </pre></blockquote></p>
      * @param coordinates A List of Coordinates as a List of List of Doubles or a List of Points
      */
     LineString(List coordinates) {
@@ -37,7 +47,9 @@ class LineString extends Geometry {
 
     /**
      * Create a LineString from a repeated List of Doubles.
-     * <p><code>LineString line = new LineString([1,2],[3,4],[4,5])</code></p>
+     * <p><blockquote><pre>
+     * LineString line = new LineString([1,2],[3,4],[4,5])
+     * </pre></blockquote></p>
      * @param coordinates A repeated of List of Doubles.
      */
     LineString(List<Double>... coordinates) {
@@ -46,7 +58,9 @@ class LineString extends Geometry {
 
     /**
      * Create a LineString from a List of repeated Points.
-     * <p><code>LineString line = new LineString(new Point(1,2), new Point(3,4), new Point(4,5))</code></p>
+     * <p><blockquote><pre>
+     * LineString line = new LineString(new Point(1,2), new Point(3,4), new Point(4,5))
+     * </pre></blockquote></p>
      * @param points A List of repated Points
      */
     LineString(Point... points) {
@@ -54,7 +68,7 @@ class LineString extends Geometry {
     }
 
     /**
-     * Get the start Point
+     * Get the start {@link Point}
      * @return The start Point
      */
     Point getStartPoint() {
@@ -62,7 +76,7 @@ class LineString extends Geometry {
     }
 
     /**
-     * Get the end Point
+     * Get the end {@link Point}
      * @return The end Point
      */
     Point getEndPoint() {
@@ -94,7 +108,7 @@ class LineString extends Geometry {
     }
 
     /**
-     * Add this LineString with another to create a MultiLineString
+     * Add this LineString with another to create a {@link MultiLineString}
      * @param line Another LineString
      * @return A new MultiLineString
      */
@@ -103,33 +117,33 @@ class LineString extends Geometry {
     }
 
     /**
-     * Interpolate a Point on this LineString at the given position from
+     * Interpolate a {@link Point} on this LineString at the given position from
      * 0 to 1.
      * @param position The position along the LineString from 0 to 1
      * @return A Point on this LineString
      */
     Point interpolatePoint(double position) {
         def indexedLine = new com.vividsolutions.jts.linearref.LengthIndexedLine(g)
-        double length = length
+        double length = getLength()
         def c = indexedLine.extractPoint(position * length)
         new Point(c.x, c.y)
     }
 
     /**
-     * Locate the position of the Point along this LineString.
+     * Locate the position of the {@link Point} along this LineString.
      * @param point The Point
      * @return The position of the Point along this LineString.
      */
     double locatePoint(Point point) {
         def indexedLine = new com.vividsolutions.jts.linearref.LengthIndexedLine(g)
         double position = indexedLine.indexOf(point.g.coordinate)
-        double length = length
-        double percentAlong = position / length
+        double len = getLength()
+        double percentAlong = position / len
         percentAlong
     }
     
     /**
-     * Place the Point on the LineString
+     * Place the {@link Point} on the LineString
      * @param point The Point
      * @return A new Point on the LineString
      */
@@ -154,8 +168,10 @@ class LineString extends Geometry {
 
     /**
      * Create a LineString from a List of List of Doubles.
-     * <p> LineString line = new LineString([[1,2],[3,4],[4,5]])</p>
-     * <p> LineString line = new LineString([new Point(111.0, -47), new Point(123.0, -48), new Point(110.0, -47)])</p>
+     * <p><blockquote><pre>
+     * LineString line = new LineString([[1,2],[3,4],[4,5]])
+     * LineString line = new LineString([new Point(111.0, -47), new Point(123.0, -48), new Point(110.0, -47)])
+     * </pre></blockquote></p>
      */
     private static JtsLineString create(List coordinates) {
         Geometry.factory.createLineString(coordinates.collect{ c -> 
@@ -165,15 +181,19 @@ class LineString extends Geometry {
 	
     /**
      * Create a LineString from a List of List of Doubles.
-     * <p> LineString line = new LineString([1,2],[3,4],[4,5])</p>
+     * <p><blockquote><pre>
+     * LineString line = new LineString([1,2],[3,4],[4,5])
+     * </pre></blockquote></p>
      */
     private static JtsLineString create(List<Double>... coordinates) {
         Geometry.factory.createLineString(coordinates.collect{new Coordinate(it[0], it[1])}.toArray() as Coordinate[])
     }
 
     /**
-     * Create a LineString from a List Points.
-     * <p> LineString line = new LineString(new Point(1,2), new Point(3,4), new Point(4,5))</p>
+     * Create a LineString from a List {@link Point}s.
+     * <p><blockquote><pre>
+     * LineString line = new LineString(new Point(1,2), new Point(3,4), new Point(4,5))
+     * </pre></blockquote></p>
      */
     private static JtsLineString create(Point... points) {
         Geometry.factory.createLineString(points.collect{it.g.coordinate}.toArray() as Coordinate[])

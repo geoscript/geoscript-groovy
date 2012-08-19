@@ -5,7 +5,18 @@ import java.awt.image.BufferedImage
 import javax.imageio.ImageIO
 
 /**
- * A Renderer that draws a Map to a BufferedImage
+ * A Renderer that draws a {@link geoscript.render.Map Map} to a BufferedImage.
+ * <p><blockquote><pre>
+ * import java.awt.image.*
+ * import geoscript.render.*
+ * import geoscript.layer.*
+ * import geoscript.style.*
+ *
+ * Map map = new Map(layers:[new Shapefile("states.shp")])
+ * Image image = new Image("png")
+ * BufferedImage img = image.render(map)
+ * </pre></blockquote></p>
+ * @author Jared Erickson
  */
 class Image extends Renderer<BufferedImage> {
 
@@ -29,8 +40,8 @@ class Image extends Renderer<BufferedImage> {
      */
     @Override
     public BufferedImage render(Map map) {
-        int imageType = (imageType.equalsIgnoreCase("jpeg") || imageType.equalsIgnoreCase("jpeg") ? BufferedImage.TYPE_INT_RGB : BufferedImage.TYPE_INT_ARGB)
-        BufferedImage image = new BufferedImage(map.width, map.height, imageType)
+        int type = (imageType.equalsIgnoreCase("jpeg") || imageType.equalsIgnoreCase("jpeg") ? BufferedImage.TYPE_INT_RGB : BufferedImage.TYPE_INT_ARGB)
+        BufferedImage image = new BufferedImage(map.width, map.height, type)
         Graphics2D g = (Graphics2D) image.createGraphics()
         map.render(g)
         g.dispose()

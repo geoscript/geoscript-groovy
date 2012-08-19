@@ -1,15 +1,15 @@
 <?xml version="1.0"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    <groupId>geoscript</groupId>
+    <groupId>org.geoscript</groupId>
     <artifactId>geoscript-groovy</artifactId>
     <packaging>jar</packaging>
-    <version>0.98-SNAPSHOT</version>
+    <version>0.99-SNAPSHOT</version>
     <repositories>
         <repository>
             <id>opengeo</id>
             <name>OpenGeo Maven Repository</name>
-            <url>http://repo.opengeo.org/</url>
+            <url>http://repo.opengeo.org</url>
             <snapshots>
                 <enabled>true</enabled>
             </snapshots>
@@ -17,7 +17,7 @@
         <repository>
             <id>osgeo</id>
             <name>Open Source Geospatial Foundation Repository</name>
-            <url>http://download.osgeo.org/webdav/geotools/</url>
+            <url>http://download.osgeo.org/webdav/geotools</url>
         </repository>
         <repository>
             <id>maven2-repository.dev.java.net</id>
@@ -101,10 +101,25 @@
             <artifactId>gt-swing</artifactId>
             <version>${gt.version}</version>
         </dependency>
+		<dependency>
+			<groupId>org.geotools</groupId>
+			<artifactId>gt-process</artifactId>
+			<version>${gt.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.geotools</groupId>
+			<artifactId>gt-process-feature</artifactId>
+			<version>${gt.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.geotools</groupId>
+			<artifactId>gt-process-geometry</artifactId>
+			<version>${gt.version}</version>
+		</dependency>
         <dependency>
             <groupId>org.geoscript</groupId>
-            <artifactId>geocss_2.8.1</artifactId>
-            <version>0.7.2</version>
+            <artifactId>geocss_2.9.1</artifactId>
+            <version>0.7.4</version>
         </dependency>
         <dependency>
             <groupId>org.geotools</groupId>
@@ -144,13 +159,18 @@
         <dependency>
             <groupId>org.codehaus.groovy</groupId>
             <artifactId>groovy</artifactId>
-            <version>1.7.10</version>
+            <version>1.8.7</version>
         </dependency>
         <dependency>
             <groupId>org.json</groupId>
             <artifactId>json</artifactId>
             <version>20090211</version>
         </dependency>
+		<dependency>
+			<groupId>net.sf.opencsv</groupId>
+			<artifactId>opencsv</artifactId>
+			<version>2.0</version>
+		</dependency>
 		<dependency>
             <groupId>com.lowagie</groupId>
             <artifactId>itext</artifactId>
@@ -174,12 +194,12 @@
             <plugin>
                 <groupId>org.codehaus.gmaven</groupId>
                 <artifactId>gmaven-plugin</artifactId>
-                <version>1.2</version>
+                <version>1.4</version>
                 <dependencies>
                     <dependency>
                         <groupId>org.codehaus.gmaven.runtime</groupId>
-                        <artifactId>gmaven-runtime-1.7</artifactId>
-                        <version>1.3</version>
+                        <artifactId>gmaven-runtime-1.8</artifactId>
+                        <version>1.4</version>
                     </dependency>
                 </dependencies>
                 <executions>
@@ -191,6 +211,15 @@
                     </execution>
                 </executions>
             </plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<configuration>
+					<!-- once, never, always, perthread -->
+					<forkMode>once</forkMode>
+					<argLine>-Xms512m -Xmx1024m -XX:PermSize=256m -XX:MaxPermSize=1024m</argLine>
+				</configuration>
+			</plugin>
             <plugin>
                 <artifactId>maven-assembly-plugin</artifactId>
                 <version>2.2-beta-5</version>
@@ -222,8 +251,34 @@
                     </execution>
                 </executions>
             </plugin>
+			<!-- Code quality: mvn codenarc:codenarc -->
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>codenarc-maven-plugin</artifactId>
+                <version>0.17-1</version>
+            </plugin>
+			<!-- Unit test covoerage: mvn cobertura:cobertura -->
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>cobertura-maven-plugin</artifactId>
+				<version>2.5.1</version>
+			</plugin>
         </plugins>
     </build>
+    <reporting>
+        <plugins>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>codenarc-maven-plugin</artifactId>
+                <version>0.17-1</version>
+            </plugin>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>cobertura-maven-plugin</artifactId>
+				<version>2.5.1</version>
+			</plugin>
+        </plugins>
+    </reporting>
     <properties>
         <gt.version>8-SNAPSHOT</gt.version>
     </properties>
@@ -245,10 +300,30 @@
         <system>github</system>
         <url>https://github.com/jericks/geoscript-groovy/issues</url>
     </issueManagement>
+    <mailingLists>
+		<mailingList>
+			<name>GeoScript Google Group</name>
+			<archive>http://groups.google.com/group/geoscript</archive>
+		</mailingList>
+	</mailingLists>
     <developers>
         <developer>
             <id>jericks</id>
             <name>Jared Erickson</name>
         </developer>
     </developers>
+    <distributionManagement>
+        <repository>
+            <id>opengeo</id>
+            <name>OpenGeo Maven Repository</name>
+            <url>dav:http://repo.opengeo.org</url>
+            <uniqueVersion>false</uniqueVersion>
+        </repository>
+        <snapshotRepository>
+            <id>opengeo</id>
+            <name>OpenGeo Maven Repository</name>
+            <url>dav:http://repo.opengeo.org</url>
+            <uniqueVersion>false</uniqueVersion>
+        </snapshotRepository>
+    </distributionManagement>
 </project>

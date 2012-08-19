@@ -18,7 +18,7 @@ Finally, use maven to create a distribution:
 
 mvn assembly:assembly
 
-The distribution can be found in target/geoscript-groovy-0.5-SNAPSHOT-bin/geoscript-groovy-0.5-SNAPSHOT
+The distribution can be found in target/geoscript-groovy-0.99-SNAPSHOT-app/geoscript-groovy-0.99-SNAPSHOT
 
 GeoScript Groovy has three commands:
 1. geoscript-groovy (which can run Groovy files)

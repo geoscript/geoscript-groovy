@@ -8,6 +8,16 @@ import org.geotools.referencing.datum.DefaultEllipsoid
 /**
  * The Geodetic class can be used to calculate azimuths, distances, and Points on an Ellipsoid.
  * It is inspired by the wonderful pyproj library.
+ * <p><blockquote><pre>
+ * def g = new Geodetic()
+ * def inverse = g.inverse(new Point(-71.1166666667,42.25), new Point(-123.6833333333,45.5166666667))
+ * println inverse.forwardAzimuth
+ * -66.5304369615103
+ * println inverse.backAzimuth
+ * 75.65384304860314
+ * println inverse.distance
+ * 4164074.239295728
+ * </pre></blockquote></p>
  * @author Jared Erickson
  */
 class Geodetic {

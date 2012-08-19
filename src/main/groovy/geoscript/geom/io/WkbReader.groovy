@@ -4,10 +4,13 @@ import geoscript.geom.Geometry
 import com.vividsolutions.jts.io.WKBReader
 
 /**
- * Read a Geometry from a WKB hex String or byte array.
- * <p><code>WkbReader reader = new WkbReader()</code></p>
- * <p><code>Point pt = reader.read("0000000001405BC00000000000C047800000000000")</code></p>
- * <p><code>POINT (111 -47)</code></p>
+ * Read a {@link geoscript.geom.Geometry Geometry} from a WKB hex String or byte array.
+ * <p><blockquote><pre>
+ * WkbReader reader = new WkbReader()
+ * {@link geoscript.geom.Point Point} pt = reader.read("0000000001405BC00000000000C047800000000000")
+ *
+ * POINT (111 -47)
+ * </pre></blockquote></p>
  * @author Jared Erickson
  */
 class WkbReader implements Reader {

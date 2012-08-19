@@ -265,10 +265,10 @@ class MapTestCase {
         map.proj = new Projection("EPSG:2927")
         map.addLayer(shp)
         map.bounds = shp.bounds
-        assertEquals(shp.bounds.l, map.bounds.l, 0.01)
-        assertEquals(shp.bounds.r, map.bounds.r, 0.01)
-        assertEquals(shp.bounds.t, map.bounds.t, 0.01)
-        assertEquals(shp.bounds.b, map.bounds.b, 0.01)
+        assertEquals(shp.bounds.minX, map.bounds.minX, 0.01)
+        assertEquals(shp.bounds.maxX, map.bounds.maxX, 0.01)
+        assertEquals(shp.bounds.minY, map.bounds.minY, 0.01)
+        assertEquals(shp.bounds.maxY, map.bounds.maxY, 0.01)
         assertEquals(shp.bounds.proj.id, map.bounds.proj.id)
     }
 }

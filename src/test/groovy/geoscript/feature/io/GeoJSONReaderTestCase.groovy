@@ -15,7 +15,7 @@ class GeoJSONReaderTestCase {
     @Test void read() {
 
         // The GeoJSON String
-        String geojson = "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[111,-47]},\"properties\":{\"name\":\"House\",\"price\":12.5},\"id\":\"house1\"}"
+        String geojson = """{"type":"Feature","geometry":{"type":"Point","coordinates":[111,-47]},"properties":{"name":"House","price":12.5},"id":"house1"}"""
 
         // The Schema
         Schema schema = new Schema("houses", [new Field("geom","Point"), new Field("name","string"), new Field("price","float")])

@@ -10,6 +10,8 @@ import geoscript.style.*
  */
 class SLDWriterTestCase {
 
+    private String NEW_LINE = System.getProperty("line.separator")
+
     private String expectedSld = """<?xml version="1.0" encoding="UTF-8"?>
 <sld:UserStyle xmlns="http://www.opengis.net/sld" xmlns:sld="http://www.opengis.net/sld" xmlns:ogc="http://www.opengis.net/ogc" xmlns:gml="http://www.opengis.net/gml">
   <sld:Name>Default Styler</sld:Name>
@@ -29,14 +31,14 @@ class SLDWriterTestCase {
       </sld:LineSymbolizer>
     </sld:Rule>
   </sld:FeatureTypeStyle>
-</sld:UserStyle>""".trim()
+</sld:UserStyle>""".trim().replaceAll("\n","")
 
     @Test void writeToOutputStream() {
         Symbolizer sym = new Fill("wheat") + new Stroke("brown")
         SLDWriter writer = new SLDWriter();
         ByteArrayOutputStream out = new ByteArrayOutputStream()
         writer.write(sym, out)
-        String sld = out.toString().trim()
+        String sld = out.toString().trim().replaceAll(NEW_LINE,"")
         assertNotNull sld
         assertTrue sld.length() > 0
         assertEquals expectedSld, sld
@@ -47,7 +49,7 @@ class SLDWriterTestCase {
         SLDWriter writer = new SLDWriter();
         File file = File.createTempFile("simple",".sld")
         writer.write(sym, file)
-        String sld = file.text.trim()
+        String sld = file.text.trim().replaceAll(NEW_LINE,"")
         assertNotNull sld
         assertTrue sld.length() > 0
         assertEquals expectedSld, sld
@@ -56,7 +58,7 @@ class SLDWriterTestCase {
     @Test void writeToString() {
         Symbolizer sym = new Fill("wheat") + new Stroke("brown")
         SLDWriter writer = new SLDWriter();
-        String sld = writer.write(sym).trim()
+        String sld = writer.write(sym).trim().replaceAll(NEW_LINE,"")
         assertNotNull sld
         assertTrue sld.length() > 0
         assertEquals expectedSld, sld

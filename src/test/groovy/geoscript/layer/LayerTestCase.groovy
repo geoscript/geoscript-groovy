@@ -17,6 +17,37 @@ import geoscript.raster.Raster
  */
 class LayerTestCase {
 
+    @Test void eachFeature() {
+        Layer layer = new Shapefile(new File(getClass().getClassLoader().getResource("states.shp").toURI()))
+        int count = 0
+        layer.eachFeature({f ->
+            assertTrue f instanceof Feature
+            count++
+        })
+        assertEquals 49, count
+        
+        String name
+        layer.eachFeature("STATE_NAME = 'Maryland'", {f ->
+            name = f.get("STATE_NAME")
+        })
+        assertEquals "Maryland", name
+    }
+
+    @Test void collectFromFeature() {
+        Layer layer = new Shapefile(new File(getClass().getClassLoader().getResource("states.shp").toURI()))
+        List results = layer.collectFromFeature({f ->
+            f.get("STATE_NAME")
+        })
+        assertEquals 49, results.size()
+        assertTrue results.contains("Utah")
+
+        results = layer.collectFromFeature("STATE_NAME = 'Utah'", {f ->
+            f.get("STATE_NAME")
+        })
+        assertEquals 1, results.size()
+        assertEquals "Utah", results[0]
+    }
+    
     @Test void getProjection() {
         Schema s1 = new Schema("facilities", [new Field("geom","Point", "EPSG:2927"), new Field("name","string"), new Field("price","float")])
         Layer layer1 = new Layer("facilities", s1)
@@ -179,6 +210,16 @@ class LayerTestCase {
         layer2.add([new Point(1,2)])
         layer2.add([new Point(3,4)])
         assertEquals 2, layer2.count()
+
+        Layer layer3 = new Layer("points")
+        layer3.add([new Point(0,0)])
+        layer3.add([new Point(1,1)])
+        layer3.add([new Point(2,2)])
+        layer3.add([new Point(3,3)])
+        layer3.add([new Point(4,4)])
+
+        assertEquals 5, layer3.count
+        assertEquals "(0.0,0.0,4.0,4.0)", layer3.bounds.toString()
     }
 
     @Test void updateFeatures() {

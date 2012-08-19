@@ -386,4 +386,49 @@ class GeometryTestCase {
         assertTrue octalEnvelope.isValid()
         assertFalse octalEnvelope.isEmpty()
     }
+    
+    /*@Test void createFromText() {
+        Geometry g = Geometry.createFromText("B")
+        assertEquals "Polygon", g.geometryType
+        
+        g = Geometry.createFromText("BAJ")
+        assertEquals "MultiPolygon", g.geometryType
+    }*/
+    
+    @Test void createSierpinskiCarpet() {
+        Geometry g = Geometry.createSierpinskiCarpet(new Bounds(0,0,10,10), 200)
+        assertNotNull g
+        assertEquals "Polygon", g.geometryType
+    }
+    
+    @Test void createKochSnowflake() {
+        Geometry g = Geometry.createKochSnowflake(new Bounds(0,0,10,10), 200)
+        assertNotNull g
+        assertEquals "Polygon", g.geometryType
+    }
+    
+    @Test void snap() {
+        Geometry g1 = Geometry.fromWKT("POLYGON ((0 0, 0 10, 10 10, 10 0, 0 0))")
+        Geometry g2 = Geometry.fromWKT("POLYGON ((11 0, 11 10, 20 10, 20 0, 11 0))")
+        Geometry snapped = g1.snap(g2, 1.2)
+        assertEquals "GEOMETRYCOLLECTION (" +
+                "POLYGON ((0 0, 0 10, 11 10, 11 0, 0 0)), " +
+                "POLYGON ((11 0, 11 10, 20 10, 20 0, 11 0)))", snapped.wkt
+    }
+
+    @Test void reducePrecision() {
+        Geometry g1 = new Point(5.19775390625, 51.07421875)
+        
+        // floating
+        Geometry g2 = g1.reducePrecision()
+        assertEquals "POINT (5.19775390625 51.07421875)", g2.wkt
+        
+        // fixed
+        Geometry g3 = g1.reducePrecision("fixed", scale: 100)
+        assertEquals "POINT (5.2 51.07)", g3.wkt
+
+        // floating single
+        Geometry g4 = g1.reducePrecision("floating_single", pointwise: true, removecollapsed: true)
+        assertEquals "POINT (5.19775390625 51.07421875)", g4.wkt
+    }
 }

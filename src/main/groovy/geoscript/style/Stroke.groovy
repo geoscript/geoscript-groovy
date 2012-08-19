@@ -10,9 +10,13 @@ import geoscript.filter.Color
 /**
  * A Symbolizer for linear geometries that consists of a color and a width.
  * <p>You can create a Stroke with a color and width:</p>
- * <p><code>def shape = new Shape("#ff0000", 0.25)</code></p>
+ * <p><blockquote><pre>
+ * def shape = new Shape("#ff0000", 0.25)
+ * </pre></blockquote></p>
  * Or with named parameters:
- * <p><code>def stroke = new Stroke(width: 1.2, dash: [5,2], color: "#ff00ff", opacity: 0.75)</code></p>
+ * <p><blockquote><pre>
+ * def stroke = new Stroke(width: 1.2, dash: [5,2], color: "#ff00ff", opacity: 0.75)
+ * </pre></blockquote></p>
  * @author Jared Erickson
  */
 class Stroke extends Symbolizer {
@@ -20,7 +24,7 @@ class Stroke extends Symbolizer {
     /**
      * The color in hexadecimal format (#00FF00)
      */
-    Color color
+    Expression color
 
     /**
      * The width (1, 2, 5, ect...)
@@ -60,7 +64,9 @@ class Stroke extends Symbolizer {
 
     /**
      * Create a new Stroke.
-     * <p><code>def stroke = new Stroke("#ff0000", 0.25, [5,2], "round", "bevel")</code></p>
+     * <p><blockquote><pre>
+     * def stroke = new Stroke("#ff0000", 0.25, [5,2], "round", "bevel")
+     * </pre></blockquote></p>
      * @param color The color
      * @param width The width
      * @param dash The dash pattern
@@ -69,7 +75,7 @@ class Stroke extends Symbolizer {
      */
     Stroke(def color = "#000000", def width = 1, List dash = null, def cap = null, def join = null, def opacity = 1.0) {
         super()
-        this.color = new Color(color)
+        this.color = color instanceof Expression ? color : new Color(color)
         this.width = new Expression(width)
         this.dash = dash
         this.cap = new Expression(cap)
@@ -79,7 +85,9 @@ class Stroke extends Symbolizer {
 
     /**
      * Create a new Stroke with named parameters.
-     * <p><code>def stroke = new Stroke(width: 1.2, dash: [5,2], color: "#ff00ff", opacity: 0.75)</code></p>
+     * <p><blockquote><pre>
+     * def stroke = new Stroke(width: 1.2, dash: [5,2], color: "#ff00ff", opacity: 0.75)
+     * </pre></blockquote></p>
      * @param map A Map of named parameters.
      */
     Stroke(Map map) {
@@ -96,7 +104,7 @@ class Stroke extends Symbolizer {
      * @param color  The color (#ffffff, red)
      */
     void setColor(def color) {
-        this.color = new Color(color)
+        this.color = color instanceof Expression ? color : new Color(color)
     }
 
     /**

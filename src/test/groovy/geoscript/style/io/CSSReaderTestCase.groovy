@@ -18,7 +18,7 @@ class CSSReaderTestCase {
         CSSReader reader = new CSSReader()
         Style style = reader.read(file)
         assertNotNull(style)
-        assertNotNull(style.style)
+        assertNotNull(style.createGtStyle())
     }
 
     @Test void readFromInputStream() {
@@ -29,7 +29,7 @@ class CSSReaderTestCase {
         CSSReader reader = new CSSReader()
         Style style = reader.read(inputStream)
         assertNotNull(style)
-        assertNotNull(style.style)
+        assertNotNull(style.createGtStyle())
     }
 
     @Test void readFromString() {
@@ -44,7 +44,7 @@ class CSSReaderTestCase {
         CSSReader reader = new CSSReader()
         Style style = reader.read(css)
         assertNotNull(style)
-        assertNotNull(style.style)
+        assertNotNull(style.createGtStyle())
     }
 
 }

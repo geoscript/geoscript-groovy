@@ -6,7 +6,9 @@ import com.vividsolutions.jts.geom.Coordinate
 /**
  * A Point Geometry.
  * <p>You can create a Point from xy coordinates:</p>
- * <code>Point p = new Point(111, -47)</code>
+ * <p><blockquote><pre>
+ * Point p = new Point(111, -47)
+ * </pre></blockquote></p>
  * @author Jared Erickson
  */
 class Point extends Geometry {
@@ -21,7 +23,9 @@ class Point extends Geometry {
 	
     /**
      * Create a Point with an x and y coordinate
-     * <p><code>def p = new Point(111,-47)</code></p>
+     * <p><blockquote><pre>
+     * def p = new Point(111,-47)
+     * </pre></blockquote></p>
      * @param x The x coordinate
      * @param y The y coordinate
      */
@@ -47,9 +51,12 @@ class Point extends Geometry {
 
     /**
      * Add this Point with another to create a MultiPoint.
-     * <p><code>def p = new Point(1,2)</code></p>
-     * <p><code>def m = p + new Point(3,4)</code></p>
-     * <p><code>MULTIPOINT (1 2, 3 4)</code></p>
+     * <p><blockquote><pre>
+     * def p = new Point(1,2)
+     * def m = p + new Point(3,4)
+     *
+     * MULTIPOINT (1 2, 3 4)
+     * </pre></blockquote></p>
      * @param point The other Point
      * @return A new MultiPoint containing this Point and the other Point
      */

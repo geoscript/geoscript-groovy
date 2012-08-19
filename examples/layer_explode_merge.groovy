@@ -26,7 +26,7 @@ def target = new Directory(".")
 
 // Iterate through layers in source workspace
 def states
-source.layers.each{name ->
+source.names.each{name ->
     // Get the Layer
     def state = source.get(name)
     // Create merge shapefile the first time through

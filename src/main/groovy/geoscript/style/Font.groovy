@@ -10,9 +10,13 @@ import org.geotools.styling.Symbolizer as GtSymbolizer
  * A Font consists of a style (normal, italic, oblique), a weight (normal or bold),
  * a size, and a font family.
  * <p>You can create a Font by specifying the style, weight, size, and family:</p>
- * <p><code>def f = new Font("normal", "bold", 12, "Arial")</code></p>
+ * <p><blockquote><pre>
+ * def f = new Font("normal", "bold", 12, "Arial")
+ * </pre></blockquote></p>
  * Or using named parameters:
- * <p><code>def f = new Font(weight: "bold", size: 32)</code></p>
+ * <p><blockquote><pre>
+ * def f = new Font(weight: "bold", size: 32)
+ * </pre></blockquote></p>
  * @author Jared Erickson
  */
 class Font extends Symbolizer {
@@ -49,7 +53,9 @@ class Font extends Symbolizer {
 
     /**
      * Create a new Font with named parameters.
-     * <p><code>def f = new Font(weight: "bold", size: 32)</code></p>
+     * <p><blockquote><pre>
+     * def f = new Font(weight: "bold", size: 32)
+     * </pre></blockquote></p>
      * @param map A Map of named parameters.
      */
     Font(Map map) {
@@ -63,7 +69,9 @@ class Font extends Symbolizer {
 
     /**
      * Create a new Font.
-     * <p><code>def f = new Font("normal", "bold", 12, "Arial")</code></p>
+     * <p><blockquote><pre>
+     * def f = new Font("normal", "bold", 12, "Arial")
+     * </pre></blockquote></p>
      * @param style The Font style (normal, italic, oblique)
      * @param weight The Font weight (normal, bold)
      * @param size The Font size (8,10,12,24,ect...)
@@ -79,10 +87,10 @@ class Font extends Symbolizer {
 
     /**
      * Set the font style (normal, italic, oblique)
-     * @param style The font style
+     * @param fontStyle The font style
      */
-    void setStyle(def style) {
-        this.style = new Expression(style)
+    void setStyle(def fontStyle) {
+        this.style = new Expression(fontStyle)
     }
 
     /**

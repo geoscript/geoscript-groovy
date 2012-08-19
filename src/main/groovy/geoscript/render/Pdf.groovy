@@ -8,7 +8,16 @@ import com.lowagie.text.pdf.PdfWriter
 import com.lowagie.text.pdf.PdfContentByte
 
 /**
- * Render the Map to a PDF
+ * Render the {@link geoscript.render.Map Map} to a PDF.
+ * <p><blockquote><pre>
+ * import geoscript.render.*
+ * import geoscript.layer.*
+ * import geoscript.style.*
+ *
+ * Map map = new Map(layers:[new Shapefile("states.shp")])
+ * Pdf pdf = new Pdf()
+ * pdf.render(map, new FileOutputStream(new File("states.pdf")))
+ * </pre></blockquote></p>
  * @author Jared Erickson
  */
 class Pdf extends Renderer<Document> {

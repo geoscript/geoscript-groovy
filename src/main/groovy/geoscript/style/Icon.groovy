@@ -9,9 +9,13 @@ import geoscript.filter.Expression
 /**
  * A Symbolizer for an external image or glyph.
  * <p>You can create an Icon from a File/URL/URI and a mime type:</p>
- * <p><code>def icon = new Icon("images/star.png", "image/png")</code></p>
+ * <p><blockquote><pre>
+ * def icon = new Icon("images/star.png", "image/png")
+ * </pre></blockquote></p>
  * Or with named parameters:
- * <p><code>def icon = new Icon(format: "image/png", url: "images/star.png")</code></p>
+ * <p><blockquote><pre>
+ * def icon = new Icon(format: "image/png", url: "images/star.png")
+ * </pre></blockquote></p>
  * @author Jared Erickson
  */
 class Icon extends Symbolizer {
@@ -33,7 +37,9 @@ class Icon extends Symbolizer {
 
     /**
      * Create a new Icon with named parameters.
-     * <p><code>def icon = new Icon(format: "image/png", url: "images/star.png")</code></p>
+     * <p><blockquote><pre>
+     * def icon = new Icon(format: "image/png", url: "images/star.png")
+     * </pre></blockquote></p>
      * @param map A Map of named parameters.
      */
     Icon(Map map) {
@@ -43,12 +49,17 @@ class Icon extends Symbolizer {
                 this."$k" = k.equals("url") ? toURL(v) : v
             }
         }
+        if (format == null) {
+            format = guessMimeType(url)
+        }
     }
 
 
     /**
      * Create a new Icon.
-     * <p><code>def icon = new Icon("images/star.png", "image/png")</code></p>
+     * <p><blockquote><pre>
+     * def icon = new Icon("images/star.png", "image/png")
+     * </pre></blockquote></p>
      * @param url The file or url of the icon
      * @param format The image format (image/png)
      * @param size The size of the Icon (default to -1 which means auto-size)
@@ -56,7 +67,7 @@ class Icon extends Symbolizer {
     Icon(def url, String format = null, def size = -1) {
         super()
         this.url = toURL(url)
-        this.format = format ? format : guessMimeType(this.url)
+        setFormat(format ? format : guessMimeType(this.url))
         this.size = new Expression(size)
     }
 
@@ -89,6 +100,17 @@ class Icon extends Symbolizer {
      */
     void setUrl(def url) {
         this.url = toURL(url)
+    }
+
+    /**
+     * Set the format
+     * @param fmt The format
+     */
+    void setFormat(String fmt) {
+        if (!fmt.startsWith("image/")) {
+            fmt = "image/${fmt}"
+        }
+        this.format = fmt
     }
 
     /**

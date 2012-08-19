@@ -32,6 +32,11 @@ class MultiPointTestCase {
         def p1 = new Point(1,2)
         def m3 = p1 + new Point(3,4)
         assertEquals "MULTIPOINT ((1 2), (3 4))", m3.wkt
+
+        def m4 = new MultiPoint([])
+        assertEquals "MULTIPOINT EMPTY", m4.wkt
+        def m5 = m4 + new Point(1,1)
+        assertEquals "MULTIPOINT ((1 1))", m5.wkt
     }
 	
 }

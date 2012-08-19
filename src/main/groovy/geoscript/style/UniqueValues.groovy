@@ -10,6 +10,10 @@ import geoscript.feature.Field
 /**
  * The UniqueValues Composite creates a Symbolizer
  * for each unique value from a Layer's Field.
+ * <p><blockquote><pre>
+ * Layer layer = new Shapefile(file)
+ * UniqueValues sym = new UniqueValues(layer, "STATE_ABBR", "Greens")
+ * </pre></blockquote></p>
  * @author Jared Erickson
  */
 class UniqueValues extends Composite {
@@ -73,7 +77,7 @@ class UniqueValues extends Composite {
 
             // Make sure color is a java.awt.Color
             if (color instanceof String) {
-                color = Color.getColor(color)
+                color = new Color(color)
             }
 
             // Increment our counter

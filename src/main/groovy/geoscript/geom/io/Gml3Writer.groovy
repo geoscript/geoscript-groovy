@@ -4,10 +4,13 @@ import geoscript.geom.*
 import com.vividsolutions.jts.geom.Coordinate
 
 /**
- * Write a Geoscript Geometry to a GML String.
- * <p><code>Gml3Writer writer = new Gml3Writer()</code></p>
- * <p><code>String gml = writer.write(new Point(111,-47))</code></p>
- * <p><code>&lt;gml:Point&gt;&lt;gml:pos&gt;111.0,-47.0&lt;/gml:pos&gt;&lt;/gml:Point&gt;</code></p>
+ * Write a Geoscript {@link geoscript.geom.Geometry Geometry} to a GML String.
+ * <p><blockquote><pre>
+ * Gml3Writer writer = new Gml3Writer()
+ * String gml = writer.write(new {@link geoscript.geom.Point Point}(111,-47))
+ *
+ * &lt;gml:Point&gt;&lt;gml:pos&gt;111.0,-47.0&lt;/gml:pos&gt;&lt;/gml:Point&gt;
+ * </pre></blockquote></p>
  * @author Jared Erickson
  */
 class Gml3Writer implements Writer{

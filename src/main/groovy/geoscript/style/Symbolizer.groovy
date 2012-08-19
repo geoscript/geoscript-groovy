@@ -1,8 +1,5 @@
 package geoscript.style
 
-import geoscript.feature.Feature
-import geoscript.layer.Layer
-import geoscript.layer.Cursor
 import geoscript.filter.Filter
 import geoscript.style.io.SLDWriter
 import org.geotools.styling.Style as GtStyle
@@ -21,7 +18,13 @@ import geoscript.filter.Color
 import org.geotools.styling.FeatureTypeStyle
 
 /**
- * A Base class for all Symbolizers
+ * A Base class for all Symbolizers.   All Symbolizers can have a Filter, min and max scales, and a z-index.
+ * <p><blockquote><pre>
+ * Symbolizer sym = new Fill("white")
+ * sym.where(new Filter("name='Washington'"))
+ * sym.range(100, 500)
+ * sym.zindex(5)
+ * </pre></blockquote></p>
  * @author Jared Erickson
  */
 class Symbolizer implements Style, Cloneable {
@@ -71,7 +74,7 @@ class Symbolizer implements Style, Cloneable {
     }
 
     /**
-     * Apply a filte to the symbolizer.  The Filter can be a CQL string
+     * Apply a filter to the symbolizer.  The Filter can be a CQL string
      * or a geoScript.filter.Filter
      * @param filter A CQL String or a Filter
      * @return The Symbolizer
@@ -93,6 +96,22 @@ class Symbolizer implements Style, Cloneable {
     }
 
     /**
+     * Apply min/max scale denominator using keywords.
+     * <pre>
+     * {@code
+     * new Fill('black').range(min: '100', max: '2000')
+     * new Stroke('teal').range(min: '1000')
+     * }
+     * </pre>
+     * @param minMax A Map of named parameters (min, max)
+     * @return The Symbolizer
+     */
+    Symbolizer range(Map minMax) {
+        scale = new Scale(minMax.get("min",-1), minMax.get("max",-1))
+        this
+    }
+    
+    /**
      * Apply a z-index.  Symbolizers with higher z-index are drawn on
      * the top of those with smaller z-index
      * @param z The z-index
@@ -110,6 +129,24 @@ class Symbolizer implements Style, Cloneable {
     void asSLD(OutputStream out = System.out) {
         def writer = new SLDWriter()
         writer.write(this, out)
+    }
+
+    /**
+     * Write this Symbolizer to a SLD File
+     * @param file The SLD File
+     */
+    void asSLD(File file) {
+        def writer = new SLDWriter()
+        writer.write(this, file)
+    }
+
+    /**
+     * Get this Symbolizer as an SLD String
+     * @return An SLD String
+     */
+    String getSld() {
+        def writer = new SLDWriter()
+        writer.write(this)
     }
 
     /**
@@ -135,6 +172,7 @@ class Symbolizer implements Style, Cloneable {
      * @param rule The GeoTools Rule
      */
     protected void prepare(Rule rule) {
+        // This is usually override by subclasses
     }
 
     /**
@@ -199,7 +237,7 @@ class Symbolizer implements Style, Cloneable {
      * Get the GeoTools Style from this Symbolizer
      * @return The GeoTools Style
      */
-    GtStyle getStyle() {
+    GtStyle createGtStyle() {
 
         // First level groups by zindex
         Map ztbl = [:]
@@ -277,23 +315,23 @@ class Symbolizer implements Style, Cloneable {
      */
     static Symbolizer getDefault(String geometryType, def color = Color.getRandomPastel()) {
         def sym;
-        java.awt.Color baseColor = Color.getColor(color)
-        java.awt.Color darkerColor = baseColor.darker()
+        Color baseColor = new Color(color)
+        Color darkerColor = baseColor.darker()
         if (geometryType.toLowerCase().endsWith("point")) {
-            sym = new Shape(Color.toHex(baseColor))
+            sym = new Shape(baseColor)
         }
         else if (geometryType.toLowerCase().endsWith("linestring") 
             || geometryType.toLowerCase().endsWith("linearring")
             || geometryType.toLowerCase().endsWith("curve")) {
-            sym = new Stroke(Color.toHex(baseColor))
+            sym = new Stroke(baseColor)
         }
         else if (geometryType.toLowerCase().endsWith("polygon")) {
-            sym = new Fill(Color.toHex(baseColor)) + new Stroke(Color.toHex(darkerColor))
+            sym = new Fill(baseColor) + new Stroke(darkerColor)
         }
         else {
-            sym = new Shape(Color.toHex(baseColor)) +
-            new Fill(Color.toHex(baseColor)) +
-            new Stroke(Color.toHex(darkerColor))
+            sym = new Shape(baseColor) +
+            new Fill(baseColor) +
+            new Stroke(darkerColor)
         }
         sym
     }

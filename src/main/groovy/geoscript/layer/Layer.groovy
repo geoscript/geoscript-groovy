@@ -12,7 +12,6 @@ import org.geotools.data.FeatureSource
 import org.geotools.data.DefaultQuery
 import org.geotools.data.Transaction
 import org.geotools.data.FeatureStore
-import org.geotools.data.FeatureReader
 import org.geotools.data.DefaultTransaction
 import org.geotools.feature.FeatureCollections
 import org.geotools.feature.FeatureCollection
@@ -42,7 +41,19 @@ import org.geotools.gce.geotiff.GeoTiffWriter
 import geoscript.raster.GeoTIFF
 
 /**
- * A Layer is a source of spatial data
+ * A Layer is a source of spatial data that contains a collection of Features.  Most often Layers are accessed from
+ * a {@link geoscript.workspace.Workspace Workspace} but you can create an in memory Layer by simply passing a name
+ * and a {@link geoscript.feature.Schema Schema}:
+ * <p><blockquote><pre>
+ * Schema schema = new Schema("facilities", [new Field("geom","Point", "EPSG:2927"), new Field("name","string"), new Field("address","string")])
+ * Layer layer = new Layer("facilities", schema)
+ * </pre></blockquote></p>
+ * If, all you want to store in a Layer is {@link geoscript.geom.Geometry Geometry}, you can just pass a layer name:
+ * <p><blockquote><pre>
+ * Layer layer = new Layer("points")
+ * layer.add([new Point(0,0)])
+ * layer.add([new Point(1,1)])
+ * </pre></blockquote></p>
  * @author Jared Erickson
  */
 class Layer {
@@ -98,29 +109,6 @@ class Layer {
         this.schema = new Schema(fs.schema)
         this.projection = new Projection(fs.schema.coordinateReferenceSystem)
         setDefaultSymbolizer(this.schema.geom.typ)
-    }
-
-    /**
-     * Create a new Layer from a GeoTools FeatureCollection
-     * @param name The name of the new Layer
-     * @param fc The GeoTools FeatureCollection
-     */
-    Layer(String name, FeatureCollection fc) {
-        this(createLayerFromFeatureCollection(name, fc))
-    }
-
-    /**
-     * Create a Layer from a name and FeatureCollection
-     * @param name The name of the new Layer
-     * @param fc The FeatureCollection
-     * @return A new Layer
-     */
-    private static Layer createLayerFromFeatureCollection(String name, FeatureCollection fc) {
-        Schema s = new Schema(fc.schema)
-        Schema schema =  new Schema(name, s.fields)
-        Layer layer = new Memory().create(schema)
-        layer.add(fc)
-        layer
     }
 
     /**
@@ -196,6 +184,44 @@ class Layer {
      */
     Layer() {
         this(newname(), new Schema("features", [new Field("geom","Geometry")]))
+    }
+
+    /**
+     * Create a new Layer with the given name, a simple Schema with just a Geometry Field in the Memory Workspace
+     */
+    Layer(String name) {
+        this(name, new Schema("features", [new Field("geom","Geometry")]))
+    }
+
+    /**
+     * Create a new Layer from a GeoTools FeatureCollection.
+     * @param fc The GeoTools FeatureCollection
+     */
+    Layer(FeatureCollection fc) {
+        this(fc.schema.name.localPart, fc)
+    }
+
+    /**
+     * Create a new Layer from a GeoTools FeatureCollection
+     * @param name The name of the new Layer
+     * @param fc The GeoTools FeatureCollection
+     */
+    Layer(String name, FeatureCollection fc) {
+        this(createLayerFromFeatureCollection(name, fc))
+    }
+
+    /**
+     * Create a Layer from a name and FeatureCollection
+     * @param name The name of the new Layer
+     * @param fc The FeatureCollection
+     * @return A new Layer
+     */
+    private static Layer createLayerFromFeatureCollection(String name, FeatureCollection fc) {
+        Schema s = new Schema(fc.schema)
+        Schema schema =  new Schema(name, s.fields)
+        Layer layer = new Memory().create(schema)
+        layer.add(fc)
+        layer
     }
 
     /**
@@ -303,6 +329,42 @@ class Layer {
         bounds()
     }
 
+    /**
+     * Call the Closure for each Feature optionally filtered by the Filter
+     * @param filter The Filter which is optional
+     * @param closure A Closure which takes a Feature
+     */
+    void eachFeature(def filter = null, Closure closure) {
+        Cursor c = getCursor(filter)
+        try {
+            while(c.hasNext()) {
+                Feature f = c.next()
+                closure.call(f)
+            }
+        } finally {
+            c.close()
+        }
+    }
+
+    /**
+     * Collect values from the Features of a Layer
+     * @param filter The Filter which is optional
+     * @param closure A Closure which takes a Feature and returns a value
+     */
+    List collectFromFeature(def filter = null, Closure closure) {
+        List results = []
+        Cursor c = getCursor(filter)
+        try {
+            while(c.hasNext()) {
+                Feature f = c.next()
+                results.add(closure.call(f))
+            }
+        } finally {
+            c.close()
+        }
+        results
+    }
+    
     /**
      * Get a List of Features
      * @param filer The Filter or Filter String to limit the Features used to construct the bounds. Defaults to null.
@@ -441,12 +503,16 @@ class Layer {
             }
         }
         // Else if it is a FeatureCollection
-        else if (o instanceof FeatureCollection) {
+        else if (o instanceof FeatureCollection || o instanceof Cursor) {
             Transaction t = new DefaultTransaction("addTransaction")
             try {
                 FeatureStore<SimpleFeatureType, SimpleFeature> store = (FeatureStore)fs
                 store.transaction = t
-                store.addFeatures(o as FeatureCollection)
+                if (o instanceof FeatureCollection) {
+                    store.addFeatures(o as FeatureCollection)
+                } else {
+                    store.addFeatures((o as Cursor).col)
+                }
                 t.commit()
             }
             catch (Exception e) {
@@ -704,7 +770,7 @@ class Layer {
         } else if (method.equalsIgnoreCase("log") || method.equalsIgnoreCase("logarithmic")) {
             fx = {x -> delta * Math.log(x+1) / Math.log(2)}
         } else {
-            throw new Exception("Interpolation method '${method}' is not supported!")
+            throw new IllegalArgumentException("Interpolation method '${method}' is not supported!")
         }
 
         Closure fy = {x -> min + fx(x)}
@@ -725,10 +791,6 @@ class Layer {
         def dim = new Dimension(gridSize[0] as int, gridSize[1] as int)
         def fld =  filterFactory.property(field instanceof Field ? field.name : field)
         def cov = VectorToRasterProcess.process(fs.features, fld, dim, bounds.env, rasterName, null)
-        /*File file = File.createTempFile(rasterName, ".tif")
-        def writer = new GeoTiffWriter(file, null)
-        writer.write(cov, null)
-        def tif = new GeoTIFF(file, this.proj)*/
         def tif = new GeoTIFF(cov)
         return tif
     }

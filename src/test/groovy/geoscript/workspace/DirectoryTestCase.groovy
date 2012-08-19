@@ -19,13 +19,24 @@ class DirectoryTestCase {
         Directory dir = new Directory(file)
         assertNotNull(dir)
         assertEquals "Directory", dir.format
-        assertEquals "Directory[${file}/]".toString(), dir.toString()
+        assertEquals "Directory[${file}]".toString(), dir.toString()
 
         Directory dir2 = new Directory(file.absolutePath)
         assertNotNull(dir2)
         assertEquals "Directory", dir2.format
-        assertEquals "Directory[${file}/]".toString(), dir2.toString()
+        assertEquals "Directory[${file}]".toString(), dir2.toString()
 
+    }
+
+    @Test void getNames() {
+        File file = new File(getClass().getClassLoader().getResource("states.shp").toURI()).parentFile
+        assertNotNull(file)
+        Directory dir = new Directory(file)
+        assertNotNull(dir)
+        println dir.names
+        assertEquals 1, dir.names.size()
+        assertEquals "[states]", dir.names.toString()
+        assertTrue dir.names[0] instanceof String
     }
 
     @Test void getLayers() {
@@ -36,8 +47,9 @@ class DirectoryTestCase {
         println dir.layers
         assertEquals 1, dir.layers.size()
         assertEquals "[states]", dir.layers.toString()
+        assertTrue dir.layers[0] instanceof Layer
     }
-
+    
     @Test void get() {
         File file = new File(getClass().getClassLoader().getResource("states.shp").toURI()).parentFile
         assertNotNull(file)

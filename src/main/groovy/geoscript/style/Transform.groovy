@@ -4,16 +4,20 @@ import geoscript.filter.Function
 import org.geotools.styling.Rule
 import org.geotools.styling.Symbolizer as GtSymbolizer
 import org.geotools.styling.TextSymbolizer
-import org.geotools.styling.RasterSymbolizer
 import org.geotools.styling.FeatureTypeStyle
+import org.geotools.process.function.ProcessFunction
 
 /**
  * A Symbolizer that wraps a geoscript.filter.Function generally
  * used for transforming Geometry or String or Date formatting.
  * <p>You can create a Transform from a CQL statement:</p>
- * <p><code>Transform transform = new Transform("centroid(the_geom)")</code></p>
+ * <p><blockquote><pre>
+ * Transform transform = new Transform("centroid(the_geom)")
+ * </pre></blockquote></p>
  * <p>Or from a geoscript.filter.Function:</p>
- * <p><code>Transform transform1 = new Transform(new Function("myCentroid", {g -> g.centroid}))</code></p>
+ * <p><blockquote><pre>
+ * Transform transform1 = new Transform(new Function("myCentroid", {g -> g.centroid}))
+ * </pre></blockquote></p>
  * @author Jared Erickson
  */
 class Transform extends Symbolizer {
@@ -24,27 +28,33 @@ class Transform extends Symbolizer {
     private Function function
 
     /**
-     * The Transform type (Geometry or Rendering)
+     * The Transform type (normal and rendering)
      */
-    private int type = GEOMETRY
+    private Type type;
 
     /**
-     * The Geometry Transformation type
+     * The Type enumeration
      */
-    static int GEOMETRY = 1;
+    public static enum Type {
+        NORMAL,
+        RENDERING
+    }
 
     /**
-     * The Rendering Transformation type
+     * Type constants for ease of use
      */
-    static int RENDERING = 2;
+    public static final Type NORMAL = Type.NORMAL
+    public static final Type RENDERING = Type.RENDERING
 
     /**
      * Create a new Transform from a Function.
-     * <p><code>Transform transform1 = new Transform(new Function("myCentroid", {g -> g.centroid}))</code></p>
+     * <p><blockquote><pre>
+     * Transform transform1 = new Transform(new Function("myCentroid", {g -> g.centroid}))
+     * </pre></blockquote></p>
      * @param function The geoscript.filter.Function
      * @param type The optional Transformation type (GEOMETRY or RENDERING)
      */
-    Transform(Function function, int type = GEOMETRY) {
+    Transform(Function function, Type type = Type.NORMAL) {
         super()
         this.function = function
         this.type = type
@@ -52,25 +62,29 @@ class Transform extends Symbolizer {
     
     /**
      * Create a new Transform from a CQL filter function.
-     * <p><code>Transform transform = new Transform("centroid(the_geom)")</code></p>
-     * @param cql A CQL string
-     * @param type The optional Transformation type (GEOMETRY or RENDERING)
+     * <p><blockquote><pre>
+     * Transform transform = new Transform("centroid(the_geom)")
+     * </pre></blockquote></p>
+     * @param cql A CQL string 
      */
-    Transform(String cql, int type = GEOMETRY) {
+    Transform(String cql, Type type = Type.NORMAL) {
         this(new Function(cql), type)
     }
 
-     /**
+    /**
      * Prepare the GeoTools FeatureTypeStyle and Rule by applying this Symbolizer.
      * @param fts The GeoTools FeatureTypeStyle
      * @param rule The GeoTools Rule
      */
     @Override
     protected void prepare(FeatureTypeStyle fts, Rule rule) {
-        if (type == GEOMETRY) {
-            prepare(rule)
-        } else {
+        if (/*function.function.class.name.equals("org.geotools.process.function.ProcessFunction") ||
+            function.function.class.name.equals("org.geotools.process.function.RenderingProcessFunction")*/
+            this.type == Type.RENDERING
+        ) {
             fts.transformation = function.function
+        } else {
+            prepare(rule)
         }
     }
 
@@ -106,6 +120,14 @@ class Transform extends Symbolizer {
      */
     Function getFunction() {
         this.function
+    }
+
+    /**
+     * Get the Type
+     * @return The Type
+     */
+    Type getType() {
+        this.type
     }
 
     /**

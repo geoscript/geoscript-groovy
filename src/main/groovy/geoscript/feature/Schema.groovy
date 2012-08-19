@@ -6,16 +6,14 @@ import org.opengis.feature.type.GeometryDescriptor
 import org.geotools.feature.NameImpl
 import org.geotools.feature.simple.SimpleFeatureTypeBuilder
 import org.geotools.data.DataUtilities
-import com.vividsolutions.jts.geom.Geometry as JtsGeometry
-import geoscript.geom.*
 import geoscript.proj.Projection
 
 /**
  * A Schema describes the structure of a Feature.  It is contains a name, and
  * a set of Fields.
- * <p> You can create a Schema from a name and a List of Fields</p>
+ * <p> You can create a Schema from a name and a List of {@link Field}s</p>
  * <code>
- * Schema s1 = new Schema("widgets", [new Field("geom","Point"), new Field("name","string"), new Field("price","float")])
+ * Schema s1 = new Schema("widgets", [new {@link Field}("geom","Point"), new {@link Field}("name","string"), new {@link Field}("price","float")])
  * </code>
  * <p> You can create a Schema from a name and a List of Lists which contain a name and type</p>
  * <code>
@@ -143,7 +141,7 @@ class Schema {
                 return new Field(ad.localName, Schema.lookUpAlias(ad.type.binding.name))
             }
         }
-        throw new Exception("No such field ${name}".toString())
+        throw new IllegalArgumentException("No such field ${name}".toString())
     }
 
     /**

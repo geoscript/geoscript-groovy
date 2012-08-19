@@ -29,15 +29,15 @@ Groovy version greater than *1.7* is required for GeoScript. The current version
 Install GeoScript
 -----------------
 
-#. Download `GeoScript <http://github.com/downloads/jericks/geoscript-groovy/geoscript-groovy-0.95.zip>`_
+#. Download `GeoScript <http://github.com/downloads/jericks/geoscript-groovy/geoscript-groovy-0.98.zip>`_
 
 #. Unpack the GeoScript tarball::
 
-     unzip geoscript-groovy0.95.zip
+     unzip geoscript-groovy0.98.zip
 
-#. Add the geoscript-groovy0.95\bin directory to your path::
+#. Add the geoscript-groovy0.97\bin directory to your path::
 
-     export PATH=geoscript-groovy0.95\bin:$PATH
+     export PATH=geoscript-groovy0.98\bin:$PATH
 
 That's it. GeoScript Groovy should now be installed on the system. To verify the install execute the :command:`geoscript-groovysh` command::
 

@@ -10,9 +10,13 @@ import geoscript.filter.Color
 /**
  * A Symbolizer for area/polygonal geometries.  It consists of a color and an opacity.
  * You can create a Fill from a color and opacity:
- * <p><code>def fill = new Fill('#ff0000', 0.5)</code></p>
+ * <p><blockquote><pre>
+ * def fill = new Fill('#ff0000', 0.5)
+ * </pre></blockquote></p>
  * Or from named parameters:
- * <p><code>def fill = new Fill(color: '#ff0000', opacity: 0.25)</code></p>
+ * <p><blockquote><pre>
+ * def fill = new Fill(color: '#ff0000', opacity: 0.25)
+ * </pre></blockquote></p>
  * @author Jared Erickson
  */
 class Fill extends Symbolizer {
@@ -20,7 +24,7 @@ class Fill extends Symbolizer {
     /**
      * The Color (#ff0000, red, [0,0.,255])
      */
-    Color color
+    Expression color
 
     /**
      * The opacity (1.0 = opaque to 0.0 = transparent)
@@ -39,7 +43,9 @@ class Fill extends Symbolizer {
 
     /**
      * Create a new Fill.
-     * <p><code>def f = new Fill(color: '#ff0000', opacity: 0.25)</code></p>
+     * <p><blockquote><pre>
+     * def f = new Fill(color: '#ff0000', opacity: 0.25)
+     * </pre></blockquote></p>
      * @param map A Map of named parameters.
      */
     Fill(Map map) {
@@ -53,15 +59,17 @@ class Fill extends Symbolizer {
 
     /**
      * Create a new Fill.
-     * <p><code>def f = new Fill('#ff0000', 0.5)</code></p>
-     * <p><code>def f = new Fill('red', 0.5)</code></p>
-     * <p><code>def f = new Fill([255,0,0], 0.5)</code></p>
+     * <p><blockquote><pre>
+     * def f = new Fill('#ff0000', 0.5)
+     * def f = new Fill('red', 0.5)
+     * def f = new Fill([255,0,0], 0.5)
+     * </pre></blockquote></p>
      * @param color The Color
      * @param opacity The opacity (1 opaque to 0 transparent)
      */
     Fill(def color, def opacity = 1.0) {
         super()
-        this.color = new Color(color)
+        this.color = color instanceof Expression ? color : new Color(color)
         this.opacity = new Expression(opacity)
         this.icon = null
         this.hatch = null
@@ -69,7 +77,9 @@ class Fill extends Symbolizer {
 
     /**
      * Compose this Fill as an Icon.
-     * <p><code>def f = new Fill().icon('icon.png','image/png')</code></p>
+     * <p><blockquote><pre>
+     * def f = new Fill().icon('icon.png','image/png')
+     * </pre></blockquote></p>
      * @param url The URL or File of the image
      * @param format The mime type of the image.
      * @return This Fill
@@ -81,7 +91,9 @@ class Fill extends Symbolizer {
 
     /**
      * Compose this Fill with a Hatch pattern.
-     * <code>def f = new Fill().hatch('slash')</code>
+     * <p><blockquote><pre>
+     * def f = new Fill().hatch('slash')
+     * </pre></blockquote></p>
      * @param name The name of the hatch pattern
      * @param stroke The Stroke
      * @param size The size
@@ -94,10 +106,10 @@ class Fill extends Symbolizer {
 
     /**
      * Set the color
-     * @param color  The color (#ffffff, red)
+     * @param color The color (#ffffff, red)
      */
     void setColor(def color) {
-        this.color = new Color(color)
+        this.color = color instanceof Expression ? color : new Color(color)
     }
 
     /**

@@ -1,13 +1,13 @@
 package geoscript.filter
 
 import org.opengis.filter.expression.Function as GtFunction
+import org.opengis.filter.expression.Expression as GtExpression
 
 import org.geotools.factory.CommonFactoryFinder
 import org.geotools.factory.FactoryIteratorProvider
 import org.geotools.factory.GeoTools
+import org.geotools.filter.FunctionExpressionImpl
 import org.geotools.filter.FunctionFactory
-import org.geotools.filter.FunctionImpl
-import org.opengis.filter.expression.Literal
 import org.opengis.feature.type.Name
 import org.geotools.feature.FeatureCollection
 import geoscript.layer.Layer
@@ -17,14 +17,20 @@ import org.geotools.gce.geotiff.GeoTiffFormat
 import org.geotools.filter.function.RenderingTransformation
 import org.geotools.data.Query
 import org.opengis.coverage.grid.GridGeometry
+import org.opengis.filter.expression.Literal
+import org.geotools.feature.NameImpl
 
 /**
  * A GeoScript Function either wraps an existing GeoTools Function or an CQL String.
  * <p>You can create a Function from CQL:</p>
- * <p><code>
+ * <p><blockquote><pre>
  * Function f = new Function("centroid(the_geom)")
- * </code></p>
- * See http://docs.geoserver.org/2.0.x/en/user/filter/function_reference.html for more
+ * </pre></blockquote></p>
+ * <p>You can also create a Function from CQL and a Closure:</p>
+ * <p><blockquote><pre>
+ * Function f = new Function("my_centroid(the_geom)", {g-> g.centroid})
+ * </pre></blockquote></p>
+ * See <a href="http://docs.geoserver.org/2.1.x/en/user/filter/function_reference.html">GeoServer's Function Reference</a> for more
  * details.
  * @author Jared Erickson
  */
@@ -58,35 +64,53 @@ class Function extends Expression {
     }
 
     /**
-     * Create a new Function from a Closure
+     * Create a new Function from a name and one or more Expressions
+     * @param name The Function name
+     * @param expressions One or more Expressions
+     */
+    Function(String name, Expression... expressions) {
+        this(ff.function(name, *expressions.collect{it.expr}))
+    }
+
+    /**
+     * Create a new Function from a Closure with one or more Expressions.
      * @param name The name of the new Function
      * @param closure The Closure
+     * @param expressions One or more Expressions
      */
-    Function(String name, Closure closure) {
-        this(new ClosureFunction(name, closure))
+    Function(String name, Closure closure, Expression... expressions) {
+        this(registerAndCreateFunction(name, closure, expressions))
     }
-	
+
     /**
-     * Call the Function with an optional parameter.
-     * @param obj The parameter
-     * @return The return value
+     * Create a new Function from CQL and a Closure.
+     * @param cql The CQL statement
+     * @param closure The Closure
      */
-    def call(Object object = null) {
-        if (object != null) {
-            // A GeoScript Layer == GeoTools FeatureCollection
-            if (object instanceof geoscript.layer.Layer) {
-                object = object.fs.features
-            }
-            // A GeoScript Geometry == JTS Geometry
-            else if (object instanceof geoscript.geom.Geometry) {
-                object = object.g
-            }
-            // A GeoScript Feature == GeoTools SimpleFeature
-            else if (object instanceof geoscript.feature.Feature) {
-                object = object.f
-            }
-        }
-        return function.evaluate(object)
+    Function(String cql, Closure closure) {
+        this(registerAndCreateFunction(cql, closure))
+    }
+
+    /**
+     * Create a Rendering Transformation Function from a Process and a variable List of Functions.
+     * @param process The GeoScript Process
+     * @param functions A variable List of Functions
+     */
+    Function(geoscript.process.Process process, Function... functions) {
+        this(createProcessFunction(process, functions))
+    }
+
+    /**
+     * Create a Rendering Transformation Function from a Process and a variable List of Functions.
+     * @param process The GeoScript Process
+     * @param functions A variable List of Functions
+     */
+    private static GtFunction createProcessFunction(geoscript.process.Process process, Function... functions) {
+        def pff = new org.geotools.process.function.ProcessFunctionFactory()
+        def names = process.name.split(":")
+        def nm = new NameImpl(names[0], names[1])
+        def f = pff.function(nm, functions.collect{it.expr}, null)
+        f
     }
 
     /**
@@ -96,47 +120,98 @@ class Function extends Expression {
     String toString() {
         function.toString()
     }
-	
+
+    /**
+     * Register a new Function by name with a Closure.
+     * @param name The name of the new Function
+     * @param closure The Closure
+     */
+    static void registerFunction(String name, Closure closure) {
+        functionFactory.cache.put(name, closure)
+    }
+
+    /**
+     * Register a new Function by name with a Closure and then immediately ask for an instance of the Function
+     * with the one or more Expressions
+     * @param name The name of the new Function
+     * @param closure The Closure
+     * @param expressions One or more Expressions
+     * @return A GeoTools Function
+     */
+    private static GtFunction registerAndCreateFunction(String name, Closure closure, Expression... expressions) {
+        registerFunction(name, closure)
+        ff.function(name, *expressions.collect{it.expr})
+    }
+
+    /**
+     * Register a new Function with a Closure and a CQL statement.  The name of the new Function is extracted from
+     * the CQL statement.
+     * @param cql The CQL statement
+     * @param closure The Closure
+     * @return A GeoTools Function
+     */
+    private static GtFunction registerAndCreateFunction(String cql, Closure closure) {
+        String name = cql.substring(0, cql.indexOf("("))
+        registerFunction(name, closure)
+        org.geotools.filter.text.ecql.ECQL.toExpression(cql)
+    }
+
     /**
      * A GeoTools Function that delegates to a Groovy Closure.
      */
-    private static class ClosureFunction extends FunctionImpl implements RenderingTransformation {
+    private static class ClosureFunction extends FunctionExpressionImpl {
+
+        /**
+         * The Groovy Closure
+         */
         private final Closure closure
-        ClosureFunction(String name, Closure closure) {
-            setName(name)
+
+        /**
+         * Create a new ClosureFunction.
+         * @param name The name of the Function
+         * @param closure The Groovy Closure
+         * @param args The Expressions
+         * @param fallback
+         */
+        ClosureFunction(String name, Closure closure, List<GtExpression> args, Literal fallback) {
+            super(name)
             this.closure = closure
-            functionFactory.functions.add(this)
+            this.getParameters().addAll(args)
+            this.fallbackValue = fallback
         }
-        // We may need to convert input and outputs to/from GeoTools or GeoScript
-        // objects to Rendering Transformations to work.
+
+        /**
+         * Evaluate the Function
+         * @param obj The Function argument
+         * @return The return value
+         */
         def evaluate(def obj) {
-            def input = obj
-            // If the input is a GeoTools FeatureCollection wrap it as a GeoScript Layer
-            if (obj instanceof FeatureCollection) {
-                input = new Layer(obj.schema.name.localPart, obj)
-            } else if (obj instanceof AbstractGridCoverage) {
-                input = new Raster(obj, new GeoTiffFormat())
+            // Evaluate each parameter (set in the constructor)
+            def args = getParameters().collect{p ->
+                def v = p.evaluate(obj)
+                // Wrap GeoTools objects with GeoScript objects
+                if (v instanceof com.vividsolutions.jts.geom.Geometry) {
+                    v = geoscript.geom.Geometry.wrap(v)
+                }
+                return v
+            } as Object[]
+
+            // Call the Closure
+            def result = closure.call(*args)
+
+            // Unwrap GeoScript objects to GeoTools objects
+            if (result instanceof geoscript.geom.Geometry) {
+                result = result.g
             }
-            // Call the Groovy Closure
-            def output = closure(input)
-            // If the output is a GeoScript Layer convert it back to a GeoTools FeatureCollection
-            if (output instanceof Layer) {
-                output = output.fs.features
-            } else if (output instanceof Raster) {
-                output = output.coverage
-            }
-            return output
+            result
         }
-        Query invertQuery(Query targetQuery, GridGeometry gridGeometry) {
-            //targetQuery
-            return null
-        }
-        GridGeometry invertGridGeometry(Query targetQuery, GridGeometry targetGridGeometry) {
-            //targetGridGeometry
-            return null
-        }
-        String toString() {
-            "${name}()"
+
+        /**
+         * Get the argument count
+         * @return The argument count
+         */
+        int getArgCount() {
+            return getParameters().size()
         }
     }
 
@@ -165,15 +240,44 @@ class Function extends Expression {
      * The GeoScript FunctionFactory
      */
     private static class GeoScriptFunctionFactory implements FunctionFactory {
-        List functions = []
+
+        /**
+         * A cache of Function name's and their Closure
+         */
+        private Map<String, Closure> cache = new HashMap<String, Closure>()
+
+        /**
+         * Look up a GeoTools Function
+         * @param name The function name
+         * @param args The arguments
+         * @param fallback The fallback value
+         * @return A ClosureFunction or null
+         */
         GtFunction function(String name, List args, Literal fallback) {
-            functions.find{func -> func.name.equals(name) }
+            if (cache.containsKey(name)) {
+                Closure closure = cache.get(name)
+                return new ClosureFunction(name, closure, args, fallback)
+            }
+            return null
         }
+
+        /**
+         * Look up a GeoToos Function.  Delegates to the previous method.
+         * @param name The Name
+         * @param args The arguments
+         * @param fallback The fallback value
+         * @return A ClosureFunction or null
+         */
         GtFunction function(Name name, List args, Literal fallback) {
-            functions.find{func -> func.name.equals(name.localPart)}
+            function(name.localPart, args, fallback)
         }
+
+        /**
+         * Get the Function names
+         * @return The Function names
+         */
         List getFunctionNames() {
-            functions.collect{func -> func.name}
+            cache.keySet().toList()
         }
     }
 

@@ -2,17 +2,29 @@ package geoscript.geom
 
 import com.vividsolutions.jts.geom.MultiLineString as JtsMultiLineString
 import com.vividsolutions.jts.geom.LineString as JtsLineString
+import com.vividsolutions.jts.geom.PrecisionModel
+import com.vividsolutions.jts.noding.snapround.GeometryNoder
+import com.vividsolutions.jts.operation.linemerge.LineMerger
+import com.vividsolutions.jts.operation.polygonize.Polygonizer as JtsPolygonizer
 
 /**
  * A MultiLineString Geometry.
- * <p>You can create a MultiLineString from a variable List of LineString:</p>
- * <code>MultiLineString m = new MultiLineString(new LineString([1,2],[3,4]), new LineString([5,6],[7,8]))</code>
+ * <p>You can create a MultiLineString from a variable List of {@link LineString}:</p>
+ * <p><blockquote><pre>
+ * MultiLineString m = new MultiLineString(new LineString([1,2],[3,4]), new LineString([5,6],[7,8]))
+ * </pre></blockquote></p>
  * <p>Or from a variable List of List of Doubles:</p>
- * <code>MultiLineString m = new MultiLineString([[1,2],[3,4]], [[5,6],[7,8]])</code>
- * <p>Or from a List of LineStrings:</p>
- * <code>MultiLineString m = new MultiLineString([new LineString([1,2],[3,4]), new LineString([5,6],[7,8])])</code>
+ * <p><blockquote><pre>
+ * MultiLineString m = new MultiLineString([[1,2],[3,4]], [[5,6],[7,8]])
+ * </pre></blockquote></p>
+ * <p>Or from a List of {@link LineString}s:</p>
+ * <p><blockquote><pre>
+ * MultiLineString m = new MultiLineString([new LineString([1,2],[3,4]), new LineString([5,6],[7,8])])
+ * </pre></blockquote></p>
  * <p>Or from a List of List of List of Doubles:</p>
- * <code>MultiLineString m = new MultiLineString([[[1,2],[3,4]], [[5,6],[7,8]]])</code>
+ * <p><blockquote><pre>
+ * MultiLineString m = new MultiLineString([[[1,2],[3,4]], [[5,6],[7,8]]])
+ * </pre></blockquote></p>
  * @author Jared Erickson
  */
 class MultiLineString extends GeometryCollection {
@@ -27,7 +39,9 @@ class MultiLineString extends GeometryCollection {
 
     /**
      * Create a MultiLineString from a variable List of LineStrings
-     * <p><code>MultiLineString m = new MultiLineString(new LineString([1,2],[3,4]), new LineString([5,6],[7,8]))</code></p>
+     * <p><blockquote><pre>
+     * MultiLineString m = new MultiLineString(new LineString([1,2],[3,4]), new LineString([5,6],[7,8]))
+     * </pre></blockquote></p>
      * @param lineString A variable List of LineStrings
      */
     MultiLineString(LineString... lineStrings) {
@@ -36,7 +50,9 @@ class MultiLineString extends GeometryCollection {
 
     /**
      * Create a MultiLineString from a variable List of List of Doubles
-     * <p><code>MultiLineString m = new MultiLineString([[1,2],[3,4]], [[5,6],[7,8]])</code></p>
+     * <p><blockquote><pre>
+     * MultiLineString m = new MultiLineString([[1,2],[3,4]], [[5,6],[7,8]])
+     * </pre></blockquote></p>
      * @param lineString A variable List of List of Doubles
      */
     MultiLineString(List<List<Double>>... lineStrings) {
@@ -45,8 +61,10 @@ class MultiLineString extends GeometryCollection {
 
     /**
      * Create a MultiLineString from a List of LineString or a List of List of Doubles
-     * <p><code>MultiLineString m = new MultiLineString([new LineString([1,2],[3,4]), new LineString([5,6],[7,8])])</code></p>
-     * <p><code>MultiLineString m = new MultiLineString([[[1,2],[3,4]], [[5,6],[7,8]]])</code></p>
+     * <p><blockquote><pre>
+     * MultiLineString m = new MultiLineString([new LineString([1,2],[3,4]), new LineString([5,6],[7,8])])
+     * MultiLineString m = new MultiLineString([[[1,2],[3,4]], [[5,6],[7,8]]])
+     * </pre></blockquote></p>
      * @param lineString Either a List of List of Doubles or a List of LineStrings
      */
     MultiLineString(List lineStrings) {
@@ -55,19 +73,57 @@ class MultiLineString extends GeometryCollection {
 
     /**
      * Add a LineString to this MultiLineString to create another MultiLineString
-     * <p><code>def m1 = new MultiLineString(new LineString([1,2],[3,4]), new LineString([5,6],[7,8]))</code></p>
-     * <p><code>def m2 = m1 + new LineString([11,12],[13,14])</code></p>
-     * <p><code>MULTILINESTRING ((1 2, 3 4), (5 6, 7 8), (11 12, 13 14))</code></p>
+     * <p><blockquote><pre>
+     * def m1 = new MultiLineString(new LineString([1,2],[3,4]), new LineString([5,6],[7,8]))
+     * def m2 = m1 + new LineString([11,12],[13,14])
+     *
+     * MULTILINESTRING ((1 2, 3 4), (5 6, 7 8), (11 12, 13 14))
+     * </pre></blockquote></p>
      * @param line A LineString
      * @return A new MultiLineString with this LineString and the other
      */
     MultiLineString plus(LineString line) {
         List<LineString> lines = []
-        (0..numGeometries-1).each{index ->
-            lines.add(getGeometryN(index))
+        if (!empty) {
+            (0..numGeometries-1).each{index ->
+                lines.add(getGeometryN(index))
+            }
         }
         lines.add(line)
         new MultiLineString(lines)
+    }
+
+    /**
+     * Node the LineStrings in this MultiLineString
+     * @param numberOfDecimalPlaces The number of decimal places to use in the PrecisionModel
+     * @return A new MultiLineString
+     */
+    MultiLineString node(int numberOfDecimalPlaces = 5) {
+        def pm = new PrecisionModel(numberOfDecimalPlaces)
+        def noder = new GeometryNoder(pm)
+        def nodedLines = noder.node(this.geometries.collect{line -> line.g})
+        new MultiLineString(nodedLines.collect{line -> new LineString(line)})
+    }
+
+    /**
+     * Merge the LineStrings of this MultiLineString together
+     * @return A new MultiLineString
+     */
+    MultiLineString merge() {
+        def merger = new LineMerger()
+        this.geometries.each{line -> merger.add(line.g) }
+        new MultiLineString(merger.mergedLineStrings.collect{line -> new LineString(line)})
+    }
+
+    /**
+     * Polygonize the LineStrings of this MultiLineString
+     * @return A MultiPolygon
+     */
+    MultiPolygon polygonize() {
+        def polygonizer = new JtsPolygonizer()
+        this.geometries.each{line -> polygonizer.add(line.g)}
+        def polygons = polygonizer.polygons
+        new MultiPolygon(polygons.collect{p -> new Polygon(p)})
     }
 
     /**

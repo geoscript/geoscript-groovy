@@ -5,13 +5,18 @@ import org.geotools.data.postgis.PostgisNGDataStoreFactory
 
 /**
  * A PostGIS Workspace connects to a PostGIS database.
+ * <p><blockquote><pre>
+ * PostGIS postgis = new PostGIS("database", "localhost", "5432", "public", "user", "password")
+ * </pre></blockquote></p>
  * @author Jared Erickson
  */
 class PostGIS extends Database {
 
     /**
      * Create a new PostGIS Workspace with a name, host, port, schema, user, and password.
-     * <p><code>def postgis = new PostGIS("database", "localhost", "5432", "public", "user", "password")</code></p>
+     * <p><blockquote><pre>
+     * PostGIS postgis = new PostGIS("database", "localhost", "5432", "public", "user", "password")
+     * </pre></blockquote></p>
      * @param name The database name
      * @param host The host name
      * @param port The port
@@ -26,11 +31,13 @@ class PostGIS extends Database {
     
     /**
      * Create a new PostGIS with just a database name using defaults for other values.
-     * <p><code>def postgis = new PostGIS("database", user: 'me', password: 'supersecret')</code></p>
+     * <p><blockquote><pre>
+     * PostGIS postgis = new PostGIS("database", user: 'me', password: 'supersecret'
+     * </pre></blockquote></p>
      * @param options The options for connecting to a PostGIS database (host, port, schema, user, password, estimatedExtent)
      * @param name The database name
      */
-    PostGIS (Map options, String name) {
+    PostGIS (Map options = [:], String name) {
         this(name, options.get("host","localhost"), options.get("port","5432"), options.get("schema","public"), options.get("user",System.getProperty("user.name")), options.get("password",null), options.get("estimatedExtent",false) as boolean)
     }
 

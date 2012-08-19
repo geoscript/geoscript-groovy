@@ -23,7 +23,7 @@ class GeoJSONWriterTestCase {
 
         // Write the Feature to a GeoJSON String
         GeoJSONWriter writer = new GeoJSONWriter()
-        String expected = "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[111,-47]},\"properties\":{\"name\":\"House\",\"price\":12.5},\"id\":\"house1\"}"
+        String expected = """{"type":"Feature","geometry":{"type":"Point","coordinates":[111,-47]},"properties":{"name":"House","price":12.5},"id":"house1"}"""
         String actual = writer.write(feature)
         assertEquals expected, actual
     }

@@ -27,10 +27,10 @@ class RasterTestCase {
         assertEquals("EPSG:2927", raster.proj.id)
 
         Bounds bounds = raster.bounds
-        assertEquals(1166191.0260847565, bounds.west, 0.0000000001)
-        assertEquals(1167331.8522748263, bounds.east, 0.0000000001)
-        assertEquals(822960.0090852415, bounds.south, 0.0000000001)
-        assertEquals(824226.3820666744, bounds.north, 0.0000000001)
+        assertEquals(1166191.0260847565, bounds.minX, 0.0000000001)
+        assertEquals(1167331.8522748263, bounds.maxX, 0.0000000001)
+        assertEquals(822960.0090852415, bounds.minY, 0.0000000001)
+        assertEquals(824226.3820666744, bounds.maxY, 0.0000000001)
         assertEquals("EPSG:2927", bounds.proj.id)
 
         def (double w, double h) = raster.size
@@ -62,10 +62,10 @@ class RasterTestCase {
         Bounds bounds = new Bounds(1166191.0260847565, 822960.0090852415, 1166761.4391797914, 823593.1955759579)
         Raster cropped = raster.crop(bounds)
         assertNotNull(cropped)
-        assertEquals(bounds.west, cropped.bounds.west, 1d)
-        assertEquals(bounds.east, cropped.bounds.east, 1d)
-        assertEquals(bounds.north, cropped.bounds.north, 1d)
-        assertEquals(bounds.south, cropped.bounds.south, 1d)
+        assertEquals(bounds.minX, cropped.bounds.minX, 1d)
+        assertEquals(bounds.maxX, cropped.bounds.maxX, 1d)
+        assertEquals(bounds.minY, cropped.bounds.minY, 1d)
+        assertEquals(bounds.maxY, cropped.bounds.maxY, 1d)
     }
 
     @Test void reproject() {

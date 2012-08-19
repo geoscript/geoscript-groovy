@@ -106,5 +106,15 @@ class KmlReaderTestCase {
         assertEquals expected.wkt, actual.wkt
     }
 
+    @Test void readPolygonWithNamespace() {
+        KmlReader reader = new KmlReader()
+        String kml = '<kml:Polygon xmlns:kml="http://earth.google.com/kml/2.1"><kml:outerBoundaryIs><kml:LinearRing><kml:coordinates>0.0,0.0 2.0,0.0 2.0,2.0 0.0,2.0 0.0,0.0</kml:coordinates></kml:LinearRing></kml:outerBoundaryIs></kml:Polygon>'
+        Polygon expected = new Polygon([0, 0], [2, 0], [2, 2], [0, 2], [0, 0])
+        Polygon actual = reader.read(kml)
+        println("Expected: ${expected.wkt}")
+        println("Actual  : ${actual.wkt}")
+        assertEquals expected.wkt, actual.wkt
+    }
+
 }
 

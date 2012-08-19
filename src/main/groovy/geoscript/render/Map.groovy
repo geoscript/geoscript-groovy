@@ -19,8 +19,18 @@ import org.geotools.renderer.lite.LabelCache
 import org.geotools.renderer.lite.RendererUtilities
 import org.geotools.renderer.lite.StreamingRenderer
 
+import org.geotools.referencing.crs.DefaultGeographicCRS
+
 /**
- * The GeoScript Map for rendering Layers as Images
+ * The GeoScript Map for rendering {@link geoscript.layer.Layer Layers}.
+ * <p><blockquote><pre>
+ * import geoscript.render.*
+ * import geoscript.layer.*
+ * import geoscript.style.*
+ *
+ * Map map = new Map(layers:[new Shapefile("states.shp")])
+ * map.renderToImage()
+ * </pre></blockquote></p>
  * @author Jared Erickson
  */
 class Map {
@@ -162,7 +172,7 @@ class Map {
         // If the Bounds doesn't have a Projection
         // assume it's the same as the Map
         if (bounds.proj == null) {
-            bounds = new Bounds(bounds.l, bounds.b, bounds.r, bounds.t, getProj())
+            bounds = new Bounds(bounds.minX, bounds.minY, bounds.maxX, bounds.maxY, getProj())
         }
         context.setAreaOfInterest(bounds.env, bounds.proj?.crs)
     }
@@ -232,7 +242,7 @@ class Map {
             backgroundColor = "white"
         }
         if (backgroundColor != null) {
-            g.color = Color.getColor(backgroundColor)
+            g.color = new Color(backgroundColor).asColor()
             g.fillRect(0,0,width,height)
         }
         setUpRendering()
@@ -257,9 +267,9 @@ class Map {
         layers.each{layer ->
             MapLayer mapLayer
             if (layer instanceof Layer) {
-                mapLayer = new DefaultMapLayer(layer.fs, layer.style.style)
+                mapLayer = new DefaultMapLayer(layer.fs, layer.style.createGtStyle())
             } else if (layer instanceof Raster) {
-                mapLayer = new DefaultMapLayer(layer.coverage, layer.style.style)
+                mapLayer = new DefaultMapLayer(layer.coverage, layer.style.createGtStyle())
             }
             context.addLayer(mapLayer)
         }
@@ -296,7 +306,13 @@ class Map {
                     }
                 }
             }
-            b = new Bounds(b.l, b.b, b.r, b.t, p)
+            // Apply a default Projection or GeoTools will throw Exceptions
+            // Should this be EPSG:4326 or
+            // CartesianAuthorityFactory.GENERIC_2D
+            if (p == null || p.crs == null) {
+                p = new Projection(DefaultGeographicCRS.WGS84)
+            }
+            b = new Bounds(b.minX, b.minY, b.maxX, b.maxY, p)
         }
         setBounds(b)
     }
@@ -320,11 +336,11 @@ class Map {
         }
         double deltaX = w / scale - mapWidth
         double deltaY = h / scale - mapHeight
-        double l = mapBounds.l - deltaX / 2D
-        double r = mapBounds.r + deltaX / 2D
-        double b = mapBounds.b - deltaY / 2D
-        double t = mapBounds.t + deltaY / 2D
-        return new Bounds(l, b, r, t, mapBounds.proj)
+        double minX = mapBounds.minX - deltaX / 2D
+        double maxX = mapBounds.maxX + deltaX / 2D
+        double minY = mapBounds.minY - deltaY / 2D
+        double maxY = mapBounds.maxY + deltaY / 2D
+        return new Bounds(minX, minY, maxX, maxY, mapBounds.proj)
     }
 
     /**

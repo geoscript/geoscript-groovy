@@ -4,10 +4,13 @@ import geoscript.geom.Geometry
 import com.vividsolutions.jts.io.WKTReader
 
 /**
- * Read a Geometry from a WKT String.
- * <p><code>WktReader reader = new WktReader()</code></p>
- * <p><code>Point pt = reader.read("POINT (111 -47)")</code></p>
- * <p><code>POINT (111 -47)</code></p>
+ * Read a {@link geoscript.geom.Geometry Geometry} from a WKT String.
+ * <p><blockquote><pre>
+ * WktReader reader = new WktReader()
+ * {@link geoscript.geom.Point Point} pt = reader.read("POINT (111 -47)")
+ *
+ * POINT (111 -47)
+ * </pre></blockquote></p>
  * @author Jared Erickson
  */
 class WktReader implements Reader {

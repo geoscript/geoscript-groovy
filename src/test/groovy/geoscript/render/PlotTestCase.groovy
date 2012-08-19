@@ -24,7 +24,7 @@ class PlotTestCase {
         Geometry geom = Geometry.fromWKT("POINT (-111 45.7)").buffer(10)
         File file = File.createTempFile("plot",".png")
         println file
-        plot(geom, [400,400], file)
+        plot(geom, size: [400,400], out: file)
     }
 
     @Test void plotGeometryToOutputStream() {
@@ -32,12 +32,12 @@ class PlotTestCase {
         File file = File.createTempFile("plot",".png")
         println file
         OutputStream out = new FileOutputStream(file)
-        plot(geom, [400,400], out, "png")
+        plot(geom, size: [400,400], out: out, type: "png")
     }
 
     @Test void plotGeometryToImage() {
         Geometry geom = Geometry.fromWKT("POINT (-111 45.7)").buffer(10)
-        BufferedImage image = plotToImage(geom, [400,400])
+        BufferedImage image = plotToImage(geom, size: [400,400])
         File file = File.createTempFile("plot",".png")
         println file
         ImageIO.write(image, "png", file)
@@ -46,7 +46,7 @@ class PlotTestCase {
     @Test void plotFeatureToImage() {
         Schema schema  = new Schema("shapes",[new Field("geom","Polygon"), new Field("name", "String")])
         Feature feature = new Feature([new LineString([0,0],[1,1]).bounds.polygon, "square"], "0",  schema)
-        BufferedImage image = plotToImage(feature, [400,400])
+        BufferedImage image = plotToImage(feature, size: [400,400])
         File file = File.createTempFile("plot_feature",".png")
         println file
         ImageIO.write(image, "png", file)
@@ -57,7 +57,7 @@ class PlotTestCase {
         Shapefile shp = new Shapefile(shpFile)
         Memory mem = new Memory()
         Layer layer = mem.add(shp).filter("STATE_ABBR IN ('ND','SD','MT')","nd_sd_mt")
-        BufferedImage image = plotToImage(layer, [400,400])
+        BufferedImage image = plotToImage(layer, size: [400,400])
         File file = File.createTempFile("plot_layer",".png")
         println file
         ImageIO.write(image, "png", file)

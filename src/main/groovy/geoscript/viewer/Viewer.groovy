@@ -9,7 +9,13 @@ import com.vividsolutions.jts.geom.Coordinate
 import geoscript.geom.Bounds
 import geoscript.geom.Geometry
 import geoscript.geom.GeometryCollection
-import geoscript.viewer.Panel
+import org.geotools.renderer.chart.GeometryDataset
+import org.geotools.renderer.chart.GeometryRenderer
+import org.jfree.chart.ChartPanel
+import org.jfree.chart.ChartUtilities
+import org.jfree.chart.JFreeChart
+import org.jfree.chart.plot.XYPlot
+
 import java.awt.geom.Point2D
 import java.awt.image.BufferedImage
 import java.util.List
@@ -17,52 +23,61 @@ import javax.imageio.ImageIO
 import javax.swing.JFrame
 import javax.swing.JPanel
 import javax.swing.WindowConstants
-import org.geotools.renderer.chart.GeometryDataset
-import org.geotools.renderer.chart.GeometryRenderer
-import org.jfree.chart.ChartPanel
-import org.jfree.chart.ChartUtilities
-import org.jfree.chart.JFreeChart
-import org.jfree.chart.plot.XYPlot
 import java.awt.*
 
 /**
  * A Viewer can be used to visualize Geometry.
- * <code><pre>
+ * <p><blockquote><pre>
  * import geoscript.geom.Point
  * import geoscript.viewer.Viewer
  * Point p = new Point(10,10)
- * Viewer.render(p.buffer(100))
- * </pre></code>
+ * Viewer.draw(p.buffer(100))
+ * </pre></blockquote></p>
  * Or you can plot a List of Geometries.
- * <code<pre>
+ * <p><blockquote><pre>
  * import geoscript.geom.Point
  * import geoscript.viewer.Viewer
  * Point p = new Point(10,10)
  * Viewer.plot([p, p.buffer(50), p.buffer(100)])
- * </pre></code>
+ * </pre></blockquote></p>
  * @author Jared Erickson
  */
 class Viewer {
 
     /**
      * Draw a Geometry (or List of Geometries) onto a GUI
-     * @param geom The Geomtry to List of Geometries to render
-     * @param A List containing the size of the GUI (defaults to 500 by 500)
+     * @param options A Map of options or named parameters
+     * <ul>
+     *  <li>size = The size of the image</li>
+     *  <li>bounds = The Bounds</li>
+     *  <li>strokeColor = The stroke color</li>
+     *  <li>fillColor = The fill color</li>
+     *  <li>markerShape = The marker shape (circle, square, cross, ect...)</li>
+     *  <li>markerSize = The marker size</li>
+     *  <li>opacity = The opacity</li>
+     *  <li>strokeWidth = The stroke width</li>
+     *  <li>drawCoords = Whether to draw coordinates or not (true | false)</li>
+     * </ul>
+     * @param geom The Geometry to List of Geometries to render
      */
-    static void draw(def geom, List size=[500,500], double buf = 50) {
-        if (!(geom instanceof List)) {
+    static void draw(java.util.Map options = [:], def geom) {
+        if (!(geom instanceof java.util.List)) {
             geom = [geom]
         }
-        Panel panel = new Panel(geom, randomColor())
+        Panel panel = new Panel(options, geom)
+        java.util.List size = options.get("size", [500,500])
+        double buf = options.get("expandBy", 0)
         Dimension dim = new Dimension((int) (size[0] + 2 * buf), (int) (size[1] + 2 * buf))
         panel.preferredSize = dim
         panel.minimumSize = dim
         JFrame frame = new JFrame("GeoScript Viewer")
-        try {
-            frame.defaultCloseOperation = JFrame.EXIT_ON_CLOSE
-        }
-        catch(SecurityException ex) {
-            frame.defaultCloseOperation = WindowConstants.HIDE_ON_CLOSE
+        // If we are opening Windows from the GroovyConsole, we can't use EXIT_ON_CLOSE because the GroovyConsole
+        // itself will exit
+        if (java.awt.Frame.frames.find{it.title.contains("GroovyConsole")}) {
+            frame.defaultCloseOperation = JFrame.DISPOSE_ON_CLOSE
+        } else {
+            // The Groovy Shell has a special SecurityManager that doesn't allow EXIT_ON_CLOSE
+            try { frame.defaultCloseOperation = JFrame.EXIT_ON_CLOSE } catch (SecurityException ex) {frame.defaultCloseOperation = JFrame.HIDE_ON_CLOSE}
         }
         frame.layout = new BorderLayout()
         frame.add(panel, BorderLayout.CENTER)
@@ -72,63 +87,76 @@ class Viewer {
 
     /**
      * Draw Geometry (or List of Geometries) to a BufferedImage
+     * @param options A Map of options or named parameters
+     * <ul>
+     *  <li>size = The size of the image</li>
+     *  <li>bounds = The Bounds</li>
+     *  <li>strokeColor = The stroke color</li>
+     *  <li>fillColor = The fill color</li>
+     *  <li>markerShape = The marker shape (circle, square, cross, ect...)</li>
+     *  <li>markerSize = The marker size</li>
+     *  <li>opacity = The opacity</li>
+     *  <li>strokeWidth = The stroke width</li>
+     *  <li>drawCoords = Whether to draw coordinates or not (true | false)</li>
+     * </ul>
      * @param geom A Geometry or a List of Geometries
-     * @param size The size of image to create
      * @return A BufferedImage
      */
-    static BufferedImage drawToImage(def geom, List size=[500,500]) {
+    static BufferedImage drawToImage(java.util.Map options = [:], def geom) {
+        java.util.List size = options.get("size", [500,500])
         BufferedImage image = new BufferedImage(size[0], size[1], BufferedImage.TYPE_INT_ARGB)
         Graphics2D g2d = image.createGraphics()
-        //g2d.color = Color.WHITE
-        //g2d.fillRect(0,0,size[0],size[1])
         Bounds bounds = new GeometryCollection(geom).bounds
         bounds.expandBy(bounds.width * 0.10)
-        geom = geom instanceof List ? geom : [geom]
-        geom.each{g ->
-            def c = randomColor()
-            draw(g2d, size, [g], bounds, c.darker(), c)
-        }
+        geom = geom instanceof java.util.List ? geom : [geom]
+        draw(options, g2d, geom)
         g2d.dispose()
         image
     }
 
     /**
      * Save a drawing of the Geometry (or List of Geometries) to a File
-     * @param file The File
+     * @param options A Map of options or named parameters
      * @param geom A Geometry or a List of Geometries
-     * @param size The image size
-     * @param formatName The type of image to create (png, jpg)
+     * @param file The File
      */
-    static void drawToFile(def geom, List size=[500,500], File file) {
+    static void drawToFile(java.util.Map options = [:], def geom, File file) {
         String fileName = file.absolutePath
         String imageFormat = fileName.substring(fileName.lastIndexOf(".")+1)
         FileOutputStream out = new FileOutputStream(file)
-        ImageIO.write(drawToImage(geom,size), imageFormat, out)
+        ImageIO.write(drawToImage(options, geom), imageFormat, out)
         out.close()
     }
 
     /**
-     * Generate a random color
-     * @return A Color
-     */
-    private static Color randomColor() {
-        def random = new java.util.Random()
-        int red = random.nextInt(256)
-        int green = random.nextInt(256)
-        int blue = random.nextInt(256)
-        new Color(red,green,blue)
-    }
-
-    /**
      * Draw a List of GeoScript Geometries to a Graphics2D.
+     * @param options A Map of options or named parameters
+     * <ul>
+     *  <li>size = The size of the image</li>
+     *  <li>bounds = The Bounds</li>
+     *  <li>strokeColor = The stroke color</li>
+     *  <li>fillColor = The fill color</li>
+     *  <li>markerShape = The marker shape (circle, square, cross, ect...)</li>
+     *  <li>markerSize = The marker size</li>
+     *  <li>opacity = The opacity</li>
+     *  <li>strokeWidth = The stroke width</li>
+     *  <li>drawCoords = Whether to draw coordinates or not (true | false)</li>
+     * </ul>
      * @param g2d The Graphics2D
-     * @param size The size of the Graphics2D/Image
      * @param geometries A List of GeoScript Geometries
      */
-    static void draw(Graphics2D g2d, List size, List geometries, Bounds bounds,
-        Color strokeColor = new Color(99,99,99), Color fillColor = new Color(206,206,206),
-        String markerShape = "square", double markerSize = 8, float opacity = 0.75, float strokeWidth = 1.0,
-        boolean drawCoordinates = false) {
+    static void draw(java.util.Map options = [:], Graphics2D g2d, List geometries) {
+
+        java.util.List size = options.get("size", [500,500])
+        Bounds bounds = (options.get("bounds",new GeometryCollection(geometries).bounds.scale(1.1)) as Bounds).ensureWidthAndHeight()
+        java.awt.Color strokeColor = new geoscript.filter.Color(options.get("strokeColor", [99,99,99])).asColor()
+        java.awt.Color fillColor = new geoscript.filter.Color(options.get("fillColor", [206,206,206])).asColor()
+        java.awt.Color backgroundColor = options.get("backgroundColor", null) == null ? null : new geoscript.filter.Color(options.get("backgroundColor")).asColor()
+        String markerShape = options.get("markerShape","square")
+        double markerSize = options.get("markerSize", 8)
+        float opacity = options.get("opacity", 0.75)
+        float strokeWidth = options.get("strokeWidth", 1.0)
+        boolean drawCoordinates = options.get("drawCoords", false)
 
         int imageWidth = size[0]
         int imageHeight = size[1]
@@ -149,10 +177,15 @@ class Viewer {
         }
 
         ShapeWriter shapeWriter = new ShapeWriter({Coordinate mapCoordinate, Point2D shape ->
-            double imageX = (1 - (bounds.r - mapCoordinate.x) / bounds.width) * imageWidth
-            double imageY = ((bounds.t - mapCoordinate.y) / bounds.height) * imageHeight
+            double imageX = (1 - (bounds.maxX - mapCoordinate.x) / bounds.width) * imageWidth
+            double imageY = ((bounds.maxY - mapCoordinate.y) / bounds.height) * imageHeight
             shape.setLocation(imageX,imageY);
         } as PointTransformation, shapeFactory)
+
+        if (backgroundColor != null) {
+            g2d.color = backgroundColor
+            g2d.fillRect(0,0,size[0],size[1])    
+        }
 
         Composite strokeComposite = g2d.getComposite()
         Composite fillComposite = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, opacity)
@@ -160,9 +193,11 @@ class Viewer {
         geometries.each{geometry->
             Shape shp = shapeWriter.toShape(geometry.g)
             // Fill
-            g2d.setComposite(fillComposite)
-            g2d.setColor(fillColor)
-            g2d.fill(shp)
+            if (!(geometry.g instanceof com.vividsolutions.jts.geom.Lineal)) {
+                g2d.setComposite(fillComposite)
+                g2d.setColor(fillColor)
+                g2d.fill(shp)
+            }
             // Stroke
             g2d.setComposite(strokeComposite)
             g2d.setStroke(new BasicStroke(strokeWidth))
@@ -170,7 +205,7 @@ class Viewer {
             g2d.draw(shp)
             if (drawCoordinates) {
                 g2d.setStroke(new BasicStroke(strokeWidth))
-                List coords = geometry.coordinates
+                java.util.List coords = geometry.coordinates
                 if (coords.size() > 1) {
                     coords.each{c ->
                         Shape coordinateShp = shapeWriter.toShape(geometry.g.getFactory().createPoint(c))
@@ -189,11 +224,19 @@ class Viewer {
     }
 
     /**
-     * Plot the Geometry (or List of Geometries) to a Swing JFrame using JFreeChart
+     * Plot the Geometry (or List of Geometries) to a Swing JFrame using JFreeChart.
+     * @param options A Map of options or named parameters
+     * <ul>
+     *    <li>size = The width and height ([500,500])</li>
+     *    <li>legend = Whether or not to show the legend (true | false)</li>
+     *    <li>fillCoords = Whether or not to fill the coordinates (true | false)</li>
+     *    <li>fillPolys = Whether or not to fill the polygons (true | false)</li>
+     *    <li>drawCoords = Whether or not to draw the coordinates (true | false)</li>
+     * </ul>
      * @param geom A Geometry (or List of Geometries)
-     * @param size The Size of the Frame
      */
-    static void plot(def geom, List size=[500,500]) {
+    static void plot(java.util.Map options = [:], def geom) {
+        java.util.List size = options.get("size", [500,500])
         def panel = new ChartPanel(createPlot(geom))
         def frame = new JFrame("GeoScript Geometry Plot")
         try {
@@ -209,22 +252,38 @@ class Viewer {
 
     /**
      * Plot a Geometry (or List of Geometries) to a BufferedImage
+     * @param options A Map of options or named parameters
+     * <ul>
+     *    <li>size = The width and height ([500,500])</li>
+     *    <li>legend = Whether or not to show the legend (true | false)</li>
+     *    <li>fillCoords = Whether or not to fill the coordinates (true | false)</li>
+     *    <li>fillPolys = Whether or not to fill the polygons (true | false)</li>
+     *    <li>drawCoords = Whether or not to draw the coordinates (true | false)</li>
+     * </ul>
      * @param geom A Geometry (or List of Geometries)
-     * @param size The size of image to create
      */
-    static BufferedImage plotToImage(def geom, List size=[500,500]) {
-        def chart = createPlot(geom)
+    static BufferedImage plotToImage(java.util.Map options = [:], def geom) {
+        def chart = createPlot(options, geom)
+        java.util.List size = options.get("size", [500,500])
         chart.createBufferedImage(size[0] as int, size[1] as int)
     }
 
     /**
      * Plot a Geometry (or List of Geometries) to an image File
+     * @param options A Map of options or named parameters
+     * <ul>
+     *    <li>size = The width and height ([500,500])</li>
+     *    <li>legend = Whether or not to show the legend (true | false)</li>
+     *    <li>fillCoords = Whether or not to fill the coordinates (true | false)</li>
+     *    <li>fillPolys = Whether or not to fill the polygons (true | false)</li>
+     *    <li>drawCoords = Whether or not to draw the coordinates (true | false)</li>
+     * </ul>
      * @param geom The Geometry (or List of Geometries)
-     * @param size The size of the image
      * @param file The File
      */
-    static void plotToFile(def geom, List size=[500,500], File file) {
-        def chart = createPlot(geom)
+    static void plotToFile(java.util.Map options = [:], def geom, File file) {
+        java.util.List size = options.get("size", [500,500])
+        def chart = createPlot(options, geom)
         String fileName = file.absolutePath
         String imageFormat = fileName.substring(fileName.lastIndexOf(".")+1)
         if (imageFormat.equalsIgnoreCase("png")) {
@@ -234,68 +293,76 @@ class Viewer {
             ChartUtilities.saveChartAsJPEG(file, chart, size[0] as int, size[1] as int)
         }
         else {
-            throw new Exception("Unsupported image format! Only PNGs and JPEGs are supported!")
+            throw new IllegalArgumentException("Unsupported image format! Only PNGs and JPEGs are supported!")
         }
     }
 
     /**
      * Create a JFreeChart from a Geometry (or List of Geometries) using the
      * GeoTools GeoemtryDataset
+     * @param options A Map of options or named parameters
+     * <ul>
+     *    <li>size = The width and height ([500,500])</li>
+     *    <li>legend = Whether or not to show the legend (true | false)</li>
+     *    <li>fillCoords = Whether or not to fill the coordinates (true | false)</li>
+     *    <li>fillPolys = Whether or not to fill the polygons (true | false)</li>
+     *    <li>drawCoords = Whether or not to draw the coordinates (true | false)</li>
+     * </ul>
      * @param geom A Geometry (or List of Geometries)
      * @return The JFreeChart
      */
-    private static JFreeChart createPlot(def geom) {
-        if (!(geom instanceof List)) {
+    private static JFreeChart createPlot(java.util.Map options = [:], def geom) {
+        if (!(geom instanceof java.util.List)) {
             geom = [geom]
         }
         def dataset = new GeometryDataset(geom.collect{g->g.g} as JtsGeometry[])
         def renderer = new GeometryRenderer()
+        renderer.legend = options.get("legend", true)
+        renderer.fillCoordinates = options.get("fillCoords", false)
+        renderer.fillPolygons = options.get("fillPolys", false)
+        renderer.renderCoordinates = options.get("drawCoords", true)
         def plot = new XYPlot(dataset, dataset.domain, dataset.range, renderer)
         new JFreeChart(plot)
     }
-}
 
-/**
- * The JPanel used to render Geometry
- */
-private static class Panel extends JPanel {
 
     /**
-     * The List of Geometries to render
+     * The JPanel used to render Geometry
      */
-    private List<Geometry> geoms
+    private static class Panel extends JPanel {
 
-    private boolean drawCoordinates = false
-    private Color color = Color.black
-    private String markerShape = "square"
-    private double markerSize = 8
-    private float opacity = 0.75
-    private float strokeWidth = 1.0
+        /**
+         * The List of Geometries to render
+         */
+        private java.util.List<Geometry> geoms
 
-    /**
-     * Create a new Panel with the List of Geometries to render
-     * @param geoms The List of Geometries to render
-     */
-    Panel(List<Geometry> geoms, Color color) {
-        super()
-        background = Color.WHITE
-        opaque = true
-        this.geoms = geoms
-        this.color = color
-    }
+        /**
+         * The Map of options
+         */
+        private Map options
 
-    /**
-     * Override the paintComponent method to render the Geometries
-     * @param gr The Graphics context
-     */
-    void paintComponent(Graphics gr) {
-        super.paintComponent(gr)
-        List size = [getWidth(), getHeight()]
-        Graphics2D g2d = (Graphics2D)gr
-        Bounds bounds = new GeometryCollection(geoms).bounds
-        bounds.expandBy(bounds.width * 0.10)
-        geoms.each{g ->
-            Viewer.draw(g2d, size, [g], bounds, color.darker(), color, markerShape, markerSize, opacity, strokeWidth, drawCoordinates)
+        /**
+         * Create a new Panel with the List of Geometries to render
+         * @param geoms The List of Geometries to render
+         */
+        Panel(java.util.Map options = [:], java.util.List<Geometry> geoms) {
+            super()
+            // Geometries
+            this.geoms = geoms
+            // Options
+            this.options = options
+        }
+
+        /**
+         * Override the paintComponent method to render the Geometries
+         * @param gr The Graphics context
+         */
+        void paintComponent(Graphics gr) {
+            super.paintComponent(gr)
+            Graphics2D g2d = (Graphics2D)gr
+            Bounds bounds = new GeometryCollection(geoms).bounds
+            bounds.expandBy(bounds.width * 0.10)
+            Viewer.draw(options, g2d, geoms)
         }
     }
 }

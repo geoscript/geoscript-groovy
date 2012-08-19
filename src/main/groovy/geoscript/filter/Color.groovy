@@ -3,9 +3,34 @@ package geoscript.filter
 import org.geotools.brewer.color.ColorBrewer
 import java.awt.Graphics2D
 import java.awt.image.BufferedImage
+import javax.swing.JFrame
 
 /**
- * A Color Expression and a set of Color Utilities.
+ * A Color Expression and a set of Color Utilities used in the Style module.
+ * You can create a Color from an RGB String
+ * <p><blockquote><pre>
+ * new Color("0,255,0")
+ * </pre></blockquote></p>
+ * or from a CSS color name:
+ * <p><blockquote><pre>
+ * new Color("silver")
+ * </pre></blockquote></p>
+ * or from a hexadecimal:
+ * <p><blockquote><pre>
+ * new Color("#00ff00")
+ * </pre></blockquote></p>
+ * or from a RGB List:
+ * <p><blockquote><pre>
+ * new Color([0,255,0])
+ * </pre></blockquote></p>
+ * or from a RGB Map:
+ * <p><blockquote><pre>
+ * new Color([r: 0, g: 255, b: 0, a: 125])
+ * </pre></blockquote></p>
+ * or from a HSL Map:
+ * <p><blockquote><pre>
+ * new Color([h: 0, s: 1.0, l: 0.5])
+ * </pre></blockquote></p>
  * @author Jared Erickson
  */
 class Color extends Expression {
@@ -69,6 +94,22 @@ class Color extends Expression {
     }
 
     /**
+     * Create a new darker Color
+     * @return A new Color
+     */
+    Color darker() {
+        new Color(getColor(this.value).darker())
+    }
+
+    /**
+     * Create a new brighter Color
+     * @return A new Color
+     */
+    Color brighter() {
+        new Color(getColor(this.vaule).brighter())
+    }
+    
+    /**
      * Interpolate a List of Colors between this Color and the given Color
      * @param color The other Color
      * @param n The number of Colors
@@ -89,13 +130,21 @@ class Color extends Expression {
     }
 
     /**
+     * Get a java.awt.Color for this Color
+     * @return A java.awt.Color
+     */
+    java.awt.Color asColor() {
+        java.awt.Color.decode(this.value)
+    }
+    
+    /**
      * Interpolate a List Colors between the start and end Color
      * @param start The start Color
      * @param end The end Color
      * @param n The number of Colors
      * @return A List of Colors
      */
-    static interpolate(Color start, Color end, int n = 10) {
+    static List interpolate(Color start, Color end, int n = 10) {
         start.interpolate(end, n)
     }
 
@@ -105,7 +154,7 @@ class Color extends Expression {
      * @param color A Object convertable to a Color
      * @return a Color or null
      */
-    static java.awt.Color getColor(def color) {
+    private static java.awt.Color getColor(def color) {
         // Color: Color.BLACK, new Color(255,255,255)
         if (color instanceof java.awt.Color) {
             return color
@@ -229,39 +278,39 @@ class Color extends Expression {
      * Generate a random color
      * @return A Color
      */
-    static java.awt.Color getRandom() {
+    static Color getRandom() {
         def random = new java.util.Random()
         int red = random.nextInt(256)
         int green = random.nextInt(256)
         int blue = random.nextInt(256)
-        new java.awt.Color(red,green,blue)
+        new Color([red,green,blue])
     }
 
     /**
      * Get a random pastel color
      * @return A Color
      */
-    static java.awt.Color getRandomPastel() {
+    static Color getRandomPastel() {
         java.util.Random random = new java.util.Random()
         int i = 128
         int r = random.nextInt(i)
         int g = random.nextInt(i)
         int b = random.nextInt(i)
-        new java.awt.Color(r,g,b)
+        new Color([r,g,b])
     }
 
     /**
      * The shared ColorBrewer instance
      */
-    private static ColorBrewer colorBrewer;
+    private static ColorBrewer colorBrewer
 
     /**
      * Initiate and load ColorBrewer if necessary
      */
     private static void loadColorBrewer() {
         if (colorBrewer == null) {
-            colorBrewer = new ColorBrewer();
-            colorBrewer.loadPalettes();
+            colorBrewer = new ColorBrewer()
+            colorBrewer.loadPalettes()
         }
     }
 
@@ -310,7 +359,7 @@ class Color extends Expression {
             count = palette.maxColors
         }
         if (palette != null) {
-            colors.addAll(palette.getColors(Math.min(palette.maxColors, count)).toList())
+            colors.addAll(palette.getColors(Math.min(palette.maxColors, count)).toList().collect{c -> new Color(c)})
         }
         colors
     }
@@ -492,11 +541,13 @@ class Color extends Expression {
      */
     static void draw(List colors, String orientation = "vertical", int size = 50) {
         def frame = new javax.swing.JFrame("GeoScript Colors")
-        try {
-            frame.defaultCloseOperation = javax.swing.JFrame.EXIT_ON_CLOSE
-        }
-        catch(SecurityException ex) {
-            frame.defaultCloseOperation = javax.swing.WindowConstants.HIDE_ON_CLOSE
+        // If we are opening Windows from the GroovyConsole, we can't use EXIT_ON_CLOSE because the GroovyConsole
+        // itself will exit
+        if (java.awt.Frame.frames.find{it.title.contains("GroovyConsole")}) {
+            frame.defaultCloseOperation = JFrame.DISPOSE_ON_CLOSE
+        } else {
+            // The Groovy Shell has a special SecurityManager that doesn't allow EXIT_ON_CLOSE
+            try { frame.defaultCloseOperation = JFrame.EXIT_ON_CLOSE } catch (SecurityException ex) {frame.defaultCloseOperation = JFrame.HIDE_ON_CLOSE}
         }
         def panel = new javax.swing.JPanel()
         panel.add(new javax.swing.JLabel(new javax.swing.ImageIcon(drawToImage(colors, orientation, size))))

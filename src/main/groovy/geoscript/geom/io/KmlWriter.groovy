@@ -4,10 +4,13 @@ import geoscript.geom.*
 import com.vividsolutions.jts.geom.Coordinate
 
 /**
- * Write a Geoscript Geometry to a KML String.
- * <p><code>KmlWriter writer = new KmlWriter()</code></p>
- * <p><code>String kml = writer.write(new Point(111,-47)</code></p>
- * <p><code>&lt;Point&gt;&lt;coordinates&gt;111.0,-47.0&lt;/coordinates&gt;&lt;/Point&gt;</code></p>
+ * Write a Geoscript {@link geoscript.geom.Geometry Geometry} to a KML String.
+ * <p><blockquote><pre>
+ * KmlWriter writer = new KmlWriter()
+ * String kml = writer.write(new {@link geoscript.geom.Point Point}(111,-47)
+ *
+ * &lt;Point&gt;&lt;coordinates&gt;111.0,-47.0&lt;/coordinates&gt;&lt;/Point&gt;
+ * </pre></blockquote></p>
  * @author Jared Erickson
  */
 class KmlWriter implements Writer {

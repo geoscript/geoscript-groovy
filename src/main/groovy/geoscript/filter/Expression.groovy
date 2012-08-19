@@ -7,6 +7,10 @@ import org.geotools.filter.text.cql2.CQL
 
 /**
  * A base class for all Expressions.
+ * <p>You can create a literal Expression by passing a value:</p>
+ * <p><blockquote><pre>
+ * Expression e = new Expression(12)
+ * </pre></blockquote></p>
  * @author Jared Erickson
  */
 class Expression {

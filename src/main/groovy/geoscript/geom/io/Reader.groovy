@@ -3,7 +3,7 @@ package geoscript.geom.io
 import geoscript.geom.Geometry
 
 /**
- * Read a Geometry from a String
+ * Read a {@link geoscript.geom.Geometry Geometry} from a String
  * @author Jared Erickson
  */
 interface Reader {

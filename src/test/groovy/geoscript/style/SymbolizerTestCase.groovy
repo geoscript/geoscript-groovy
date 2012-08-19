@@ -3,7 +3,7 @@ package geoscript.style
 import org.junit.Test
 import static org.junit.Assert.*
 import geoscript.filter.Filter
-import geoscript.layer.Shapefile
+
 import org.geotools.styling.Style
 import org.opengis.filter.Filter as GTFilter
 import org.geotools.styling.LineSymbolizer
@@ -11,7 +11,6 @@ import org.geotools.styling.PointSymbolizer
 import org.geotools.styling.PointSymbolizerImpl
 import org.geotools.styling.PolygonSymbolizer
 import org.geotools.styling.TextSymbolizer
-import geoscript.filter.Color
 
 /**
  * The Symbolizer Unit Test
@@ -45,6 +44,30 @@ class SymbolizerTestCase {
         sym.asSLD()
     }
 
+    @Test void range() {
+
+        // Both named parameters
+        Symbolizer sym = new Symbolizer().range(min: 100, max:200)
+        assertEquals 100, sym.scale[0], 0.1
+        assertEquals 200, sym.scale[1], 0.1
+
+        // Just one named parameters (min)
+        sym = new Symbolizer().range(min: 100)
+        assertEquals 100, sym.scale[0], 0.1
+        assertEquals(-1, sym.scale[1], 0.1)
+
+        // Just one named parameters (max)
+        sym = new Symbolizer().range(max: 1000)
+        assertEquals(-1, sym.scale[0], 0.1)
+        assertEquals 1000, sym.scale[1], 0.1
+
+        // Constructor
+        sym = new Symbolizer().range(100, 200)
+        assertEquals 100, sym.scale[0], 0.1
+        assertEquals 200, sym.scale[1], 0.1
+
+    }
+    
     @Test void plus() {
         def composite = new Fill("red") + new Stroke("#ffffff")
         assertTrue composite instanceof Composite
@@ -69,6 +92,10 @@ class SymbolizerTestCase {
         def polygonSym = Symbolizer.getDefault("polygon")
         assertTrue polygonSym instanceof Composite
         assertEquals 2, polygonSym.parts.size()
+
+        def pointSym2 = Symbolizer.getDefault("point", "black")
+        assertTrue pointSym instanceof Shape
+        assertEquals pointSym2.color.hex, "#000000"
     }
 
     @Test void buildString() {
@@ -107,7 +134,7 @@ class SymbolizerTestCase {
 
         // Simple Symbolizer :: Fill
         Symbolizer sym = new Fill("teal")
-        Style style = sym.style
+        Style style = sym.createGtStyle()
         assertNotNull style
         assertEquals 1, style.featureTypeStyles().size()
         assertEquals 1, style.featureTypeStyles()[0].rules().size()
@@ -123,7 +150,7 @@ class SymbolizerTestCase {
 
         // Simple Composite: Fill and Hatch
         sym = new Fill("teal").hatch("slash",new Stroke("navy"),6)
-        style = sym.style
+        style = sym.createGtStyle()
         assertNotNull style
         assertEquals 1, style.featureTypeStyles().size()
         assertEquals 1, style.featureTypeStyles()[0].rules().size()
@@ -144,7 +171,7 @@ class SymbolizerTestCase {
 
         // Simple Composite :: Fill and Stroke
         sym = new Fill("teal") + new Stroke("navy")
-        style = sym.style
+        style = sym.createGtStyle()
         assertNotNull style
         assertEquals 1, style.featureTypeStyles().size()
         assertEquals 1, style.featureTypeStyles()[0].rules().size()
@@ -167,7 +194,7 @@ class SymbolizerTestCase {
     @Test void getStyleWithZindex() {
 
         Symbolizer sym = (new Fill("red") + new Stroke("blue")) + new Fill("green").zindex(1)
-        Style style = sym.style
+        Style style = sym.createGtStyle()
 
         // There should be 2 FeatureTypeStyles
         assertEquals 2, style.featureTypeStyles().size()
@@ -205,7 +232,7 @@ class SymbolizerTestCase {
     @Test void getStyleWithScale() {
 
         Symbolizer sym = (new Fill("red") + new Stroke("blue")).range(-1, 1000) + new Fill("green").range(1000, -1)
-        Style style = sym.style
+        Style style = sym.createGtStyle()
 
         // There should only be one FeatureTypeStyle
         assertEquals 1, style.featureTypeStyles().size()
@@ -232,7 +259,7 @@ class SymbolizerTestCase {
     @Test void getScaleWithFilter() {
 
         Symbolizer sym = (new Fill("red") + new Stroke("blue")).where("FOO = 'foo'") + new Fill("green").where("BAR = 'bar'")
-        Style style = sym.style
+        Style style = sym.createGtStyle()
 
         // There should only be one FeatureTypeStyle
         assertEquals 1, style.featureTypeStyles().size()
@@ -253,4 +280,52 @@ class SymbolizerTestCase {
         assertEquals 1, rule2.symbolizers().size()
         assertTrue rule2.symbolizers()[0] instanceof PolygonSymbolizer
     }
+
+    @Test void asSDL() {
+
+        String NEW_LINE = System.getProperty("line.separator")
+
+        String expectedSld = """<?xml version="1.0" encoding="UTF-8"?>
+<sld:UserStyle xmlns="http://www.opengis.net/sld" xmlns:sld="http://www.opengis.net/sld" xmlns:ogc="http://www.opengis.net/ogc" xmlns:gml="http://www.opengis.net/gml">
+  <sld:Name>Default Styler</sld:Name>
+  <sld:Title/>
+  <sld:FeatureTypeStyle>
+    <sld:Name>name</sld:Name>
+    <sld:Rule>
+      <sld:PolygonSymbolizer>
+        <sld:Fill>
+          <sld:CssParameter name="fill">#f5deb3</sld:CssParameter>
+        </sld:Fill>
+      </sld:PolygonSymbolizer>
+      <sld:LineSymbolizer>
+        <sld:Stroke>
+          <sld:CssParameter name="stroke">#a52a2a</sld:CssParameter>
+        </sld:Stroke>
+      </sld:LineSymbolizer>
+    </sld:Rule>
+  </sld:FeatureTypeStyle>
+</sld:UserStyle>""".trim().replaceAll("\n","")
+
+        Symbolizer sym = new Fill("wheat") + new Stroke("brown")
+
+        ByteArrayOutputStream out = new ByteArrayOutputStream()
+        sym.asSLD(out)
+        String sld = out.toString().trim().replaceAll(NEW_LINE,"")
+        assertNotNull sld
+        assertTrue sld.length() > 0
+        assertEquals expectedSld, sld
+
+        File file = File.createTempFile("simple",".sld")
+        sym.asSLD(file)
+        sld = file.text.trim().replaceAll(NEW_LINE,"")
+        assertNotNull sld
+        assertTrue sld.length() > 0
+        assertEquals expectedSld, sld
+
+        sld = sym.sld.trim().replaceAll(NEW_LINE,"")
+        assertNotNull sld
+        assertTrue sld.length() > 0
+        assertEquals expectedSld, sld
+    }
+
 }

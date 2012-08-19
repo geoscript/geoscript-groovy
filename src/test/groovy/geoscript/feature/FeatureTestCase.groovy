@@ -60,10 +60,10 @@ class FeatureTestCase {
         Schema s1 = new Schema("houses", [new Field("geom","LineString", "EPSG:4326"), new Field("name","string"), new Field("price","float")])
         Feature f1 = new Feature([new LineString([1,1], [10,10]), "House", 12.5], "house1", s1)
         Bounds b = f1.bounds
-        assertEquals(1, b.west, 0.0)
-        assertEquals(1, b.south, 0.0)
-        assertEquals(10, b.east, 0.0)
-        assertEquals(10, b.north, 0.0)
+        assertEquals(1, b.minX, 0.0)
+        assertEquals(1, b.minY, 0.0)
+        assertEquals(10, b.maxX, 0.0)
+        assertEquals(10, b.maxY, 0.0)
         assertEquals("EPSG:4326", b.proj.id)
     }
 

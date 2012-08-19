@@ -1,7 +1,7 @@
 package geoscript.render
 
 /**
- * Render a Map to a Type T or an OutputStream
+ * Render a {@link geoscript.render.Map Map} to a Type T or an OutputStream
  * @param < T > The type the Renderer can produce (like a BufferedImage or a SVG Document)
  */
 abstract class Renderer<T>  {

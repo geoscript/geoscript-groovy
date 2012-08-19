@@ -9,6 +9,20 @@ import geoscript.feature.Field
 /**
  * The Gradient Composite Symbolizer creates gradients between a series of values and symbolizers or from
  * values from Layer.
+ * <p>You can create a Gradient between a List of values and Styles:</p>
+ * <p><blockquote><pre>
+ * Gradient gradient = new Gradient(
+ *    new Expression("PERSONS / LAND_KM"),
+ *    [0,200],
+ *    [new Fill("#000066") + new Stroke("black",0.1), new Fill("red") + new Stroke("black",0.1)],
+ *    10,
+ *    "exponential"
+ * )
+ * </pre></blockquote></p>
+ * <p>Or you can create a Gradient based on a classification method and a list of colors or a color brewer palette:</p>
+ * <p><blockquote><pre>
+ * Gradient gradient = new Gradient(shapefile, "WORKERS", "Quantile", 5, "Greens")
+ * </pre></blockquote></p>
  * @author Jared Erickson
  */
 class Gradient extends Composite {
@@ -68,11 +82,11 @@ class Gradient extends Composite {
         // If the colors argument is a String treat it
         // like a Palette
         if (colors instanceof String) {
-            colors = Color.getPaletteColors(colors) as java.awt.Color[]
+            colors = Color.getPaletteColors(colors).collect{c -> c.asColor()} as java.awt.Color[]
         }
         else {
             colors = colors.collect{c ->
-                Color.getColor(c)
+                new Color(c).asColor()
             } as java.awt.Color[]
         }
 
