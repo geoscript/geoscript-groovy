@@ -7,6 +7,12 @@ import geoscript.feature.Field
 import geoscript.geom.Point
 import geoscript.proj.DecimalDegrees
 import geoscript.geom.Geometry
+import geoscript.geom.io.WktReader
+import geoscript.geom.io.WkbReader
+import geoscript.geom.io.GeoJSONReader
+import geoscript.geom.io.KmlReader
+import geoscript.geom.io.Gml2Reader
+import geoscript.geom.io.Gml3Reader
 
 /**
  * Read a CSV String, File, or InputStream and create a {@geoscript.layer.Layer Layer}.
@@ -23,9 +29,26 @@ import geoscript.geom.Geometry
 class CsvReader implements Reader {
 
     /**
-     * The type of geometry encoding: WKT or XY
+     * The Type of geometry encoding
      */
-    private String type
+    private Type type
+
+    /**
+     * The geometry encoding type.
+     */
+    public static enum Type {
+        WKT, WKB, GEOJSON, KML, GML2, GML3, XY, DMS, DMSChar, DDM, DDMChar
+    }
+
+    /**
+     * The geoscript.geom.io.Writer
+     */
+    private geoscript.geom.io.Reader geomReader
+
+    /**
+     * The name of the single column with WKT or XY data
+     */
+    private boolean usingSingleColumn = false
 
     /**
      * The name of the x column if
@@ -40,10 +63,9 @@ class CsvReader implements Reader {
     private String yColumn
 
     /**
-     * The name of the WKT column if
-     * the geometry encoding type is WKT
+     * The name of the column that contains the geometry
      */
-    private String wktColumn
+    private String column
 
     /**
      * The separator character (the default is comma)
@@ -61,9 +83,11 @@ class CsvReader implements Reader {
      * @param options The CSV reader options (separator and quote)
      */
     CsvReader(Map options = [:]) {
-        this.type = "wkt"
+        this.type = Type.WKT
+        this.usingSingleColumn = true
         this.separator = options.get("separator", ",")
         this.quote = options.get("quote", "\"")
+        this.geomReader = new WktReader()
     }
 
     /**
@@ -72,21 +96,50 @@ class CsvReader implements Reader {
      * @param xColumn The x column name
      * @param yColumn The y column name
      */
-    CsvReader(Map options = [:], String xColumn, String yColumn) {
+    CsvReader(Map options = [:], String xColumn, String yColumn, Type type = Type.XY) {
         this(options)
-        this.type = "xy"
+        this.type = type
+        if (!isTypeXY(this.type)) {
+            throw IllegalArgumentException("With two columns, Type must be an XY type!")
+        }
         this.xColumn = xColumn
         this.yColumn = yColumn
+        this.usingSingleColumn = false
     }
 
     /**
      * Read a CSV dataset with the geometry encoded as WKT.
      * @param options The CSV reader options (separator and quote)
-     * @param wktColumn The name of the WKT column
+     * @param column The name of the geometry column
      */
-    CsvReader(Map options = [:], String wktColumn) {
+    CsvReader(Map options = [:], String column) {
         this(options)
-        this.wktColumn = wktColumn
+        this.column = column
+        this.usingSingleColumn = true
+    }
+
+    /**
+     * Read a CSV dataset with the geometry encoded as WKT.
+     * @param options The CSV reader options (separator and quote)
+     * @param column The name of the geometry column
+     */
+    CsvReader(Map options = [:], String column, Type type) {
+        this(options, column)
+        this.type = type
+        this.usingSingleColumn = true
+        if (type == Type.WKB) {
+            this.geomReader = new WkbReader()
+        } else if (type == Type.GEOJSON) {
+            this.geomReader = new GeoJSONReader()
+        } else if (type == Type.KML) {
+            this.geomReader = new KmlReader()
+        } else if (type == Type.GML2) {
+            this.geomReader = new Gml2Reader()
+        } else if (type == Type.GML3) {
+            this.geomReader = new Gml3Reader()
+        } else /*if (type == Type.WKT)*/ {
+            this.geomReader = new WktReader()
+        }
     }
 
     /**
@@ -127,8 +180,9 @@ class CsvReader implements Reader {
         Layer layer = null
         int xCol
         int yCol
-        boolean isWkt = false
-        if (type.equalsIgnoreCase("xy")) {
+        boolean isGeom = false
+        // Are we splitting the geometry into two fields?
+        if (!usingSingleColumn) {
             List fields = cols.collect{name ->
                 new Field(name, "String")
             }
@@ -139,23 +193,31 @@ class CsvReader implements Reader {
         }
         def values
         while((values = reader.readNext()) != null) {
+            // The layer is not defined yet, so try to define it from
+            // the first row
             if (!layer) {
                 List fields = []
                 cols.eachWithIndex { c, i ->
                     def v = values[i]
-                    def type = "String"
+                    def colType = "String"
                     // The user specified a column but it isn't WKT it's XY
-                    if (wktColumn && c.equalsIgnoreCase(wktColumn) && !isWKT(v)) {
-                        type = "Point"
+                    if (column && c.equalsIgnoreCase(column) && isTypeXY(type)) {
+                        colType = "Point"
                     }
-                    // The user either specified a column for WKT or didn't but it
-                    // looks like wkt
-                    else if((wktColumn && c.equalsIgnoreCase(wktColumn)) || isWKT(v)) {
-                        isWkt = true
-                        wktColumn = c
-                        type = getGeometryTypeFromWKT(v)
+                    // The user either specified a column
+                    else if((column && c.equalsIgnoreCase(column))) {
+                        isGeom = true
+                        column = c
+                        Geometry g = geomReader.read(v)
+                        colType = g.getGeometryType()
                     }
-                    fields.add(new Field(c, type))
+                    // The users didn't specify a column but the value looks like WKT
+                    else if (!column && isWKT(v)) {
+                        isGeom = true
+                        column = c
+                        colType = getGeometryTypeFromWKT(v)
+                    }
+                    fields.add(new Field(c, colType))
                 }
                 Schema schema = new Schema("csv", fields)
                 layer = new Layer("csv", schema)
@@ -166,9 +228,9 @@ class CsvReader implements Reader {
                 Map valueMap = [:]
                 cols.eachWithIndex {c,i ->
                     def v = values[i]
-                    if (type.equalsIgnoreCase("wkt") && c.equalsIgnoreCase(wktColumn)) {
-                        if (isWkt) {
-                            v = Geometry.fromWKT(v)
+                    if (usingSingleColumn && c.equalsIgnoreCase(column)) {
+                        if (isGeom) {
+                            v = geomReader.read(v.trim())
                         } else {
                             // Parse XY values including longitude/latitude in DMS, DDM formats
                             v = new DecimalDegrees(v.trim()).point
@@ -176,14 +238,14 @@ class CsvReader implements Reader {
                     }
                     valueMap.put(c,v)
                 }
-                if (type.equalsIgnoreCase("xy")) {
+                if (!usingSingleColumn) {
                     // Parse XY values including longitude/latitude in DMS, DDM formats
                     Point p = new DecimalDegrees(values[xCol], values[yCol]).point
                     valueMap.put("geom", p)
                 }
                 layer.add(valueMap)
             } catch(Exception ex) {
-                System.err.println("Error parsing CSV: ${values}")
+                System.err.println("Error parsing CSV: ${values} because ${ex.message}")
             }
         }
         return layer
@@ -211,6 +273,19 @@ class CsvReader implements Reader {
             return true
         }
         else {
+            return false
+        }
+    }
+
+    /**
+     * Is the Type an XY/Point only Type?
+     * @param t The Type to test
+     * @return Whether the Type is an XY/Point only Type
+     */
+    private boolean isTypeXY(Type t) {
+        if (t == Type.XY || t == Type.DMS || t == Type.DMSChar || t == Type.DDM || t == Type.DDMChar) {
+            return true
+        } else {
             return false
         }
     }

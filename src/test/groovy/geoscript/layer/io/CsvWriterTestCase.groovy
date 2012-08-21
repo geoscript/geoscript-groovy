@@ -16,8 +16,7 @@ import static org.junit.Assert.assertEquals
  */
 class CsvWriterTestCase {
 
-    @Test void writeWTK() {
-
+    private Layer createLayer() {
         // Create a simple Schema
         Schema schema = new Schema("houses", [new Field("geom","Point"), new Field("name","string"), new Field("price","float")])
 
@@ -26,6 +25,12 @@ class CsvWriterTestCase {
         Layer layer = memory.create(schema)
         layer.add(new Feature([new Point(111,-47), "House", 12.5], "house1", schema))
         layer.add(new Feature([new Point(121,-45), "School", 22.7], "house2", schema))
+        layer
+    }
+
+    @Test void writeWTK() {
+
+        Layer layer = createLayer()
 
         String expected = """"geom","name","price"
 "POINT (111 -47)","House","12.5"
@@ -52,14 +57,7 @@ class CsvWriterTestCase {
 
     @Test void writeXY() {
 
-        // Create a simple Schema
-        Schema schema = new Schema("houses", [new Field("geom","Point"), new Field("name","string"), new Field("price","float")])
-
-        // Create a Layer in memory with a couple of Features
-        Memory memory = new Memory()
-        Layer layer = memory.create(schema)
-        layer.add(new Feature([new Point(111,-47), "House", 12.5], "house1", schema))
-        layer.add(new Feature([new Point(121,-45), "School", 22.7], "house2", schema))
+        Layer layer = createLayer()
 
         String expected = """"lon"|"lat"|"name"|"price"
 "111.0"|"-47.0"|"House"|"12.5"
@@ -86,14 +84,7 @@ class CsvWriterTestCase {
 
     @Test void writeXYInSingleColumn() {
 
-        // Create a simple Schema
-        Schema schema = new Schema("houses", [new Field("geom","Point"), new Field("name","string"), new Field("price","float")])
-
-        // Create a Layer in memory with a couple of Features
-        Memory memory = new Memory()
-        Layer layer = memory.create(schema)
-        layer.add(new Feature([new Point(111,-47), "House", 12.5], "house1", schema))
-        layer.add(new Feature([new Point(121,-45), "School", 22.7], "house2", schema))
+        Layer layer = createLayer()
 
         String expected = """"geom"|"name"|"price"
 "111.0,-47.0"|"House"|"12.5"
@@ -107,14 +98,7 @@ class CsvWriterTestCase {
 
     @Test void writeDMS() {
 
-        // Create a simple Schema
-        Schema schema = new Schema("houses", [new Field("geom","Point"), new Field("name","string"), new Field("price","float")])
-
-        // Create a Layer in memory with a couple of Features
-        Memory memory = new Memory()
-        Layer layer = memory.create(schema)
-        layer.add(new Feature([new Point(111,-47), "House", 12.5], "house1", schema))
-        layer.add(new Feature([new Point(121,-45), "School", 22.7], "house2", schema))
+        Layer layer = createLayer()
 
         String expected = """"lon"|"lat"|"name"|"price"
 "111\u00B0 0' 0.0000"" W"|" -47\u00B0 0' 0.0000"" N"|"House"|"12.5"
@@ -128,14 +112,7 @@ class CsvWriterTestCase {
 
     @Test void writeDMSInSingleColumn() {
 
-        // Create a simple Schema
-        Schema schema = new Schema("houses", [new Field("geom","Point"), new Field("name","string"), new Field("price","float")])
-
-        // Create a Layer in memory with a couple of Features
-        Memory memory = new Memory()
-        Layer layer = memory.create(schema)
-        layer.add(new Feature([new Point(111,-47), "House", 12.5], "house1", schema))
-        layer.add(new Feature([new Point(121,-45), "School", 22.7], "house2", schema))
+        Layer layer = createLayer()
 
         String expected = """"geom"|"name"|"price"
 "111\u00B0 0' 0.0000"" W, -47\u00B0 0' 0.0000"" N"|"House"|"12.5"
@@ -149,14 +126,7 @@ class CsvWriterTestCase {
 
     @Test void writeDMSChar() {
 
-        // Create a simple Schema
-        Schema schema = new Schema("houses", [new Field("geom","Point"), new Field("name","string"), new Field("price","float")])
-
-        // Create a Layer in memory with a couple of Features
-        Memory memory = new Memory()
-        Layer layer = memory.create(schema)
-        layer.add(new Feature([new Point(111,-47), "House", 12.5], "house1", schema))
-        layer.add(new Feature([new Point(121,-45), "School", 22.7], "house2", schema))
+        Layer layer = createLayer()
 
         String expected = """"lon"|"lat"|"name"|"price"
 "111d 0m 0.0000s W"|" -47d 0m 0.0000s N"|"House"|"12.5"
@@ -170,14 +140,7 @@ class CsvWriterTestCase {
 
     @Test void writeDMSCharInSingleColumn() {
 
-        // Create a simple Schema
-        Schema schema = new Schema("houses", [new Field("geom","Point"), new Field("name","string"), new Field("price","float")])
-
-        // Create a Layer in memory with a couple of Features
-        Memory memory = new Memory()
-        Layer layer = memory.create(schema)
-        layer.add(new Feature([new Point(111,-47), "House", 12.5], "house1", schema))
-        layer.add(new Feature([new Point(121,-45), "School", 22.7], "house2", schema))
+        Layer layer = createLayer()
 
         String expected = """"geom"|"name"|"price"
 "111d 0m 0.0000s W, -47d 0m 0.0000s N"|"House"|"12.5"
@@ -191,14 +154,7 @@ class CsvWriterTestCase {
 
     @Test void writeDDM() {
 
-        // Create a simple Schema
-        Schema schema = new Schema("houses", [new Field("geom","Point"), new Field("name","string"), new Field("price","float")])
-
-        // Create a Layer in memory with a couple of Features
-        Memory memory = new Memory()
-        Layer layer = memory.create(schema)
-        layer.add(new Feature([new Point(111,-47), "House", 12.5], "house1", schema))
-        layer.add(new Feature([new Point(121,-45), "School", 22.7], "house2", schema))
+        Layer layer = createLayer()
 
         String expected = """"lon"|"lat"|"name"|"price"
 "111\u00B0 0.0000' W"|" -47\u00B0 0.0000' N"|"House"|"12.5"
@@ -212,14 +168,7 @@ class CsvWriterTestCase {
 
     @Test void writeDDMInSingleColumn() {
 
-        // Create a simple Schema
-        Schema schema = new Schema("houses", [new Field("geom","Point"), new Field("name","string"), new Field("price","float")])
-
-        // Create a Layer in memory with a couple of Features
-        Memory memory = new Memory()
-        Layer layer = memory.create(schema)
-        layer.add(new Feature([new Point(111,-47), "House", 12.5], "house1", schema))
-        layer.add(new Feature([new Point(121,-45), "School", 22.7], "house2", schema))
+        Layer layer = createLayer()
 
         String expected = """"geom"|"name"|"price"
 "111\u00B0 0.0000' W, -47\u00B0 0.0000' N"|"House"|"12.5"
@@ -233,14 +182,7 @@ class CsvWriterTestCase {
 
     @Test void writeDDMChar() {
 
-        // Create a simple Schema
-        Schema schema = new Schema("houses", [new Field("geom","Point"), new Field("name","string"), new Field("price","float")])
-
-        // Create a Layer in memory with a couple of Features
-        Memory memory = new Memory()
-        Layer layer = memory.create(schema)
-        layer.add(new Feature([new Point(111,-47), "House", 12.5], "house1", schema))
-        layer.add(new Feature([new Point(121,-45), "School", 22.7], "house2", schema))
+        Layer layer = createLayer()
 
         String expected = """"lon"|"lat"|"name"|"price"
 "111d 0.0000m W"|" -47d 0.0000m N"|"House"|"12.5"
@@ -254,14 +196,7 @@ class CsvWriterTestCase {
 
     @Test void writeDDMCharInSingleColumn() {
 
-        // Create a simple Schema
-        Schema schema = new Schema("houses", [new Field("geom","Point"), new Field("name","string"), new Field("price","float")])
-
-        // Create a Layer in memory with a couple of Features
-        Memory memory = new Memory()
-        Layer layer = memory.create(schema)
-        layer.add(new Feature([new Point(111,-47), "House", 12.5], "house1", schema))
-        layer.add(new Feature([new Point(121,-45), "School", 22.7], "house2", schema))
+        Layer layer = createLayer()
 
         String expected = """"geom"|"name"|"price"
 "111d 0.0000m W, -47d 0.0000m N"|"House"|"12.5"
@@ -273,4 +208,73 @@ class CsvWriterTestCase {
         assertEquals(expected, csv)
     }
 
+    @Test void writeWTB() {
+
+        Layer layer = createLayer()
+
+        String expected = """"geom","name","price"
+"0000000001405BC00000000000C047800000000000","House","12.5"
+"0000000001405E400000000000C046800000000000","School","22.7"
+"""
+        // Write the Layer to a CSV String
+        CsvWriter writer = new CsvWriter(CsvWriter.Type.WKB)
+        String csv = writer.write(layer)
+        assertEquals(expected, csv)
+    }
+
+    @Test void writeGeoJSON() {
+
+        Layer layer = createLayer()
+
+        String expected = """"geom","name","price"
+"{ ""type"": ""Point"", ""coordinates"": [111.0, -47.0] }","House","12.5"
+"{ ""type"": ""Point"", ""coordinates"": [121.0, -45.0] }","School","22.7"
+"""
+        // Write the Layer to a CSV String
+        CsvWriter writer = new CsvWriter(CsvWriter.Type.GEOJSON)
+        String csv = writer.write(layer)
+        assertEquals(expected, csv)
+    }
+
+    @Test void writeKML() {
+
+        Layer layer = createLayer()
+
+        String expected = """"geom","name","price"
+"<Point><coordinates>111.0,-47.0</coordinates></Point>","House","12.5"
+"<Point><coordinates>121.0,-45.0</coordinates></Point>","School","22.7"
+"""
+        // Write the Layer to a CSV String
+        CsvWriter writer = new CsvWriter(CsvWriter.Type.KML)
+        String csv = writer.write(layer)
+        assertEquals(expected, csv)
+    }
+
+    @Test void writeGML2() {
+
+        Layer layer = createLayer()
+
+        String expected = """"geom","name","price"
+"<gml:Point><gml:coordinates>111.0,-47.0</gml:coordinates></gml:Point>","House","12.5"
+"<gml:Point><gml:coordinates>121.0,-45.0</gml:coordinates></gml:Point>","School","22.7"
+"""
+        // Write the Layer to a CSV String
+        CsvWriter writer = new CsvWriter(CsvWriter.Type.GML2)
+        String csv = writer.write(layer)
+        assertEquals(expected, csv)
+    }
+
+    @Test void writeGML3() {
+
+        Layer layer = createLayer()
+
+        String expected = """"geom","name","price"
+"<gml:Point><gml:pos>111.0 -47.0</gml:pos></gml:Point>","House","12.5"
+"<gml:Point><gml:pos>121.0 -45.0</gml:pos></gml:Point>","School","22.7"
+"""
+        // Write the Layer to a CSV String
+        CsvWriter writer = new CsvWriter(CsvWriter.Type.GML3)
+        String csv = writer.write(layer)
+        assertEquals(expected, csv)
+    }
 }

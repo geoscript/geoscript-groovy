@@ -4,7 +4,13 @@ import geoscript.geom.Point
 import geoscript.layer.Layer
 import au.com.bytecode.opencsv.CSVWriter
 import geoscript.proj.DecimalDegrees
-import org.jfree.chart.annotations.XYAnnotation
+import geoscript.geom.io.WkbWriter
+import geoscript.geom.io.WktWriter
+import geoscript.geom.Geometry
+import geoscript.geom.io.GeoJSONWriter
+import geoscript.geom.io.KmlWriter
+import geoscript.geom.io.Gml2Writer
+import geoscript.geom.io.Gml3Writer
 
 /**
  * Write a {@geoscript.layer.Layer Layer} to a CSV String.
@@ -26,8 +32,13 @@ class CsvWriter implements Writer {
      * How to encode the geometry
      */
     public static enum Type {
-        WKT, XY, DMS, DMSChar, DDM, DDMChar
+        WKT, WKB, GEOJSON, KML, GML2, GML3, XY, DMS, DMSChar, DDM, DDMChar
     }
+
+    /**
+     * The geoscript.geom.io.Writer
+     */
+    private geoscript.geom.io.Writer geomWriter
 
     /**
      * The name of the single column with WKT or XY data
@@ -74,6 +85,19 @@ class CsvWriter implements Writer {
         this.usingSingleColumn = true
         this.separator = options.get("separator", ",")
         this.quote = options.get("quote", "\"")
+        if (this.type == Type.WKB) {
+            this.geomWriter = new WkbWriter()
+        } else if (this.type == Type.GEOJSON) {
+            this.geomWriter = new GeoJSONWriter()
+        } else if (this.type == Type.KML) {
+            this.geomWriter = new KmlWriter()
+        } else if (type == Type.GML2) {
+            this.geomWriter = new Gml2Writer()
+        } else if (type == Type.GML3) {
+            this.geomWriter = new Gml3Writer()
+        } else /*if (this.type == Type.WKT)*/ {
+            this.geomWriter = new WktWriter()
+        }
     }
 
     /**
@@ -171,7 +195,12 @@ class CsvWriter implements Writer {
                         values.add(dd.toDdm(false))
                     }
                 } else {
-                    values.add(f.get(fld))
+                    if (fld.equals(geomFldName)) {
+                        values.add(geomWriter.write(f.get(fld) as Geometry))
+                    }
+                    else {
+                        values.add(f.get(fld))
+                    }
                 }
             }
             writer.writeNext(values as String[])
