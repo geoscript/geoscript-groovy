@@ -193,59 +193,62 @@ class CsvReader implements Reader {
         }
         def values
         while((values = reader.readNext()) != null) {
-            // The layer is not defined yet, so try to define it from
-            // the first row
-            if (!layer) {
-                List fields = []
-                cols.eachWithIndex { c, i ->
-                    def v = values[i]
-                    def colType = "String"
-                    // The user specified a column but it isn't WKT it's XY
-                    if (column && c.equalsIgnoreCase(column) && isTypeXY(type)) {
-                        colType = "Point"
-                    }
-                    // The user either specified a column
-                    else if((column && c.equalsIgnoreCase(column))) {
-                        isGeom = true
-                        column = c
-                        Geometry g = geomReader.read(v)
-                        colType = g.getGeometryType()
-                    }
-                    // The users didn't specify a column but the value looks like WKT
-                    else if (!column && isWKT(v)) {
-                        isGeom = true
-                        column = c
-                        colType = getGeometryTypeFromWKT(v)
-                    }
-                    fields.add(new Field(c, colType))
-                }
-                Schema schema = new Schema("csv", fields)
-                layer = new Layer("csv", schema)
-            }
-            // Try to turn the CSV values into a Feature, but fail
-            // gracefully by logging the error and moving to the next line
-            try {
-                Map valueMap = [:]
-                cols.eachWithIndex {c,i ->
-                    def v = values[i]
-                    if (usingSingleColumn && c.equalsIgnoreCase(column)) {
-                        if (isGeom) {
-                            v = geomReader.read(v.trim())
-                        } else {
-                            // Parse XY values including longitude/latitude in DMS, DDM formats
-                            v = new DecimalDegrees(v.trim()).point
+            // Skip blank lines
+            if (values.length > 0 && values[0] != null && values[0].trim() != "") {
+                // The layer is not defined yet, so try to define it from
+                // the first row
+                if (!layer) {
+                    List fields = []
+                    cols.eachWithIndex { c, i ->
+                        def v = values[i]
+                        def colType = "String"
+                        // The user specified a column but it isn't WKT it's XY
+                        if (column && c.equalsIgnoreCase(column) && isTypeXY(type)) {
+                            colType = "Point"
                         }
+                        // The user either specified a column
+                        else if((column && c.equalsIgnoreCase(column))) {
+                            isGeom = true
+                            column = c
+                            Geometry g = geomReader.read(v)
+                            colType = g.getGeometryType()
+                        }
+                        // The users didn't specify a column but the value looks like WKT
+                        else if (!column && isWKT(v)) {
+                            isGeom = true
+                            column = c
+                            colType = getGeometryTypeFromWKT(v)
+                        }
+                        fields.add(new Field(c, colType))
                     }
-                    valueMap.put(c,v)
+                    Schema schema = new Schema("csv", fields)
+                    layer = new Layer("csv", schema)
                 }
-                if (!usingSingleColumn) {
-                    // Parse XY values including longitude/latitude in DMS, DDM formats
-                    Point p = new DecimalDegrees(values[xCol], values[yCol]).point
-                    valueMap.put("geom", p)
+                // Try to turn the CSV values into a Feature, but fail
+                // gracefully by logging the error and moving to the next line
+                try {
+                    Map valueMap = [:]
+                    cols.eachWithIndex {c,i ->
+                        def v = values[i]
+                        if (usingSingleColumn && c.equalsIgnoreCase(column)) {
+                            if (isGeom) {
+                                v = geomReader.read(v.trim())
+                            } else {
+                                // Parse XY values including longitude/latitude in DMS, DDM formats
+                                v = new DecimalDegrees(v.trim()).point
+                            }
+                        }
+                        valueMap.put(c,v)
+                    }
+                    if (!usingSingleColumn) {
+                        // Parse XY values including longitude/latitude in DMS, DDM formats
+                        Point p = new DecimalDegrees(values[xCol], values[yCol]).point
+                        valueMap.put("geom", p)
+                    }
+                    layer.add(valueMap)
+                } catch(Exception ex) {
+                    System.err.println("Error parsing CSV: ${values} because ${ex.message}")
                 }
-                layer.add(valueMap)
-            } catch(Exception ex) {
-                System.err.println("Error parsing CSV: ${values} because ${ex.message}")
             }
         }
         return layer

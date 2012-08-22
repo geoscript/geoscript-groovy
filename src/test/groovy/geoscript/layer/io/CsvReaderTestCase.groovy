@@ -213,4 +213,14 @@ ak,10501917,?,"Thursday, June 28, 2012 02:30:58 UTC",60.0233,-152.9946,2,2.9,?,"
             assertTrue(f.geom instanceof geoscript.geom.Point)
         }
     }
+
+    @Test void readCsvWithBlankLine() {
+        String csv = """"the_geom"
+"POLYGON ((-126.72872789292975 22.964486856824095, -126.72872789292975 51.368178553333294, -64.97359027747028 51.368178553333294, -64.97359027747028 22.964486856824095, -126.72872789292975 22.964486856824095))"
+
+"""
+        CsvReader reader = new CsvReader()
+        Layer layer = reader.read(csv)
+        assertEquals(1, layer.count)
+    }
 }
