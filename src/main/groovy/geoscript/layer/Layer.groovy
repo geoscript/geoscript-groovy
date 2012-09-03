@@ -222,7 +222,30 @@ class Layer {
      */
     private void setDefaultSymbolizer(String geometryType) {
         if(!this.style) {
-            this.style = Symbolizer.getDefault(geometryType)
+            if (this instanceof Shapefile) {
+                def shp = this as Shapefile
+                def fileName = shp.file.name.substring(0, shp.file.name.lastIndexOf(".shp"))
+                def dir = shp.file.parentFile
+                // Check for SLD
+                def f = new File(dir,"${fileName}.sld")
+                if (f.exists()) {
+                    def reader = new geoscript.style.io.SLDReader()
+                    this.style = reader.read(f)
+                }
+                // Check for CSS but only if the style is still falsey
+                if (!this.style) {
+                    f = new File(dir,"${fileName}.css")
+                    if (f.exists()) {
+                        def reader = new geoscript.style.io.CSSReader()
+                        this.style = reader.read(f)
+                    }
+                }
+            }
+            // If the Layer isn't a Shapefile or if the Shapefile didn't
+            // have a companion SLD or CSS file
+            if (!this.style) {
+                this.style = Symbolizer.getDefault(geometryType)
+            }
         }
     }
 
