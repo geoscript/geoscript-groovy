@@ -24,7 +24,7 @@ class UniqueValuesTestCase {
         map.addLayer(shapefile)
 
         // Default is random colors
-        UniqueValues sym1 = new UniqueValues(shapefile, "STATE_ABBR", "Greens")
+        UniqueValues sym1 = new UniqueValues(shapefile, "STATE_ABBR")
         assertNotNull(sym1)
         assertEquals(49, sym1.parts.size())
 
