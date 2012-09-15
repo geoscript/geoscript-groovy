@@ -8,7 +8,7 @@ import geoscript.workspace.Memory
 import java.awt.image.BufferedImage
 
 /**
- * Easily draw a {@link geoscript.geom.Geometry Geometry}, a {@geoscript.feature.Feature Feature}, and a {@link geoscript.layer.Layer Layer} to an image or interactive App.
+ * Easily draw a {@link geoscript.geom.Geometry Geometry}, a {@link geoscript.feature.Feature Feature}, and a {@link geoscript.layer.Layer Layer} to an image or interactive App.
  * <p><blockquote><pre>
  * import static geoscript.render.Draw.*
  * import geoscript.style.*
