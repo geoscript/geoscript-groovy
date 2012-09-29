@@ -59,6 +59,16 @@ class DrawTestCase {
         draw(layer, bounds: layer.bounds.scale(1.1), size: [250,250], out: file, format: "png")
     }
 
+    @Test void drawLayerToPdf() {
+        Symbolizer sym = new Stroke('black', 0.1) + new Fill('gray', 0.75)
+        File shpFile = new File(getClass().getClassLoader().getResource("states.shp").toURI())
+        Layer layer = new Shapefile(shpFile)
+        layer.style = sym
+        File file = File.createTempFile("draw_layer_",".pdf")
+        println "Drawing Layer: ${file}"
+        draw(layer, bounds: layer.bounds.scale(1.1), size: [250,250], out: file, format: "pdf")
+    }
+
     @Test void drawGeometryToImage() {
         Symbolizer sym = new Stroke('black', 2) + new Fill('gray',0.75)
         Geometry geom = new Point(0,0).buffer(0.2)
