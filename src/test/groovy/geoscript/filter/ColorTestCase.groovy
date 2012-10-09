@@ -221,6 +221,20 @@ class ColorTestCase {
        assertEquals 10, colors.size()
     }
 
+	@Test void darker() {
+		Color c = new Color("red")
+		Color darkerColor = c.darker()
+		assertTrue darkerColor instanceof Color
+		assertEquals("#b20000", darkerColor.hex)
+	}
+	
+	@Test void brighter() {
+		Color c = new Color([100,0,0])
+		Color brighterColor = c.brighter()
+		assertTrue brighterColor instanceof Color
+		assertEquals("#8e0000", brighterColor.hex)
+	}
+	
     @Test void drawToImage() {
         def colors = Color.interpolate(new Color("white"), new Color("red"))
         def image = Color.drawToImage(colors)

@@ -106,7 +106,7 @@ class Color extends Expression {
      * @return A new Color
      */
     Color brighter() {
-        new Color(getColor(this.vaule).brighter())
+        new Color(getColor(this.value).brighter())
     }
     
     /**
