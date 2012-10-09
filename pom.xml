@@ -101,21 +101,21 @@
             <artifactId>gt-swing</artifactId>
             <version>${gt.version}</version>
         </dependency>
-		<dependency>
-			<groupId>org.geotools</groupId>
-			<artifactId>gt-process</artifactId>
-			<version>${gt.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.geotools</groupId>
-			<artifactId>gt-process-feature</artifactId>
-			<version>${gt.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.geotools</groupId>
-			<artifactId>gt-process-geometry</artifactId>
-			<version>${gt.version}</version>
-		</dependency>
+        <dependency>
+                <groupId>org.geotools</groupId>
+                <artifactId>gt-process</artifactId>
+                <version>${gt.version}</version>
+        </dependency>
+        <dependency>
+                <groupId>org.geotools</groupId>
+                <artifactId>gt-process-feature</artifactId>
+                <version>${gt.version}</version>
+        </dependency>
+        <dependency>
+                <groupId>org.geotools</groupId>
+                <artifactId>gt-process-geometry</artifactId>
+                <version>${gt.version}</version>
+        </dependency>
         <dependency>
             <groupId>org.geoscript</groupId>
             <artifactId>geocss_2.9.1</artifactId>
@@ -131,12 +131,12 @@
             <artifactId>json</artifactId>
             <version>20090211</version>
         </dependency>
-		<dependency>
-			<groupId>net.sf.opencsv</groupId>
-			<artifactId>opencsv</artifactId>
-			<version>2.0</version>
-		</dependency>
-		<dependency>
+        <dependency>
+                <groupId>net.sf.opencsv</groupId>
+                <artifactId>opencsv</artifactId>
+                <version>2.0</version>
+        </dependency>
+        <dependency>
             <groupId>com.lowagie</groupId>
             <artifactId>itext</artifactId>
             <version>2.1.7</version>
@@ -150,7 +150,7 @@
         </dependency>
     </dependencies>
     <build>
-		<sourceDirectory>src/main/groovy</sourceDirectory>
+        <sourceDirectory>src/main/groovy</sourceDirectory>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -185,15 +185,15 @@
                         <descriptor>src/assembly/zip.xml</descriptor>
                     </descriptors>
                 </configuration>
-				<executions>
-					<execution>
-						<id>make-assembly</id>
-						<phase>package</phase>
-						<goals>
-							<goal>single</goal>
-						</goals>
-					</execution>
-				</executions>
+                <executions>
+                    <execution>
+                        <id>make-assembly</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
             <plugin>
                 <artifactId>maven-antrun-plugin</artifactId>
@@ -216,19 +216,48 @@
                     </execution>
                 </executions>
             </plugin>
-			<!-- Code quality: mvn codenarc:codenarc -->
+            <!-- Code quality: mvn codenarc:codenarc -->
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>codenarc-maven-plugin</artifactId>
                 <version>0.17-1</version>
             </plugin>
-			<!-- Unit test covoerage: mvn cobertura:cobertura -->
-			<plugin>
-				<groupId>org.codehaus.mojo</groupId>
-				<artifactId>cobertura-maven-plugin</artifactId>
-				<version>2.5.1</version>
-			</plugin>
+            <!-- Unit test covoerage: mvn cobertura:cobertura -->
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>cobertura-maven-plugin</artifactId>
+                <version>2.5.1</version>
+            </plugin>
         </plugins>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.eclipse.m2e</groupId>
+                    <artifactId>lifecycle-mapping</artifactId>
+                    <version>1.0.0</version>
+                    <configuration>
+                        <lifecycleMappingMetadata>
+                            <pluginExecutions>
+                                <pluginExecution>
+                                    <pluginExecutionFilter>
+                                        <groupId>org.codehaus.gmaven</groupId>
+                                        <artifactId>gmaven-plugin</artifactId>
+                                        <versionRange>1.4</versionRange>
+                                        <goals>
+                                            <goal>compile</goal>
+                                            <goal>testCompile</goal>
+                                        </goals>
+                                    </pluginExecutionFilter>
+                                    <action>
+                                        <execute />
+                                    </action>
+                                </pluginExecution>
+                            </pluginExecutions>
+                        </lifecycleMappingMetadata>
+                    </configuration>
+                </plugin>
+            </plugins>
+        </pluginManagement>
     </build>
     <reporting>
         <plugins>
@@ -237,11 +266,11 @@
                 <artifactId>codenarc-maven-plugin</artifactId>
                 <version>0.17-1</version>
             </plugin>
-			<plugin>
-				<groupId>org.codehaus.mojo</groupId>
-				<artifactId>cobertura-maven-plugin</artifactId>
-				<version>2.5.1</version>
-			</plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>cobertura-maven-plugin</artifactId>
+                <version>2.5.1</version>
+            </plugin>
         </plugins>
     </reporting>
     <properties>
@@ -266,11 +295,11 @@
         <url>https://github.com/jericks/geoscript-groovy/issues</url>
     </issueManagement>
     <mailingLists>
-		<mailingList>
-			<name>GeoScript Google Group</name>
-			<archive>http://groups.google.com/group/geoscript</archive>
-		</mailingList>
-	</mailingLists>
+        <mailingList>
+            <name>GeoScript Google Group</name>
+            <archive>http://groups.google.com/group/geoscript</archive>
+        </mailingList>
+    </mailingLists>
     <developers>
         <developer>
             <id>jericks</id>
