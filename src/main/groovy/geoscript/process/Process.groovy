@@ -106,8 +106,11 @@ class Process {
      * @param closure The Groovy Closure
      */
     static void registerProcess(String name, String description, Map inputs, Map outputs, Closure closure) {
-        processFactory.cache.put(name, new ClosureProcessInfo(name:  name, description:  description,
-                parameters: inputs, results: outputs, closure: closure))
+        if (!isGeoServerAvailable) {
+            processFactory.cache.put(name, new ClosureProcessInfo(name:  name, description:  description,
+                    parameters: inputs, results: outputs, closure: closure))
+        }
+
     }
 
     /**
@@ -419,14 +422,19 @@ class Process {
     }
 
     /**
+     * Whether we are embedded in GeoServer or not
+     */
+    private static final isGeoServerAvailable;
+
+    /**
      * The GeoScriptProcessFactory
      */
-    private static final GeoScriptProcessFactory processFactory = new GeoScriptProcessFactory()
+    private static final GeoScriptProcessFactory processFactory
 
     /**
      * The GeoScriptFactoryIteratorProvider
      */
-    private static final GeoScriptFactoryIteratorProvider provider = new GeoScriptFactoryIteratorProvider()
+    private static final GeoScriptFactoryIteratorProvider provider
 
     /**
      * The GeoScriptFactoryIteratorProvider
@@ -442,11 +450,21 @@ class Process {
     }
 
     /**
-     * Add the ability to dynamically create and register custom Functions
+     * Add the ability to dynamically create and register custom Processes
      */
     static {
-        GeoTools.addClassLoader(provider.class.classLoader)
-        GeoTools.addFactoryIteratorProvider(provider)
+        try {
+            Class.forName("org.geoserver.config.GeoServer")
+            isGeoServerAvailable = true
+        } catch (ClassNotFoundException ex) {
+            isGeoServerAvailable = false
+        }
+        if (!isGeoServerAvailable) {
+            processFactory = new GeoScriptProcessFactory()
+            provider = new GeoScriptFactoryIteratorProvider()
+            GeoTools.addClassLoader(provider.class.classLoader)
+            GeoTools.addFactoryIteratorProvider(provider)
+        }
     }
 
     /**

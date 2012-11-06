@@ -119,7 +119,9 @@ class Function extends Expression {
      * @param closure The Closure
      */
     static void registerFunction(String name, Closure closure) {
-        functionFactory.cache.put(name, closure)
+        if (!isGeoServerAvailable) {
+            functionFactory.cache.put(name, closure)
+        }
     }
 
     /**
@@ -208,24 +210,39 @@ class Function extends Expression {
     }
 
     /**
+     * Whether we are embedded in GeoServer or not
+     */
+    private static final isGeoServerAvailable;
+
+    /**
      * A GeoScript FunctionFactory
      */
-    private static final GeoScriptFunctionFactory functionFactory = new GeoScriptFunctionFactory()
+    private static final GeoScriptFunctionFactory functionFactory
 
     /**
      * A GeoScript FactoryIteratorProvider
      */
-    private static final GeoScriptFactoryIteratorProvider provider = new GeoScriptFactoryIteratorProvider()
+    private static final GeoScriptFactoryIteratorProvider provider
 
     /**
      * Add the ability to dynamically create and register custom Functions
      */
     static {
-        GeoTools.addClassLoader(provider.class.classLoader)
-        GeoTools.addFactoryIteratorProvider(provider)
-        // If a custom function is called before a standard function,
-        // the standard functions (through CQL) can't be found.
-        org.geotools.filter.text.ecql.ECQL.toExpression("centroid(the_geom)")
+        try {
+            Class.forName("org.geoserver.config.GeoServer")
+            isGeoServerAvailable = true
+        } catch (ClassNotFoundException ex) {
+            isGeoServerAvailable = false
+        }
+        if (!isGeoServerAvailable) {
+            functionFactory = new GeoScriptFunctionFactory()
+            provider = new GeoScriptFactoryIteratorProvider()
+            GeoTools.addClassLoader(provider.class.classLoader)
+            GeoTools.addFactoryIteratorProvider(provider)
+            // If a custom function is called before a standard function,
+            // the standard functions (through CQL) can't be found.
+            org.geotools.filter.text.ecql.ECQL.toExpression("centroid(the_geom)")
+        }
     }
 
     /**
