@@ -44,16 +44,19 @@ class ProcessTestCase {
     
     @Test void getProcessNames() {
         def names = Process.processNames
+        println names
         assertTrue names.size() > 0
     }
     
     @Test void boundsGeoToolsProcess() {
-        def p = new Process("gs:Bounds")
-        assertEquals "gs:Bounds", p.name
+        def names = Process.processNames
+        String processName = "gs:Bounds" in names ? "gs:Bounds" : "vec:Bounds"
+        def p = new Process(processName)
+        assertEquals processName, p.name
         assertEquals "Bounds", p.title
         assertEquals "Computes the bounding box of the input features.", p.description
         assertEquals "1.0.0", p.version
-        assertEquals "gs:Bounds", p.toString()
+        assertEquals processName, p.toString()
         
         assertEquals 1, p.parameters.size()
         assertTrue p.parameters.containsKey("features")
@@ -74,12 +77,14 @@ class ProcessTestCase {
     }
     
     @Test void countGeoToolsProcess() {
-        Process p = new Process("gs:Count")
-        assertEquals "gs:Count", p.name
+        def names = Process.processNames
+        String processName = "gs:Count" in names ? "gs:Count" : "vec:Count"
+        def p = new Process(processName)
+        assertEquals processName, p.name
         assertEquals "Count Features", p.title
         assertEquals "Computes the number of features in a feature collection.", p.description
         assertEquals "1.0.0", p.version
-        assertEquals "gs:Count", p.toString()
+        assertEquals processName, p.toString()
 
         assertEquals 1, p.parameters.size()
         assertTrue p.parameters.containsKey("features")
@@ -100,12 +105,14 @@ class ProcessTestCase {
     }
 
     @Test void collectGeometriesGeoToolsProcess() {
-        Process p = new Process("gs:CollectGeometries")
-        assertEquals "gs:CollectGeometries", p.name
+        def names = Process.processNames
+        String processName = "gs:CollectGeometries" in names ? "gs:CollectGeometries" : "vec:CollectGeometries"
+        def p = new Process(processName)
+        assertEquals processName, p.name
         assertEquals "Collect Geometries", p.title
         assertEquals "Collects the deafult geometries of the input features and combines them into a single geometry collection", p.description
         assertEquals "1.0.0", p.version
-        assertEquals "gs:CollectGeometries", p.toString()
+        assertEquals processName, p.toString()
 
         assertEquals 1, p.parameters.size()
         assertTrue p.parameters.containsKey("features")
