@@ -11,6 +11,8 @@ import org.geotools.filter.FunctionFactory
 import org.opengis.feature.type.Name
 import org.opengis.filter.expression.Literal
 import org.geotools.feature.NameImpl
+import org.geotools.factory.FactoryRegistry
+import org.opengis.filter.capability.FunctionName
 
 /**
  * A GeoScript Function either wraps an existing GeoTools Function or an CQL String.
@@ -111,6 +113,20 @@ class Function extends Expression {
      */
     String toString() {
         function.toString()
+    }
+
+    /**
+     * Get a List of all Function names
+     * @return A List of all Function names
+     */
+    static List<String> getFunctionNames() {
+        List names = []
+        CommonFactoryFinder.getFunctionFactories().each { f ->
+            f.functionNames.each { fn ->
+                names.add(fn.toString())
+            }
+        }
+        names.sort()
     }
 
     /**

@@ -130,4 +130,12 @@ class FunctionTestCase {
         map.bounds = statesShp.bounds
         map.render(imgFile)
     }
+
+    @Test void getFunctionNames() {
+        List names = Function.functionNames
+        assertTrue names.size() > 0
+        assertTrue names.contains("Area")
+        assertTrue names.contains("cos")
+        assertTrue names.contains("within")
+    }
 }
