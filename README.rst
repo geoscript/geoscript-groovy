@@ -18,7 +18,7 @@ Use maven to build, test, and package::
 
     mvn clean install
 
-The distribution can be found in target/geoscript-groovy-0.99-SNAPSHOT-app/geoscript-groovy-0.99-SNAPSHOT.
+The distribution can be found in target/geoscript-groovy-0.99-app/geoscript-groovy-0.99.
 
 Use
 ---
