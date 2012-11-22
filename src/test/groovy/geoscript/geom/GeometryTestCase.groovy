@@ -431,4 +431,12 @@ class GeometryTestCase {
         Geometry g4 = g1.reducePrecision("floating_single", pointwise: true, removecollapsed: true)
         assertEquals "POINT (5.19775390625 51.07421875)", g4.wkt
     }
+
+    @Test void asType() {
+        Geometry g = Geometry.fromWKT("POLYGON ((0 0, 0 10, 10 10, 10 0, 0 0))")
+        Bounds b = g as Bounds
+        assertEquals "(0.0,0.0,10.0,10.0)", b.toString()
+        Point p = g as Point
+        assertEquals "POINT (5 5)", p.wkt
+    }
 }

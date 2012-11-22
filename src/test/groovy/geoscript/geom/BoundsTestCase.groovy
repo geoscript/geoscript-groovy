@@ -348,4 +348,11 @@ class BoundsTestCase {
             "7.377641290737883 4.227457514062631, 10 5))",
             g.wkt
     }
+
+    @Test void boundsAsGeometry() {
+        def b = new Bounds(0,0,10,10)
+        def g = b as Geometry
+        assertEquals "POLYGON ((0 0, 0 10, 10 10, 10 0, 0 0))", g.wkt
+        assertEquals "(0.0,0.0,10.0,10.0)", b as String
+    }
 }

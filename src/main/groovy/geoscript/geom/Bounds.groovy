@@ -462,6 +462,21 @@ class Bounds {
     }
 
     /**
+     * Override the asType method to convert Bounds to Geometry
+     * if the Class is Geometry
+     * @param type The Class
+     * @return The converted Object
+     */
+    @Override
+    Object asType(Class type) {
+        if (type == Geometry) {
+            return this.geometry
+        } else {
+            return super.asType(type)
+        }
+    }
+
+    /**
      * The string representation
      * @return The string representation
      */

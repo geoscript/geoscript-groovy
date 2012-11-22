@@ -237,7 +237,7 @@ class Geometry {
      * @return The centroid as a Point of this Geometry
      */
     Point getCentroid() {
-        wrap(this.g.centroid) as Point
+        wrap(this.g.centroid)
     }
 
     /**
@@ -863,6 +863,22 @@ class Geometry {
     @Override
     int hashCode() {
         this.g.hashCode()
+    }
+
+    /**
+     * Override the asType method to convert Geometry to a custom value
+     * @param type The Class
+     * @return The converted Object
+     */
+    @Override
+    Object asType(Class type) {
+        if (type == Point) {
+            return centroid
+        } else if (type == Bounds) {
+            return bounds
+        } else {
+            return super.asType(type)
+        }
     }
 
     /**
