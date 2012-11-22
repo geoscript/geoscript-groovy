@@ -11,7 +11,6 @@ import org.geotools.filter.FunctionFactory
 import org.opengis.feature.type.Name
 import org.opengis.filter.expression.Literal
 import org.geotools.feature.NameImpl
-import org.geotools.factory.FactoryRegistry
 import org.opengis.filter.capability.FunctionName
 
 /**
@@ -123,7 +122,7 @@ class Function extends Expression {
         List names = []
         CommonFactoryFinder.getFunctionFactories().each { f ->
             f.functionNames.each { fn ->
-                names.add(fn.toString())
+                names.add((fn instanceof FunctionName) ? fn.functionName.toString() : fn.toString())
             }
         }
         names.sort()
