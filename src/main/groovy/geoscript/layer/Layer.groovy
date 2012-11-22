@@ -112,7 +112,11 @@ class Layer {
         this.fs = layer.fs
         this.schema = layer.schema
         this.projection = new Projection(fs.schema.coordinateReferenceSystem)
-        setDefaultSymbolizer(this.schema.geom.typ)
+        if (layer.style) {
+            this.style = layer.style
+        } else {
+            setDefaultSymbolizer(this.schema.geom.typ)
+        }
     }
 
     /**
@@ -220,12 +224,19 @@ class Layer {
      * @param geometryType The geometry type
      * @return A default Symbolizer
      */
-    private void setDefaultSymbolizer(String geometryType) {
+    protected void setDefaultSymbolizer(String geometryType) {
         if(!this.style) {
-            if (this instanceof Shapefile) {
-                def shp = this as Shapefile
-                def fileName = shp.file.name.substring(0, shp.file.name.lastIndexOf(".shp"))
-                def dir = shp.file.parentFile
+            if (this instanceof Shapefile || this.format.equalsIgnoreCase("Directory")) {
+                def dir
+                def fileName
+                if (this instanceof Shapefile) {
+                    def shp = this as Shapefile
+                    fileName = shp.file.name.substring(0, shp.file.name.lastIndexOf(".shp"))
+                    dir = shp.file.parentFile
+                } else {
+                    dir = this.workspace.ds.info.source.path
+                    fileName = this.name
+                }
                 // Check for SLD
                 def f = new File(dir,"${fileName}.sld")
                 if (f.exists()) {
