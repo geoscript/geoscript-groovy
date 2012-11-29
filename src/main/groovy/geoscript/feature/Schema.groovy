@@ -74,7 +74,7 @@ class Schema {
      * @param uri The namespace uri
      */
     Schema(String name, def fields, String uri = "http://geoscript.org/feature") {
-        this(buildFeatureType(name, fields))
+        this(buildFeatureType(name, fields, uri))
     }
 
     /**

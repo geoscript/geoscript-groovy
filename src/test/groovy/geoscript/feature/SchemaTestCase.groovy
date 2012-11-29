@@ -32,7 +32,7 @@ class SchemaTestCase {
 
         Schema s6 = new Schema("widgets", [new Field("geom","Point"), new Field("name","string"), new Field("price","float")], "http://geotools.org/feature")
         assertEquals "widgets geom: Point, name: String, price: Float", s6.toString()
-        assertEquals "http://geoscript.org/feature", s6.uri
+        assertEquals "http://geotools.org/feature", s6.uri
     }
 
     @Test void getName() {
