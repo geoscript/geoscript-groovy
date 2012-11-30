@@ -213,7 +213,7 @@ class Layer {
      */
     private static Layer createLayerFromFeatureCollection(String name, FeatureCollection fc) {
         Schema s = new Schema(fc.schema)
-        Schema schema =  new Schema(name, s.fields)
+        Schema schema =  new Schema(name, s.fields, fc.schema.name.namespaceURI ?: "http://geoscript.org/feature")
         Layer layer = new Memory().create(schema)
         layer.add(fc)
         layer
@@ -676,7 +676,7 @@ class Layer {
      */
     Layer filter(def filter = null, String newName = newname()) {
         Filter f = (filter == null) ? Filter.PASS : new Filter(filter)
-        Schema s = new Schema(newName, this.schema.fields)
+        Schema s = new Schema(newName, this.schema.fields, this.schema.uri)
         Layer l = this.workspace.create(s)
         DefaultQuery q = new DefaultQuery(getName(), f.filter)
         FeatureCollection fc = this.fs.getFeatures(q)

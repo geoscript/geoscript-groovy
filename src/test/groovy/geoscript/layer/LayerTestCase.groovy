@@ -9,6 +9,7 @@ import geoscript.proj.Projection
 import geoscript.filter.Filter
 import geoscript.workspace.Memory
 import geoscript.geom.*
+import geoscript.workspace.Workspace
 
 /**
  * The Layer UnitTest
@@ -221,6 +222,14 @@ class LayerTestCase {
 
         assertEquals 5, layer3.count
         assertEquals "(0.0,0.0,4.0,4.0)", layer3.bounds.toString()
+
+        // Make sure that the namepsace uri is passed through when creating Layers from FeatureCollections
+        URL url = getClass().getClassLoader().getResource("states.shp")
+        Workspace workspace = new Workspace(["url": url, namespace: 'http://omar.ossim.org'])
+        Layer layer4 = workspace["states"]
+        assertEquals layer4.schema.uri, 'http://omar.ossim.org'
+        Layer layer5 = new Layer(layer4.fs.features)
+        assertEquals layer5.schema.uri, 'http://omar.ossim.org'
     }
 
     @Test void updateFeatures() {
