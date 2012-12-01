@@ -859,7 +859,7 @@ class Layer {
      * @param out A GeoJSON String
      */
     String toJSONString() {
-        geoJSONWriter.write(layer)
+        geoJSONWriter.write(this)
     }
 
     /**

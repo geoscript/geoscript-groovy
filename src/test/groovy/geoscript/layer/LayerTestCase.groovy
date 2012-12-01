@@ -157,6 +157,8 @@ class LayerTestCase {
         String json = out.toString()
         assertNotNull json
         assertTrue json.startsWith("{\"type\":\"FeatureCollection\",\"features\":[")
+        json = layer1.toJSONString()
+        assertTrue json.startsWith("{\"type\":\"FeatureCollection\",\"features\":[")
     }
 
     @Test void toKML() {
