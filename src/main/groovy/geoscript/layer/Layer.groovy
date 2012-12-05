@@ -87,7 +87,7 @@ class Layer {
     /**
      * The FilterFactory2 for creating Filters
      */
-    private final static FilterFactory2 filterFactory = org.geotools.factory.CommonFactoryFinder.getFilterFactory2(org.geotools.factory.GeoTools.getDefaultHints())
+    protected final static FilterFactory2 filterFactory = org.geotools.factory.CommonFactoryFinder.getFilterFactory2(org.geotools.factory.GeoTools.getDefaultHints())
 
     /**
      * Create a new Layer from a GeoTools FeatureSource
@@ -419,15 +419,54 @@ class Layer {
     }
 
     /**
-     * Get a Cursor over the Features of the Layer.
-     * @param filer The Filter or Filter String to limit the Features. Defaults to null.
-     * @param sort A List of Lists that define the sort order [[Field or Field name, "ASC" or "DESC"],...]. Not all Layers
-     * support sorting!
+     * Get a Cursor over the Features of the Layer using named parameters.
+     * @param options.  The Map of named parameters can include:
+     * <ul>
+     *  <li>filter = The Filter or Filter String to limit the Features. Defaults to null.</li>
+     *  <li>sort = A List of Lists that define the sort order [[Field or Field name, "ASC" or "DESC"],...]. Not all Layers
+     *  support sorting!</li>
+     *  <li>max= The maximum number of Features to include in the Cursor</li>
+     *  <li>start = The index of the record to start the cursor at.  Together with maxFeatures this simulates paging.
+     * Not all Layers support the start index and paging!</li>
+     * </ul>
      * @return A Cursor
      */
-    Cursor getCursor(def filter = null, List sort = null) {
+    Cursor getCursor(Map options) {
+        getCursor(options.get("filter", null), options.get("sort", null),
+            options.get("max",-1), options.get("start", -1))
+    }
+
+    /**
+     * Get a Cursor over the Features of the Layer.
+     * @param filter The Filter or Filter String to limit the Features. Defaults to null.
+     * @param sort A List of Lists that define the sort order [[Field or Field name, "ASC" or "DESC"],...]. Not all Layers
+     * support sorting!
+     * @param max The maximum number of Features to include in the Cursor
+     * @param start The index of the record to start the cursor at.  Together with maxFeatures this simulates paging.
+     * Not all Layers support the start index and paging!
+     * @return A Cursor
+     */
+    Cursor getCursor(def filter = null, List sort = null, int max = -1, int start = -1) {
+        Map cursorOptions = [:]
         Filter f = (filter == null) ? Filter.PASS : new Filter(filter)
         DefaultQuery q = new DefaultQuery(getName(), f.filter)
+        if (max > -1) {
+            q.maxFeatures = max
+        }
+        if (start > -1) {
+            if (fs.queryCapabilities.offsetSupported) {
+                q.startIndex = start
+            } else {
+                throw new UnsupportedOperationException("Start and max are not supported by this layer!");
+                // This will work in GeoTools 9.0
+                // cursorOptions.start = start
+                // cursorOptions.max = max
+                // Reset max features because the we will
+                // be using the MaxFeaturesIterator in Cursor
+                // and it needs all of the Features to simulate paging
+                // q.maxFeatures = Integer.MAX_VALUE
+            }
+        }
         if (getProj()) {
             q.coordinateSystem = getProj().crs
         }
@@ -445,11 +484,11 @@ class Layer {
             if (fs.queryCapabilities.supportsSorting(sortByArray)) {
                 q.sortBy = sortByArray
             } else {
-                println "This Layer does not support sorting!"
+                cursorOptions.sort = sortByArray
             }
         }
         def col = fs.getFeatures(q)
-        return new Cursor(col, this)
+        return new Cursor(cursorOptions, col, this)
     }
 
     /**

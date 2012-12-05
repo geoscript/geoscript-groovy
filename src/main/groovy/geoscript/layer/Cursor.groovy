@@ -5,6 +5,9 @@ import org.geotools.feature.FeatureIterator
 import org.opengis.feature.simple.SimpleFeature
 import org.opengis.feature.simple.SimpleFeatureType
 import org.geotools.feature.FeatureCollection
+import org.geotools.data.store.MaxFeaturesIterator
+import org.geotools.data.sort.SortedFeatureIterator
+import org.opengis.filter.sort.SortBy
 
 /**
  * A Cursor is a Iterator over a Feature objects.
@@ -30,30 +33,55 @@ class Cursor implements Iterator {
      * The GeoTools FeatureIterator
      */
     private FeatureIterator<SimpleFeature> iter
-    
+
     /**
      * The GeoTools FeatureCollection
      */
     FeatureCollection<SimpleFeatureType, SimpleFeature> col
 
     /**
+     * A Map of options.  Options can be: sort, start, max
+     */
+    private Map options
+
+    /**
      * Create a new Cursor with a FeatureCollection
+     * @param options A Map of options (sort, start, max)
      * @param col The GeoTools FeatureCollection
      */
-    Cursor(FeatureCollection<SimpleFeatureType, SimpleFeature> col) {
+    Cursor(Map options = [:], FeatureCollection<SimpleFeatureType, SimpleFeature> col) {
+        this.options = options
         this.col = col
-        this.iter = col.features()
+        createIterator()
     }
 
     /**
      * Create a new Cursor with a FeatureCollection and a Layer
+     * @param options A Map of options (sort, start, max)
      * @param col The GeoTools FeatureCollection
      * @param layer The Geoscript Layer
      */
-    Cursor(FeatureCollection<SimpleFeatureType, SimpleFeature> col, Layer layer) {
+    Cursor(Map options = [:], FeatureCollection<SimpleFeatureType, SimpleFeature> col, Layer layer) {
+        this.options = options
         this.col = col
-        this.iter = col.features()
+        createIterator()
         this.layer = layer
+    }
+
+    /**
+     * Create the FeatureIterator based on the FeatureCollection and options
+     */
+    protected void createIterator() {
+       this.iter = col.features()
+       if (options.containsKey("sort")) {
+           this.iter = new SortedFeatureIterator(this.iter, col.schema, options.sort as SortBy[], Integer.MAX_VALUE)
+       }
+       // This will work in GeoTools 9.0
+       /*if (options.containsKey("start") && options.containsKey("max")) {
+           long start = options.start as long
+           long end = start + options.max as long
+           this.iter = new MaxFeaturesIterator<SimpleFeature>(this.iter, start, end)
+       }*/
     }
 
     /**
@@ -110,6 +138,6 @@ class Cursor implements Iterator {
      * Reset and read the Features again.
      */
     void reset() {
-        iter = col.features()
+        createIterator()
     }
 }
