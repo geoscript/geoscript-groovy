@@ -154,6 +154,53 @@
             <version>4.7</version>
             <scope>test</scope>
         </dependency>
+
+        <dependency>
+            <groupId>org.geotools</groupId>
+            <artifactId>gt-wms</artifactId>
+            <version>${gt.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.geotools</groupId>
+            <artifactId>gt-wfs</artifactId>
+            <version>${gt.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.geotools</groupId>
+            <artifactId>gt-geotiff</artifactId>
+            <version>${gt.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.geotools</groupId>
+            <artifactId>gt-image</artifactId>
+            <version>${gt.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.geotools</groupId>
+            <artifactId>gt-imagemosaic</artifactId>
+            <version>${gt.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.geotools</groupId>
+            <artifactId>gt-imageio-ext-gdal</artifactId>
+            <version>${gt.version}</version>
+        </dependency>
+	<dependency>
+            <groupId>org.geotools</groupId>
+            <artifactId>gt-process-raster</artifactId>
+            <version>${gt.version}</version>
+        </dependency>
+	<dependency>
+		<groupId>org.jaitools</groupId>
+		<artifactId>jt-jiffleop</artifactId>
+		<version>0.2.0</version>
+	</dependency>
+	<dependency>
+		<groupId>org.jaitools</groupId>
+		<artifactId>jt-jiffle-language</artifactId>
+		<version>0.2.0</version>
+	</dependency>
     </dependencies>
     <build>
         <sourceDirectory>src/main/groovy</sourceDirectory>
@@ -288,7 +335,7 @@
         </plugins>
     </reporting>
     <properties>
-        <gt.version>8.4</gt.version>
+        <gt.version>8.3</gt.version>
 		<!-- <gt.version>9-SNAPSHOT</gt.version> -->
     </properties>
     <name>geoscript groovy</name>
