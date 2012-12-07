@@ -4,10 +4,13 @@ import geoscript.geom.*
 import com.vividsolutions.jts.geom.Coordinate
 
 /**
- * Write a Geoscript Geometry to a GML Version 2 String.
- * <p><code>Gml2Writer writer = new Gml2Writer()</code></p>
- * <p><code>String gml = writer.write(new Point(111,-47))</code></p>
- * <p><code>&lt;gml:Point&gt;&lt;gml:coordinates&gt;111.0,-47.0&lt;/gml:coordinates&gt;&lt;/gml:Point&gt;</code></p>
+ * Write a Geoscript {@link geoscript.geom.Geometry Geometry} to a GML Version 2 String.
+ * <p><blockquote><pre>
+ * Gml2Writer writer = new Gml2Writer()
+ * String gml = writer.write(new {@link geoscript.geom.Point Point}(111,-47))
+ *
+ * &lt;gml:Point&gt;&lt;gml:coordinates&gt;111.0,-47.0&lt;/gml:coordinates&gt;&lt;/gml:Point&gt;
+ * </pre></blockquote></p>
  * @author Jared Erickson
  */
 class Gml2Writer implements Writer {
@@ -29,7 +32,7 @@ class Gml2Writer implements Writer {
             return "<gml:LineString><gml:coordinates>${getCoordinatesAsString(geom.coordinates)}</gml:coordinates></gml:LineString>"
         }
         else if (geom instanceof Polygon) {
-            return "<gml:Polygon><gml:outerBoundaryIs><gml:LinearRing><gml:coordinates>${getCoordinatesAsString(geom.exteriorRing.coordinates)}</gml:coordinates></gml:LinearRing></gml:outerBoundaryIs>${geom.interiorRings.collect{r-> "<gml:innerBoundaryIs><gml:LinearRing><gml:coordinates>" + getCoordinatesAsString(r.coordinates) + "</gml:coordinates></gml:LinearRing></gml:innerBoundaryIs>"}.join()}</gml:Polygon>"
+            return "<gml:Polygon><gml:outerBoundaryIs><gml:LinearRing><gml:coordinates>${getCoordinatesAsString(geom.exteriorRing.coordinates)}</gml:coordinates></gml:LinearRing></gml:outerBoundaryIs>${geom.interiorRings.collect{r-> "<gml:innerBoundaryIs><gml:LinearRing><gml:coordinates>" + getCoordinatesAsString(r.coordinates) + "</gml:coordinates></gml:LinearRing></gml:innerBoundaryIs>"}.join('')}</gml:Polygon>"
         }
         if (geom instanceof MultiPoint) {
             return "<gml:MultiPoint>${geom.geometries.collect{g->"<gml:pointMember>" + write(g) + "</gml:pointMember>"}.join('')}</gml:MultiPoint>"

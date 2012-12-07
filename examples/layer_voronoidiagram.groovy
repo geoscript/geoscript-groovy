@@ -22,3 +22,25 @@ Geometry voronoiGeom = geomCol.voronoiDiagram
 
 // Add the Voronoi Diagram Geometry as a Feature
 diagramLayer.add(schema.feature([voronoiGeom]))
+
+// Import style and map
+import geoscript.render.Map
+import geoscript.style.*
+
+// Create a Map
+map = new Map()
+map.backgroundColor = "white"
+
+// Set styles
+shp.style = new Fill("wheat") + new Stroke("navy", 0.1)
+diagramLayer.style = new Stroke("navy", 0.5)
+
+// Add layers
+map.addLayer(shp)
+map.addLayer(diagramLayer)
+
+// Set bounds
+map.bounds = diagramLayer.bounds.expandBy(5)
+
+// Render to image
+map.renderToImage()

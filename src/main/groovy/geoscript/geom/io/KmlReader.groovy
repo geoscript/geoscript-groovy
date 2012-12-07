@@ -7,10 +7,13 @@ import org.jdom.Document
 import org.jdom.Element
 
 /**
- * Read a Geometry from a KML String.
- * <p><code>KmlReader reader= new KmlReader()</code></p>
- * <p><code>Point point = reader.read("&lt;Point&gt;&lt;coordinates&gt;111.0,-47.0&lt;/coordinates&gt;&lt;/Point&gt;")</code></p>
- * <p><code>POINT (111 -47)</code></p>
+ * Read a {@link geoscript.geom.Geometry Geometry} from a KML String.
+ * <p><blockquote><pre>
+ * KmlReader reader = new KmlReader()
+ * {@link geoscript.geom.Point Point} point = reader.read("&lt;Point&gt;&lt;coordinates&gt;111.0,-47.0&lt;/coordinates&gt;&lt;/Point&gt;")
+ *
+ * POINT (111 -47)
+ * </pre></blockquote></p>
  * @author Jared Erickson
  */
 class KmlReader implements Reader {
@@ -24,7 +27,7 @@ class KmlReader implements Reader {
         SAXBuilder builder = new SAXBuilder()
         Document document = builder.build(new StringReader(str))
         Element root = document.rootElement
-        read(root)
+        readElement(root)
     }
 
     /**
@@ -32,28 +35,29 @@ class KmlReader implements Reader {
      * @param The JDOM Element
      * @return A Geometry
      */
-    private Geometry read(Element element) {
+    private Geometry readElement(Element element) {
         
         String name = element.name
+        def ns = element.namespace
 
         if (name.equalsIgnoreCase("Point")) {
-            return getPoints(element.getChild("coordinates").text)[0]
+            return getPoints(element.getChild("coordinates",ns).text)[0]
         }
         else if (name.equalsIgnoreCase("LineString")) {
-            return new LineString(getPoints(element.getChild("coordinates").text))
+            return new LineString(getPoints(element.getChild("coordinates",ns).text))
         }
         else if (name.equalsIgnoreCase("LinearRing")) {
-            return new LinearRing(getPoints(element.getChild("coordinates").text))
+            return new LinearRing(getPoints(element.getChild("coordinates",ns).text))
         }
         else if (name.equalsIgnoreCase("Polygon")) {
-            LinearRing shell = new LinearRing(getPoints(element.getChild("outerBoundaryIs").getChild("LinearRing").getChild("coordinates").text))
-            List<LinearRing> holes = element.getChildren("innerBoundaryIs").collect{e ->
-                new LinearRing(getPoints(e.getChild("LinearRing").getChild("coordinates").text))
+            LinearRing shell = new LinearRing(getPoints(element.getChild("outerBoundaryIs",ns).getChild("LinearRing",ns).getChild("coordinates",ns).text))
+            List<LinearRing> holes = element.getChildren("innerBoundaryIs",ns).collect{e ->
+                new LinearRing(getPoints(e.getChild("LinearRing",ns).getChild("coordinates",ns).text))
             }
             return new Polygon(shell, holes)
         }
         else if (name.equalsIgnoreCase("MultiGeometry")) {
-            List<Geometry> geoms = element.getChildren().collect{e->read(e)}
+            List<Geometry> geoms = element.getChildren().collect{e->readElement(e)}
             if (!(false in geoms.collect{g -> g instanceof Point})) {
                 return new MultiPoint(geoms)
             }
@@ -66,6 +70,8 @@ class KmlReader implements Reader {
             else {
                 return new GeometryCollection(geoms)
             }
+        } else {
+            return null
         }
     }
 
@@ -82,4 +88,3 @@ class KmlReader implements Reader {
     }
 
 }
-

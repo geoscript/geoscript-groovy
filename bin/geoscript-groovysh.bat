@@ -36,7 +36,7 @@ FOR /R %%G IN (*.jar) DO (
 )
 
 cd %CWD%
-%GROOVY% -cp "%CLASSPATH%"
+%GROOVY% -cp "%CLASSPATH%" %*
 goto end
 
 :error

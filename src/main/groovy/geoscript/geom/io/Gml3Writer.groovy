@@ -4,10 +4,13 @@ import geoscript.geom.*
 import com.vividsolutions.jts.geom.Coordinate
 
 /**
- * Write a Geoscript Geometry to a GML String.
- * <p><code>Gml3Writer writer = new Gml3Writer()</code></p>
- * <p><code>String gml = writer.write(new Point(111,-47))</code></p>
- * <p><code>&lt;gml:Point&gt;&lt;gml:pos&gt;111.0,-47.0&lt;/gml:pos&gt;&lt;/gml:Point&gt;</code></p>
+ * Write a Geoscript {@link geoscript.geom.Geometry Geometry} to a GML String.
+ * <p><blockquote><pre>
+ * Gml3Writer writer = new Gml3Writer()
+ * String gml = writer.write(new {@link geoscript.geom.Point Point}(111,-47))
+ *
+ * &lt;gml:Point&gt;&lt;gml:pos&gt;111.0,-47.0&lt;/gml:pos&gt;&lt;/gml:Point&gt;
+ * </pre></blockquote></p>
  * @author Jared Erickson
  */
 class Gml3Writer implements Writer{
@@ -29,7 +32,7 @@ class Gml3Writer implements Writer{
             return "<gml:LineString><gml:posList>${getCoordinatesAsString(geom.coordinates)}</gml:posList></gml:LineString>"
         }
         else if (geom instanceof Polygon) {
-            return "<gml:Polygon><gml:exterior><gml:LinearRing><gml:posList>${getCoordinatesAsString(geom.exteriorRing.coordinates)}</gml:posList></gml:LinearRing></gml:exterior>${geom.interiorRings.collect{r-> "<gml:interior><gml:LinearRing><gml:posList>" + getCoordinatesAsString(r.coordinates) + "</gml:posList></gml:LinearRing></gml:interior>"}.join()}</gml:Polygon>"
+            return "<gml:Polygon><gml:exterior><gml:LinearRing><gml:posList>${getCoordinatesAsString(geom.exteriorRing.coordinates)}</gml:posList></gml:LinearRing></gml:exterior>${geom.interiorRings.collect{r-> "<gml:interior><gml:LinearRing><gml:posList>" + getCoordinatesAsString(r.coordinates) + "</gml:posList></gml:LinearRing></gml:interior>"}.join('')}</gml:Polygon>"
         }
         if (geom instanceof MultiPoint) {
             return "<gml:MultiPoint>${geom.geometries.collect{g->"<gml:pointMember>" + write(g) + "</gml:pointMember>"}.join('')}</gml:MultiPoint>"

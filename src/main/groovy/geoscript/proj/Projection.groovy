@@ -1,6 +1,7 @@
 package geoscript.proj
 
 import geoscript.geom.Geometry
+import geoscript.geom.Bounds
 import org.geotools.geometry.jts.GeometryCoordinateSequenceTransformer
 import org.geotools.referencing.CRS
 import org.opengis.referencing.crs.CoordinateReferenceSystem
@@ -9,9 +10,13 @@ import org.opengis.referencing.operation.MathTransform
 /**
  * A Projection is a cartographic projection or coordinate reference system.
  * <p>You can create a Projection with an EPSG Code:</p>
- * <code>Projection p = new Projection("EPSG:4326")</code>
+ * <p><blockquote><pre>
+ * Projection p = new Projection("EPSG:4326")
+ * </pre></blockquote></p>
  * <p>Or with WKT:</p>
- * <code>Projection p = new Projection("""GEOGCS["GCS_WGS_1984",DATUM["D_WGS_1984",SPHEROID["WGS_1984",6378137,298.257223563]],PRIMEM["Greenwich",0],UNIT["Degree",0.017453292519943295]]""")</cod>
+ * <p><blockquote><pre>
+ * Projection p = new Projection("""GEOGCS["GCS_WGS_1984",DATUM["D_WGS_1984",SPHEROID["WGS_1984",6378137,298.257223563]],PRIMEM["Greenwich",0],UNIT["Degree",0.017453292519943295]]""")
+ * </pre></blockquote></p>
  * @author Jared Erickson
  */
 class Projection {
@@ -73,6 +78,32 @@ class Projection {
     }
 
     /**
+     * Get the extent for this Projection
+     * @return A Bounds
+     */
+    Bounds getBounds() {
+        def extent = CRS.getEnvelope(crs)
+        if (extent != null) {
+            return new Bounds(extent.getMinimum(0), extent.getMinimum(1), extent.getMaximum(0), extent.getMaximum(1), this)
+        } else {
+            return null
+        }
+    }
+
+    /**
+     * Get the valid geographic area for this Projection
+     * @return A Bounds
+     */
+    Bounds getGeoBounds() {
+        def extent = CRS.getGeographicBoundingBox(crs)
+        if (extent != null) {
+            return new Bounds(extent.westBoundLongitude, extent.southBoundLatitude, extent.eastBoundLongitude, extent.northBoundLatitude, 'epsg:4326')
+        } else {
+            return null
+        }
+    }
+
+    /**
      * Transform the Geometry to another Projection
      * @param geom The Geometry
      * @param dest The destination Projection
@@ -110,10 +141,20 @@ class Projection {
      * Does this Projection equal the other?
      * @return Whether this Projection equal the other?
      */
+    @Override
     boolean equals(Object other) {
         if (!(other instanceof Projection))
         return false;
         return CRS.equalsIgnoreMetadata(crs, other.crs)
+    }
+
+    /**
+     * Get the hashcode of this Projection
+     * @return The hashcode
+     */
+    @Override
+    int hashCode() {
+        crs.hashCode()
     }
 
     /**

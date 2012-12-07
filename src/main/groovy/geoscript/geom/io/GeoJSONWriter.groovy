@@ -4,10 +4,13 @@ import geoscript.geom.*
 import com.vividsolutions.jts.geom.Coordinate
 
 /**
- * Write a Geometry to a GeoJSON String.
- * <p><code>GeoJSONWriter writer = new GeoJSONWriter()</code></p>
- * <p><code>writer.write(new Point(111,-47))</code></p>
- * <p><code>{ "type": "Point", "coordinates": [111.0, -47.0] }</code></p>
+ * Write a {@link geoscript.geom.Geometry Geometry} to a GeoJSON String.
+ * <p><blockquote><pre>
+ * GeoJSONWriter writer = new GeoJSONWriter()
+ * writer.write(new {@link geoscript.geom.Point Point}(111,-47))
+ *
+ * { "type": "Point", "coordinates": [111.0, -47.0] }
+ * </pre></blockquote></p>
  * @author Jared Erickson
  */
 class GeoJSONWriter implements Writer {
@@ -29,7 +32,7 @@ class GeoJSONWriter implements Writer {
             return """{ "type": "LineString", "coordinates": [${geometryToCoordinateString(geom)}] }"""
         }
         else if (geom instanceof Polygon) {
-            return """{ "type": "Polygon", "coordinates": [${polygonToCoordinateString(geom)}] }"""
+            return """{ "type": "Polygon", "coordinates": [${polygonToCoordinateString(geom as Polygon)}] }"""
         }
         if (geom instanceof MultiPoint) {
             return """{ "type": "MultiPoint", "coordinates": [${geom.geometries.collect{g-> geometryToCoordinateString(g)}.join(', ')}] }"""
@@ -38,7 +41,7 @@ class GeoJSONWriter implements Writer {
             return """{ "type": "MultiLineString", "coordinates": [${geom.geometries.collect{g->'[' + geometryToCoordinateString(g) + ']'}.join(', ')}] }"""
         }
         else if (geom instanceof MultiPolygon) {
-            return """{ "type": "MultiPolygon", "coordinates": [${geom.geometries.collect{g-> '[' + polygonToCoordinateString(g) + ']'}.join(', ')}] }"""
+            return """{ "type": "MultiPolygon", "coordinates": [${geom.geometries.collect{g-> '[' + polygonToCoordinateString(g as Polygon) + ']'}.join(', ')}] }"""
         }
         else {
             return """{ "type": "GeometryCollection", "geometries": [${geom.geometries.collect{g->write(g)}.join(', ')}] }"""

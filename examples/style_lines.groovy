@@ -7,14 +7,14 @@
  *
  */
 import geoscript.layer.*
-import geoscript.filter.Filter
-import geoscript.geom.Bounds
 import geoscript.style.*
-import geoscript.map.Map
+import geoscript.filter.*
+import geoscript.render.Map
 
-void createImage(Layer layer, Style style, File file) {
+void createImage(Layer layer, Symbolizer symbolizer, File file) {
+    symbolizer.asSLD()
     Map map = new Map()
-    layer.style = style
+    layer.style = symbolizer
     map.addLayer(layer)
     map.bounds = layer.bounds.expandBy(20)
     map.render(file)
@@ -23,204 +23,58 @@ void createImage(Layer layer, Style style, File file) {
 
 Layer shp = new Shapefile("sld_cookbook_line/sld_cookbook_line.shp")
 
-createImage(shp, new Style(new LineSymbolizer(
-    strokeColor: "#000000",
-    strokeWidth: 3
-)), new File("line_simple.png"))
+// Simple Line
+createImage(shp, new Stroke("#000000", 3), new File("line_simple.png"))
 
-createImage(shp, new Style([
-    new LineSymbolizer(
-        strokeColor: "#333333",
-        strokeWidth: 5,
-        strokeLineCap: "round",
-        zIndex: 0
-    ),
-    new LineSymbolizer(
-        strokeColor: "#6699FF",
-        strokeWidth: 3,
-        strokeLineCap: "round",
-        zIndex: 1
-    )
-]), new File("line_border.png"))
+// Line with border
+createImage(shp, new Stroke("#333333", 5, null, "round").zindex(0) + new Stroke("#6699FF", 3, null, "round").zindex(1), new File("line_border.png")) 
 
-createImage(shp, new Style(new LineSymbolizer(
-    strokeColor: "#0000FF",
-    strokeWidth: 3,
-    strokeDashArray: "5 2"
-)), new File("line_dashed.png"))
+// Dashed line
+createImage(shp, new Stroke("#0000FF", 3, [5,2]), new File("line_dashed.png"))
 
-createImage(shp, new Style([
-    new LineSymbolizer(
-            strokeColor: "#333333",
-            strokeWidth: 3
-    ),
-    new LineSymbolizer(
-        graphicStrokeMarkName: "shape://vertline",
-        graphicStrokeMarkStrokeColor: "#333333",
-        graphicStrokeMarkStrokeWidth: 1,
-        graphicStrokeMarkSize: 12
-    )
-]), new File("line_railroad.png"))
+// Railroad (hatching)
+createImage(shp, new Stroke("#333333", 3) + new Hatch("vertline", new Stroke("#333333", 1), 12).zindex(1), new File("line_railroad.png"))
 
-createImage(shp, new Style([
-    new LineSymbolizer(
-        strokeColor: "#FF0000",
-        strokeWidth: 1,
-    ),
-    new TextSymbolizer(
-        label: "name",
-        color: "#000000"
-    )
-]), new File("line_default_label.png"))
+// Spaced graphic symbols
+createImage(shp, new Stroke(null, 0, [4, 6]).shape(new Shape("#666666", 4, "circle").stroke("#333333", 1)), new File("line_spaced_graphics.png"))
 
-createImage(shp, new Style([
-    new LineSymbolizer(
-        strokeColor: "#FF0000",
-        strokeWidth: 1,
-    ),
-    new TextSymbolizer(
-        label: "name",
-        color: "#000000",
-        followLine: true
-    )
-]), new File("line_follow_label.png"))
+// Alternating symbols with dash offsets
+createImage(shp, new Stroke("#0000FF", 1, [10,10]).zindex(0) + new Stroke(null, 0, [[5,15],7.5]).shape(new Shape(null, 5, "circle").stroke("#000033",1)).zindex(1), new File("line_alternating_symbols.png"))
 
-createImage(shp, new Style([
-    new LineSymbolizer(
-        strokeColor: "#FF0000",
-        strokeWidth: 1,
-    ),
-    new TextSymbolizer(
-        label: "name",
-        color: "#000000",
-        followLine: true,
-        maxAngleDelta: 90,
-        maxDisplacement: 400,
-        repeat: 150
-    )
-]), new File("line_follow_label_optimized.png"))
+// Line with default labels
+createImage(shp, new Stroke("#FF0000",1) + new Label("name"), new File("line_default_label.png"))
 
-createImage(shp, new Style([
-    new LineSymbolizer(
-        strokeColor: "#FF0000",
-        strokeWidth: 1,
-    ),
-    new TextSymbolizer(
-        label: "name",
-        color: "#000000",
-        fontFamily: "Arial",
-        fontSize: 10,
-        fontStyle: "normal",
-        fontWeight: "bold",
-        followLine: true,
-        maxAngleDelta: 90,
-        maxDisplacement: 400,
-        repeat: 150
-    )
-]), new File("line_follow_label_optimized_styled.png"))
+// Label following line
+createImage(shp, new Stroke("#FF0000",1) + new Label("name").linear(0, null, null, false, true), new File("line_label_following.png"))
 
+// Optimized label placement
+createImage(shp, new Stroke("#FF0000",1) + new Label("name").linear(0, null, null, false, true, false, 400, 150).maxAngleDelta(90), new File("line_optimized_labels.png"))
 
-Rule localRoadRule = new Rule(
-    symbolizers: [
-        new LineSymbolizer(
-            strokeColor: "#009933",
-            strokeWidth: 2
-        )
-    ],
-    name: "local-road",
-    filter: new Filter("type = 'local-road'")
+// Optimized  and styled label
+createImage(shp, new Stroke("#FF0000",1) + new Label("name").linear(0, null, null, false, true, false, 400, 150).maxAngleDelta(90).font(new Font("normal", "bold", 10, "Arial")), new File("line_optimized_styled_labels.png"))
+
+// Attribute based line
+createImage(shp, new Stroke("#009933", 2).where("type='local-road'").zindex(1) +
+        new Stroke("#0055CC", 3).where("type='secondary'").zindex(2) +
+        new Stroke("#FF0000", 6).where("type='highway'").zindex(3), new File("line_attribute_based.png")
 )
 
-Rule secondaryRoadRule = new Rule(
-    symbolizers:[
-        new LineSymbolizer(
-            strokeColor: "#0055CC",
-            strokeWidth: 3
-        )
-    ],
-    name: "secondary-road",
-    filter: new Filter("type = 'secondary'")
+// Zoom based line
+createImage(shp, new Stroke("#009933", 6).range(-1, 180000000) +
+    new Stroke("#009933", 4).range(180000000, 360000000) +
+    new Stroke("#009933", 2).range(360000000),
+    new File("line_zoom_based.png")
 )
 
-Rule highwayRoadRule = new Rule(
-    symbolizers: [
-        new LineSymbolizer(
-            strokeColor: "#550000",
-            strokeWidth: 6
-        )
-    ],
-    name: "highway",
-    filter: new Filter("type = 'highway'")
-)
-createImage(shp, new Style([
-    localRoadRule,
-    secondaryRoadRule,
-    highwayRoadRule
-]), new File("line_attribute_based.png"));
-
-Rule largeRule = new Rule(
-    symbolizers: [
-        new LineSymbolizer(
-            strokeColor: "#009933",
-            strokeWidth: 6
-        )
-    ],
-    name: "Large",
-    maxScaleDenominator: 1800000000
+// Line with alternating star and dots
+createImage(shp, new Stroke(color: "#000000", width: 15, join: "round", cap: "round").zindex(0) +
+        new Stroke(shape: new Shape(color: "red", size: 10, type: "circle"), dash: [[10,20],0]).zindex(1) +
+        new Stroke(shape: new Shape(color: "blue", size: 10, type: "star"), dash: [[10,20],15]).zindex(2),
+        new File("line_star_dots.png")
 )
 
-Rule mediumRule = new Rule(
-    symbolizers: [
-        new LineSymbolizer(
-            strokeColor: "#009933",
-            strokeWidth: 4
-        )
-    ],
-    name: "Medium",
-    minScaleDenominator: 1800000000,
-    maxScaleDenominator: 3600000000
-)
-
-Rule smallRule = new Rule(
-    symbolizers: [
-        new LineSymbolizer(
-            strokeColor: "#009933",
-            strokeWidth: 2
-        )
-    ],
-    name: "Small",
-    minScaleDenominator: 3600000000
-)
-
-createImage(shp, new Style([
-    largeRule,
-    mediumRule,
-    smallRule
-]), new File("line_zoom.png"))
-
-
-createImage(shp, new Style([
-    new LineSymbolizer(
-        strokeColor: "#000000",
-        strokeWidth: 15,
-        strokeLineJoin: "round",
-        strokeLineCap: "round",
-        zIndex: 0
-    ),
-    new LineSymbolizer(
-        graphicStrokeMarkName: "circle",
-        graphicStrokeMarkStrokeColor: "red",
-        graphicStrokeMarkFillColor: "red",
-        strokeDashArray: "10 20",
-        strokeDashOffset: 0,
-        zIndex: 1
-    ),
-    new LineSymbolizer(
-        graphicStrokeMarkName: "star",
-        graphicStrokeMarkStrokeColor: "blue",
-        graphicStrokeMarkFillColor: "blue",
-        strokeDashArray: "10 20",
-        strokeDashOffset: 15,
-        zIndex: 1
-    )
-]), new File("line_stardot.png"))
+// Line with arrows
+createImage(shp, new Stroke("#333333", 5, null, "round").zindex(0) +
+        new Stroke("#6699FF", 3, null, "round").zindex(1) +
+        new Label(new Expression("\u2192")).linear().font(new Font("normal", "bold", 12, "Lucida Sans")).halo(new Fill("#FFFFFF", 0.85), 1).fill(new Fill("#AAAAAA")).maxDisplacement(100).forceLeftToRight(false),
+        new File("line_arrow.png"))

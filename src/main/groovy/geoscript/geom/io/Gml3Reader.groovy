@@ -6,14 +6,16 @@ import org.jdom.Document
 import org.jdom.Element
 import org.jdom.Namespace
 import java.util.regex.Pattern
-import java.util.regex.Pattern
 import java.util.regex.Matcher
 
 /**
- * Read a Geometry from a GML Version 3 String.
- * <p><code>Gml3Reader reader = new Gml3Reader()</code></p>
- * <p><code>Point p = reader.read("&lt;gml:Point&gt;&lt;gml:pos&gt;111.0,-47.0&lt;/gml:pos&gt;&lt;/gml:Point&gt;")</code></p>
- * <p><code>POINT (111 -47)</code></p>
+ * Read a {@link geoscript.geom.Geometry Geometry} from a GML Version 3 String.
+ * <p><blockquote><pre>
+ * Gml3Reader reader = new Gml3Reader()
+ * {@link geoscript.geom.Point Point} p = reader.read("&lt;gml:Point&gt;&lt;gml:pos&gt;111.0,-47.0&lt;/gml:pos&gt;&lt;/gml:Point&gt;")
+ *
+ * POINT (111 -47)
+ * </pre></blockquote></p>
  * @author Jared Erickson
  */
 class Gml3Reader implements Reader{
@@ -31,7 +33,7 @@ class Gml3Reader implements Reader{
         SAXBuilder builder = new SAXBuilder()
         Document document = builder.build(new StringReader(prepareXmlString(str)))
         Element root = document.rootElement
-        read(root)
+        readElement(root)
     }
 
     /**
@@ -39,7 +41,7 @@ class Gml3Reader implements Reader{
      * @param The JDOM Element
      * @return A Geometry
      */
-    private Geometry read(Element element) {
+    private Geometry readElement(Element element) {
 
         String name = element.name
 
@@ -53,12 +55,12 @@ class Gml3Reader implements Reader{
             return new LinearRing(getPoints(element.getChild("posList",ns).text))
         }
         else if (name.equalsIgnoreCase("Polygon")) {
-            LinearRing shell = read(element.getChild("exterior",ns).getChild("LinearRing",ns))
-            List<LinearRing> holes = element.getChildren("interior",ns).collect{e->read(e.getChild("LinearRing",ns))}
+            LinearRing shell = readElement(element.getChild("exterior",ns).getChild("LinearRing",ns)) as LinearRing
+            List<LinearRing> holes = element.getChildren("interior",ns).collect{e->readElement(e.getChild("LinearRing",ns)) as LinearRing}
             return new Polygon(shell, holes)
         }
         else if (name.equalsIgnoreCase("MultiPoint")) {
-            return new MultiPoint(element.getChildren("pointMember",ns).collect{e->read(e.getChild("Point",ns))})
+            return new MultiPoint(element.getChildren("pointMember",ns).collect{e->readElement(e.getChild("Point",ns))})
         }
         else if (name.equalsIgnoreCase("Curve")) {
             return new MultiLineString(element.getChild("segments",ns).getChildren("LineStringSegment",ns).collect{e->
@@ -66,16 +68,19 @@ class Gml3Reader implements Reader{
             })
         }
         else if (name.equalsIgnoreCase("MultiCurve")) {
-            return new MultiLineString(element.getChildren("curveMember",ns).collect{e->read(e.getChild("LineString",ns))})
+            return new MultiLineString(element.getChildren("curveMember",ns).collect{e->readElement(e.getChild("LineString",ns))})
         }
         else if (name.equalsIgnoreCase("MultiSurface")) {
-            return new MultiPolygon(element.getChildren("surfaceMember",ns).collect{e->read(e.getChild("Polygon",ns))})
+            return new MultiPolygon(element.getChildren("surfaceMember",ns).collect{e->readElement(e.getChild("Polygon",ns))})
         }
         else if (name.equalsIgnoreCase("MultiGeometry")) {
-            return new GeometryCollection(element.getChildren("geometryMember",ns).collect{e->read(e.getChildren()[0])})
+            return new GeometryCollection(element.getChildren("geometryMember",ns).collect{e->readElement(e.getChildren()[0])})
         }
         else if (name.equalsIgnoreCase("GeometryCollection")) {
-            return new GeometryCollection(element.getChildren("geometryMember",ns).collect{e->read(e.getChildren()[0])})
+            return new GeometryCollection(element.getChildren("geometryMember",ns).collect{e->readElement(e.getChildren()[0])})
+        }
+        else {
+            return null
         }
     }
 

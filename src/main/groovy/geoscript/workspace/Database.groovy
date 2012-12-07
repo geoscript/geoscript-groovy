@@ -6,8 +6,15 @@ import geoscript.feature.Field
 import geoscript.layer.Layer
 
 /**
- * A Workspace that is a Database
- * @author jericks
+ * A Workspace that is a Database.
+ * <p>A Database subclass can add a SQL query as a Layer:</p>
+ * <p><blockquote><pre>
+ * Database db = new H2("acme", "target/h2")
+ * Layer statesLayer = h2.add(shp, 'states')
+ * String sql = """select st_centroid("the_geom") as "the_geom", "STATE_NAME" FROM "states""""
+ * Layer statesCentroidLayer = h2.addSqlQuery("states_centroids", sql, new Field("the_geom", "Point", "EPSG:4326"), [])
+ * </pre></blockquote></p>
+ * @author Jared Erickson
  */
 class Database extends Workspace {
 
@@ -73,6 +80,8 @@ class Database extends Workspace {
             return com.vividsolutions.jts.geom.MultiPolygon.class
         } else if (geometry.equalsIgnoreCase("geometrycollection")) {
             return com.vividsolutions.jts.geom.GeometryCollection.class
+        } else {
+            return com.vividsolutions.jts.geom.Geometry.class
         }
     }
 }

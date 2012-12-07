@@ -1,0 +1,104 @@
+<html>
+    <head>
+        <title>GeoScript Geometry Web Services</title>
+        <link rel="stylesheet" type="text/css" href="http://openlayers.org/api/theme/default/style.css">
+        <link rel="shortcut icon" href="/static/favicon.ico">
+        <script src="http://openlayers.org/api/OpenLayers.js"></script>
+        <style>
+            #map {
+                width: 512px;
+                height: 256px;
+            }
+        </style>
+    </head>
+    <body>
+        <div id="map" style="border: 1px solid #CCCCCC; width:400px; height: 400px;"></div>
+        <script>
+            var map = new OpenLayers.Map("map");
+            var layer = new OpenLayers.Layer.OSM("OSM");
+            map.addLayer(layer);
+            var vectorLayer = new OpenLayers.Layer.Vector("Features");
+            map.addLayer(vectorLayer);
+            var toolbar = new OpenLayers.Control.EditingToolbar(vectorLayer);
+            map.addControl(toolbar);
+            map.zoomToMaxExtent();
+
+            var wktFormat = new OpenLayers.Format.WKT();
+
+            function buffer() {
+                var features = vectorLayer.features;
+                if (features.length == 0) {
+                    alert("Please add some features!");
+                } else {
+                    var d = parseFloat(prompt("Enter buffer distance!"));
+                    OpenLayers.loadURL('buffer', {
+                            geom: wktFormat.write(features),
+                            distance: d
+                        }, 
+                        this, 
+                        function(request) {
+                            var wkt = request.responseText;
+                            var features = wktFormat.read(wkt);
+                            if (features) vectorLayer.addFeatures(features);
+                        }, 
+                        function() {
+                            alert("Error buffering features!");
+                        }
+                    );
+                }
+            }
+
+            function centroid() {
+                var features = vectorLayer.features;
+                if (features.length == 0) {
+                    alert("Please add some features!");
+                } else {
+                    OpenLayers.loadURL('centroid', {
+                            geom: wktFormat.write(features)
+                        }, 
+                        this, 
+                        function(request) {
+                            var wkt = request.responseText;
+                            var features = wktFormat.read(wkt);
+                            if (features) vectorLayer.addFeatures(features);
+                        }, 
+                        function() {
+                            alert("Error calculating centroids!");
+                        }
+                    );
+                }
+            }
+
+            function convexHull() {
+                var features = vectorLayer.features;
+                if (features.length == 0) {
+                    alert("Please add some features!");
+                } else {
+                    OpenLayers.loadURL('convexHull', {
+                            geom: wktFormat.write(features)
+                        }, 
+                        this, 
+                        function(request) {
+                            var wkt = request.responseText;
+                            var features = wktFormat.read(wkt);
+                            if (features) vectorLayer.addFeatures(features);
+                        }, 
+                        function() {
+                            alert("Error calculating convex hulls!");
+                        }
+                    );
+                }
+            }
+
+            function clear() {
+                vectorLayer.destroyFeatures();
+            }
+
+        </script>
+        <a href="javascript:buffer()">Buffer</a> | 
+        <a href="javascript:centroid()">Centroid</a> | 
+        <a href="javascript:convexHull()">ConvexHull</a> |
+        <a href="javascript:clear()">Clear</a>
+
+    </body>
+</html>

@@ -3,14 +3,12 @@ package geoscript.feature
 import geoscript.proj.Projection
 
 /**
- * A Field is composed of a name and a type.  A Field with a Geometry type
- * can also contain a Projection.
- * <p><code>
+ * A Field is composed of a name and a type.  A Field with a {@link geoscript.geom.Geometry Geometry} type
+ * can also contain a {@link geoscript.proj.Projection Projection}.
+ * <p><blockquote><pre>
  * Field f1 = new Field("name","String")
- * </code></p>
- * <p><code>
  * Field f2 = new Field("geom","Point", "EPSG:2927")
- * </code></p>
+ * </pre></blockquote></p>
  * @author Jared Erickson
  */
 class Field {
@@ -94,7 +92,7 @@ class Field {
      * @return Is the Field spatial?
      */
     boolean isGeometry() {
-	List geometryNames = ["point","linestring","polygon","linearring"]
+        List geometryNames = ["point","linestring","polygon","linearring"]
         geometryNames.any{geomName -> typ.toLowerCase().endsWith(geomName)}
     }
 

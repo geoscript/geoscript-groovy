@@ -1,23 +1,11 @@
-import geoscript.layer.*
-import geoscript.proj.*
-import geoscript.style.*
-import geoscript.map.*
 import geoscript.geom.Bounds
+import geoscript.layer.Shapefile
+import geoscript.render.Map
+import geoscript.style.*
 
 def statesShp = new Shapefile("states.shp")
-
-statesShp.style = new Style([
-    new PolygonSymbolizer(
-        fillColor: "#E6E6E6",
-        strokeColor: "#4C4C4C",
-        strokeWidth: 0.5f,
-        zIndex: 0
-    ),
-    new PointSymbolizer(
-        graphic: 'http://www.usautoparts.net/bmw/images/states/tn_${strToLowerCase(STATE_ABBR)}.jpg',
-        zIndex: 1
-    )
-])
+statesShp.style = (new Fill("#E6E6E6") + new Stroke("#4C4C4C", 0.5)).zindex(0) +
+        new Icon('http://www.usautoparts.net/bmw/images/states/tn_${strToLowerCase(STATE_ABBR)}.jpg',"image/jpeg")
 
 def map = new Map(width: 600, height: 400, fixAspectRatio: true)
 map.proj = "EPSG:4326"

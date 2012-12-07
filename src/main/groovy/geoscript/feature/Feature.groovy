@@ -4,24 +4,25 @@ import org.opengis.feature.simple.SimpleFeature
 import org.geotools.feature.simple.SimpleFeatureBuilder
 import com.vividsolutions.jts.geom.Geometry as JtsGeometry
 import geoscript.geom.*
+import geoscript.layer.Layer
 
 /**
  * A Feature contains a set of named attributes with values.
  * <p>A Feature is created from a Map of name value pairs and an identifier.</p>
- * <p><i>Without a Schema (see below) the data types are inferred).</i></p>
- * <code>
+ * <p><i>Without a {@link Schema} (see below) the data types are inferred).</i></p>
+ * <p><blockquote><pre>
  * Feature f = new Feature(['name': 'anvil', 'price': 100.0], 'widgets.1')
- * </code>
+ * </pre></blockquote></p>
  * <p>A Feature can also be created from a list of values, an identifier, and a {@link Schema}</p>
- * <code>
- * Schema s = new Schema('widgets', [['name','string'],['price','float']])
+ * <p><blockquote><pre>
+ * {@link Schema} s = new {@link Schema}('widgets', [['name','string'],['price','float']])
  * Feature f = new Feature(['anvil', 100.0], '1', s)
- * </code>
+ * </pre></blockquote></p>
  * <p>A Feature can also be created from a Map of name value pairs, an identifier, and a {@link Schema}</p>
- * <code>
- * Schema s = new Schema('widgets', [['name','string'],['price','float']])
+ * <p><blockquote><pre>
+ * {@link Schema} s = new {@link Schema}('widgets', [['name','string'],['price','float']])
  * Feature f = new Feature(['name': 'anvil', 'price': 100.0], '1', s)
- * </code>
+ * </pre></blockquote></p>
  * @author Jared Erickson
  */
 class Feature {
@@ -35,6 +36,11 @@ class Feature {
      * The Schema
      */
     Schema schema
+
+    /**
+     * The Layer the Feature was read from
+     */
+    Layer layer
 
     /**
      * Create a new Feature by wrapping a GeoTools SimpleFeature
@@ -117,16 +123,16 @@ class Feature {
      */
     Bounds getBounds() {
         Bounds b = getGeom().bounds
-        new Bounds(b.west, b.south, b.east, b.north, schema.proj)
+        new Bounds(b.minX, b.minY, b.maxX, b.maxY, schema.proj)
     }
 
     /**
-     * Get a value by Field name
+     * Get a value by Field name.
+     * <p><code>String name = feature.get("name")</code></p>
      * @param name The Field name
      * @return The attribute value
      */
     Object get(String name) {
-        Field fld = schema.field(name)
         Object obj = f.getAttribute(name)
         if (obj instanceof JtsGeometry) {
             return Geometry.wrap((JtsGeometry)obj)
@@ -137,13 +143,42 @@ class Feature {
     }
 
     /**
-     * Set a value for a Field
+     * Get a value by Field name.  This method supports
+     * a the following syntax:
+     * <p><code>String name = feature["name"]</code></p>
+     * @param name The Field name
+     * @return The Field value
+     */
+    Object getAt(String name) {
+        get(name)
+    }
+
+    /**
+     * Set a value for a Field.
+     * <p><code>feature.set("name") = "lighthouse"</code></p>
      * @param name The Field name
      * @param value The new attribute value
      */
     void set(String name, Object value) {
-        Field fld = schema.field(name)
-        f.setAttribute(name, (value instanceof Geometry) ? ((Geometry)value).g : value)
+        if (name.equalsIgnoreCase(schema.geom.name)) {
+            f.defaultGeometry = ((Geometry)value).g
+        } else {
+            f.setAttribute(name, value)
+        }
+        if (layer) {
+            layer.queueModified(this, name)
+        }
+    }
+    
+    /**
+     * Another way of setting a value. This method supports
+     * the following syntax:
+     * <p><code>feature["name"] = "lighthouse"</code></p>
+     * @param name The Field name
+     * @param value The new value
+     */
+    void putAt(String name, Object value) {
+        set(name, value)
     }
 
     /**

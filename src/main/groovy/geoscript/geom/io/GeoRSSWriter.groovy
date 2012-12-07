@@ -28,12 +28,15 @@ import geoscript.geom.*
 import com.vividsolutions.jts.geom.Coordinate
 
 /**
- * A GeoRSS Simple Writer.  See http://www.georss.org/simple for more details.
- * Only Points, LineStrings, and Polygon are supported.  Any other Geometry type
+ * A GeoRSS Simple Writer.  See the <a href="http://www.georss.org/simple">GeoRSS spec</a> for more details.
+ * Only Points, LineStrings, and Polygon are supported.  Any other {@link geoscript.geom.Geometry Geometry} type
  * will return a null value.
- * <p><code>GeoRSSWriter writer = new GeoRSSWriter()</code></p>
- * <p><code>String georss = writer.write(new Point(-71.92, 45.256))</code></p>
- * <p><code>&lt;georss:point&gt;45.256 -71.92&lt;/georss:point&gt;</code></p>
+ * <p><blockquote><pre>
+ * GeoRSSWriter writer = new GeoRSSWriter()
+ * String georss = writer.write(new {@link geoscript.geom.Point Point}(-71.92, 45.256))
+ *
+ * &lt;georss:point&gt;45.256 -71.92&lt;/georss:point&gt;
+ * </pre></blockquote></p>
  * @author Jared Erickson
  */
 class GeoRSSWriter implements Writer {

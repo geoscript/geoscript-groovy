@@ -12,7 +12,7 @@ println("Layers:")
 p.layers.each{lyr -> println(lyr)}
 
 // Get the first Layer
-Layer layer = p.get(p.layers[0])
+Layer layer = p.layers[0]
 println("Layer: ${layer.name}")
 println("Projection : ${layer.proj}")
 println("# Features: ${layer.count()}")

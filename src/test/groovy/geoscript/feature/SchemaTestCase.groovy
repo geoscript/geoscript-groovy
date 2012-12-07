@@ -12,15 +12,27 @@ class SchemaTestCase {
     @Test void constructors() {
         Schema s1 = new Schema("widgets", [new Field("geom","Point"), new Field("name","string"), new Field("price","float")])
         assertEquals "widgets geom: Point, name: String, price: Float", s1.toString()
+        assertEquals "http://geoscript.org/feature", s1.uri
 
         Schema s2 = new Schema("widgets", [["geom","Point"], ["name","string"], ["price","float"]])
         assertEquals "widgets geom: Point, name: String, price: Float", s2.toString()
+        assertEquals "http://geoscript.org/feature", s2.uri
 
         Schema s3 = new Schema("widgets", [[name: "geom",type: "Point"], [name: "name", type: "string"], [name: "price", type: "float"]])
         assertEquals "widgets geom: Point, name: String, price: Float", s3.toString()
+        assertEquals "http://geoscript.org/feature", s3.uri
 
         Schema s4 = new Schema("widgets", "geom:Point:srid=4326,name:String,price:float")
         assertEquals "widgets geom: Point(EPSG:4326), name: String, price: Float", s4.toString()
+        assertEquals "http://geoscript.org/feature", s4.uri
+
+        Schema s5 = new Schema("widgets", "geom:Point:srid=4326,name:String,price:float", "http://geotools.org/feature")
+        assertEquals "widgets geom: Point(EPSG:4326), name: String, price: Float", s5.toString()
+        assertEquals "http://geotools.org/feature", s5.uri
+
+        Schema s6 = new Schema("widgets", [new Field("geom","Point"), new Field("name","string"), new Field("price","float")], "http://geotools.org/feature")
+        assertEquals "widgets geom: Point, name: String, price: Float", s6.toString()
+        assertEquals "http://geotools.org/feature", s6.uri
     }
 
     @Test void getName() {

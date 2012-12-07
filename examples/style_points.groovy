@@ -7,14 +7,12 @@
  *
  */
 import geoscript.layer.*
-import geoscript.filter.Filter
-import geoscript.geom.Bounds
 import geoscript.style.*
-import geoscript.map.Map
+import geoscript.render.Map
 
-void createImage(Layer layer, Style style, File file) {
+void createImage(Layer layer, Symbolizer symbolizer, File file) {
     Map map = new Map()
-    layer.style = style
+    layer.style = symbolizer
     map.addLayer(layer)
     map.bounds = layer.bounds.expandBy(20)
     map.render(file)
@@ -23,192 +21,38 @@ void createImage(Layer layer, Style style, File file) {
 
 Layer shp = new Shapefile("sld_cookbook_point/sld_cookbook_point.shp")
 
-createImage(shp, new Style(new PointSymbolizer(
-    shape: "circle",
-    fillColor: "#FF0000",
-    size: 6,
-    strokeOpacity: 0
-)), new File("point_simple.png"))
+// Simple point
+createImage(shp, new Shape("#FF0000", 6, "circle"), new File("point_simple.png"))
 
-createImage(shp, new Style(new PointSymbolizer(
-    shape: "circle",
-    fillColor: "#FF0000",
-    size: 6,
-    strokeColor: "#000000",
-    strokeWidth: 2
-)), new File("point_simple_stroke.png"))
+// Simple point with stroke
+createImage(shp, new Shape("#FF0000", 6, "circle").stroke("#000000",2), new File("point_simple_stroke.png"))
 
-createImage(shp, new Style(new PointSymbolizer(
-    shape: "square",
-    fillColor: "#009900",
-    size: 12,
-    rotation: 45,
-    strokeOpacity: 0
-)), new File("point_rotated_square.png"))
+// Simple point with true type font
+createImage(shp, new Shape("navy", 18, "ttf://Wingdings#0xF054"), new File("point_simple_ttf.png"))
 
-createImage(shp, new Style(new PointSymbolizer(
-    shape: "triangle",
-    fillColor: "#009900",
-    fillOpacity: 0.2,
-    size: 12,
-    strokeColor: "#000000",
-    strokeWidth: 2
-)), new File("point_transparent_triangle.png"))
+// Rotated square
+createImage(shp, new Shape("#009900", 12, "square", 1.0, 45), new File("point_rotated_square.png"))
 
-// PNG Icons
-createImage(shp, new Style(new PointSymbolizer(
-    graphic: 'smileyface.png'
-)), new File("point_graphic.png"))
+// Transparent triangle
+createImage(shp, new Shape("#009900", 12, "triangle", 0.2).stroke("#000000",2), new File("point_transparent_triangle.png"))
 
-// SVG Icons
-createImage(shp, new Style(new PointSymbolizer(
-    graphic: 'accommodation_camping.svg',
-    size: 16
-)), new File("point_graphic_svg.png"))
+// Point as graphic
+createImage(shp, new Icon("smileyface.png", "image/png"), new File("point_graphic.png"))
 
-createImage(shp, new Style([
-    new PointSymbolizer(
-            shape: "circle",
-            fillColor: "#FF0000",
-            size: 6,
-            strokeOpacity: 0
-    ),
-    new TextSymbolizer(
-        label: "name",
-        color: "#000000"
-    )
-]), new File("point_label.png"))
+// Point as graphic with SVG
+createImage(shp, new Icon("accommodation_camping.svg", "image/svg", 12), new File("point_graphic_svg.png"))
 
+// Point with default label
+createImage(shp, new Shape("#FF0000", 6, "circle") + new Label("name").fill(new Fill("#000000")), new File("point_label.png"))
 
-createImage(shp, new Style([
-    new PointSymbolizer(
-            shape: "circle",
-            fillColor: "#FF0000",
-            size: 6,
-            strokeOpacity: 0
-    ),
-    new TextSymbolizer(
-        label: "name",
-        color: "#000000",
-        fontFamily: "Arial",
-        fontSize: 12,
-        fontStyle: "normal",
-        fontWeight: "bold",
-        anchorPointX: 0.5,
-        anchorPointY: 0.5,
-        displacementX: 0,
-        displacementY: 10
-    )
-]), new File("point_label_styled.png"))
+// Point with styled label
+createImage(shp, new Shape("#FF0000", 6, "circle") + new Label("name").font(new Font("normal","bold",12,"Arial")).fill(new Fill("#000000")).point([0.5,0.5],[0,5]), new File("point__styled_label.png"))
 
-createImage(shp, new Style([
-    new PointSymbolizer(
-            shape: "circle",
-            fillColor: "#FF0000",
-            size: 6,
-            strokeOpacity: 0
-    ),
-    new TextSymbolizer(
-        label: "name",
-        color: "#990099",
-        fontFamily: "Arial",
-        fontSize: 12,
-        fontStyle: "normal",
-        fontWeight: "bold",
-        anchorPointX: 0.5,
-        anchorPointY: 0,
-        displacementX: 0,
-        displacementY: 25,
-        rotation: -45
-    )
-]), new File("point_label_rotated.png"))
+// Point with rotated label
+createImage(shp, new Shape("#FF0000", 6, "circle") + new Label("name").font(new Font("normal","bold",12,"Arial")).fill(new Fill("#000000")).point([0.5,0.5],[0,5], -45), new File("point_label_rotated.png"))
 
+// Attribute-based point
+createImage(shp, new Shape("#0033CC", 8, "circle").where("pop < 50000") + new Shape("#0033CC", 12, "circle").where("pop >= 50000 AND pop < 100000") + new Shape("#0033CC", 16, "circle").where("pop >= 100000"), new File("point_attribute_based.png"))
 
-Rule smallPopRule = new Rule(
-    symbolizers: [
-        new PointSymbolizer(
-            shape: "circle",
-            size: 8,
-            fillColor: "#0033CC",
-            strokeOpacity: 0
-        )
-    ],
-    filter:  new Filter("pop < 5000")
-)
-
-Rule mediumPopRule = new Rule(
-    symbolizers: [
-        new PointSymbolizer(
-            shape: "circle",
-            size: 12,
-            fillColor: "#0033CC",
-            strokeOpacity: 0
-        )
-    ],
-    filter: new Filter("pop >= 5000 AND pop < 100000")
-)
-
-Rule largePopRule = new Rule(
-    symbolizers: [
-         new PointSymbolizer(
-            shape: "circle",
-            size: 16,
-            fillColor: "#0033CC",
-            strokeOpacity: 0
-        )
-    ],
-    filter: new Filter("pop >= 100000")
-)
-
-Style style =  new Style([
-    smallPopRule,
-    mediumPopRule,
-    largePopRule
-])
-createImage(shp, style, new File("point_attribute_based.png"))
-
-// Zoom based scales
-Rule largeRule = new Rule(
-    symbolizers: [
-        new PointSymbolizer(
-            shape: "circle",
-            size: 12,
-            fillColor: "#CC3300",
-            strokeOpacity: 0
-        )
-    ],
-    name: "Large",
-    maxScaleDenominator: 160000000
-)
-
-Rule mediumRule = new Rule(
-    symbolizers: [
-        new PointSymbolizer(
-            shape: "circle",
-            size: 8,
-            fillColor: "#0033CC",
-            strokeOpacity: 0
-        )
-    ],
-    name: "Medium",
-    minScaleDenominator: 160000000,
-    maxScaleDenominator: 320000000
-)
-
-Rule smallRule = new Rule(
-    symbolizers: [
-        new PointSymbolizer(
-            shape: "circle",
-            size: 4,
-            fillColor: "#0033CC",
-            strokeOpacity: 0
-        )
-    ],
-    name: "Small",
-    minScaleDenominator: 320000000
-)
-createImage(shp, new Style([
-    smallRule,
-    mediumRule,
-    largeRule
-]), new File("point_zoom.png"))
+// Zoom-based point
+createImage(shp, new Shape("#CC3300", 8, "circle").range(0, 160000000) + new Shape("#CC3300", 12, "circle").range(160000000,320000000) + new Shape("#CC3300", 16, "circle").range(320000000), new File("point_zoom.png"))

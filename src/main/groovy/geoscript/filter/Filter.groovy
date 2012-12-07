@@ -5,23 +5,27 @@ import geoscript.geom.Geometry
 import geoscript.feature.Feature
 import org.opengis.filter.Filter as GTFilter
 import org.geotools.filter.text.cql2.CQL
+import org.geotools.filter.text.ecql.ECQL
 import org.geotools.xml.Parser
 import org.geotools.xml.Encoder
 import org.geotools.filter.v1_0.OGCConfiguration as OGCConfiguration10 
 import org.geotools.filter.v1_0.OGC as OGC10 
 import org.geotools.filter.v1_1.OGCConfiguration as OGCConfiguration11 
 import org.geotools.filter.v1_1.OGC as OGC11 
+import org.geotools.factory.CommonFactoryFinder
+import org.geotools.factory.GeoTools
+import org.opengis.filter.FilterFactory2
 
 /**
- * A Filter is a predicate or constraint used to match or filter Feature objects.
+ * A Filter is a predicate or constraint used to match or filter {@link geoscript.feature.Feature Feature} objects.
  * <p>You can create Filters from CQL:</p>
- * <code>
+ * <p><blockquote><pre>
  * Filter f = new Filter("name='foobar')
- * </code>
+ * </pre></blockquote></p>
  * <p>Or you can create Filters from XML:</p>
- * <code>
+ * <p><blockquote><pre>
  * Filter f = new Filter('&lt;Filter&gt;&lt;PropertyIsEqualTo&gt;&lt;PropertyName&gt;name&lt;/PropertyName&gt;&lt;Literal&gt;foobar&lt;/Literal&gt;&lt;/PropertyIsEqualTo&gt;&lt;/Filter&gt;')
- * </code>
+ * </pre></blockquote></p>
  * @author Jared Erickson
  */
 class Filter {
@@ -30,7 +34,12 @@ class Filter {
      * The wrapped GeoTools Filter
      */
     GTFilter filter
-    
+
+    /**
+     * The GeoTools FilterFactory
+     */
+    FilterFactory2 factory = CommonFactoryFinder.getFilterFactory2(GeoTools.defaultHints)
+
     /**
      * Create a new Filter wrapping a GeoTools Filter
      * @param filter The org.opengis.filter.Filter
@@ -85,7 +94,7 @@ class Filter {
      * @return The Filter as CQL
      */
     String getCql() {
-        CQL.toCQL(filter)
+        ECQL.toCQL(filter)
     }
     
     /**
@@ -122,13 +131,68 @@ class Filter {
     }
 
     /**
+     * Get a new Filter that is the negation of the current Filter
+     * @return A new Filter that is the negation of the current Filter
+     */
+    Filter getNot() {
+        new Filter(factory.not(filter))
+    }
+
+    /**
      * The string representation
      * @return The string representation
      */
     String toString() {
         filter.toString()
     }
-    
+
+    /**
+     * Does this Filter equal another Filter?
+     * @return Whether this and the other Filter are equal
+     */
+    boolean equals(Object obj) {
+        filter.equals(obj.filter)
+    }
+
+    /**
+     * Returns the hash code value of the Filter
+     * @return The hash code value of the Filter
+     */
+    int hashCode() {
+        filter.hashCode()
+    }
+
+    /**
+     * Combine the current Filter with another Filter.
+     * @param other Another Filter or a CQL String
+     * @return A combined Filter
+     */
+    Filter plus(def other) {
+        and(other)
+    }
+
+    /**
+     * Combine the current Filter with another Filter.
+     * @param other Another Filter or a CQL String
+     * @return A combined Filter
+     */
+    Filter and(def other) {
+        if (filter == GTFilter.INCLUDE) {
+            return new Filter(other)
+        } else {
+            return new Filter(factory.and(filter, new Filter(other).filter))
+        }
+    }
+
+    /**
+     * Combine the current Filter with another Filter in an OR relationship.
+     * @param other Another Filter or a CQL String
+     * @return A new Filter
+     */
+    Filter or(def other) {
+        new Filter(factory.or(filter, new Filter(other).filter))
+    }
+
     /**
      * The PASS Filter wrapps the Geotools INCLUDE Filter
      */
@@ -146,7 +210,7 @@ class Filter {
      * @return A Filter
      */
     static Filter bbox(String fieldName = "the_geom", Bounds bounds) {
-        new Filter("BBOX(${fieldName}, ${bounds.l},${bounds.b},${bounds.r},${bounds.t})")
+        new Filter("BBOX(${fieldName}, ${bounds.minX},${bounds.minY},${bounds.maxX},${bounds.maxY})")
     }
 
     /**
@@ -197,7 +261,7 @@ class Filter {
      * Create a GeoTools Filter from a CQL String
      */
     private static GTFilter fromCQL(String cql) {
-        CQL.toFilter(cql)
+        return ECQL.toFilter(cql)
     }
 
     /**

@@ -6,16 +6,14 @@ import org.opengis.feature.type.GeometryDescriptor
 import org.geotools.feature.NameImpl
 import org.geotools.feature.simple.SimpleFeatureTypeBuilder
 import org.geotools.data.DataUtilities
-import com.vividsolutions.jts.geom.Geometry as JtsGeometry
-import geoscript.geom.*
 import geoscript.proj.Projection
 
 /**
  * A Schema describes the structure of a Feature.  It is contains a name, and
  * a set of Fields.
- * <p> You can create a Schema from a name and a List of Fields</p>
+ * <p> You can create a Schema from a name and a List of {@link Field}s</p>
  * <code>
- * Schema s1 = new Schema("widgets", [new Field("geom","Point"), new Field("name","string"), new Field("price","float")])
+ * Schema s1 = new Schema("widgets", [new {@link Field}("geom","Point"), new {@link Field}("name","string"), new {@link Field}("price","float")])
  * </code>
  * <p> You can create a Schema from a name and a List of Lists which contain a name and type</p>
  * <code>
@@ -54,9 +52,10 @@ class Schema {
      * </code></p>
      * @param name The Schema name
      * @param typeSpec The Schema String.
+     * @param uri The namespace uri
      */
-    Schema(String name, String typeSpec) {
-        this(DataUtilities.createType(name, typeSpec))
+    Schema(String name, String typeSpec, String uri = "http://geoscript.org/feature") {
+        this(DataUtilities.createType(uri, name, typeSpec))
     }
 
     /**
@@ -72,9 +71,10 @@ class Schema {
      * </code></p>
      * @param name The Schema's name
      * @param fields A List of Fields, a List of Lists, or a List of Maps
+     * @param uri The namespace uri
      */
-    Schema(String name, def fields) {
-        this(buildFeatureType(name, fields))
+    Schema(String name, def fields, String uri = "http://geoscript.org/feature") {
+        this(buildFeatureType(name, fields, uri))
     }
 
     /**
@@ -110,6 +110,14 @@ class Schema {
     }
 
     /**
+     * Get the namespace uri of this Schema
+     * @return The namespace uri
+     */
+    String getUri() {
+        featureType.name.namespaceURI
+    }
+
+    /**
      * Get a Field by name
      * @param name The name of the Field
      * @return The Field
@@ -133,7 +141,7 @@ class Schema {
                 return new Field(ad.localName, Schema.lookUpAlias(ad.type.binding.name))
             }
         }
-        throw new Exception("No such field ${name}".toString())
+        throw new IllegalArgumentException("No such field ${name}".toString())
     }
 
     /**
@@ -294,11 +302,16 @@ class Schema {
     }
 
     /**
-     * Build a SimpleFeatureType from the name and a List of Fields
+     * Build a SimpleFeatureType from the name and a List of Fields.
+     * @param name The name
+     * @param fields A List of Fields or Strings
+     * @param uri The namespace uri
+     * @return a GeoTools SimpleFeatureType
      */
-    private static SimpleFeatureType buildFeatureType(String name, def fields) {
+    private static SimpleFeatureType buildFeatureType(String name, def fields, String uri = "http://geoscript.org/feature") {
         SimpleFeatureTypeBuilder builder = new SimpleFeatureTypeBuilder()
         builder.setName(new NameImpl(name))
+        builder.namespaceURI = uri
         fields.each{field ->
             if (!(field instanceof Field)) {
                 field = new Field(field)

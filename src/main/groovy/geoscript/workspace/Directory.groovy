@@ -1,12 +1,14 @@
 package geoscript.workspace
 
-import java.net.URI
-import java.io.File
 import org.geotools.data.directory.DirectoryDataStore
 import org.geotools.data.shapefile.ShapefileDataStoreFactory
 
 /**
  * A Directory Workspace can contain one or more Shapefiles.
+ * <p><blockquote><pre>
+ * Directory dir = new Directory("shapefiles")
+ * Layer layer = dir.get("states")
+ * </pre></blockquote></p>
  * @author Jared Erickson
  */
 class Directory extends Workspace {
@@ -40,7 +42,7 @@ class Directory extends Workspace {
      * @return The string representation
      */
     String toString() {
-        return "Directory[${ds.getInfo().getSource().getPath()}]"
+        return "Directory[${new File(ds.info.source.path).absolutePath}]"
     }
 
 }

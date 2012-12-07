@@ -3,7 +3,8 @@ package geoscript.proj
 import org.junit.Test
 import static org.junit.Assert.*
 import geoscript.geom.Point
-import geoscript.proj.Projection
+
+import geoscript.geom.Bounds
 
 /**
  * The Projection UnitTest
@@ -42,12 +43,32 @@ class ProjectionTestCase {
   UNIT["degree", 0.017453292519943295], 
   AXIS["Geodetic longitude", EAST], 
   AXIS["Geodetic latitude", NORTH], 
-  AUTHORITY["EPSG","4326"]]"""
+  AUTHORITY["EPSG","4326"]]""".replaceAll(" ","").replaceAll("\n","")
 
-        String actual = p1.wkt
+        String actual = p1.wkt.replaceAll(" ","").replaceAll(System.getProperty("line.separator"),"")
         
         assertEquals expected, actual
 
+    }
+    
+    @Test void getBounds() {
+        Bounds bounds = new Projection("EPSG:2927").bounds
+        assertNotNull(bounds)
+        assertEquals "EPSG:2927", bounds.proj.id
+        assertEquals(641400.91, bounds.minX, 0.1)
+        assertEquals(75407.62, bounds.minY, 0.1)
+        assertEquals(2557520.70, bounds.maxX, 0.1)
+        assertEquals(854063.65, bounds.maxY, 0.1)
+    }
+
+    @Test void getGeoBounds() {
+        Bounds bounds = new Projection("EPSG:2927").geoBounds
+        assertNotNull(bounds)
+        assertEquals "EPSG:4326", bounds.proj.id
+        assertEquals(-124.5, bounds.minX, 0.1)
+        assertEquals(45.55, bounds.minY, 0.1)
+        assertEquals(-116.9, bounds.maxX, 0.1)
+        assertEquals(47.6, bounds.maxY, 0.1)
     }
 
     @Test void transform() {
@@ -79,7 +100,7 @@ class ProjectionTestCase {
     @Test void transform26916To4326() {
         Point point = new Point(776041.0, 3386618.0)
         Point projectedPoint = Projection.transform(point, "EPSG:26916", "EPSG:4326")
-        assertEquals "POINT (-84.12159978127191 30.580282514678835)", projectedPoint.wkt
+        assertEquals "POINT (-84.121611219545 30.580286157377163)", projectedPoint.wkt
     }
 }
 

@@ -6,13 +6,21 @@ import com.vividsolutions.jts.geom.Coordinate
 /**
  * A LinearRing Geometry is a LineString whose first and last coordinates are the same forming a closed ring.
  * <p>You can create a LinearRing with a List of List of Doubles:</p>
- * <code>LinearRing l = new LinearRing([[111.0, -47],[123.0, -48],[110.0, -47], [111.0, -47]])</code>
- * <p>Or you can create a LinearRing wih a List of Points:</p>
- * <code>LinearRing l = new LinearRing([new Point(111.0, -47), new Point(123.0, -48), new Point(110.0, -47), new Point(111.0, -47)])</code>
+ * <p><blockquote><pre>
+ * LinearRing l = new LinearRing([[111.0, -47],[123.0, -48],[110.0, -47], [111.0, -47]])
+ * </pre></blockquote></p>
+ * <p>Or you can create a LinearRing wih a List of {@link Point}s:</p>
+ * <p><blockquote><pre>
+ * LinearRing l = new LinearRing([new Point(111.0, -47), new Point(123.0, -48), new Point(110.0, -47), new Point(111.0, -47)])
+ * </pre></blockquote></p>
  * <p>Or you can create a LinearRing with a repeated List of Doubles:</p>
- * <code>LinearRing l =  new LinearRing([111.0, -47],[123.0, -48],[110.0, -47], [111.0, -47])</code>
- * <p>Or you can create a LinearRing with a repated List of Points:</p>
- * <code>LinearRing l = new LinearRing(new Point(111.0, -47), new Point(123.0, -48), new Point(110.0, -47), new Point(111.0, -47))</code>
+ * <p><blockquote><pre>
+ * LinearRing l =  new LinearRing([111.0, -47],[123.0, -48],[110.0, -47], [111.0, -47])
+ * </pre></blockquote></p>
+ * <p>Or you can create a LinearRing with a repated List of {@link Point}s:</p>
+ * <p><blockquote><pre>
+ * LinearRing l = new LinearRing(new Point(111.0, -47), new Point(123.0, -48), new Point(110.0, -47), new Point(111.0, -47))
+ * </pre></blockquote></p>
  * @author Jared Erickson
  */
 class LinearRing extends LineString {
@@ -27,8 +35,10 @@ class LinearRing extends LineString {
 	
     /**
      * Create a new LinearRing with a List of List of Doubles.
-     * <p><code>LinearRing ring = new LinearRing([[1,2],[3,4],[4,5]])</code></p>
-     * <p><code>LinearRing ring = new LinearRing([new Point(111.0, -47), new Point(123.0, -48), new Point(110.0, -47), new Point(111.0, -47)])</code></p>
+     * <p><blockquote><pre>
+     * LinearRing ring = new LinearRing([[1,2],[3,4],[4,5]])
+     * LinearRing ring = new LinearRing([new Point(111.0, -47), new Point(123.0, -48), new Point(110.0, -47), new Point(111.0, -47)])
+     * </pre></blockquote></p>
      * @param coordinate A List of List Double or a List of Points
      */
     LinearRing(List coordinates) {
@@ -37,7 +47,9 @@ class LinearRing extends LineString {
 
     /**
      * Create a new LinearRing with a List of List of Doubles.
-     * <p><code>LinearRing ring = new LinearRing([1,2],[3,4],[4,5])</code></p>
+     * <p><blockquote><pre>
+     * LinearRing ring = new LinearRing([1,2],[3,4],[4,5])
+     * </pre></blockquote></p>
      * @param coordinates A repeated List of List of Doubles
      *
      */
@@ -46,8 +58,10 @@ class LinearRing extends LineString {
     }
 
     /**
-     * Create a new LinearRing with a repetaed List Points.
-     * <p><code>LinearRing ring = new LinearRing(new Point(1,2), new Point(3,4), new Point(4,5))</code></p>
+     * Create a new LinearRing with a repeated List {@link Point}s.
+     * <p><blockquote><pre>
+     * LinearRing ring = new LinearRing(new Point(1,2), new Point(3,4), new Point(4,5))
+     * </pre></blockquote></p>
      * @param points A repeated List of Points
      */
     LinearRing(Point... points) {
@@ -56,7 +70,9 @@ class LinearRing extends LineString {
 
     /**
      * Create a new LinearRing with a List of List of Doubles.
-     * <p><code>LinearRing ring = new LinearRing([[1,2],[3,4],[4,5]])</code></p>
+     * <p><blockquote><pre>
+     * LinearRing ring = new LinearRing([[1,2],[3,4],[4,5]])
+     * </pre></blockquote></p>
      * @param coordinate A List of List of Doubles or a List of Points
      */
     private static JtsLinearRing create(List coordinates) {
@@ -67,7 +83,9 @@ class LinearRing extends LineString {
 	
     /**
      * Create a new LinearRing with a List of List of Doubles.
-     * <p><code>LinearRing ring = new LinearRing([1,2],[3,4],[4,5])</code></p>
+     * <p><blockquote><pre>
+     * LinearRing ring = new LinearRing([1,2],[3,4],[4,5])
+     * </pre></blockquote></p>
      * @param coordinates A repeated List of Doubles
      */
     private static JtsLinearRing create(List<Double>... coordinates) {
@@ -75,8 +93,10 @@ class LinearRing extends LineString {
     }
 
     /**
-     * Create a new LinearRing with a repetaed List Points.
-     * <p><code>LinearRing ring = new LinearRing(new Point(1,2), new Point(3,4), new Point(4,5))</code></p>
+     * Create a new LinearRing with a repeated List {@link Point}s.
+     * <p><blockquote><pre>
+     * LinearRing ring = new LinearRing(new Point(1,2), new Point(3,4), new Point(4,5))
+     * </pre></blockquote></p>
      * @param points A repeated List of Points
      */
     private static JtsLinearRing create(Point... points) {

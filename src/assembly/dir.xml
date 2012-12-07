@@ -31,7 +31,7 @@
         <fileSet>
             <outputDirectory>/</outputDirectory>
             <includes>
-                <include>README</include>
+                <include>README.rst</include>
                 <include>LICENSE.txt</include>
             </includes>
         </fileSet>

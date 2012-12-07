@@ -1,15 +1,15 @@
 <?xml version="1.0"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    <groupId>geoscript</groupId>
+    <groupId>org.geoscript</groupId>
     <artifactId>geoscript-groovy</artifactId>
     <packaging>jar</packaging>
-    <version>0.95</version>
+    <version>1.0-SNAPSHOT</version>
     <repositories>
         <repository>
             <id>opengeo</id>
             <name>OpenGeo Maven Repository</name>
-            <url>http://repo.opengeo.org/</url>
+            <url>http://repo.opengeo.org</url>
             <snapshots>
                 <enabled>true</enabled>
             </snapshots>
@@ -17,7 +17,7 @@
         <repository>
             <id>osgeo</id>
             <name>Open Source Geospatial Foundation Repository</name>
-            <url>http://download.osgeo.org/webdav/geotools/</url>
+            <url>http://download.osgeo.org/webdav/geotools</url>
         </repository>
         <repository>
             <id>maven2-repository.dev.java.net</id>
@@ -65,11 +65,12 @@
             <groupId>org.geotools.jdbc</groupId>
             <artifactId>gt-jdbc-spatialite</artifactId>
             <version>${gt.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.geotools</groupId>
-            <artifactId>gt-directory</artifactId>
-            <version>${gt.version}</version>
+            <exclusions>
+		        <exclusion>
+		          <groupId>org.xerial</groupId>
+		          <artifactId>sqlite-jdbc-spatialite</artifactId>
+		        </exclusion>
+	      	</exclusions>
         </dependency>
         <dependency>
             <groupId>org.geotools.xsd</groupId>
@@ -91,6 +92,41 @@
             <artifactId>gt-svg</artifactId>
             <version>${gt.version}</version>
         </dependency>
+		<dependency>
+            <groupId>org.geotools</groupId>
+            <artifactId>gt-property</artifactId>
+            <version>${gt.version}</version>
+        </dependency>
+		<dependency>
+            <groupId>org.geotools</groupId>
+            <artifactId>gt-geojson</artifactId>
+            <version>${gt.version}</version>
+        </dependency>
+		<dependency>
+            <groupId>org.geotools</groupId>
+            <artifactId>gt-swing</artifactId>
+            <version>${gt.version}</version>
+        </dependency>
+        <dependency>
+			<groupId>org.geotools</groupId>
+			<artifactId>gt-process</artifactId>
+			<version>${gt.version}</version>
+        </dependency>
+        <dependency>
+			<groupId>org.geotools</groupId>
+			<artifactId>gt-process-feature</artifactId>
+			<version>${gt.version}</version>
+        </dependency>
+        <dependency>
+			<groupId>org.geotools</groupId>
+			<artifactId>gt-process-geometry</artifactId>
+			<version>${gt.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.geoscript</groupId>
+            <artifactId>geocss_2.9.1</artifactId>
+            <version>0.7.4</version>
+        </dependency>
         <dependency>
             <groupId>org.geotools</groupId>
             <artifactId>gt-wms</artifactId>
@@ -104,12 +140,23 @@
         <dependency>
             <groupId>org.codehaus.groovy</groupId>
             <artifactId>groovy</artifactId>
-            <version>1.7.0</version>
+            <version>1.8.8</version>
         </dependency>
         <dependency>
             <groupId>org.json</groupId>
             <artifactId>json</artifactId>
             <version>20090211</version>
+        </dependency>
+        <dependency>
+			<groupId>net.sf.opencsv</groupId>
+			<artifactId>opencsv</artifactId>
+			<version>2.0</version>
+        </dependency>
+        <dependency>
+            <groupId>com.lowagie</groupId>
+            <artifactId>itext</artifactId>
+            <version>2.1.7</version>
+            <type>jar</type>
         </dependency>
         <dependency>
             <groupId>junit</groupId>
@@ -119,33 +166,33 @@
         </dependency>
     </dependencies>
     <build>
+        <sourceDirectory>src/main/groovy</sourceDirectory>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
-                <!-- <configuration>
-                    <systemProperties>
-                        <property>
-                            <name>java.library.path</name>
-                            <value>${basedir}/native</value>
-                        </property>
-                    </systemProperties>
-                    <argLine>-Djava.library.path=${basedir}/native</argLine>
-                </configuration>-->
             </plugin>
             <plugin>
                 <groupId>org.codehaus.gmaven</groupId>
                 <artifactId>gmaven-plugin</artifactId>
-                <version>1.2</version>
-                <dependencies>
+                <version>1.4</version>
+				<dependencies>
+					<dependency>
+						<groupId>org.codehaus.gmaven.runtime</groupId>
+						<artifactId>gmaven-runtime-1.8</artifactId>
+						<version>1.4</version>
+					</dependency>
                     <dependency>
-                        <groupId>org.codehaus.gmaven.runtime</groupId>
-                        <artifactId>gmaven-runtime-1.7</artifactId>
-                        <version>1.2</version>
+                        <groupId>org.codehaus.groovy</groupId>
+                        <artifactId>groovy</artifactId>
+                        <version>1.8.8</version>
                     </dependency>
                 </dependencies>
                 <executions>
                     <execution>
+						<configuration>
+							<providerSelection>1.8</providerSelection>
+						</configuration>
                         <goals>
                             <goal>compile</goal>
                             <goal>testCompile</goal>
@@ -162,6 +209,15 @@
                         <descriptor>src/assembly/zip.xml</descriptor>
                     </descriptors>
                 </configuration>
+                <executions>
+                    <execution>
+                        <id>make-assembly</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
             <plugin>
                 <artifactId>maven-antrun-plugin</artifactId>
@@ -184,10 +240,66 @@
                     </execution>
                 </executions>
             </plugin>
+            <!-- Code quality: mvn codenarc:codenarc -->
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>codenarc-maven-plugin</artifactId>
+                <version>0.17-1</version>
+            </plugin>
+            <!-- Unit test covoerage: mvn cobertura:cobertura -->
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>cobertura-maven-plugin</artifactId>
+                <version>2.5.1</version>
+            </plugin>
         </plugins>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.eclipse.m2e</groupId>
+                    <artifactId>lifecycle-mapping</artifactId>
+                    <version>1.0.0</version>
+                    <configuration>
+                        <lifecycleMappingMetadata>
+                            <pluginExecutions>
+                                <pluginExecution>
+                                    <pluginExecutionFilter>
+                                        <groupId>org.codehaus.gmaven</groupId>
+                                        <artifactId>gmaven-plugin</artifactId>
+                                        <versionRange>1.4</versionRange>
+                                        <goals>
+                                            <goal>compile</goal>
+                                            <goal>testCompile</goal>
+                                        </goals>
+                                    </pluginExecutionFilter>
+                                    <action>
+                                        <execute />
+                                    </action>
+                                </pluginExecution>
+                            </pluginExecutions>
+                        </lifecycleMappingMetadata>
+                    </configuration>
+                </plugin>
+            </plugins>
+        </pluginManagement>
     </build>
+    <reporting>
+        <plugins>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>codenarc-maven-plugin</artifactId>
+                <version>0.17-1</version>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>cobertura-maven-plugin</artifactId>
+                <version>2.5.1</version>
+            </plugin>
+        </plugins>
+    </reporting>
     <properties>
-        <gt.version>2.7-SNAPSHOT</gt.version>
+        <gt.version>8.4</gt.version>
+		<!-- <gt.version>9-SNAPSHOT</gt.version> -->
     </properties>
     <name>geoscript groovy</name>
     <description>A groovy implementation of geoscript.</description>
@@ -207,10 +319,30 @@
         <system>github</system>
         <url>https://github.com/jericks/geoscript-groovy/issues</url>
     </issueManagement>
+    <mailingLists>
+        <mailingList>
+            <name>GeoScript Google Group</name>
+            <archive>http://groups.google.com/group/geoscript</archive>
+        </mailingList>
+    </mailingLists>
     <developers>
         <developer>
             <id>jericks</id>
             <name>Jared Erickson</name>
         </developer>
     </developers>
+    <distributionManagement>
+        <repository>
+            <id>opengeo</id>
+            <name>OpenGeo Maven Repository</name>
+            <url>dav:http://repo.opengeo.org</url>
+            <uniqueVersion>false</uniqueVersion>
+        </repository>
+        <snapshotRepository>
+            <id>opengeo</id>
+            <name>OpenGeo Maven Repository</name>
+            <url>dav:http://repo.opengeo.org</url>
+            <uniqueVersion>false</uniqueVersion>
+        </snapshotRepository>
+    </distributionManagement>
 </project>

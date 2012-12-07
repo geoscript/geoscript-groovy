@@ -24,12 +24,69 @@ class GeometryTestCase {
         assertNotNull(p)
         assertEquals pt.buffer(5.0).toString(), p.toString()
     }
-	
+
+    @Test void singleSidedBuffer() {
+       String wkt = "LINESTRING (0.693359375 46.591796875, 5.703125 51.337890625, 9.306640625 48.0419921875, 12.03125 53.0078125, 19.2822265625 45.80078125)"
+       Geometry g = Geometry.fromWKT(wkt)
+       Geometry buffer = g.singleSidedBuffer(-2)
+       assertEquals "POLYGON ((0.693359375 46.591796875, 5.703125 51.337890625, 9.306640625 48.0419921875, 12.03125 53.0078125, 19.2822265625 45.80078125, 17.8723180343991 44.38227571867897, 12.506275490911024 49.71579679220651, 11.060054369792876 47.07994216823311, 10.832564011572027 46.749104791663626, 10.543576944652168 46.470372468507726, 10.20473972588441 46.25497847602753, 9.82970793845354 46.11160347389942, 9.43359585401137 46.04602566227302, 9.032367307756616 46.06088791274607, 8.642192334992414 46.155591257181634, 8.278795497549897 46.32631902690761, 7.9568221633754534 46.566190669457164, 5.727082494228705 48.605586708310895, 2.0688486708215663 45.139891507188345, 0.693359375 46.591796875))", buffer.wkt
+    }
+
+    @Test void equals() {
+        Geometry g1 = new Point(111, -47)
+        Geometry g2 = new Point(111, -47)
+        Geometry g3 = new Point(123, -32)
+        assertTrue g1.equals(g2)
+        assertFalse g1.equals(g3)
+        assertFalse g2.equals(g3)
+    }
+
+    @Test void testHashCode() {
+        Geometry g1 = new Point(111, -47)
+        Geometry g2 = new Point(111, -47)
+        Geometry g3 = new Point(123, -32)
+        assertTrue g1.hashCode().equals(g2.hashCode())
+        assertFalse g1.hashCode().equals(g3.hashCode())
+        assertFalse g2.hashCode().equals(g3.hashCode())
+    }
+
+    @Test void equalsNorm() {
+        Geometry g1 = new Point(111, -47)
+        Geometry g2 = new Point(111, -47)
+        Geometry g3 = new Point(123, -32)
+        assertTrue g1.equalsNorm(g2)
+        assertFalse g1.equalsNorm(g3)
+        assertFalse g2.equalsNorm(g3)
+    }
+
+    @Test void equalsTopo() {
+        Geometry g1 = new Point(111, -47)
+        Geometry g2 = new Point(111, -47)
+        Geometry g3 = new Point(123, -32)
+        assertTrue g1.equalsTopo(g2)
+        assertFalse g1.equalsTopo(g3)
+        assertFalse g2.equalsTopo(g3)
+    }
+
     @Test void getWkt() {
         Geometry g = new Geometry(Geometry.factory.createPoint(new Coordinate(111,-47)))
         assertEquals "POINT (111 -47)", g.wkt
     }
-	
+
+    @Test void getWkb() {
+        Geometry g = new Point(111,-47)
+        assertEquals "0000000001405BC00000000000C047800000000000", g.wkb
+        assertArrayEquals([0, 0, 0, 0, 1, 64, 91, -64, 0, 0, 0, 0, 0, -64, 71, -128, 0, 0, 0, 0, 0] as byte[], g.wkbBytes)
+    }
+
+    @Test void fromWkb() {
+        Geometry expected = new Point(111, -47)
+        Geometry actual = Geometry.fromWKB("0000000001405BC00000000000C047800000000000")
+        assertEquals expected.wkt, actual.wkt
+        actual = Geometry.fromWKB([0, 0, 0, 0, 1, 64, 91, -64, 0, 0, 0, 0, 0, -64, 71, -128, 0, 0, 0, 0, 0] as byte[])
+        assertEquals expected.wkt, actual.wkt
+    }
+
     @Test void string() {
         Geometry g = new Geometry(Geometry.factory.createPoint(new Coordinate(111,-47)))
         assertEquals "POINT (111 -47)", g.toString()
@@ -189,6 +246,13 @@ class GeometryTestCase {
         assertEquals("LINESTRING (1 2, 2 1)", minDiameter.wkt)
     }
 
+    @Test void getMinimumClearance() {
+        String wkt = "POLYGON ((12.998046875 53.4912109375, 16.337890625 49.9755859375, 11.591796875 44.5263671875, 19.5458984375 45.0537109375, 17.6123046875 53.6669921875, 12.998046875 53.4912109375))"
+        Geometry g = Geometry.fromWKT(wkt)
+        Geometry minClearance = g.minimumClearance
+        assertEquals "LINESTRING (16.337890625 49.9755859375, 18.340085760928826 50.42505831495341)", minClearance.wkt
+    }
+
     @Test void isValid() {
         Geometry g1 = new Polygon([0,0],[10,10],[0,10],[10,0],[0,0])
         assertFalse(g1.isValid())
@@ -277,4 +341,102 @@ class GeometryTestCase {
         assertEquals("POINT (3 4)", p2.wkt)
     }
 
+    @Test void norm() {
+        Geometry g1 = new Polygon([10,10],[10,20],[20,20],[20,10],[10,10])
+        Geometry g2 = g1.norm
+        assertNotNull g2
+    }
+
+    @Test void createRandomPoints() {
+        int number = 100
+        String wkt = "POLYGON ((8.603515625 52.919921875, 5.52734375 45.2734375, 20.9521484375 45.9326171875, 19.150390625 53.798828125, 8.603515625 52.919921875))"
+        Geometry g = Geometry.fromWKT(wkt)
+        Geometry pts = Geometry.createRandomPoints(g, number)
+        assertEquals number, pts.numPoints
+        pts.coordinates.each {coord ->
+            assertTrue g.contains(new Point(coord.x, coord.y))
+        }
+    }
+
+    @Test void createRandomPointsInGrid() {
+        int number = 100
+        Bounds b = new Bounds(4, 45, 19, 53)
+        Geometry g = b.geometry
+        Geometry pts = Geometry.createRandomPointsInGrid(b, number, true, 0.75)
+        // Yes, this is actually correct.  More random points can be generated than the number
+        // given if required
+        assertEquals 121, pts.numPoints
+        pts.coordinates.each {coord ->
+            assertTrue g.contains(new Point(coord.x, coord.y))
+        }
+    }
+
+    @Test void getGeometryType() {
+        Point p = new Point(145, -47)
+        assertEquals "Point", p.geometryType
+
+        LineString lineString = new LineString([[0,0],[1,1],[2,2]])
+        assertEquals "LineString", lineString.geometryType
+    }
+
+    @Test void getOctagonalEnvelope() {
+        Geometry g = Geometry.fromWKT("POLYGON ((1254084.2451712033 681826.3362917757, 1255211.7905953382 677551.0598919304, 1247506.896863749 673651.6319667968, 1247459.9158044101 669047.4881515788, 1252392.9270350009 668859.563914223, 1260802.5366566745 668953.5260329009, 1260802.5366566745 678725.5863754044, 1259862.9154698953 685161.9915048417, 1255916.5064854226 685068.0293861638, 1254084.2451712033 681826.3362917757))")
+        Geometry octalEnvelope = g.octagonalEnvelope
+        assertNotNull octalEnvelope
+        assertTrue octalEnvelope.isValid()
+        assertFalse octalEnvelope.isEmpty()
+    }
+    
+    /*@Test void createFromText() {
+        Geometry g = Geometry.createFromText("B")
+        assertEquals "Polygon", g.geometryType
+        
+        g = Geometry.createFromText("BAJ")
+        assertEquals "MultiPolygon", g.geometryType
+    }*/
+    
+    @Test void createSierpinskiCarpet() {
+        Geometry g = Geometry.createSierpinskiCarpet(new Bounds(0,0,10,10), 200)
+        assertNotNull g
+        assertEquals "Polygon", g.geometryType
+    }
+    
+    @Test void createKochSnowflake() {
+        Geometry g = Geometry.createKochSnowflake(new Bounds(0,0,10,10), 200)
+        assertNotNull g
+        assertEquals "Polygon", g.geometryType
+    }
+    
+    @Test void snap() {
+        Geometry g1 = Geometry.fromWKT("POLYGON ((0 0, 0 10, 10 10, 10 0, 0 0))")
+        Geometry g2 = Geometry.fromWKT("POLYGON ((11 0, 11 10, 20 10, 20 0, 11 0))")
+        Geometry snapped = g1.snap(g2, 1.2)
+        assertEquals "GEOMETRYCOLLECTION (" +
+                "POLYGON ((0 0, 0 10, 11 10, 11 0, 0 0)), " +
+                "POLYGON ((11 0, 11 10, 20 10, 20 0, 11 0)))", snapped.wkt
+    }
+
+    @Test void reducePrecision() {
+        Geometry g1 = new Point(5.19775390625, 51.07421875)
+        
+        // floating
+        Geometry g2 = g1.reducePrecision()
+        assertEquals "POINT (5.19775390625 51.07421875)", g2.wkt
+        
+        // fixed
+        Geometry g3 = g1.reducePrecision("fixed", scale: 100)
+        assertEquals "POINT (5.2 51.07)", g3.wkt
+
+        // floating single
+        Geometry g4 = g1.reducePrecision("floating_single", pointwise: true, removecollapsed: true)
+        assertEquals "POINT (5.19775390625 51.07421875)", g4.wkt
+    }
+
+    @Test void asType() {
+        Geometry g = Geometry.fromWKT("POLYGON ((0 0, 0 10, 10 10, 10 0, 0 0))")
+        Bounds b = g as Bounds
+        assertEquals "(0.0,0.0,10.0,10.0)", b.toString()
+        Point p = g as Point
+        assertEquals "POINT (5 5)", p.wkt
+    }
 }

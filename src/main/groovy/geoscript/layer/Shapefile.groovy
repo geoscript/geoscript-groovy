@@ -5,7 +5,9 @@ import geoscript.workspace.Directory
 /**
  * A Shapefile Layer.
  * <p>You can create a Shapefile Layer by passing the .shp file:</p>
- * <code>Shapefile shp = new Shapefile('states.shp')</code>
+ * <p><blockquote><pre>
+ * Shapefile shp = new Shapefile('states.shp')
+ * </pre></blockquote></p>
  * @author Jared Erickson
  */
 class Shapefile extends Layer {
@@ -42,5 +44,4 @@ class Shapefile extends Layer {
         String name = fileName.substring(0, fileName.lastIndexOf('.'))
         return new Layer(name, new Directory(file.parentFile))
     }
-
 }
