@@ -101,6 +101,10 @@ class WMS {
             minY = options['minY']
             maxY = options['maxY']
         }
+        def bounds = new Bounds(minX, minY, maxX, maxY)
+        if (options.get("fixAspectRatio", false)) {
+            bounds = fixAspectRatio(w, h, bounds)
+        }
         String format = options.get("format","image/png")
         String srs = options.get('srs', "EPSG:4326")
         boolean isTransprent = options.get("transparent", true)
@@ -109,12 +113,12 @@ class WMS {
         mapRequest.setDimensions(w,h)
         mapRequest.SRS = srs
         mapRequest.format = format;
-        mapRequest.setBBox(new org.geotools.data.ows.CRSEnvelope(srs, minX, minY, maxX, maxY))
+        mapRequest.setBBox(new org.geotools.data.ows.CRSEnvelope(srs, bounds.minX, bounds.minY, bounds.maxX, bounds.maxY))
         mapRequest.transparent = isTransprent
         layers.each{layer ->
             mapRequest.addLayer(layer.toString(),"")
         }
-        println mapRequest.finalURL
+        // println "WMS Request URL: ${mapRequest.finalURL}"
         def response = wms.issueRequest(mapRequest)
         ImageIO.read(response.inputStream)
     }
@@ -165,9 +169,35 @@ class WMS {
         if (options.containsKey("style")) {
             request.style = options.get("style")
         }
-        //println("Get Legend: ${request.finalURL}")
+        println("Get Legend: ${request.finalURL}")
         def response = wms.issueRequest(request)
         ImageIO.read(response.inputStream)
+    }
+
+    /**
+     * Fix the aspect ration
+     * @param w The image width
+     * @param h The image height
+     * @param mapBounds The geographic/map Bounds
+     */
+    private Bounds fixAspectRatio(int w, int h, Bounds mapBounds) {
+        double mapWidth = mapBounds.width
+        double mapHeight = mapBounds.height
+        double scaleX = w / mapWidth
+        double scaleY = h / mapHeight
+        double scale
+        if (scaleX < scaleY) {
+            scale = scaleX
+        } else {
+            scale = scaleY
+        }
+        double deltaX = w / scale - mapWidth
+        double deltaY = h / scale - mapHeight
+        double minX = mapBounds.minX - deltaX / 2D
+        double maxX = mapBounds.maxX + deltaX / 2D
+        double minY = mapBounds.minY - deltaY / 2D
+        double maxY = mapBounds.maxY + deltaY / 2D
+        return new Bounds(minX, minY, maxX, maxY, mapBounds.proj)
     }
 
     /**

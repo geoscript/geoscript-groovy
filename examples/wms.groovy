@@ -13,7 +13,7 @@ import geoscript.layer.Shapefile
 import javax.imageio.ImageIO
 
 // Connect to the MassGIS WMS Server
-def wms = new WMS("http://giswebservices.massgis.state.ma.us/geoserver/wms?REQUEST=GetCapabilities")
+def wms = new WMS("http://localhost:8080/geoserver/wms?REQUEST=GetCapabilities")
 
 // Let's explore some metadata
 println("WMS: ${wms.name}")
@@ -30,7 +30,7 @@ wms.layers.eachWithIndex{layer,i ->
 }
 
 // We want the towns layer (aka massgis:GISDATA.TOWNS_POLYM)
-def layer = wms.getLayer("massgis:GISDATA.TOWNS_POLYM")
+def layer = wms.getLayer("world:borders")
 
 // Let's look at some Layer properties
 println("Layer: ${layer.name}")
@@ -54,18 +54,17 @@ layer.srs[0..5].each{srs->
 
 // Get an image
 def image = wms.getMap([
-    bbox: layer.bounds[1],
-    srs: "EPSG:26986",
+    bbox: layer.bounds[0],
+    srs: "EPSG:4326",
     layers: [layer.name]
 ])
-println image
-ImageIO.write(image, "PNG", new File("massgis_towns.png"))
+ImageIO.write(image, "PNG", new File("world_borders.png"))
 
 // Get the legend
 def legend = wms.getLegend([
     layer: layer.name
 ])
-ImageIO.write(legend, "PNG", new File("massgis_towns_legend.png"))
+ImageIO.write(legend, "PNG", new File("world_borders_legend.png"))
 
 // Create a Map combining a shapefile with a WMS layer
 def file = new File("states.shp")
@@ -79,5 +78,5 @@ def map = new Map(
     bounds: layer.latLonBounds,
     fixAspectRatio: true
 )
-map.render("massgis_towns_map.png")
+map.render("world_borders_states.png")
 map.close()
