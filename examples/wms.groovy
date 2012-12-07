@@ -7,7 +7,7 @@
 import geoscript.wms.WMS
 
 // Import other classes
-import geoscript.map.Map
+import geoscript.render.Map
 import geoscript.style.*
 import geoscript.layer.Shapefile
 import javax.imageio.ImageIO
@@ -54,10 +54,11 @@ layer.srs[0..5].each{srs->
 
 // Get an image
 def image = wms.getMap([
-    bbox: layer.bounds[0],
+    bbox: layer.bounds[1],
     srs: "EPSG:26986",
     layers: [layer.name]
 ])
+println image
 ImageIO.write(image, "PNG", new File("massgis_towns.png"))
 
 // Get the legend
@@ -69,11 +70,7 @@ ImageIO.write(legend, "PNG", new File("massgis_towns_legend.png"))
 // Create a Map combining a shapefile with a WMS layer
 def file = new File("states.shp")
 def shp = new Shapefile(file)
-shp.style =  new Style(new PolygonSymbolizer(
-    fillColor: "steelblue",
-    fillOpacity: 0.5,
-    strokeColor: "wheat"
-))
+shp.style = new Fill("steelblue",0.5) + new Stroke("wheat")
 def map = new Map(
     width: 512,
     height: 512,

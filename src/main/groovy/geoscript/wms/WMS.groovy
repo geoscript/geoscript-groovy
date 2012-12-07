@@ -91,10 +91,10 @@ class WMS {
             maxX = parts[2] as double
             maxY = parts[3] as double
         } else if (bbox instanceof Bounds) {
-            minX = bbox.l
-            minY = bbox.b
-            maxX = bbox.r
-            maxY = bbox.t
+            minX = bbox.minX
+            minY = bbox.minY
+            maxX = bbox.maxX
+            maxY = bbox.maxY
         } else {
             minX = options['minX']
             maxX = options['maxX']
@@ -114,6 +114,7 @@ class WMS {
         layers.each{layer ->
             mapRequest.addLayer(layer.toString(),"")
         }
+        println mapRequest.finalURL
         def response = wms.issueRequest(mapRequest)
         ImageIO.read(response.inputStream)
     }

@@ -12,9 +12,7 @@ import geoscript.geom.Bounds
 import geoscript.filter.Filter
 
 // Create a WFS Workspace with a GetCapabilities URL
-def wfs = new WFS("http://frameworkwfs.usgs.gov/framework/wfs/wfs.cgi", [
-    timeout: 9000
-])
+def wfs = new WFS("http://frameworkwfs.usgs.gov/framework/wfs/wfs.cgi", timeout: 9000)
 
 // Print the Layers
 println("Layers:")

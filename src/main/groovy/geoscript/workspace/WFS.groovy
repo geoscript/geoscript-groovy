@@ -17,7 +17,7 @@ class WFS extends Workspace {
      * @param url The get capabilities URL
      * @param options A Map of optional options
      */
-    WFS(String url, Map options = [:]) {
+    WFS(Map options = [:], String url) {
         super(new WFSDataStoreFactory().createDataStore(createParams(url, options)))
     }
 
