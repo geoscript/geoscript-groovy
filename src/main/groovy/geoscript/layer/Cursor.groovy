@@ -76,12 +76,11 @@ class Cursor implements Iterator {
        if (options.containsKey("sort")) {
            this.iter = new SortedFeatureIterator(this.iter, col.schema, options.sort as SortBy[], Integer.MAX_VALUE)
        }
-       // This will work in GeoTools 9.0
-       /*if (options.containsKey("start") && options.containsKey("max")) {
+       if (options.containsKey("start") && options.containsKey("max")) {
            long start = options.start as long
            long end = start + options.max as long
            this.iter = new MaxFeaturesIterator<SimpleFeature>(this.iter, start, end)
-       }*/
+       }
     }
 
     /**

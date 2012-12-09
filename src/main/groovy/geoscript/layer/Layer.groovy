@@ -457,14 +457,12 @@ class Layer {
             if (fs.queryCapabilities.offsetSupported) {
                 q.startIndex = start
             } else {
-                throw new UnsupportedOperationException("Start and max are not supported by this layer!");
-                // This will work in GeoTools 9.0
-                // cursorOptions.start = start
-                // cursorOptions.max = max
+                cursorOptions.start = start
+                cursorOptions.max = max
                 // Reset max features because the we will
                 // be using the MaxFeaturesIterator in Cursor
                 // and it needs all of the Features to simulate paging
-                // q.maxFeatures = Integer.MAX_VALUE
+                q.maxFeatures = Integer.MAX_VALUE
             }
         }
         if (getProj()) {

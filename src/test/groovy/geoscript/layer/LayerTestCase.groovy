@@ -446,8 +446,8 @@ class LayerTestCase {
         assertFalse c.hasNext()
         c.close()
 
-        // Page (will work with GeoTools 9.0)
-        /*c = layer.getCursor(start:0, max:2)
+        // Page
+        c = layer.getCursor(start:0, max:2)
         assertEquals "A", c.next()["name"]
         assertEquals "B", c.next()["name"]
         assertFalse c.hasNext()
@@ -461,7 +461,7 @@ class LayerTestCase {
         assertEquals "B", c.next()["name"]
         assertEquals "C", c.next()["name"]
         assertFalse c.hasNext()
-        c.close()*/
+        c.close()
     }
 
     @Test void cursorPaging() {
