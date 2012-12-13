@@ -12,7 +12,7 @@ import geoscript.geom.Bounds
 import geoscript.filter.Filter
 
 // Create a WFS Workspace with a GetCapabilities URL
-def wfs = new WFS("http://frameworkwfs.usgs.gov/framework/wfs/wfs.cgi", timeout: 9000)
+def wfs = new WFS("http://localhost:8080/geoserver/ows?service=wfs&version=1.1.0&request=GetCapabilities", timeout: 9000)
 
 // Print the Layers
 println("Layers:")
@@ -20,14 +20,15 @@ wfs.layers.each{layer ->
     println(layer)
 }
 
-// Get the 'gubs:GovernmentalUnitCE' Layer and inspect some properties
-def layer = wfs.get("gubs:GovernmentalUnitCE")
+// Get a Layer and inspect some properties
+def layer = wfs.get("usa:states")
 println("Layer: ${layer.name}")
 println("   Format: ${layer.format}")
 println("   Projection: ${layer.proj}")
 println("   Schema: ${layer.schema}")
 println("   # Features: ${layer.count}")
 println("   Bounds: ${layer.bounds}")
+println("   Geometry Field: ${layer.schema.geom.name}")
 
 // Print all features
 println("   Features:")
@@ -41,8 +42,8 @@ layer.features.each{f->
 }
 
 // Query the Layer by attribute
-println("Features where instanceName = 'Washington'")
-layer.getFeatures("instanceName = 'Washington'").each{f ->
+println("Features where STATE_ABBR = 'WA'")
+layer.getFeatures("STATE_ABBR = 'WA'").each{f ->
     println("Feature:")
     println("----------------------")
     f.schema.fields.each {fld ->
@@ -52,7 +53,7 @@ layer.getFeatures("instanceName = 'Washington'").each{f ->
 }
 
 // Query the Layer by Bounding Box
-def filter = Filter.bbox("geometry", new Bounds(43.636, -73.0442, 44.9487, -72.0159, "EPSG:4269"))
+def filter = Filter.bbox("the_geom", new Bounds(43.636, -73.0442, 44.9487, -72.0159, "EPSG:4269"))
 println("Features for ${filter}")
 layer.getFeatures(filter).each{f ->
     println("Feature:")
@@ -65,21 +66,13 @@ layer.getFeatures(filter).each{f ->
 
 // Extract a subset from WFS and save it to a Shapefile
 def dir = new Directory(".")
-def schema = new Schema("wa_govunits", layer.schema.fields)
+def schema = new Schema("wa_state", layer.schema.fields)
 def waLayer = dir.create(schema)
-def features = layer.getFeatures("instanceName = 'Washington'")
+def features = layer.getFeatures("STATE_ABBR = 'WA'")
 features.each{f->
     waLayer.add([
         the_geom: f.geom,
-        typeAbbrev: f.get('typeAbbreviation'),
-        instanceNa: f.get('instanceName'),
-        instanceAl: f.get('instanceAlternateName'),
-        officialDe: f.get('officialDescription'),
-        instanceCo: f.get('instanceCode'),
-        codingSyst: f.get('codingSystemReference'),
-        government: f.get('governmentalUnitType'),
-        typeDefini: f.get('typeDefinition')
-
+        STATE_ABBR: f.get('STATE_ABBR'),
     ])
 }
 println("Shapefile: ${waLayer.name}")

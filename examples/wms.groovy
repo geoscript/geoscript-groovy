@@ -13,7 +13,7 @@ import geoscript.layer.Shapefile
 import javax.imageio.ImageIO
 
 // Connect to the MassGIS WMS Server
-def wms = new WMS("http://localhost:8080/geoserver/wms?REQUEST=GetCapabilities")
+def wms = new WMS("http://localhost:8080/geoserver/wms?REQUEST=GetCapabilities&version=1.1.0")
 
 // Let's explore some metadata
 println("WMS: ${wms.name}")
