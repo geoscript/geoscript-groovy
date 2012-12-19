@@ -363,9 +363,7 @@ class GeometryTestCase {
         Bounds b = new Bounds(4, 45, 19, 53)
         Geometry g = b.geometry
         Geometry pts = Geometry.createRandomPointsInGrid(b, number, true, 0.75)
-        // Yes, this is actually correct.  More random points can be generated than the number
-        // given if required
-        assertEquals 121, pts.numPoints
+        assertEquals 100, pts.numPoints
         pts.coordinates.each {coord ->
             assertTrue g.contains(new Point(coord.x, coord.y))
         }
