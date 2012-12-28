@@ -122,6 +122,11 @@
 			<artifactId>gt-process-geometry</artifactId>
 			<version>${gt.version}</version>
         </dependency>
+		<dependency>
+			<groupId>org.geotools.xsd</groupId>
+			<artifactId>gt-xsd-kml</artifactId>
+			<version>${gt.version}</version>
+		</dependency>
         <dependency>
             <groupId>org.geoscript</groupId>
             <artifactId>geocss_2.9.1</artifactId>
