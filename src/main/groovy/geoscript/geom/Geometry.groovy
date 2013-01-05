@@ -903,7 +903,9 @@ class Geometry {
      * @return A GeoScript Geometry
      */
     static Geometry wrap(JtsGeometry jts) {
-        if (jts instanceof com.vividsolutions.jts.geom.Point) {
+        if (jts == null) {
+            return null
+        } else if (jts instanceof com.vividsolutions.jts.geom.Point) {
             return new Point(jts)
         }
         else if (jts instanceof com.vividsolutions.jts.geom.LineString) {

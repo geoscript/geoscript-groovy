@@ -95,6 +95,8 @@ class GeometryTestCase {
     @Test void wrap() {
         Geometry g = Geometry.wrap(Geometry.factory.createPoint(new Coordinate(111,-47)))
         assertEquals "POINT (111 -47)", g.toString()
+        g = Geometry.wrap(null)
+        assertNull g
     }
 	
     @Test void fromWkt() {
