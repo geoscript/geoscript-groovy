@@ -1024,7 +1024,7 @@ class Geometry {
      * of a grid.  Often more points will be generated that the number given because of the required grid size.
      * @param bounds The Bounds that will contain the randomly located points
      * @param number The number of points
-     * @param constrainedToCircle Whether the points should be contrained to a circle or not
+     * @param constrainedToCircle Whether the points should be constrained to a circle or not
      * @param gutterFraction The size of the gutter between cells
      * @return A MultiPoint
      */
