@@ -194,7 +194,11 @@ class CsvReader implements Reader {
         def values
         while((values = reader.readNext()) != null) {
             // Skip blank lines
-            if (values.length > 0 && values[0] != null && values[0].trim() != "") {
+            if (values.length > 0 && values[0] != null) {
+                // If there is only one value and it's blank skip it too
+                if (values.length == 1 && values[0].trim() == "") {
+                    continue
+                }
                 // The layer is not defined yet, so try to define it from
                 // the first row
                 if (!layer) {
