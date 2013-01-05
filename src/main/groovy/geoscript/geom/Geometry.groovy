@@ -16,7 +16,7 @@ import com.vividsolutions.jts.geom.PrecisionModel
 import com.vividsolutions.jts.precision.GeometryPrecisionReducer
 
 /**
- * The base class for other Geomtries.
+ * The base class for other Geometries.
  * @author Jared Erickson
  */
 class Geometry {
