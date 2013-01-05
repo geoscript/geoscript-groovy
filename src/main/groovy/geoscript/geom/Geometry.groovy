@@ -998,6 +998,45 @@ class Geometry {
     }
 
     /**
+     * Get a Geometry from a String with an unknown format.
+     * @param str The String
+     * @return A Geometry or null if the String can't be parsed
+     * as a Geometry
+     */
+    static Geometry fromString(String str) {
+        if (str == null || str.trim().length() == 0) {
+            return null
+        }
+        List readers = [
+            new WktReader(),
+            new GeoJSONReader(),
+            new GeoRSSReader(),
+            new Gml2Reader(),
+            new Gml3Reader(),
+            new KmlReader(),
+            new WkbReader()
+        ]
+        Geometry geom = null
+        for(def reader in readers ) {
+            try {
+                geom = reader.read(str)
+            } catch(Exception ex) { /* Reading failed, try next reader */ }
+            if (geom) {
+                break
+            }
+        }
+        if (!geom) {
+            def parts = str.split(",")
+            if (parts.length == 4) {
+                geom = new Bounds(parts[0] as double, parts[1] as double, parts[2] as double, parts[3] as double).geometry
+            } else if (parts.length == 2) {
+                geom = new Point(parts[0] as double, parts[1] as double)
+            }
+        }
+        geom
+    }
+
+    /**
      * Get a PreparedGeometry for the given Geometry
      * @param g The Geometry
      * @return A PreparedGeometry

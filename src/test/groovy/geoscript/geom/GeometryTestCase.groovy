@@ -439,4 +439,52 @@ class GeometryTestCase {
         Point p = g as Point
         assertEquals "POINT (5 5)", p.wkt
     }
+
+    @Test void fromString() {
+        // WKT
+        Geometry g = Geometry.fromString("POINT (1 1)")
+        assertNotNull g
+        assertEquals "POINT (1 1)", g.wkt
+        // GeoJSON
+        g = Geometry.fromString("""{ "type": "Point", "coordinates": [1.0, 1.0] }""")
+        assertNotNull g
+        assertEquals "POINT (1 1)", g.wkt
+        // GeoRSS
+        g = Geometry.fromString("<georss:point>1 1</georss:point>")
+        assertNotNull g
+        assertEquals "POINT (1 1)", g.wkt
+        // GML 2
+        g = Geometry.fromString("<gml:Point><gml:coordinates>1,1</gml:coordinates></gml:Point>")
+        assertNotNull g
+        assertEquals "POINT (1 1)", g.wkt
+        // GML 3
+        g = Geometry.fromString("<gml:Point><gml:pos>1 1</gml:pos></gml:Point>")
+        assertNotNull g
+        assertEquals "POINT (1 1)", g.wkt
+        // KML
+        g = Geometry.fromString("<Point><coordinates>1,1</coordinates></Point>")
+        assertNotNull g
+        assertEquals "POINT (1 1)", g.wkt
+        // WKB
+        g = Geometry.fromString("00000000013FF00000000000003FF0000000000000")
+        assertNotNull g
+        assertEquals "POINT (1 1)", g.wkt
+        // Bounds
+        g = Geometry.fromString("1,1,10,10")
+        assertNotNull g
+        assertEquals "POLYGON ((1 1, 1 10, 10 10, 10 1, 1 1))", g.wkt
+        // Point
+        g = Geometry.fromString("1,1")
+        assertNotNull g
+        assertEquals "POINT (1 1)", g.wkt
+        // Null
+        g = Geometry.fromString(null)
+        assertNull g
+        // Empty String
+        g = Geometry.fromString("    ")
+        assertNull g
+        // Bad String
+        g = Geometry.fromString("asfasd")
+        assertNull g
+    }
 }
