@@ -8,6 +8,7 @@ import geoscript.feature.Feature
 import geoscript.proj.Projection
 import geoscript.filter.Filter
 import geoscript.workspace.Memory
+import geoscript.workspace.Property
 import geoscript.geom.*
 import geoscript.workspace.Workspace
 import geoscript.workspace.H2
@@ -177,6 +178,37 @@ class LayerTestCase {
         Layer layer1 = new Layer("facilities", s1)
         layer1.add(new Feature([new Point(-122.494165, 47.198096), "House", 12.5], "house1", s1))
         Layer layer2 = layer1.reproject(new Projection("EPSG:2927"))
+        assertEquals 1, layer2.count()
+        assertEquals 1144731.06, layer2.features[0].geom.x, 0.01
+        assertEquals 686299.16, layer2.features[0].geom.y, 0.01
+    }
+
+    @Test void reprojectToWorkspace() {
+        // Create Layer in Memory
+        Schema s1 = new Schema("facilities", [new Field("geom","Point", "EPSG:4326"), new Field("name","string"), new Field("price","float")])
+        Layer layer1 = new Layer("facilities", s1)
+        layer1.add(new Feature([new Point(-122.494165, 47.198096), "House", 12.5], "house1", s1))
+
+        // Reproject to a Property Workspace
+        File file = File.createTempFile("reproject",".properties")
+        Property property = new Property(file.parentFile)
+        Layer layer2 = layer1.reproject(new Projection("EPSG:2927"), property, "facilities_reprojected")
+        assertEquals 1, layer2.count()
+        assertEquals 1144731.06, layer2.features[0].geom.x, 0.01
+        assertEquals 686299.16, layer2.features[0].geom.y, 0.01
+    }
+
+    @Test void reprojectToLayer() {
+        // Create Layer in Memory
+        Schema s1 = new Schema("facilities", [new Field("geom","Point", "EPSG:4326"), new Field("name","string"), new Field("price","float")])
+        Layer layer1 = new Layer("facilities", s1)
+        layer1.add(new Feature([new Point(-122.494165, 47.198096), "House", 12.5], "house1", s1))
+
+        // Reproject to a Property Workspace Layer
+        File file = File.createTempFile("reproject",".properties")
+        Property property = new Property(file.parentFile)
+        Layer propertyLayer = property.create(layer1.schema.reproject("EPSG:2927","facilities_epsg_2927"))
+        Layer layer2 = layer1.reproject(propertyLayer)
         assertEquals 1, layer2.count()
         assertEquals 1144731.06, layer2.features[0].geom.x, 0.01
         assertEquals 686299.16, layer2.features[0].geom.y, 0.01

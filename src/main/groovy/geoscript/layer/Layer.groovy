@@ -10,6 +10,7 @@ import geoscript.style.Style
 import geoscript.style.Symbolizer
 import org.geotools.data.FeatureSource
 import org.geotools.data.DefaultQuery
+import org.geotools.data.Query
 import org.geotools.data.Transaction
 import org.geotools.data.FeatureStore
 import org.geotools.data.DefaultTransaction
@@ -688,22 +689,49 @@ class Layer {
     Layer reproject(Projection p, String newName = newname(), int chunk=1000) {
         Schema s = schema.reproject(p, newName)
         Layer l = workspace.create(s)
-        DefaultQuery q = new DefaultQuery(getName(), Filter.PASS.filter)
+        reproject(l, chunk)
+    }
+
+    /**
+     * Reproject the Layer to another Layer in the given Workspace
+     * @param p The Projection
+     * @param outputWorkspace The output Workspace
+     * @param newName The name of the new Layer
+     * @param chunk The number of Features to reproject in one batch
+     * @return The reprojected Layer
+     */
+    Layer reproject(Projection p, Workspace outputWorkspace, String newName, int chunk=1000) {
+        Schema s = schema.reproject(p, newName)
+        Layer l = outputWorkspace.create(s)
+        reproject(l, chunk)
+    }
+
+    /**
+     * Reproject this Layer to another Layer that already exists.
+     * @param projectedLayer The already created projected Layer
+     * @param chunk The number of Features to reproject in one batch
+     * @return The projected Layer
+     */
+    Layer reproject(Layer projectedLayer, int chunk = 1000) {
+        Query q = new Query(getName(), Filter.PASS.filter)
         if (getProj() != null) {
             q.coordinateSystem = getProj().crs
         }
-        q.coordinateSystemReproject = p.crs
+        q.coordinateSystemReproject = projectedLayer.proj.crs
         FeatureCollection fc = fs.getFeatures(q)
         FeatureIterator i = fc.features()
-        while (true) {
-            def features = readFeatures(i, fs.schema, chunk)
-            if (features.isEmpty()) {
-                break
+        try {
+            while (true) {
+                def features = readFeatures(i, fs.schema, chunk)
+                if (features.isEmpty()) {
+                    break
+                }
+                projectedLayer.fs.addFeatures(features)
             }
-            l.fs.addFeatures(features)
+        } finally {
+            i.close()
         }
-        i.close()
-        l
+        projectedLayer
     }
 
     /**
