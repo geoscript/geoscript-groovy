@@ -500,12 +500,15 @@ class Layer {
 
     /**
      * Update the values of a Field
-     * @param fld The Field whose values will be udpated
+     * @param fld The Field whose values will be updated
      * @param value Either a static value or a Closure that takes
      * a Feature and return an Object
      * @param filter The Filter to limit the Features that will be updated
+     * @param isScript A flag for whether the value is a Groovy script or not (defaults to false).
+     * If the value is a script, it can access the Feature as variable f and the counter as
+     * variable c.
      */
-    void update(Field fld, def value, def filter = null) {
+    void update(Field fld, def value, def filter = null, boolean isScript = false) {
         Filter f = (filter == null) ? Filter.PASS : new Filter(filter)
         Transaction t = new DefaultTransaction("calculateTransaction")
         try {
@@ -518,6 +521,21 @@ class Layer {
                     Feature feature = c.next()
                     def idFilter = filterFactory.id(java.util.Collections.singleton(feature.f.identifier))
                     store.modifyFeatures(ad, value.call(feature), idFilter)
+                }
+                c.close()
+            }
+            else if (isScript) {
+                int counter = 0
+                Cursor c = getCursor(f)
+                while(c.hasNext()) {
+                    Feature feature = c.next()
+                    def idFilter = filterFactory.id(java.util.Collections.singleton(feature.f.identifier))
+                    Binding binding = new Binding()
+                    binding.setVariable("f", feature)
+                    binding.setVariable("c", counter)
+                    GroovyShell shell = new GroovyShell(binding)
+                    store.modifyFeatures(ad.name, shell.evaluate(value), idFilter)
+                    counter++
                 }
                 c.close()
             }

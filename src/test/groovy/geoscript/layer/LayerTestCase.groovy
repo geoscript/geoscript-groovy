@@ -313,6 +313,16 @@ class LayerTestCase {
         assertEquals 13.5 * 2, features[1].get('price'), 0.01
         assertEquals 14.5 * 2, features[2].get('price'), 0.01
         assertEquals 3, layer.count
+
+        // Update with script
+        layer.update(s.get('name'), "return c + '). ' + f.get('name')", Filter.PASS, true)
+        features = layer.features
+        features.each{println(it)}
+        assertEquals "0). Building 1", features[0].get('name')
+        assertEquals "1). Building 2", features[1].get('name')
+        assertEquals "2). Building 3", features[2].get('name')
+        assertEquals 3, layer.count
+
     }
 
     @Test void minmax() {
