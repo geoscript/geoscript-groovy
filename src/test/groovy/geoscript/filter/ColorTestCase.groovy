@@ -141,7 +141,13 @@ class ColorTestCase {
         // Empty
         colors = Color.getPaletteColors("NOT A REAL PALETTE", 5)
         assertTrue(colors.isEmpty())
+        colors = Color.getPaletteColors("NOT A REAL PALETTE")
+        assertTrue(colors.isEmpty())
 
+        // 5 Greens (wrong case)
+        colors = Color.getPaletteColors("greens", 5)
+        colors.each{c -> assertTrue c instanceof Color}
+        assertTrue(colors.size() == 5)
     }
 
     @Test void getHex() {
