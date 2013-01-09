@@ -104,4 +104,21 @@ class Field {
         "${name}: ${typ}${(proj!=null?'(' + proj + ')' : '')}".toString()
     }
 
+    boolean equals(o) {
+        if (this.is(o)) return true
+        if (getClass() != o.class) return false
+        Field field = (Field) o
+        if (name != field.name) return false
+        if (proj != field.proj) return false
+        if (typ != field.typ) return false
+        return true
+    }
+
+    int hashCode() {
+        int result
+        result = name.hashCode()
+        result = 31 * result + typ.hashCode()
+        result = 31 * result + (proj != null ? proj.hashCode() : 0)
+        return result
+    }
 }

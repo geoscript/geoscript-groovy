@@ -65,5 +65,18 @@ class FieldTestCase {
         assertTrue f3.isGeometry()
     }
 
+    @Test void equalsAndHashCode() {
+        // Same name and type
+        assertTrue new Field("name","String").equals(new Field("name","String"))
+        // Same name, type, and projection
+        assertTrue new Field("geom","Point","EPSG:2927").equals(new Field("geom","Point","EPSG:2927"))
+        // Different name, same type
+        assertFalse new Field("name","String").equals(new Field("description","String"))
+        // Same name, different type
+        assertFalse new Field("name","String").equals(new Field("name","int"))
+        // Same name and type, different projection
+        assertFalse new Field("geom","Point","EPSG:2927").equals(new Field("geom","Point","EPSG:4326"))
+    }
+
 }
 
