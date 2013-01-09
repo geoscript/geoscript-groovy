@@ -88,6 +88,14 @@ class Field {
     }
 
     /**
+     * Create a new Field based on an existing Field
+     * @param fld The existing Field
+     */
+    Field(Field fld) {
+        this(fld.name, fld.typ, fld.proj)
+    }
+
+    /**
      * Is the Field spatial?
      * @return Is the Field spatial?
      */
