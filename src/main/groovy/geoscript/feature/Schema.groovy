@@ -216,15 +216,92 @@ class Schema {
      * Geometry type
      * @param geometryType The new type of Geometry
      * @param name The new Schema name
+     * @return A new Schema
      */
     Schema changeGeometryType(String geometryType, String name) {
+        changeField(this.geom, new Field(this.geom.name, geometryType, this.geom.proj), name)
+    }
+
+    /**
+     * Create a new Schema by changing an existing Field's definition.
+     * @param oldField The old existing Field
+     * @param newField The new Field definition
+     * @param name The new Schema name
+     * @return A new Schema
+     */
+    Schema changeField(Field oldField, Field newField, String name) {
+        Map fieldsToChange = [:]
+        fieldsToChange.put(oldField, newField)
+        changeFields(fieldsToChange, name)
+    }
+
+    /**
+     * Create a new Schema by changing one or more Field's definition.
+     * @param fieldsToChange A Map of old existing Fields as keys and new Fields as values
+     * @param name The new Schema name
+     * @return A new Schema
+     */
+    Schema changeFields(Map<Field, Field> fieldsToChange, String name) {
         List flds = []
         fields.each{fld ->
-            if (fld.isGeometry()) {
-                flds.add(new Field(fld.name, geometryType, fld.proj))
+            if (fieldsToChange.containsKey(fld)) {
+                flds.add(fieldsToChange[fld])
+            } else {
+                flds.add(new Field(fld))
             }
-            else {
-                flds.add(new Field(fld.name, fld.typ))
+        }
+        new Schema(name, flds)
+    }
+
+    /**
+     * Create a new Schema with a new name by adding a Field to the current Schema
+     * @param field The Field to add
+     * @param name The name of the new Schema
+     * @return The new Schema with the added Field
+     */
+    Schema addField(Field field, String name) {
+        addFields([field], name)
+    }
+
+    /**
+     * Create a new Schema with a new name by adding a List of Fields to the current Schema
+     * @param fields The List of Fields to add
+     * @param name The name of the new Schema
+     * @return The new Schema with the added Fields
+     */
+    Schema addFields(List<Field> newFields, String name) {
+        List flds = []
+        fields.each{fld ->
+            flds.add(new Field(fld))
+        }
+        newFields.each {fld ->
+            flds.add(fld)
+        }
+        new Schema(name, flds)
+    }
+
+    /**
+     * Create a new Schema with a new name by removing a Field from the current Schema
+     * @param field The Field to remove
+     * @param name The name of the new Schema
+     * @return The new Schema with the removed Field
+     */
+    Schema removeField(Field field, String name) {
+        removeFields([field], name)
+    }
+
+    /**
+     * Create a new Schema with a new name by removing a List of Fields from the current Schema
+     * @param fieldsToRemove The List of Fields to remove
+     * @param name The name of the new Schema
+     * @return The new Schema with the removed Fields
+     */
+    Schema removeFields(List<Field> fieldsToRemove, String name) {
+        List fieldNamesToRemove = fieldsToRemove.collect{fld -> fld.name.toLowerCase()}
+        List flds = []
+        fields.each{fld ->
+            if (!fieldNamesToRemove.contains(fld.name.toLowerCase())) {
+                flds.add(new Field(fld))
             }
         }
         new Schema(name, flds)

@@ -110,5 +110,61 @@ class SchemaTestCase {
         assertEquals "houses buffered geom: Polygon(EPSG:2927), name: String, price: Float", s2.toString()
     }
 
+    @Test void addField() {
+        Schema s1 = new Schema("points", [new Field("geom","Point","EPSG:4326"), new Field("name","String")])
+        assertEquals "points geom: Point(EPSG:4326), name: String", s1.toString()
+        Schema s2 = s1.addField(new Field("description","String"), "points_with_description")
+        assertEquals "points_with_description geom: Point(EPSG:4326), name: String, description: String", s2.toString()
+        assertEquals "points geom: Point(EPSG:4326), name: String", s1.toString()
+    }
+
+    @Test void addFields() {
+        Schema s1 = new Schema("points", [new Field("geom","Point","EPSG:4326"), new Field("name","String")])
+        assertEquals "points geom: Point(EPSG:4326), name: String", s1.toString()
+        Schema s2 = s1.addFields([
+            new Field("x","double"),
+            new Field("y","double")],
+            "points_with_xy"
+        )
+        assertEquals "points_with_xy geom: Point(EPSG:4326), name: String, x: Double, y: Double", s2.toString()
+        assertEquals "points geom: Point(EPSG:4326), name: String", s1.toString()
+    }
+
+    @Test void removeField() {
+        Schema s1 = new Schema("points", [new Field("geom","Point","EPSG:4326"), new Field("name","String"), new Field("x", "Double"), new Field("y", "Double")])
+        assertEquals "points geom: Point(EPSG:4326), name: String, x: Double, y: Double", s1.toString()
+        Schema s2 = s1.removeField(s1.get("name"), "points_without_name")
+        assertEquals "points_without_name geom: Point(EPSG:4326), x: Double, y: Double", s2.toString()
+        assertEquals "points geom: Point(EPSG:4326), name: String, x: Double, y: Double", s1.toString()
+    }
+
+    @Test void removeFields() {
+        Schema s1 = new Schema("points", [new Field("geom","Point","EPSG:4326"), new Field("name","String"), new Field("x", "Double"), new Field("y", "Double")])
+        assertEquals "points geom: Point(EPSG:4326), name: String, x: Double, y: Double", s1.toString()
+        Schema s2 = s1.removeFields([s1.get("x"), s1.get("y")], "points_without_xy")
+        assertEquals "points_without_xy geom: Point(EPSG:4326), name: String", s2.toString()
+        assertEquals "points geom: Point(EPSG:4326), name: String, x: Double, y: Double", s1.toString()
+    }
+
+    @Test void changeField() {
+        Schema s1 = new Schema("points", [new Field("geom","Point","EPSG:4326"), new Field("name","String"), new Field("x", "Double"), new Field("y", "Double")])
+        assertEquals "points geom: Point(EPSG:4326), name: String, x: Double, y: Double", s1.toString()
+        Schema s2 = s1.changeField(s1.get("name"), new Field("id","int"), "points_with_id")
+        assertEquals "points_with_id geom: Point(EPSG:4326), id: Integer, x: Double, y: Double", s2.toString()
+        assertEquals "points geom: Point(EPSG:4326), name: String, x: Double, y: Double", s1.toString()
+    }
+
+    @Test void changeFields() {
+        Schema s1 = new Schema("points", [new Field("geom","Point","EPSG:4326"), new Field("name","String"), new Field("x", "Double"), new Field("y", "Double")])
+        assertEquals "points geom: Point(EPSG:4326), name: String, x: Double, y: Double", s1.toString()
+        Schema s2 = s1.changeFields([
+            (s1.get("geom")): new Field("geom","Polygon", "EPSG:2927"),
+            (s1.get("name")): new Field("id","int")
+        ], "points_new")
+        assertEquals "points_new geom: Polygon(EPSG:2927), id: Integer, x: Double, y: Double", s2.toString()
+        assertEquals "points geom: Point(EPSG:4326), name: String, x: Double, y: Double", s1.toString()
+    }
+
+
 }
 
