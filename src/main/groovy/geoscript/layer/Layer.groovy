@@ -568,6 +568,11 @@ class Layer {
                 FeatureStore<SimpleFeatureType, SimpleFeature> store = (FeatureStore)fs
                 store.transaction = t
                 o.each{f->
+                    if (f.schema == null) {
+                        f.schema = schema
+                    } else if (f.schema != this.schema) {
+                        f = this.schema.feature(o.attributes)
+                    }
                     FeatureCollection fc = FeatureCollections.newCollection()
                     fc.add(f.f)
                     store.addFeatures(fc)
@@ -612,6 +617,8 @@ class Layer {
                 f = o
                 if (f.schema == null) {
                     f.schema = schema
+                } else if (f.schema != this.schema) {
+                    f = this.schema.feature(o.attributes)
                 }
             }
             else {

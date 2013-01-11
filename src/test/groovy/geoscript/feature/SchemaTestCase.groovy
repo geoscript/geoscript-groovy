@@ -165,6 +165,25 @@ class SchemaTestCase {
         assertEquals "points geom: Point(EPSG:4326), name: String, x: Double, y: Double", s1.toString()
     }
 
-
+    @Test void equalsAndHashCode() {
+        Schema s1 = new Schema("points", [new Field("geom","Point","EPSG:4326"), new Field("name","String")])
+        Schema s2 = new Schema("points", [new Field("geom","Point","EPSG:4326"), new Field("name","String")])
+        Schema s3 = new Schema("facilities", [new Field("geom","Point","EPSG:4326"), new Field("name","String")])
+        Schema s4 = new Schema("hours", [new Field("the_geom","Polygon","EPSG:2927"), new Field("address","String")])
+        // Equals
+        assertTrue s1.equals(s2)
+        assertFalse s1.equals(s3)
+        assertFalse s1.equals(s4)
+        assertFalse s2.equals(s3)
+        assertFalse s2.equals(s4)
+        assertFalse s3.equals(s4)
+        // Hashcode
+        assertTrue s1.hashCode() == s2.hashCode()
+        assertFalse s1.hashCode() == s3.hashCode()
+        assertFalse s1.hashCode() == s4.hashCode()
+        assertFalse s2.hashCode() == s3.hashCode()
+        assertFalse s2.hashCode() == s4.hashCode()
+        assertFalse s3.hashCode() == s4.hashCode()
+    }
 }
 

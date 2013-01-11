@@ -404,4 +404,16 @@ class Schema {
         }
         builder.buildFeatureType()
     }
+
+    boolean equals(Object obj) {
+        if (obj instanceof Schema) {
+            this.featureType.equals(obj.featureType)
+        } else {
+            false
+        }
+    }
+
+    int hashCode() {
+        this.featureType.hashCode()
+    }
 }

@@ -95,6 +95,29 @@ class LayerTestCase {
         assertEquals 5, layer1.count()
     }
 
+    @Test void addFeaturesFromOneLayerToAnother() {
+        Schema s1 = new Schema("facilities1", [new Field("geom","Point", "EPSG:2927"), new Field("name","string"), new Field("price","float")])
+        Layer layer1 = new Layer("facilities1", s1)
+
+        Schema s2 = new Schema("facilities2", [new Field("geom","Point", "EPSG:2927"), new Field("name","string"), new Field("price","float")])
+        Layer layer2 = new Layer("facilities2", s2)
+
+        layer1.add([
+            new Feature([new Point(109,-45), "House 3", 15.5], "house2", s1),
+            new Feature([new Point(108,-44), "House 4", 16.5], "house3", s1),
+            new Feature([new Point(107,-43), "House 5", 17.5], "house4", s1)
+        ])
+        assertEquals 3, layer1.count()
+
+        layer1.eachFeature {f ->
+            layer2.add(f)
+        }
+        assertEquals 3, layer2.count()
+
+        layer2.add(layer1.features)
+        assertEquals 6, layer2.count()
+    }
+
     @Test void plus() {
         Schema s1 = new Schema("facilities", [new Field("geom","Point", "EPSG:2927"), new Field("name","string"), new Field("price","float")])
         Layer layer1 = new Layer("facilities", s1)
