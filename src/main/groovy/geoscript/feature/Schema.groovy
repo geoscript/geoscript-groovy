@@ -155,11 +155,11 @@ class Schema {
 
     /**
      * Whether this Schema contains a Field by the given name or not
-     * @param name The Field name
+     * @param field The Field or Field name
      * @return Whether this Schema contains a Field by the given name or not
      */
-    boolean has(String name) {
-        featureType.getDescriptor(name) != null
+    boolean has(def field) {
+        featureType.getDescriptor(field instanceof Field ? field.name : field as String) != null
     }
 
     /**

@@ -87,6 +87,7 @@ class SchemaTestCase {
         assertTrue s1.has("price")
         assertFalse s1.has("asdfasd")
         assertFalse s1.has("NOT A FIELD NAME")
+        assertTrue s1.has(s1.get("geom"))
     }
 
     @Test void feature() {
