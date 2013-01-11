@@ -80,6 +80,15 @@ class SchemaTestCase {
         assertEquals "price: Float", fields[2].toString()
     }
 
+    @Test void has() {
+        Schema s1 = new Schema("widgets", [new Field("geom","Point"), new Field("name","string"), new Field("price","float")])
+        assertTrue s1.has("geom")
+        assertTrue s1.has("name")
+        assertTrue s1.has("price")
+        assertFalse s1.has("asdfasd")
+        assertFalse s1.has("NOT A FIELD NAME")
+    }
+
     @Test void feature() {
         Schema s1 = new Schema("houses", [new Field("geom","Point"), new Field("name","string"), new Field("price","float")])
         Feature f1 = s1.feature([new Point(111,-47), "House", 12.5],"house1")

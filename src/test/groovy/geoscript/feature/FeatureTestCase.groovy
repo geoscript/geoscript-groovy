@@ -33,6 +33,10 @@ class FeatureTestCase {
         assertEquals "feature geom: Point, name: String, price: java.math.BigDecimal", f3.schema.toString()
         assertTrue(f3.geom instanceof Geometry)
         assertTrue(f3.f.defaultGeometry instanceof JtsGeometry)
+
+        // Create a feature from a Map of values where some keys don't match the Schema
+        Feature f4 = new Feature(["geom": new Point(111,-47), "name": "House", "price": 12.5, "description": "very nice", "rating": 4], "house1", s1)
+        assertEquals "houses.house1 geom: POINT (111 -47), name: House, price: 12.5", f4.toString()
     }
 
     @Test void getId() {

@@ -154,6 +154,15 @@ class Schema {
     }
 
     /**
+     * Whether this Schema contains a Field by the given name or not
+     * @param name The Field name
+     * @return Whether this Schema contains a Field by the given name or not
+     */
+    boolean has(String name) {
+        featureType.getDescriptor(name) != null
+    }
+
+    /**
      * Get the List of Fields
      * @return The List of Fields
      */

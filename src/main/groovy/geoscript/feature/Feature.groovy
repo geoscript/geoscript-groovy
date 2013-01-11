@@ -211,11 +211,13 @@ class Feature {
     private static SimpleFeature buildFeature(Map attributes, String id, Schema schema) {
         SimpleFeatureBuilder featureBuilder = new SimpleFeatureBuilder(schema.featureType)
         attributes.each{
-            if (it.value instanceof Geometry) {
-                featureBuilder.set(it.key, it.value.g)
-            }
-            else {
-                featureBuilder.set(it.key, it.value);
+            if (schema.has(it.key)) {
+                if (it.value instanceof Geometry) {
+                    featureBuilder.set(it.key, it.value.g)
+                }
+                else {
+                    featureBuilder.set(it.key, it.value);
+                }
             }
         }
         featureBuilder.buildFeature(id)
