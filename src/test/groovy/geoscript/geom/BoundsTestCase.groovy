@@ -394,6 +394,10 @@ class BoundsTestCase {
             assertEquals 5, cell.numPoints
         }
         assertEquals 400, g.numGeometries
+
+        b = new Bounds(80, 87, 120, 110)
+        g = b.getGrid(2 as int,2 as int)
+        println g
     }
 
     @Test void getGridCellWidthAndHeight() {

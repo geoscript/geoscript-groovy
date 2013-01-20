@@ -419,8 +419,8 @@ class Bounds {
         int row = 0
         double x = this.minX
         double y = this.minY
-        while(x < this.width) {
-            while(y < this.height) {
+        while(x < this.maxX) {
+            while(y < this.maxY) {
                 Bounds b = new Bounds(x,y,x+cellWidth,y+cellHeight)
                 Geometry g = b.geometry
                 if (type.equalsIgnoreCase("point")) {
