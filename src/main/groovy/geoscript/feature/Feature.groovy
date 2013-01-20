@@ -143,18 +143,41 @@ class Feature {
     }
 
     /**
+     * Get a value by a Field.
+     * <p><code>Field fld = feature.schema.get("name")</code></p>
+     * <p><code>String name = feature.get(fld)</code></p>
+     * @param name The Field name
+     * @return The attribute value
+     */
+    Object get(Field field) {
+        get(field.name)
+    }
+
+    /**
      * Get a value by Field name.  This method supports
      * a the following syntax:
      * <p><code>String name = feature["name"]</code></p>
      * @param name The Field name
-     * @return The Field value
+     * @return The attribute value
      */
     Object getAt(String name) {
         get(name)
     }
 
     /**
-     * Set a value for a Field.
+     * Get a value by Field.  This method supports
+     * a the following syntax:
+     * <p><code>Field fld = feature.schema.get("name")</code></p>
+     * <p><code>String name = feature[fld]</code></p>
+     * @param name The Field
+     * @return The attribute value
+     */
+    Object getAt(Field field) {
+        get(field)
+    }
+
+    /**
+     * Set a value.
      * <p><code>feature.set("name") = "lighthouse"</code></p>
      * @param name The Field name
      * @param value The new attribute value
@@ -169,7 +192,18 @@ class Feature {
             layer.queueModified(this, name)
         }
     }
-    
+
+    /**
+     * Set a value.
+     * <p><code>Field fld = feature.schema.get("name")</code></p>
+     * <p><code>feature.set(fld) = "lighthouse"</code></p>
+     * @param name The Field
+     * @param value The new attribute value
+     */
+    void set(Field field, Object value) {
+        set(field.name, value)
+    }
+
     /**
      * Another way of setting a value. This method supports
      * the following syntax:
@@ -179,6 +213,17 @@ class Feature {
      */
     void putAt(String name, Object value) {
         set(name, value)
+    }
+
+    /**
+     * Set a value
+     * <p><code>Field fld = feature.schema.get("name")</code></p>
+     * <p><code>feature[fld] = "lighthouse"</code></p>
+     * @param name The Field
+     * @param value The new attribute value
+     */
+    void putAt(Field field, Object value) {
+        set(field, value)
     }
 
     /**
