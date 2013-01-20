@@ -522,7 +522,7 @@ class LayerTestCase {
         assertEquals "D", c.next()["name"]
         assertFalse c.hasNext()
         c.close()
-        c = layer.getCursor("price > 10", [["price", "DESC"]], 2, 1)
+        c = layer.getCursor("price > 10", [["price", "DESC"]], 2, 1, [])
         assertEquals "B", c.next()["name"]
         assertEquals "C", c.next()["name"]
         assertFalse c.hasNext()
@@ -543,19 +543,19 @@ class LayerTestCase {
         layer.add(new Feature(["geom": new Point(113,-45), "name": "E", "price": 15], "house5"))
         layer.add(new Feature(["geom": new Point(113,-45), "name": "F", "price": 16], "house6"))
 
-        Cursor c = layer.getCursor(Filter.PASS, [["name","ASC"]], 2, 0)
+        Cursor c = layer.getCursor(Filter.PASS, [["name","ASC"]], 2, 0, [])
         assertEquals "A", c.next()["name"]
         assertEquals "B", c.next()["name"]
         assertFalse c.hasNext()
         c.close()
 
-        c = layer.getCursor(Filter.PASS, [["name","ASC"]], 2, 2)
+        c = layer.getCursor(Filter.PASS, [["name","ASC"]], 2, 2, [])
         assertEquals "C", c.next()["name"]
         assertEquals "D", c.next()["name"]
         assertFalse c.hasNext()
         c.close()
 
-        c = layer.getCursor(Filter.PASS, [["name","ASC"]], 2, 4)
+        c = layer.getCursor(Filter.PASS, [["name","ASC"]], 2, 4, [])
         assertEquals "E", c.next()["name"]
         assertEquals "F", c.next()["name"]
         assertFalse c.hasNext()
@@ -572,5 +572,18 @@ class LayerTestCase {
         h2.close()
     }
 
+    @Test void cursorSubFields() {
+        Schema s = new Schema("facilities", [new Field("geom","Point", "EPSG:2927"), new Field("name","string"), new Field("price","float")])
+        Layer layer = new Layer("facilities", s)
+        layer.add(new Feature([new Point(111,-47), "House 1", 12.5], "house1", s))
+        layer.add(new Feature([new Point(112,-46), "House 2", 13.5], "house2", s))
+        layer.add(new Feature([new Point(113,-45), "House 3", 14.5], "house3", s))
+
+        layer.getCursor([fields: ["name"]]).each { f ->
+            println f
+            assertNotNull f["name"]
+            assertNull f["price"]
+        }
+    }
 }
 

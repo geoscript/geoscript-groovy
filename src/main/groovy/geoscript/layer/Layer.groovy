@@ -429,12 +429,13 @@ class Layer {
      *  <li>max= The maximum number of Features to include in the Cursor</li>
      *  <li>start = The index of the record to start the cursor at.  Together with maxFeatures this simulates paging.
      * Not all Layers support the start index and paging!</li>
+     *  <li>fields = A List of Fields or Field names to include.  Used to select only a subset of Fields.</li>
      * </ul>
      * @return A Cursor
      */
     Cursor getCursor(Map options) {
         getCursor(options.get("filter", null), options.get("sort", null),
-            options.get("max",-1), options.get("start", -1))
+            options.get("max",-1), options.get("start", -1),options.get("fields", null))
     }
 
     /**
@@ -445,12 +446,16 @@ class Layer {
      * @param max The maximum number of Features to include in the Cursor
      * @param start The index of the record to start the cursor at.  Together with maxFeatures this simulates paging.
      * Not all Layers support the start index and paging!
+     * @param fields A List of Fields or Field names to include.  Used to select only a subset of Fields.
      * @return A Cursor
      */
-    Cursor getCursor(def filter = null, List sort = null, int max = -1, int start = -1) {
+    Cursor getCursor(def filter = null, List sort = null, int max = -1, int start = -1, List fields = null) {
         Map cursorOptions = [:]
         Filter f = (filter == null) ? Filter.PASS : new Filter(filter)
         DefaultQuery q = new DefaultQuery(getName(), f.filter)
+        if (fields != null && fields.size() > 0) {
+            q.propertyNames = ((fields[0] instanceof Field) ? fields*.name : fields) as String[]
+        }
         if (max > -1) {
             q.maxFeatures = max
         }
