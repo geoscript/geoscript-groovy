@@ -1032,6 +1032,14 @@ class Geometry {
             } else if (parts.length == 2) {
                 geom = new Point(parts[0] as double, parts[1] as double)
             }
+            if (!geom) {
+                parts = str.split(" ")
+                if (parts.length == 4) {
+                    geom = new Bounds(parts[0] as double, parts[1] as double, parts[2] as double, parts[3] as double).geometry
+                } else if (parts.length == 2) {
+                    geom = new Point(parts[0] as double, parts[1] as double)
+                }
+            }
         }
         geom
     }

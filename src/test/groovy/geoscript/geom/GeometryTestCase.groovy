@@ -477,6 +477,14 @@ class GeometryTestCase {
         g = Geometry.fromString("1,1")
         assertNotNull g
         assertEquals "POINT (1 1)", g.wkt
+        // Bounds
+        g = Geometry.fromString("1 1 10 10")
+        assertNotNull g
+        assertEquals "POLYGON ((1 1, 1 10, 10 10, 10 1, 1 1))", g.wkt
+        // Point
+        g = Geometry.fromString("1 1")
+        assertNotNull g
+        assertEquals "POINT (1 1)", g.wkt
         // Null
         g = Geometry.fromString(null)
         assertNull g
