@@ -317,6 +317,44 @@ class Schema {
     }
 
     /**
+     * Create a new Schema by adding another Schema to this current Schema. The Geometry Field is taken from the
+     * current Schema.
+     * @param otherSchema The other Schema
+     * @param newName The new Schema's name
+     * @param prefixAll Whether to prefix all field names (true) or not (false). If true, all Fields from the
+     * this current Schema will have '1' at the end of their name while the other Schema's Fields will have '2'.
+     * Defaults to false.
+     * @param includeDuplicates Whether or not to include duplicate fields names. Defaults to false. If a duplicate is found
+     * a '2' will be added.
+     * @return A new Schema
+     */
+    Schema addSchema(Schema otherSchema, String newName, boolean prefixAll = false, boolean includeDuplicates = false) {
+        List flds = []
+        List fieldNames = []
+        this.fields.each {fld ->
+            Field newField
+            if (fld.isGeometry()) {
+                newField = new Field(fld)
+            } else {
+                newField = new Field ((prefixAll) ? fld.name + "1" : fld.name, fld.typ)
+            }
+            flds.add(newField)
+            fieldNames.add(newField.name)
+        }
+        otherSchema.fields.each {fld ->
+            if (!fld.isGeometry()) {
+                boolean isDuplicate = fieldNames.contains(fld.name)
+                Field newField = new Field ((prefixAll || isDuplicate) ? fld.name + "2" : fld.name, fld.typ)
+                if (includeDuplicates || (!includeDuplicates && !isDuplicate)) {
+                    flds.add(newField)
+                    fieldNames.add(newField.name)
+                }
+            }
+        }
+        new Schema(newName, flds)
+    }
+
+    /**
      * The string reprentation
      * @return The string representation
      */
