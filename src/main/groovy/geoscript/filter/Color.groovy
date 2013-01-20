@@ -95,18 +95,24 @@ class Color extends Expression {
 
     /**
      * Create a new darker Color
+     * @param n The number of times to darken the Color. Defaults to 1.
      * @return A new Color
      */
-    Color darker() {
-        new Color(getColor(this.value).darker())
+    Color darker(int n = 1) {
+        def c = getColor(this.value)
+        (1..n).each{c=c.darker()}
+        new Color(c)
     }
 
     /**
      * Create a new brighter Color
+     * @param n The number of times to brighten the Color. Defaults to 1.
      * @return A new Color
      */
-    Color brighter() {
-        new Color(getColor(this.value).brighter())
+    Color brighter(int n = 1) {
+        def c = getColor(this.value)
+        (1..n).each{c=c.brighter()}
+        new Color(c)
     }
     
     /**

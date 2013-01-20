@@ -232,6 +232,12 @@ class ColorTestCase {
 		Color darkerColor = c.darker()
 		assertTrue darkerColor instanceof Color
 		assertEquals("#b20000", darkerColor.hex)
+        darkerColor = c.darker(2)
+        assertTrue darkerColor instanceof Color
+        assertEquals("#7c0000", darkerColor.hex)
+        darkerColor = c.darker(3)
+        assertTrue darkerColor instanceof Color
+        assertEquals("#560000", darkerColor.hex)
 	}
 	
 	@Test void brighter() {
@@ -239,6 +245,12 @@ class ColorTestCase {
 		Color brighterColor = c.brighter()
 		assertTrue brighterColor instanceof Color
 		assertEquals("#8e0000", brighterColor.hex)
+        brighterColor = c.brighter(2)
+        assertTrue brighterColor instanceof Color
+        assertEquals("#ca0000", brighterColor.hex)
+        brighterColor = c.brighter(3)
+        assertTrue brighterColor instanceof Color
+        assertEquals("#ff0000", brighterColor.hex)
 	}
 	
     @Test void drawToImage() {
