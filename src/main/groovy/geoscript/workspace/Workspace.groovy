@@ -165,7 +165,7 @@ class Workspace {
      * @param chunk The number of Features to read in one batch
      * @return A FeatureCollection
      */
-    private FeatureCollection readFeatures(FeatureIterator it, SimpleFeatureType type, int chunk) {
+    protected FeatureCollection readFeatures(FeatureIterator it, SimpleFeatureType type, int chunk) {
         int i = 0
         def features = new ListFeatureCollection(type)
         while (it.hasNext() && i < chunk) {

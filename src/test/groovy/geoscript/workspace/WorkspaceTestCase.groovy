@@ -1,5 +1,7 @@
 package geoscript.workspace
 
+import geoscript.feature.Schema
+import geoscript.geom.Point
 import org.junit.Test
 import static org.junit.Assert.*
 import geoscript.feature.Field
@@ -73,6 +75,19 @@ class WorkspaceTestCase {
         assertNotNull params.find {p ->
             p.key.equals("create spatial index") ? p : null
         }
+    }
+
+    @Test void add() {
+        Layer layer1 = new Memory().create(new Schema("points", [["the_geom", "Point", "EPSG:4326"],["name","String"]]))
+        layer1.add([new Point(1,1),"point1"])
+        layer1.add([new Point(2,2),"point2"])
+        layer1.add([new Point(3,3),"point3"])
+
+        File file = new File(System.getProperty("java.io.tmpdir"))
+        Directory dir = new Directory(file)
+        Layer layer2 = dir.add(layer1)
+        assertTrue(new File(file,"points.shp").exists())
+        assertEquals 3, layer2.count
     }
 
 }
