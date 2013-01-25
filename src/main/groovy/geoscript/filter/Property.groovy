@@ -1,6 +1,7 @@
 package geoscript.filter
 
 import geoscript.feature.Field
+import org.opengis.filter.expression.PropertyName
 
 /**
  * Property is an {@link Expression} that is a {@link geoscript.feature.Field Field} value
@@ -30,5 +31,13 @@ class Property extends Expression {
      */
     Property(Field field) {
         super(Expression.filterFactory.property(field.name))
+    }
+
+    /**
+     * Create a new Property from a GeoTools PropertyName
+     * @param propertyName The GeoTools PropertyName
+     */
+    Property(PropertyName propertyName) {
+        super(propertyName)
     }
 }
