@@ -1,7 +1,14 @@
 package geoscript
 
+import geoscript.feature.Feature
+import geoscript.feature.Schema
+import geoscript.filter.Expression
+import geoscript.filter.Filter
 import geoscript.geom.*
+import geoscript.layer.Cursor
 import geoscript.layer.Shapefile
+import geoscript.process.Process
+import geoscript.proj.Geodetic
 import org.codehaus.groovy.runtime.DefaultGroovyMethods
 import geoscript.layer.io.CsvReader
 import geoscript.layer.Layer
@@ -68,6 +75,10 @@ class GeoScript {
             return Geometry.fromWKT(str)
         } else if (type == Workspace) {
             return new Workspace(str)
+        } else if (type == Expression) {
+            return Expression.fromCQL(str)
+        } else if (type == Geodetic) {
+            return new Geodetic(str)
         }
         DefaultGroovyMethods.asType(str, type)
     }
@@ -81,4 +92,123 @@ class GeoScript {
         DefaultGroovyMethods.asType(map, type)
     }
 
+    /**
+     * Convert a GeoTools Object to a GeoScript Object if possible
+     * @param obj The Object
+     * @return A GeoScript Object wrapping the GeoTools Object if possible
+     */
+    static Object wrap(Object obj) {
+        // SimpleFeature -> Feature
+        if (obj instanceof org.opengis.feature.simple.SimpleFeature) {
+            return new Feature(obj as org.opengis.feature.simple.SimpleFeature)
+        }
+        // SimpleFeatureType -> Schema
+        else if (obj instanceof org.opengis.feature.simple.SimpleFeatureType) {
+            return new Schema(obj as org.opengis.feature.simple.SimpleFeatureType)
+        }
+        // JTS Geometry -> Geometry
+        else if (obj instanceof com.vividsolutions.jts.geom.Geometry) {
+            return Geometry.wrap(obj as com.vividsolutions.jts.geom.Geometry)
+        }
+        // ReferencedEnvelope -> Bounds
+        else if (obj instanceof org.geotools.geometry.jts.ReferencedEnvelope) {
+            return new Bounds(obj as org.geotools.geometry.jts.ReferencedEnvelope)
+        }
+        // GeoTools Expression -> Expression
+        else if (obj instanceof org.opengis.filter.expression.Expression) {
+            return new Expression(obj as org.opengis.filter.expression.Expression)
+        }
+        // GeoTools Filter -> Filter
+        else if (obj instanceof org.opengis.filter.Filter) {
+            return new Filter(obj as org.opengis.filter.Filter)
+        }
+        // FeatureCollection -> Cursor
+        else if (obj instanceof org.geotools.feature.FeatureCollection) {
+            return new Cursor(obj as org.geotools.feature.FeatureCollection)
+        }
+        // FeatureSource -> Layer
+        else if (obj instanceof org.geotools.data.FeatureSource) {
+            return new Layer(obj as org.geotools.data.FeatureSource)
+        }
+        /*// GeoTools Process -> Process
+        else if (obj instanceof org.geotools.process.Process) {
+            return new Process((obj as org.geotools.process.Process)
+        }*/
+        // CoordinateReferenceSystem -> Projection
+        else if (obj instanceof org.opengis.referencing.crs.CoordinateReferenceSystem) {
+            return new Projection(obj as org.opengis.referencing.crs.CoordinateReferenceSystem)
+        }
+        // DefaultEllipsoid -> Geodetic
+        else if (obj instanceof org.geotools.referencing.datum.DefaultEllipsoid) {
+            return new Geodetic(obj as org.geotools.referencing.datum.DefaultEllipsoid)
+        }
+        // DataStore -> Workspace
+        else if (obj instanceof org.geotools.data.DataStore) {
+            return new Workspace(obj as org.geotools.data.DataStore)
+        }
+        // Not a wrapped GeoTools object just just return
+        else {
+            return obj
+        }
+    }
+
+    /**
+     * Convert a GeoScript object to a GeoTools object if possible
+     * @param obj The potential GeoScript object
+     * @return A GeoTools object backing the GeoScript object if possible
+     */
+    static Object unwrap(Object obj) {
+        // Feature -> SimpleFeature
+        if (obj instanceof Feature) {
+            return (obj as Feature).f
+        }
+        // Schema -> SimpleFeatureType
+        else if (obj instanceof Schema) {
+            return (obj as Schema).featureType
+        }
+        // Geometry -> JTS Geometry
+        else if (obj instanceof Geometry) {
+            return (obj as Geometry).g
+        }
+        // Bounds -> ReferencedEnvelope
+        else if (obj instanceof Bounds) {
+            return (obj as Bounds).env
+        }
+        // Expression -> GeoTools Expression
+        else if (obj instanceof Expression) {
+            return (obj as Expression).expr
+        }
+        // Filter -> GeoTools Filter
+        else if (obj instanceof Filter) {
+            return (obj as Filter).filter
+        }
+        // Cursor -> FeatureCollection
+        else if (obj instanceof Cursor) {
+            return (obj as Cursor).col
+        }
+        // Layer -> FeatureSource
+        else if (obj instanceof Layer) {
+            return (obj as Layer).fs
+        }
+        // Process -> GeoTools Process
+        else if (obj instanceof Process) {
+            return (obj as Process).process
+        }
+        // Projection -> CoordinateReferenceSystem
+        else if (obj instanceof Projection) {
+            return (obj as Projection).crs
+        }
+        // Geodetic -> DefaultEllipsoid
+        else if (obj instanceof Geodetic) {
+            return (obj as Geodetic).ellipsoid
+        }
+        // Workspace -> DataStore
+        else if (obj instanceof Workspace) {
+            return (obj as Workspace).ds
+        }
+        // Not a supported GeoScript object
+        else {
+            return obj
+        }
+    }
 }
