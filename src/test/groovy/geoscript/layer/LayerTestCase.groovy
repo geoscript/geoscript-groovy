@@ -288,6 +288,11 @@ class LayerTestCase {
         assertEquals layer4.schema.uri, 'http://omar.ossim.org'
         Layer layer5 = new Layer(layer4.fs.features)
         assertEquals layer5.schema.uri, 'http://omar.ossim.org'
+
+        // Make sure Layers without geometry don't through an Exception
+        Schema s2 = new Schema("facilities", [new Field("name","string"), new Field("price","float")])
+        Layer layer6 = new Layer("facilities", s2)
+
     }
 
     @Test void updateFeatures() {

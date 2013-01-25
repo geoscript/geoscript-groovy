@@ -97,6 +97,15 @@ class SymbolizerTestCase {
         def pointSym2 = Symbolizer.getDefault("point", "black")
         assertTrue pointSym instanceof Shape
         assertEquals pointSym2.color.hex, "#000000"
+
+        def geomSym = Symbolizer.getDefault(null)
+        println geomSym
+        assertTrue geomSym instanceof Composite
+        assertEquals 2, geomSym.parts.size()
+        assertTrue geomSym.parts[0] instanceof Composite
+        assertTrue geomSym.parts[0].parts[0] instanceof Shape
+        assertTrue geomSym.parts[0].parts[1] instanceof Fill
+        assertTrue geomSym.parts[1] instanceof Stroke
     }
 
     @Test void buildString() {

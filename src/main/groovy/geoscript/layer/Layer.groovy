@@ -100,7 +100,7 @@ class Layer {
         this.fs = fs
         this.schema = new Schema(fs.schema)
         this.projection = new Projection(fs.schema.coordinateReferenceSystem)
-        setDefaultSymbolizer(this.schema.geom.typ)
+        setDefaultSymbolizer(this.schema.geom?.typ)
     }
 
     /**
@@ -116,7 +116,7 @@ class Layer {
         if (layer.style) {
             this.style = layer.style
         } else {
-            setDefaultSymbolizer(this.schema.geom.typ)
+            setDefaultSymbolizer(this.schema.geom?.typ)
         }
     }
 
@@ -133,7 +133,7 @@ class Layer {
         this.fs = fs
         this.schema = schema
         this.projection = new Projection(fs.schema.coordinateReferenceSystem)
-        setDefaultSymbolizer(this.schema.geom.typ)
+        setDefaultSymbolizer(this.schema.geom?.typ)
     }
 
     /**
@@ -157,7 +157,7 @@ class Layer {
         this.fs = layer.fs
         this.schema = new Schema(layer.fs.schema)
         this.projection = new Projection(fs.schema.coordinateReferenceSystem)
-        setDefaultSymbolizer(this.schema.geom.typ)
+        setDefaultSymbolizer(this.schema.geom?.typ)
     }
 
     /**
@@ -172,7 +172,7 @@ class Layer {
         this.fs = layer.fs
         this.schema = new Schema(layer.fs.schema)
         this.projection = new Projection(fs.schema.coordinateReferenceSystem)
-        setDefaultSymbolizer(this.schema.geom.typ)
+        setDefaultSymbolizer(this.schema.geom?.typ)
     }
 
     /**
@@ -256,7 +256,7 @@ class Layer {
             // If the Layer isn't a Shapefile or if the Shapefile didn't
             // have a companion SLD or CSS file
             if (!this.style) {
-                this.style = Symbolizer.getDefault(geometryType)
+                this.style = Symbolizer.getDefault(geometryType ?: "geometry")
             }
         }
     }

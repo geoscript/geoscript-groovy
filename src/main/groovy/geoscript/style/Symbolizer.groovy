@@ -311,6 +311,9 @@ class Symbolizer implements Style, Cloneable {
      * @return A Symbolizer
      */
     static Symbolizer getDefault(String geometryType, def color = Color.getRandomPastel()) {
+        if (!geometryType) {
+            geometryType = "geometry"
+        }
         def sym;
         Color baseColor = new Color(color)
         Color darkerColor = baseColor.darker()
