@@ -40,6 +40,11 @@ class ColorTestCase {
         assertEquals hsl, c2.hsl
     }
 
+    @Test void evaluate() {
+        Color color = new Color("black")
+        assertEquals "#000000", color.evaluate()
+    }
+
     @Test void getColor() {
 
         // java.awt.Color
