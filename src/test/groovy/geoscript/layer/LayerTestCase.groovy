@@ -469,6 +469,15 @@ class LayerTestCase {
         assertEquals "A", c.next()["name"]
         c.close()
 
+        c = layer.getCursor(Filter.PASS, ["name ASC"])
+        assertEquals "A", c.next()["name"]
+        assertEquals "B", c.next()["name"]
+        assertEquals "C", c.next()["name"]
+        assertEquals "D", c.next()["name"]
+        assertEquals "E", c.next()["name"]
+        assertEquals "F", c.next()["name"]
+        c.close()
+
         // Named Parameters
         c = layer.getCursor(filter: "price >= 14.0", sort: [["price", "DESC"]])
         assertTrue c.hasNext()

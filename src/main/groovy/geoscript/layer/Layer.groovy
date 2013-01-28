@@ -441,8 +441,8 @@ class Layer {
     /**
      * Get a Cursor over the Features of the Layer.
      * @param filter The Filter or Filter String to limit the Features. Defaults to null.
-     * @param sort A List of Lists that define the sort order [[Field or Field name, "ASC" or "DESC"],...]. Not all Layers
-     * support sorting!
+     * @param sort A List of Lists [[Field or Field name, "ASC" or "DESC"],...] or a List of Strings ["name DESC", "price ASC"]
+     * that define the sort order. Not all Layers support sorting!
      * @param max The maximum number of Features to include in the Cursor
      * @param start The index of the record to start the cursor at.  Together with maxFeatures this simulates paging.
      * Not all Layers support the start index and paging!
@@ -478,8 +478,25 @@ class Layer {
         if (sort != null && sort.size() > 0) {
             // Create a list of SortBy's
             List sortBy = sort.collect{s ->
-                s = s instanceof List ? s : [s, "ASC"]
-                filterFactory.sort(s[0] instanceof Field ? s[0].name : s[0], SortOrder.valueOf(s[1]))
+                String sortName
+                String sortDirection
+                // ["name","ASC"] or ["name"] or [nameField,"ASC"]
+                if (s instanceof List) {
+                    sortName = s[0] instanceof Field ? s[0].name : s[0]
+                    sortDirection = s.size() > 1 ? s[1] : "ASC"
+                }
+                // "name ASC", "name"
+                else {
+                    List values = s.toString().split(" ") as List
+                    if (values.last().toUpperCase() in ["ASC","DESC"]) {
+                        sortDirection = values.pop().toUpperCase()
+                        sortName = values.join(" ")
+                    } else {
+                        sortName = values.join(" ")
+                        sortDirection = "ASC"
+                    }
+                }
+                filterFactory.sort(sortName, SortOrder.valueOf(sortDirection))
             }
             // Turn it into an array
             def sortByArray = sortBy as org.geotools.filter.SortByImpl[]
