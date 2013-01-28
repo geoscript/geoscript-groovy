@@ -1,6 +1,7 @@
 package geoscript.layer
 
 import geoscript.feature.Schema
+import geoscript.filter.Expression
 import geoscript.geom.*
 import geoscript.proj.Projection
 import geoscript.feature.*
@@ -524,8 +525,8 @@ class Layer {
     /**
      * Update the values of a Field
      * @param fld The Field whose values will be updated
-     * @param value Either a static value or a Closure that takes
-     * a Feature and return an Object
+     * @param value Either a static value, a Closure that takes
+     * a Feature and return an Object, an Expression, or a Groovy Script (if isScript is true)
      * @param filter The Filter to limit the Features that will be updated
      * @param isScript A flag for whether the value is a Groovy script or not (defaults to false).
      * If the value is a script, it can access the Feature as variable f and the counter as
@@ -544,6 +545,16 @@ class Layer {
                     Feature feature = c.next()
                     def idFilter = filterFactory.id(java.util.Collections.singleton(feature.f.identifier))
                     store.modifyFeatures(ad, value.call(feature), idFilter)
+                }
+                c.close()
+            }
+            else if (value instanceof Expression) {
+                Expression expression = value as Expression
+                Cursor c = getCursor(f)
+                while(c.hasNext()) {
+                    Feature feature = c.next()
+                    def idFilter = filterFactory.id(java.util.Collections.singleton(feature.f.identifier))
+                    store.modifyFeatures(ad, expression.evaluate(feature), idFilter)
                 }
                 c.close()
             }
