@@ -33,10 +33,14 @@ class ExpressionTestCase {
     }
 
     @Test void fromCQL() {
-        // Literal
+        // Literal Number
         Expression e = Expression.fromCQL("12")
         assertTrue e.expr instanceof org.opengis.filter.expression.Literal
         assertEquals "12", e.toString()
+        // Literal String
+        e = Expression.fromCQL("'A String'")
+        assertTrue e.expr instanceof org.opengis.filter.expression.Literal
+        assertEquals "A String", e.toString()
         // Property
         e = Expression.fromCQL("NAME")
         assertTrue e instanceof Property

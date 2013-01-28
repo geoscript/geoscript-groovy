@@ -67,7 +67,9 @@ class Expression {
     }
 
     /**
-     * Evaluate the Filter against a Feature
+     * Evaluate the Filter against an Object (commonly a Feature)
+     * @param obj Some Object
+     * @return A value
      */
     Object evaluate(Object obj = null) {
         GeoScript.wrap(this.expr.evaluate(GeoScript.unwrap(obj)))
