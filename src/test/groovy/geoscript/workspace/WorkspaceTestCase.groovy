@@ -47,6 +47,14 @@ class WorkspaceTestCase {
         Workspace prop = new Workspace("directory='${propFile}'")
         assertNotNull(prop.ds)
         assertEquals("org.geotools.data.property.PropertyDataStore", prop.format)
+
+        Workspace prop2 = new Workspace(propFile.absolutePath)
+        assertNotNull(prop2.ds)
+        assertEquals("org.geotools.data.property.PropertyDataStore", prop2.format)
+
+        Workspace prop3 = new Workspace(new File(propFile.parentFile, "asdfasdfas.properties").absolutePath)
+        assertNotNull(prop3.ds)
+        assertEquals("org.geotools.data.property.PropertyDataStore", prop3.format)
     }
 
     @Test void getWorkspaceNames() {
