@@ -649,13 +649,13 @@ class Layer {
             if (o instanceof Feature) {
                 f = o
                 if (f.schema == null) {
-                    f.schema = schema
+                    f.schema = this.schema
                 } else if (f.schema != this.schema) {
                     f = this.schema.feature(o.attributes)
                 }
             }
             else {
-                f = schema.feature(o)
+                f = this.schema.feature(o)
             }
             FeatureCollection fc = FeatureCollections.newCollection()
             fc.add(f.f)
