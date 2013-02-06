@@ -133,6 +133,9 @@ class Feature {
      * @return The attribute value
      */
     Object get(String name) {
+        if (name != null && !schema.has(name) && name.length() >= 10) {
+            name = name.substring(0,10)
+        }
         Object obj = f.getAttribute(name)
         if (obj instanceof JtsGeometry) {
             return Geometry.wrap((JtsGeometry)obj)
@@ -183,6 +186,9 @@ class Feature {
      * @param value The new attribute value
      */
     void set(String name, Object value) {
+        if (name != null && !schema.has(name) && name.length() >= 10) {
+            name = name.substring(0,10)
+        }
         if (name.equalsIgnoreCase(schema.geom.name)) {
             f.defaultGeometry = ((Geometry)value).g
         } else {
@@ -256,12 +262,20 @@ class Feature {
     private static SimpleFeature buildFeature(Map attributes, String id, Schema schema) {
         SimpleFeatureBuilder featureBuilder = new SimpleFeatureBuilder(schema.featureType)
         attributes.each{
-            if (schema.has(it.key)) {
-                if (it.value instanceof Geometry) {
-                    featureBuilder.set(it.key, it.value.g)
+            String name = it.key
+            Object value = it.value
+            // Shapefiles can only have field names of 10 characters
+            // or less, so if the schema doesn't contain a Field by the
+            // original name, try truncating it to 10 characters
+            if (!schema.has(name) && name.length() >= 10) {
+                name = name.substring(0,10)
+            }
+            if (schema.has(name)) {
+                if (value instanceof Geometry) {
+                    featureBuilder.set(name, value.g)
                 }
                 else {
-                    featureBuilder.set(it.key, it.value);
+                    featureBuilder.set(name, value);
                 }
             }
         }
