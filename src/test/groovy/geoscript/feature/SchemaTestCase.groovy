@@ -206,15 +206,15 @@ class SchemaTestCase {
 
         // Prefix all, No duplicates
         s3 = s1.addSchema(s2, "points_houses", true, false)
-        assertEquals "points_houses geom: Point(EPSG:4326), id1: Integer, name1: String, id2: Integer, description2: String, price2: Double", s3.toString()
+        assertEquals "points_houses geom: Point(EPSG:4326), 1id: Integer, 1name: String, 2id: Integer, 2description: String, 2price: Double", s3.toString()
 
         // No prefix all, Duplicates
         s3 = s1.addSchema(s2, "points_houses", false, true)
-        assertEquals "points_houses geom: Point(EPSG:4326), id: Integer, name: String, id2: Integer, description: String, price: Double", s3.toString()
+        assertEquals "points_houses geom: Point(EPSG:4326), id: Integer, name: String, 2id: Integer, description: String, price: Double", s3.toString()
 
         // Prefix all, Duplicates
         s3 = s1.addSchema(s2, "points_houses", true, true)
-        assertEquals "points_houses geom: Point(EPSG:4326), id1: Integer, name1: String, id2: Integer, description2: String, price2: Double", s3.toString()
+        assertEquals "points_houses geom: Point(EPSG:4326), 1id: Integer, 1name: String, 2id: Integer, 2description: String, 2price: Double", s3.toString()
     }
 }
 

@@ -336,7 +336,7 @@ class Schema {
             if (fld.isGeometry()) {
                 newField = new Field(fld)
             } else {
-                newField = new Field ((prefixAll) ? fld.name + "1" : fld.name, fld.typ)
+                newField = new Field ((prefixAll) ? "1" + fld.name : fld.name, fld.typ)
             }
             flds.add(newField)
             fieldNames.add(newField.name)
@@ -344,7 +344,7 @@ class Schema {
         otherSchema.fields.each {fld ->
             if (!fld.isGeometry()) {
                 boolean isDuplicate = fieldNames.contains(fld.name)
-                Field newField = new Field ((prefixAll || isDuplicate) ? fld.name + "2" : fld.name, fld.typ)
+                Field newField = new Field ((prefixAll || isDuplicate) ? "2" + fld.name : fld.name, fld.typ)
                 if (includeDuplicates || (!includeDuplicates && !isDuplicate)) {
                     flds.add(newField)
                     fieldNames.add(newField.name)
@@ -355,7 +355,7 @@ class Schema {
     }
 
     /**
-     * The string reprentation
+     * The string representation
      * @return The string representation
      */
     String toString() {
