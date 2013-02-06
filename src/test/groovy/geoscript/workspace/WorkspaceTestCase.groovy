@@ -40,7 +40,15 @@ class WorkspaceTestCase {
 
         Workspace shp2 = new Workspace("${url}")
         assertNotNull(shp2.ds)
-        assertEquals("org.geotools.data.shapefile.indexed.IndexedShapefileDataStore", shp2.format)
+        assertEquals("org.geotools.data.directory.DirectoryDataStore", shp2.format)
+
+        Workspace shp3 = new Workspace("${url.file}")
+        assertNotNull(shp3.ds)
+        assertEquals("org.geotools.data.directory.DirectoryDataStore", shp3.format)
+
+        Workspace dir = new Workspace("${new File(url.file).getAbsoluteFile().getParent()}")
+        assertNotNull(dir.ds)
+        assertEquals("org.geotools.data.directory.DirectoryDataStore", dir.format)
 
         // Properties
         File propFile = new File(getClass().getClassLoader().getResource("points.properties").file)
