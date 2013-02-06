@@ -389,7 +389,39 @@ class Bounds {
     void generateGrid(int columns, int rows, String type, Closure c) {
         double cellWidth = this.width / columns
         double cellHeight = this.height / rows
-        generateGrid(cellWidth, cellHeight, type, c)
+        double x = this.minX
+        double y = this.minY
+        (1..columns).each {column ->
+            (1..rows).each {row ->
+                Bounds b = new Bounds(x,y,x+cellWidth,y+cellHeight)
+                Geometry g = b.geometry
+                if (type.equalsIgnoreCase("point")) {
+                    g = g.centroid
+                } else if (type.equalsIgnoreCase("ellipse") || type.equalsIgnoreCase("circle")) {
+                    g = b.createEllipse(100)
+                } else if (type.equalsIgnoreCase("hexagon")) {
+                    Bounds newBounds = new Bounds(
+                            b.minX - b.width / 6,
+                            column % 2 == 0 ? b.minY : b.minY - b.height / 2,
+                            b.maxX + b.width / 6,
+                            column % 2 == 0 ? b.maxY : b.maxY - b.height / 2
+                    )
+                    g = newBounds.createHexagon()
+                } else if (type.equalsIgnoreCase("hexagon-inv")) {
+                    Bounds newBounds = new Bounds(
+                            row % 2 == 0 ? b.minX : b.minX - b.width / 2,
+                            b.minY - b.height / 6,
+                            row % 2 == 0 ? b.maxX : b.maxX - b.width / 2,
+                            b.maxY + b.height / 6,
+                    )
+                    g = newBounds.createHexagon(true)
+                }
+                c.call(g, column, row)
+                y += cellHeight
+            }
+            x += cellWidth
+            y = this.minY
+        }
     }
 
     /**
@@ -415,44 +447,15 @@ class Bounds {
      * @param c A Closure that is called with each Geometry cell with the geometry, the column, and the row
      */
     void generateGrid(double cellWidth, double cellHeight, String type, Closure c) {
-        int column = 0
-        int row = 0
-        double x = this.minX
-        double y = this.minY
-        while(x < this.maxX) {
-            while(y < this.maxY) {
-                Bounds b = new Bounds(x,y,x+cellWidth,y+cellHeight)
-                Geometry g = b.geometry
-                if (type.equalsIgnoreCase("point")) {
-                    g = g.centroid
-                } else if (type.equalsIgnoreCase("ellipse") || type.equalsIgnoreCase("circle")) {
-                    g = b.createEllipse(100)
-                } else if (type.equalsIgnoreCase("hexagon")) {
-                    Bounds newBounds = new Bounds(
-                        b.minX - b.width / 6,
-                        column % 2 == 0 ? b.minY : b.minY - b.height / 2,
-                        b.maxX + b.width / 6,
-                        column % 2 == 0 ? b.maxY : b.maxY - b.height / 2
-                    )
-                    g = newBounds.createHexagon()
-                } else if (type.equalsIgnoreCase("hexagon-inv")) {
-                    Bounds newBounds = new Bounds(
-                        row % 2 == 0 ? b.minX : b.minX - b.width / 2,
-                        b.minY - b.height / 6,
-                        row % 2 == 0 ? b.maxX : b.maxX - b.width / 2,
-                        b.maxY + b.height / 6,
-                    )
-                    g = newBounds.createHexagon(true)
-                }
-                c.call(g, column, row)
-                y += cellHeight
-                row += 1
-            }
-            x += cellWidth
-            y = this.minY
-            column += 1
-            row = 0
+        int columns = (height / cellWidth) as int
+        if (height % cellWidth != 0) {
+            columns++
         }
+        int rows = (width / cellHeight) as int
+        if (width % cellHeight != 0) {
+            rows++
+        }
+        generateGrid(columns, rows, type, c)
     }
 
     /**
