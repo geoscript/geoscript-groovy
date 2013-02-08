@@ -59,6 +59,10 @@ class DirectoryTestCase {
         Layer layer = dir.get("states")
         assertNotNull(layer)
         assertEquals "states", layer.name
+
+        layer = dir.get("states.shp")
+        assertNotNull(layer)
+        assertEquals "states", layer.name
     }
 
     @Test void getAt() {
