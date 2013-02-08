@@ -1120,4 +1120,13 @@ class Geometry {
         builder.numPoints = numberOfPoints
         Geometry.wrap(builder.geometry)
     }
+
+    /**
+     * Perform a cascaded union on a List of Polygons
+     * @param polygons The Polygons
+     * @return A unioned Geometry
+     */
+    static Geometry cascadedUnion(List<Polygon> polygons) {
+        Geometry.wrap(com.vividsolutions.jts.operation.union.CascadedPolygonUnion.union(polygons.collect{it.g}))
+    }
 }

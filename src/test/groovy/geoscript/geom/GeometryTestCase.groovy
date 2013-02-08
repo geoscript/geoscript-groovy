@@ -495,4 +495,12 @@ class GeometryTestCase {
         g = Geometry.fromString("asfasd")
         assertNull g
     }
+
+    @Test void cascadedUnion() {
+        def pts = Geometry.createRandomPoints(new Bounds(0,0,10,10).geometry, 100)
+        def polys = pts.collect{it.buffer(0.7)}
+        def union = Geometry.cascadedUnion(polys)
+        assertTrue union instanceof Geometry
+        assertTrue union.numGeometries < pts.numGeometries
+    }
 }
