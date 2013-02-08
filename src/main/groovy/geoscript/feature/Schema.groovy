@@ -321,30 +321,46 @@ class Schema {
      * current Schema.
      * @param otherSchema The other Schema
      * @param newName The new Schema's name
-     * @param prefixAll Whether to prefix all field names (true) or not (false). If true, all Fields from the
+     * @param options A Map of optional parameters:
+     * <ul>
+     * <li>postfixAll: Whether to postfix all field names (true) or not (false). If true, all Fields from the
      * this current Schema will have '1' at the end of their name while the other Schema's Fields will have '2'.
-     * Defaults to false.
-     * @param includeDuplicates Whether or not to include duplicate fields names. Defaults to false. If a duplicate is found
-     * a '2' will be added.
+     * Defaults to false.</li>
+     * <li>includeDuplicates: Whether or not to include duplicate fields names. Defaults to false. If a duplicate is found
+     * a '2' will be added.</li>
+     * <li>maxFieldNameLength: The maximum new Field name length (mostly to support shapefiles where Field names can't be longer
+     * than 10 characters</li>
+     * </ul>
      * @return A new Schema
      */
-    Schema addSchema(Schema otherSchema, String newName, boolean prefixAll = false, boolean includeDuplicates = false) {
+    Schema addSchema(Map options = [:], Schema otherSchema, String newName) {
+        boolean postfixAll = options.get("postfixAll", false)
+        boolean includeDuplicates = options.get("includeDuplicates", false)
+        int maxFieldNameLength = options.get("maxFieldNameLength", -1)
         List flds = []
         List fieldNames = []
         this.fields.each {fld ->
             Field newField
+            String fieldName = fld.name
+            if (maxFieldNameLength > -1 && fieldName.length() + 1 > maxFieldNameLength) {
+                fieldName = fieldName.substring(0, maxFieldNameLength)
+            }
             if (fld.isGeometry()) {
                 newField = new Field(fld)
             } else {
-                newField = new Field ((prefixAll) ? "1" + fld.name : fld.name, fld.typ)
+                newField = new Field ((postfixAll) ? "${fieldName}1" : fieldName, fld.typ)
             }
             flds.add(newField)
             fieldNames.add(newField.name)
         }
         otherSchema.fields.each {fld ->
             if (!fld.isGeometry()) {
+                String fieldName = fld.name
+                if (maxFieldNameLength > -1 && fieldName.length() + 1 > maxFieldNameLength) {
+                    fieldName = fieldName.substring(0, maxFieldNameLength)
+                }
                 boolean isDuplicate = fieldNames.contains(fld.name)
-                Field newField = new Field ((prefixAll || isDuplicate) ? "2" + fld.name : fld.name, fld.typ)
+                Field newField = new Field ((postfixAll || isDuplicate) ? "${fieldName}2" : fieldName, fld.typ)
                 if (includeDuplicates || (!includeDuplicates && !isDuplicate)) {
                     flds.add(newField)
                     fieldNames.add(newField.name)
