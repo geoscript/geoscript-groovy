@@ -201,24 +201,69 @@ class SchemaTestCase {
         Schema s2 = new Schema("houses", [new Field("geom", "Point", "EPSG:4326"), new Field("id","int"), new Field("description","String"), new Field("price","Double")])
 
         // No prefix all, No duplicates,
-        Schema s3 = s1.addSchema(s2, "points_houses")
+        Map result = s1.addSchema(s2, "points_houses")
+        Schema s3 = result.schema
         assertEquals "points_houses geom: Point(EPSG:4326), id: Integer, name: String, description: String, price: Double", s3.toString()
+        assertEquals "geom", result.fields[0]["geom"]
+        assertEquals "id", result.fields[0]["id"]
+        assertEquals "name", result.fields[0]["name"]
+        assertEquals "description", result.fields[1]["description"]
+        assertEquals "price", result.fields[1]["price"]
 
         // Postfix all, No duplicates
-        s3 = s1.addSchema(s2, "points_houses", postfixAll: true, includeDuplicates: false)
+        result = s1.addSchema(s2, "points_houses", postfixAll: true, includeDuplicates: false)
+        s3 = result.schema
         assertEquals "points_houses geom: Point(EPSG:4326), id1: Integer, name1: String, id2: Integer, description2: String, price2: Double", s3.toString()
+        assertEquals "geom", result.fields[0]["geom"]
+        assertEquals "id1", result.fields[0]["id"]
+        assertEquals "name1", result.fields[0]["name"]
+        assertEquals "id2", result.fields[1]["id"]
+        assertEquals "description2", result.fields[1]["description"]
+        assertEquals "price2", result.fields[1]["price"]
 
         // No postfix all, Duplicates
-        s3 = s1.addSchema(s2, "points_houses", postfixAll: false, includeDuplicates: true)
+        result = s1.addSchema(s2, "points_houses", postfixAll: false, includeDuplicates: true)
+        s3 = result.schema
         assertEquals "points_houses geom: Point(EPSG:4326), id: Integer, name: String, id2: Integer, description: String, price: Double", s3.toString()
+        assertEquals "geom", result.fields[0]["geom"]
+        assertEquals "id", result.fields[0]["id"]
+        assertEquals "name", result.fields[0]["name"]
+        assertEquals "id2", result.fields[1]["id"]
+        assertEquals "description", result.fields[1]["description"]
+        assertEquals "price", result.fields[1]["price"]
 
         // Prefix all, Duplicates
-        s3 = s1.addSchema(s2, "points_houses", postfixAll: true, includeDuplicates: true)
+        result = s1.addSchema(s2, "points_houses", postfixAll: true, includeDuplicates: true)
+        s3 = result.schema
         assertEquals "points_houses geom: Point(EPSG:4326), id1: Integer, name1: String, id2: Integer, description2: String, price2: Double", s3.toString()
+        assertEquals "geom", result.fields[0]["geom"]
+        assertEquals "id1", result.fields[0]["id"]
+        assertEquals "name1", result.fields[0]["name"]
+        assertEquals "id2", result.fields[1]["id"]
+        assertEquals "description2", result.fields[1]["description"]
+        assertEquals "price2", result.fields[1]["price"]
 
         // Max Field name length (shapefiles)
-        s3 = s1.addSchema(s2, "points_houses", maxFieldNameLength: 10, postfixAll: true)
+        result = s1.addSchema(s2, "points_houses", maxFieldNameLength: 10, postfixAll: true)
+        s3 = result.schema
         assertEquals "points_houses geom: Point(EPSG:4326), id1: Integer, name1: String, id2: Integer, descriptio2: String, price2: Double", s3.toString()
+        assertEquals "geom", result.fields[0]["geom"]
+        assertEquals "id1", result.fields[0]["id"]
+        assertEquals "name1", result.fields[0]["name"]
+        assertEquals "id2", result.fields[1]["id"]
+        assertEquals "descriptio2", result.fields[1]["description"]
+        assertEquals "price2", result.fields[1]["price"]
+
+        // Postfix all, custom postfixes
+        result = s1.addSchema(s2, "points_houses", postfixAll: true, firstPostfix: 'A', secondPostfix: 'B')
+        s3 = result.schema
+        assertEquals "points_houses geom: Point(EPSG:4326), idA: Integer, nameA: String, idB: Integer, descriptionB: String, priceB: Double", s3.toString()
+        assertEquals "geom", result.fields[0]["geom"]
+        assertEquals "idA", result.fields[0]["id"]
+        assertEquals "nameA", result.fields[0]["name"]
+        assertEquals "idB", result.fields[1]["id"]
+        assertEquals "descriptionB", result.fields[1]["description"]
+        assertEquals "priceB", result.fields[1]["price"]
     }
 }
 

@@ -331,14 +331,17 @@ class Schema {
      * <li>maxFieldNameLength: The maximum new Field name length (mostly to support shapefiles where Field names can't be longer
      * than 10 characters</li>
      * </ul>
-     * @return A new Schema
+     * @return A Map with the new Schema as schema and two Maps containing the old and new Field names as fields.
      */
-    Schema addSchema(Map options = [:], Schema otherSchema, String newName) {
+    Map addSchema(Map options = [:], Schema otherSchema, String newName) {
         boolean postfixAll = options.get("postfixAll", false)
         boolean includeDuplicates = options.get("includeDuplicates", false)
         int maxFieldNameLength = options.get("maxFieldNameLength", -1)
+        String firstPostfix = options.get("firstPostfix","1")
+        String secondPostfix = options.get("secondPostfix","2")
         List flds = []
         List fieldNames = []
+        Map fieldMap1 = [:]
         this.fields.each {fld ->
             Field newField
             String fieldName = fld.name
@@ -348,11 +351,13 @@ class Schema {
             if (fld.isGeometry()) {
                 newField = new Field(fld)
             } else {
-                newField = new Field ((postfixAll) ? "${fieldName}1" : fieldName, fld.typ)
+                newField = new Field ((postfixAll) ? "${fieldName}${firstPostfix}" : fieldName, fld.typ)
             }
+            fieldMap1[fld.name] = newField.name
             flds.add(newField)
             fieldNames.add(newField.name)
         }
+        Map fieldMap2 = [:]
         otherSchema.fields.each {fld ->
             if (!fld.isGeometry()) {
                 String fieldName = fld.name
@@ -360,14 +365,16 @@ class Schema {
                     fieldName = fieldName.substring(0, maxFieldNameLength)
                 }
                 boolean isDuplicate = fieldNames.contains(fld.name)
-                Field newField = new Field ((postfixAll || isDuplicate) ? "${fieldName}2" : fieldName, fld.typ)
+                Field newField = new Field ((postfixAll || isDuplicate) ? "${fieldName}${secondPostfix}" : fieldName, fld.typ)
                 if (includeDuplicates || (!includeDuplicates && !isDuplicate)) {
+                    fieldMap2[fld.name] = newField.name
                     flds.add(newField)
                     fieldNames.add(newField.name)
                 }
             }
         }
-        new Schema(newName, flds)
+        List fieldMaps = [fieldMap1, fieldMap2]
+        [schema: new Schema(newName, flds), fields: fieldMaps]
     }
 
     /**
