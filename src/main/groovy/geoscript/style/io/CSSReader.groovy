@@ -59,7 +59,7 @@ class CSSReader implements Reader {
         CSSStyle(GtStyle style) {
             this.style = style
         }
-        GtStyle createGtStyle() {
+        GtStyle getGtStyle() {
             style
         }
     }

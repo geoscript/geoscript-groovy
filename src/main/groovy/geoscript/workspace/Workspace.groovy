@@ -4,6 +4,7 @@ import geoscript.feature.Field
 import geoscript.feature.Schema
 import geoscript.layer.Layer
 import org.geotools.data.DataStore
+import org.geotools.data.DataUtilities
 import org.geotools.feature.FeatureIterator
 import org.geotools.feature.FeatureCollection
 import org.opengis.feature.simple.SimpleFeatureType
@@ -26,6 +27,9 @@ class Workspace {
      * @param The GeoTools DataStore
      */
     Workspace(DataStore ds) {
+        if (ds == null) {
+            throw new IllegalArgumentException("Can't find Workspace!")
+        }
         this.ds = ds
     }
 
@@ -165,7 +169,7 @@ class Workspace {
      * @param chunk The number of Features to read in one batch
      * @return A FeatureCollection
      */
-    private FeatureCollection readFeatures(FeatureIterator it, SimpleFeatureType type, int chunk) {
+    protected FeatureCollection readFeatures(FeatureIterator it, SimpleFeatureType type, int chunk) {
         int i = 0
         def features = new ListFeatureCollection(type)
         while (it.hasNext() && i < chunk) {
@@ -192,6 +196,22 @@ class Workspace {
         Map params = [:]
         if (str.indexOf("=") == -1) {
             if (str.endsWith(".shp")) {
+                if (str.startsWith("file:/")) {
+                    params.put("url", DataUtilities.fileToURL(DataUtilities.urlToFile(new URL(str)).getAbsoluteFile().getParentFile()))
+                } else {
+                    params.put("url", DataUtilities.fileToURL(new File(str).getAbsoluteFile().getParentFile()))
+                }
+            } else if (str.endsWith(".properties")) {
+                String dir
+                File f = new File(str)
+                if (f.exists()) {
+                    dir = f.absoluteFile.parentFile.absolutePath
+                } else {
+                    dir = f.absolutePath.substring(0,f.absolutePath.lastIndexOf(File.separator))
+                }
+                params.put("directory", dir)
+            }
+            else if (new File(str).isDirectory()) {
                 params.put("url", new File(str).toURL())
             } else {
                 throw new IllegalArgumentException("Unknown Workspace parameter string: ${str}")
@@ -209,6 +229,9 @@ class Workspace {
                 if ((value.startsWith("'") && value.endsWith("'")) ||
                         (value.startsWith("\"") && value.endsWith("\""))) {
                     value = value.substring(1, value.length() - 1)
+                }
+                if (key.equalsIgnoreCase("url")) {
+                    value = new File(value).absoluteFile.toURL()
                 }
                 params.put(key, value)
             }

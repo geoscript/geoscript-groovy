@@ -16,7 +16,7 @@ import com.vividsolutions.jts.geom.PrecisionModel
 import com.vividsolutions.jts.precision.GeometryPrecisionReducer
 
 /**
- * The base class for other Geomtries.
+ * The base class for other Geometries.
  * @author Jared Erickson
  */
 class Geometry {
@@ -237,7 +237,7 @@ class Geometry {
      * @return The centroid as a Point of this Geometry
      */
     Point getCentroid() {
-        wrap(this.g.centroid) as Point
+        wrap(this.g.centroid)
     }
 
     /**
@@ -866,6 +866,22 @@ class Geometry {
     }
 
     /**
+     * Override the asType method to convert Geometry to a custom value
+     * @param type The Class
+     * @return The converted Object
+     */
+    @Override
+    Object asType(Class type) {
+        if (type == Point) {
+            return centroid
+        } else if (type == Bounds) {
+            return bounds
+        } else {
+            return super.asType(type)
+        }
+    }
+
+    /**
      * Get a PreparedGeometry for this Geometry.
      * @return A PreparedGeometry for this Geometry
      */
@@ -887,7 +903,9 @@ class Geometry {
      * @return A GeoScript Geometry
      */
     static Geometry wrap(JtsGeometry jts) {
-        if (jts instanceof com.vividsolutions.jts.geom.Point) {
+        if (jts == null) {
+            return null
+        } else if (jts instanceof com.vividsolutions.jts.geom.Point) {
             return new Point(jts)
         }
         else if (jts instanceof com.vividsolutions.jts.geom.LineString) {
@@ -980,6 +998,53 @@ class Geometry {
     }
 
     /**
+     * Get a Geometry from a String with an unknown format.
+     * @param str The String
+     * @return A Geometry or null if the String can't be parsed
+     * as a Geometry
+     */
+    static Geometry fromString(String str) {
+        if (str == null || str.trim().length() == 0) {
+            return null
+        }
+        List readers = [
+            new WktReader(),
+            new GeoJSONReader(),
+            new GeoRSSReader(),
+            new Gml2Reader(),
+            new Gml3Reader(),
+            new KmlReader(),
+            new WkbReader()
+        ]
+        Geometry geom = null
+        for(def reader in readers ) {
+            try {
+                geom = reader.read(str)
+            } catch(Exception ex) { /* Reading failed, try next reader */ }
+            if (geom) {
+                break
+            }
+        }
+        if (!geom) {
+            def parts = str.split(",")
+            if (parts.length == 4) {
+                geom = new Bounds(parts[0] as double, parts[1] as double, parts[2] as double, parts[3] as double).geometry
+            } else if (parts.length == 2) {
+                geom = new Point(parts[0] as double, parts[1] as double)
+            }
+            if (!geom) {
+                parts = str.split(" ")
+                if (parts.length == 4) {
+                    geom = new Bounds(parts[0] as double, parts[1] as double, parts[2] as double, parts[3] as double).geometry
+                } else if (parts.length == 2) {
+                    geom = new Point(parts[0] as double, parts[1] as double)
+                }
+            }
+        }
+        geom
+    }
+
+    /**
      * Get a PreparedGeometry for the given Geometry
      * @param g The Geometry
      * @return A PreparedGeometry
@@ -1006,7 +1071,7 @@ class Geometry {
      * of a grid.  Often more points will be generated that the number given because of the required grid size.
      * @param bounds The Bounds that will contain the randomly located points
      * @param number The number of points
-     * @param constrainedToCircle Whether the points should be contrained to a circle or not
+     * @param constrainedToCircle Whether the points should be constrained to a circle or not
      * @param gutterFraction The size of the gutter between cells
      * @return A MultiPoint
      */
@@ -1054,5 +1119,14 @@ class Geometry {
         builder.extent = bounds.env
         builder.numPoints = numberOfPoints
         Geometry.wrap(builder.geometry)
+    }
+
+    /**
+     * Perform a cascaded union on a List of Polygons
+     * @param polygons The Polygons
+     * @return A unioned Geometry
+     */
+    static Geometry cascadedUnion(List<Polygon> polygons) {
+        Geometry.wrap(com.vividsolutions.jts.operation.union.CascadedPolygonUnion.union(polygons.collect{it.g}))
     }
 }

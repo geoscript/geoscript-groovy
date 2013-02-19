@@ -365,6 +365,132 @@ class Bounds {
     }
 
     /**
+     * Get a generated grid with the given number of the rows and column
+     * @param columns The number of columns
+     * @param rows The number of rows
+     * @param type The cell type (polygon, point, circle/ellipse, hexagon, hexagon-inv)
+     * @return The generated grid as a Geometry
+     */
+    Geometry getGrid(int columns, int rows, String type = "polygon") {
+        List geoms = []
+        this.generateGrid(rows, columns, type, {cell, c, r ->
+            geoms.add(cell)
+        })
+        new GeometryCollection(geoms)
+    }
+
+    /**
+     * Generate a grid with the given number or rows and columns
+     * @param columns The number of columns
+     * @param rows The number of rows
+     * @param type The cell type (polygon, point, circle/ellipse, hexagon, hexagon-inv)
+     * @param c A Closure that is called with each Geometry cell with the geometry, the column, and the row
+     */
+    void generateGrid(int columns, int rows, String type, Closure c) {
+        double cellWidth = this.width / columns
+        double cellHeight = this.height / rows
+        double x = this.minX
+        double y = this.minY
+        (1..columns).each {column ->
+            (1..rows).each {row ->
+                Bounds b = new Bounds(x,y,x+cellWidth,y+cellHeight)
+                Geometry g = b.geometry
+                if (type.equalsIgnoreCase("point")) {
+                    g = g.centroid
+                } else if (type.equalsIgnoreCase("ellipse") || type.equalsIgnoreCase("circle")) {
+                    g = b.createEllipse(100)
+                } else if (type.equalsIgnoreCase("hexagon")) {
+                    Bounds newBounds = new Bounds(
+                            b.minX - b.width / 6,
+                            column % 2 == 0 ? b.minY : b.minY - b.height / 2,
+                            b.maxX + b.width / 6,
+                            column % 2 == 0 ? b.maxY : b.maxY - b.height / 2
+                    )
+                    g = newBounds.createHexagon()
+                } else if (type.equalsIgnoreCase("hexagon-inv")) {
+                    Bounds newBounds = new Bounds(
+                            row % 2 == 0 ? b.minX : b.minX - b.width / 2,
+                            b.minY - b.height / 6,
+                            row % 2 == 0 ? b.maxX : b.maxX - b.width / 2,
+                            b.maxY + b.height / 6,
+                    )
+                    g = newBounds.createHexagon(true)
+                }
+                c.call(g, column, row)
+                y += cellHeight
+            }
+            x += cellWidth
+            y = this.minY
+        }
+    }
+
+    /**
+     * Get a generated grid with the given cell width and height
+     * @param cellWidth The cell width
+     * @param cellHeight The cell height
+     * @param type The cell type (polygon, point, circle/ellipse, hexagon, hexagon-inv)
+     * @return The generated grid as a Geometry
+     */
+    Geometry getGrid(double cellWidth, double cellHeight, String type = "polygon") {
+        List geoms = []
+        this.generateGrid(cellWidth, cellHeight, type, {cell, c, r ->
+            geoms.add(cell)
+        })
+        new GeometryCollection(geoms)
+    }
+
+    /**
+     * Generate a grid with the given cell width and height
+     * @param cellWidth The cell width
+     * @param cellHeight The cell height
+     * @param type The cell type (polygon, point, circle/ellipse, hexagon, hexagon-inv)
+     * @param c A Closure that is called with each Geometry cell with the geometry, the column, and the row
+     */
+    void generateGrid(double cellWidth, double cellHeight, String type, Closure c) {
+        int columns = (height / cellWidth) as int
+        if (height % cellWidth != 0) {
+            columns++
+        }
+        int rows = (width / cellHeight) as int
+        if (width % cellHeight != 0) {
+            rows++
+        }
+        generateGrid(columns, rows, type, c)
+    }
+
+    /**
+     * Create a hexagon based on this Bound's extent
+     * @param inverted Whether the hexagon is inverted.  If true then
+     * the point is north/south, else point is east/west
+     * @return A Polygon
+     */
+    Polygon createHexagon(boolean inverted = false) {
+        double w = this.width
+        double h = this.height
+        if (inverted) {
+            new Polygon([[
+                    [this.minX + w / 2, this.minY],
+                    [this.maxX, this.minY + h * 1/4],
+                    [this.maxX, this.minY + h * 3/4],
+                    [this.minX + w / 2, this.maxY],
+                    [this.minX, this.minY + h * 3/4],
+                    [this.minX, this.minY + h * 1/4],
+                    [this.minX + w / 2, this.minY]
+            ]])
+        } else {
+            new Polygon([[
+                    [this.minX + w * 1/4, this.minY],
+                    [this.minX + w * 3/4, this.minY],
+                    [this.maxX, this.minY + h / 2],
+                    [this.minX + w * 3/4, this.maxY],
+                    [this.minX + w * 1/4, this.maxY],
+                    [this.minX, this.minY + h/2],
+                    [this.minX + w * 1/4, this.minY]
+            ]])
+        }
+    }
+
+    /**
      * Create a rectangle or square based on this Bound's extent with the given number of points and rotation.
      * @param numPoints The number of points
      * @param rotation The rotation angle
@@ -459,6 +585,21 @@ class Bounds {
         shapeFactory.rotation = rotation
         shapeFactory.envelope = env
         shapeFactory
+    }
+
+    /**
+     * Override the asType method to convert Bounds to Geometry
+     * if the Class is Geometry
+     * @param type The Class
+     * @return The converted Object
+     */
+    @Override
+    Object asType(Class type) {
+        if (type == Geometry) {
+            return this.geometry
+        } else {
+            return super.asType(type)
+        }
     }
 
     /**

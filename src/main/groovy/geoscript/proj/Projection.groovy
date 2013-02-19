@@ -78,10 +78,23 @@ class Projection {
     }
 
     /**
-     * Get the valid geographic area for this Projection
+     * Get the extent for this Projection
      * @return A Bounds
      */
     Bounds getBounds() {
+        def extent = CRS.getEnvelope(crs)
+        if (extent != null) {
+            return new Bounds(extent.getMinimum(0), extent.getMinimum(1), extent.getMaximum(0), extent.getMaximum(1), this)
+        } else {
+            return null
+        }
+    }
+
+    /**
+     * Get the valid geographic area for this Projection
+     * @return A Bounds
+     */
+    Bounds getGeoBounds() {
         def extent = CRS.getGeographicBoundingBox(crs)
         if (extent != null) {
             return new Bounds(extent.westBoundLongitude, extent.southBoundLatitude, extent.eastBoundLongitude, extent.northBoundLatitude, 'epsg:4326')

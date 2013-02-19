@@ -267,9 +267,9 @@ class Map {
         layers.each{layer ->
             MapLayer mapLayer
             if (layer instanceof Layer) {
-                mapLayer = new DefaultMapLayer(layer.fs, layer.style.createGtStyle())
+                mapLayer = new DefaultMapLayer(layer.fs, layer.style.gtStyle)
             } else if (layer instanceof Raster) {
-                mapLayer = new DefaultMapLayer(layer.coverage, layer.style.createGtStyle())
+                mapLayer = new DefaultMapLayer(layer.coverage, layer.style.gtStyle)
             }
             context.addLayer(mapLayer)
         }

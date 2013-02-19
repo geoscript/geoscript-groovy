@@ -1,5 +1,7 @@
 package geoscript.layer
 
+import geoscript.filter.Expression
+import geoscript.raster.GeoTIFF
 import org.junit.Test
 import static org.junit.Assert.*
 import geoscript.feature.Schema
@@ -8,9 +10,12 @@ import geoscript.feature.Feature
 import geoscript.proj.Projection
 import geoscript.filter.Filter
 import geoscript.workspace.Memory
+import geoscript.workspace.Property
 import geoscript.geom.*
 import geoscript.style.Raster
 import geoscript.raster.Raster
+import geoscript.workspace.Workspace
+import geoscript.workspace.H2
 
 /**
  * The Layer UnitTest
@@ -94,6 +99,29 @@ class LayerTestCase {
         assertEquals 5, layer1.count()
     }
 
+    @Test void addFeaturesFromOneLayerToAnother() {
+        Schema s1 = new Schema("facilities1", [new Field("geom","Point", "EPSG:2927"), new Field("name","string"), new Field("price","float")])
+        Layer layer1 = new Layer("facilities1", s1)
+
+        Schema s2 = new Schema("facilities2", [new Field("geom","Point", "EPSG:2927"), new Field("name","string"), new Field("price","float")])
+        Layer layer2 = new Layer("facilities2", s2)
+
+        layer1.add([
+            new Feature([new Point(109,-45), "House 3", 15.5], "house2", s1),
+            new Feature([new Point(108,-44), "House 4", 16.5], "house3", s1),
+            new Feature([new Point(107,-43), "House 5", 17.5], "house4", s1)
+        ])
+        assertEquals 3, layer1.count()
+
+        layer1.eachFeature {f ->
+            layer2.add(f)
+        }
+        assertEquals 3, layer2.count()
+
+        layer2.add(layer1.features)
+        assertEquals 6, layer2.count()
+    }
+
     @Test void plus() {
         Schema s1 = new Schema("facilities", [new Field("geom","Point", "EPSG:2927"), new Field("name","string"), new Field("price","float")])
         Layer layer1 = new Layer("facilities", s1)
@@ -118,7 +146,10 @@ class LayerTestCase {
         Bounds bounds = layer1.bounds()
         assertNotNull(bounds);
         println("Bounds: ${bounds}")
-        assertEquals "(111.0,-47.0,111.0,-47.0)", bounds.toString()
+        assertEquals(111.0, bounds.minX, 0.1)
+        assertEquals(-47.0, bounds.minY, 0.1)
+        assertEquals(111.0, bounds.maxX, 0.1)
+        assertEquals(-47.0, bounds.maxY, 0.1)
         layer1.add(new Feature([new Point(108,-44), "House 2", 16.5], "house2", s1))
         bounds = layer1.bounds("name = 'House 2'")
         assertNotNull(bounds);
@@ -155,6 +186,8 @@ class LayerTestCase {
         String json = out.toString()
         assertNotNull json
         assertTrue json.startsWith("{\"type\":\"FeatureCollection\",\"features\":[")
+        json = layer1.toJSONString()
+        assertTrue json.startsWith("{\"type\":\"FeatureCollection\",\"features\":[")
     }
 
     @Test void toKML() {
@@ -172,6 +205,37 @@ class LayerTestCase {
         Layer layer1 = new Layer("facilities", s1)
         layer1.add(new Feature([new Point(-122.494165, 47.198096), "House", 12.5], "house1", s1))
         Layer layer2 = layer1.reproject(new Projection("EPSG:2927"))
+        assertEquals 1, layer2.count()
+        assertEquals 1144731.06, layer2.features[0].geom.x, 0.01
+        assertEquals 686299.16, layer2.features[0].geom.y, 0.01
+    }
+
+    @Test void reprojectToWorkspace() {
+        // Create Layer in Memory
+        Schema s1 = new Schema("facilities", [new Field("geom","Point", "EPSG:4326"), new Field("name","string"), new Field("price","float")])
+        Layer layer1 = new Layer("facilities", s1)
+        layer1.add(new Feature([new Point(-122.494165, 47.198096), "House", 12.5], "house1", s1))
+
+        // Reproject to a Property Workspace
+        File file = File.createTempFile("reproject",".properties")
+        Property property = new Property(file.parentFile)
+        Layer layer2 = layer1.reproject(new Projection("EPSG:2927"), property, "facilities_reprojected")
+        assertEquals 1, layer2.count()
+        assertEquals 1144731.06, layer2.features[0].geom.x, 0.01
+        assertEquals 686299.16, layer2.features[0].geom.y, 0.01
+    }
+
+    @Test void reprojectToLayer() {
+        // Create Layer in Memory
+        Schema s1 = new Schema("facilities", [new Field("geom","Point", "EPSG:4326"), new Field("name","string"), new Field("price","float")])
+        Layer layer1 = new Layer("facilities", s1)
+        layer1.add(new Feature([new Point(-122.494165, 47.198096), "House", 12.5], "house1", s1))
+
+        // Reproject to a Property Workspace Layer
+        File file = File.createTempFile("reproject",".properties")
+        Property property = new Property(file.parentFile)
+        Layer propertyLayer = property.create(layer1.schema.reproject("EPSG:2927","facilities_epsg_2927"))
+        Layer layer2 = layer1.reproject(propertyLayer)
         assertEquals 1, layer2.count()
         assertEquals 1144731.06, layer2.features[0].geom.x, 0.01
         assertEquals 686299.16, layer2.features[0].geom.y, 0.01
@@ -220,6 +284,19 @@ class LayerTestCase {
 
         assertEquals 5, layer3.count
         assertEquals "(0.0,0.0,4.0,4.0)", layer3.bounds.toString()
+
+        // Make sure that the namepsace uri is passed through when creating Layers from FeatureCollections
+        URL url = getClass().getClassLoader().getResource("states.shp")
+        Workspace workspace = new Workspace(["url": url, namespace: 'http://omar.ossim.org'])
+        Layer layer4 = workspace["states"]
+        assertEquals layer4.schema.uri, 'http://omar.ossim.org'
+        Layer layer5 = new Layer(layer4.fs.features)
+        assertEquals layer5.schema.uri, 'http://omar.ossim.org'
+
+        // Make sure Layers without geometry don't through an Exception
+        Schema s2 = new Schema("facilities", [new Field("name","string"), new Field("price","float")])
+        Layer layer6 = new Layer("facilities", s2)
+
     }
 
     @Test void updateFeatures() {
@@ -262,6 +339,7 @@ class LayerTestCase {
     }
 
     @Test void update() {
+        // Create a Layer
         Schema s = new Schema("facilities", [new Field("geom","Point", "EPSG:2927"), new Field("name","string"), new Field("price","float")])
         Layer layer = new Layer("facilities", s)
         layer.add(new Feature([new Point(111,-47), "House 1", 12.5], "house1", s))
@@ -269,36 +347,53 @@ class LayerTestCase {
         layer.add(new Feature([new Point(113,-45), "House 3", 14.5], "house3", s))
         assertEquals 3, layer.count
 
+        // Test original values
         def features = layer.features
         assertEquals "House 1", features[0].get('name')
         assertEquals "House 2", features[1].get('name')
         assertEquals "House 3", features[2].get('name')
 
+        // Update with static value
         layer.update(s.get('name'), 'Building')
-
         features = layer.features
         assertEquals "Building", features[0].get('name')
         assertEquals "Building", features[1].get('name')
         assertEquals "Building", features[2].get('name')
 
+        // Update static value with Filter
         layer.update(s.get('name'), 'Building 1', new Filter('price = 12.5'))
         layer.update(s.get('name'), 'Building 2', new Filter('price = 13.5'))
         layer.update(s.get('name'), 'Building 3', new Filter('price = 14.5'))
-
         features = layer.features
         assertEquals "Building 1", features[0].get('name')
         assertEquals "Building 2", features[1].get('name')
         assertEquals "Building 3", features[2].get('name')
 
+        // Update with closure
         layer.update(s.get('price'), {f ->
             f.get('price') * 2
         })
-
         features = layer.features
-        features.each{println(it)}
         assertEquals 12.5 * 2, features[0].get('price'), 0.01
         assertEquals 13.5 * 2, features[1].get('price'), 0.01
         assertEquals 14.5 * 2, features[2].get('price'), 0.01
+        assertEquals 3, layer.count
+
+        // Update with script
+        layer.update(s.get('name'), "return c + '). ' + f.get('name')", Filter.PASS, true)
+        features = layer.features
+        assertEquals "0). Building 1", features[0].get('name')
+        assertEquals "1). Building 2", features[1].get('name')
+        assertEquals "2). Building 3", features[2].get('name')
+        assertEquals 3, layer.count
+
+        // Update with an Expression
+        layer.update(s.get("price"), Expression.fromCQL("price * 2"))
+        features = layer.features
+        // We already multiplied the price * 2 with a Closure
+        assertEquals 12.5 * 4, features[0].get('price'), 0.01
+        assertEquals 13.5 * 4, features[1].get('price'), 0.01
+        assertEquals 14.5 * 4, features[2].get('price'), 0.01
         assertEquals 3, layer.count
     }
 
@@ -346,30 +441,161 @@ class LayerTestCase {
     }
 
     @Test void cursorSorting() {
-        Schema s = new Schema("facilities", [new Field("geom","Point", "EPSG:2927"), new Field("name","string"), new Field("price","float")])
-        Layer layer = new Layer("facilities", s)
-        layer.add(new Feature([new Point(111,-47), "A", 10], "house1", s))
-        layer.add(new Feature([new Point(112,-46), "B", 12], "house2", s))
-        layer.add(new Feature([new Point(113,-45), "C", 11], "house3", s))
+        File f = new File("target/h2").absoluteFile
+        if (f.exists()) {
+            boolean deleted = f.deleteDir()
+        }
+        H2 h2 = new H2("facilities", "target/h2")
+        Layer layer = h2.create('facilities',[new Field("geom","Point", "EPSG:2927"), new Field("name","string"), new Field("price","float")])
+        layer.add(new Feature(["geom": new Point(111,-47), "name": "A", "price": 10], "house1"))
+        layer.add(new Feature(["geom": new Point(112,-46), "name": "B", "price": 12], "house2"))
+        layer.add(new Feature(["geom": new Point(113,-45), "name": "C", "price": 13], "house3"))
+        layer.add(new Feature(["geom": new Point(113,-45), "name": "D", "price": 14], "house4"))
+        layer.add(new Feature(["geom": new Point(113,-45), "name": "E", "price": 15], "house5"))
+        layer.add(new Feature(["geom": new Point(113,-45), "name": "F", "price": 16], "house6"))
 
         Cursor c = layer.getCursor(Filter.PASS, [["name","ASC"]])
         assertEquals "A", c.next()["name"]
         assertEquals "B", c.next()["name"]
         assertEquals "C", c.next()["name"]
+        assertEquals "D", c.next()["name"]
+        assertEquals "E", c.next()["name"]
+        assertEquals "F", c.next()["name"]
         c.close()
 
         c = layer.getCursor(Filter.PASS, ["name"])
         assertEquals "A", c.next()["name"]
         assertEquals "B", c.next()["name"]
         assertEquals "C", c.next()["name"]
+        assertEquals "D", c.next()["name"]
+        assertEquals "E", c.next()["name"]
+        assertEquals "F", c.next()["name"]
         c.close()
 
-        // @TODO MemoryDataStore doesn't actually sort!
-        /*c = layer.getCursor(Filter.PASS, [["name","DESC"]])
+        c = layer.getCursor(Filter.PASS, [["name","DESC"]])
+        assertEquals "F", c.next()["name"]
+        assertEquals "E", c.next()["name"]
+        assertEquals "D", c.next()["name"]
         assertEquals "C", c.next()["name"]
         assertEquals "B", c.next()["name"]
         assertEquals "A", c.next()["name"]
-        c.close()*/
+        c.close()
+
+        c = layer.getCursor(Filter.PASS, ["name ASC"])
+        assertEquals "A", c.next()["name"]
+        assertEquals "B", c.next()["name"]
+        assertEquals "C", c.next()["name"]
+        assertEquals "D", c.next()["name"]
+        assertEquals "E", c.next()["name"]
+        assertEquals "F", c.next()["name"]
+        c.close()
+
+        // Named Parameters
+        c = layer.getCursor(filter: "price >= 14.0", sort: [["price", "DESC"]])
+        assertTrue c.hasNext()
+        assertEquals "F", c.next()["name"]
+        assertEquals "E", c.next()["name"]
+        assertEquals "D", c.next()["name"]
+        assertFalse c.hasNext()
+        c.close()
+
+        h2.close()
+    }
+
+    @Test void cursorSortingAndPagingWithUnsupportedLayer() {
+        Schema s = new Schema("facilities", [new Field("geom","Point", "EPSG:2927"), new Field("name","string"), new Field("price","float")])
+        Layer layer = new Layer("facilities", s)
+        layer.add(new Feature([new Point(111,-47), "A", 10], "house1", s))
+        layer.add(new Feature([new Point(112,-46), "B", 12], "house2", s))
+        layer.add(new Feature([new Point(113,-45), "C", 11], "house3", s))
+        layer.add(new Feature([new Point(113,-44), "D", 15], "house4", s))
+
+        // Sort ascending explicitly
+        Cursor c = layer.getCursor(Filter.PASS, [["name","ASC"]])
+        assertEquals "A", c.next()["name"]
+        assertEquals "B", c.next()["name"]
+        assertEquals "C", c.next()["name"]
+        assertEquals "D", c.next()["name"]
+        assertFalse c.hasNext()
+        c.close()
+
+        // Sort ascending implicitly
+        c = layer.getCursor(Filter.PASS, ["name"])
+        assertEquals "A", c.next()["name"]
+        assertEquals "B", c.next()["name"]
+        assertEquals "C", c.next()["name"]
+        assertEquals "D", c.next()["name"]
+        assertFalse c.hasNext()
+        c.close()
+
+        // Sort descending
+        c = layer.getCursor(Filter.PASS, [["name","DESC"]])
+        assertEquals "D", c.next()["name"]
+        assertEquals "C", c.next()["name"]
+        assertEquals "B", c.next()["name"]
+        assertEquals "A", c.next()["name"]
+        assertFalse c.hasNext()
+        c.close()
+
+        // Page
+        c = layer.getCursor(start:0, max:2)
+        assertEquals "A", c.next()["name"]
+        assertEquals "B", c.next()["name"]
+        assertFalse c.hasNext()
+        c.close()
+        c = layer.getCursor(start:2, max:2)
+        assertEquals "C", c.next()["name"]
+        assertEquals "D", c.next()["name"]
+        assertFalse c.hasNext()
+        c.close()
+        c = layer.getCursor("price > 10", [["price", "DESC"]], 2, 1, [])
+        assertEquals "B", c.next()["name"]
+        assertEquals "C", c.next()["name"]
+        assertFalse c.hasNext()
+        c.close()
+    }
+
+    @Test void cursorPaging() {
+        File f = new File("target/h2").absoluteFile
+        if (f.exists()) {
+            boolean deleted = f.deleteDir()
+        }
+        H2 h2 = new H2("facilities", "target/h2")
+        Layer layer = h2.create('facilities',[new Field("geom","Point", "EPSG:2927"), new Field("name","string"), new Field("price","float")])
+        layer.add(new Feature(["geom": new Point(111,-47), "name": "A", "price": 10], "house1"))
+        layer.add(new Feature(["geom": new Point(112,-46), "name": "B", "price": 12], "house2"))
+        layer.add(new Feature(["geom": new Point(113,-45), "name": "C", "price": 13], "house3"))
+        layer.add(new Feature(["geom": new Point(113,-45), "name": "D", "price": 14], "house4"))
+        layer.add(new Feature(["geom": new Point(113,-45), "name": "E", "price": 15], "house5"))
+        layer.add(new Feature(["geom": new Point(113,-45), "name": "F", "price": 16], "house6"))
+
+        Cursor c = layer.getCursor(Filter.PASS, [["name","ASC"]], 2, 0, [])
+        assertEquals "A", c.next()["name"]
+        assertEquals "B", c.next()["name"]
+        assertFalse c.hasNext()
+        c.close()
+
+        c = layer.getCursor(Filter.PASS, [["name","ASC"]], 2, 2, [])
+        assertEquals "C", c.next()["name"]
+        assertEquals "D", c.next()["name"]
+        assertFalse c.hasNext()
+        c.close()
+
+        c = layer.getCursor(Filter.PASS, [["name","ASC"]], 2, 4, [])
+        assertEquals "E", c.next()["name"]
+        assertEquals "F", c.next()["name"]
+        assertFalse c.hasNext()
+        c.close()
+
+        // Named parameters
+        c = layer.getCursor(start: 0, max: 4)
+        assertEquals "A", c.next()["name"]
+        assertEquals "B", c.next()["name"]
+        assertEquals "C", c.next()["name"]
+        assertEquals "D", c.next()["name"]
+        c.close()
+
+        h2.close()
     }
 
     @Test void toRaster() {
@@ -379,8 +605,22 @@ class LayerTestCase {
         assertNotNull raster
         File rasterFile = File.createTempFile("states_pop_",".tif")
         println rasterFile
-        raster.write(rasterFile)
+        GeoTIFF geotiff = new GeoTIFF()
+        geotiff.write(raster, rasterFile)
     }
 
+    @Test void cursorSubFields() {
+        Schema s = new Schema("facilities", [new Field("geom","Point", "EPSG:2927"), new Field("name","string"), new Field("price","float")])
+        Layer layer = new Layer("facilities", s)
+        layer.add(new Feature([new Point(111,-47), "House 1", 12.5], "house1", s))
+        layer.add(new Feature([new Point(112,-46), "House 2", 13.5], "house2", s))
+        layer.add(new Feature([new Point(113,-45), "House 3", 14.5], "house3", s))
+
+        layer.getCursor([fields: ["name"]]).each { f ->
+            println f
+            assertNotNull f["name"]
+            assertNull f["price"]
+        }
+    }
 }
 

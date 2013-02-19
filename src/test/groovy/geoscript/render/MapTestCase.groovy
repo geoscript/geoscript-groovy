@@ -63,7 +63,8 @@ class MapTestCase {
         File file = new File(getClass().getClassLoader().getResource("alki.tif").toURI())
         assertNotNull(file)
 
-        Raster raster = new GeoTIFF(file)
+        GeoTIFF geoTIFF = new GeoTIFF()
+        Raster raster = geoTIFF.read(file)
 
         Map map = new Map()
         map.proj = new Projection("EPSG:2927")
@@ -83,7 +84,8 @@ class MapTestCase {
         File file = new File(getClass().getClassLoader().getResource("raster.tif").toURI())
         assertNotNull(file)
 
-        Raster raster = new GeoTIFF(file)
+        GeoTIFF geoTIFF = new GeoTIFF()
+        Raster raster = geoTIFF.read(file)
         raster.style = new  geoscript.style.ColorMap([[color: "#008000", quantity:70], [color:"#663333", quantity:256]])
 
         Map map = new Map()

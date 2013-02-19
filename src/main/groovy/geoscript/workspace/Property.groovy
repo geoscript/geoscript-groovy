@@ -1,5 +1,6 @@
 package geoscript.workspace
 
+import geoscript.layer.Layer
 import org.geotools.data.DataStore
 import org.geotools.data.property.PropertyDataStoreFactory
 
@@ -39,6 +40,20 @@ class Property extends Workspace {
     @Override
     String getFormat() {
         return "Property"
+    }
+
+    /**
+     * Get a Layer by name
+     * @param The Layer name
+     * @return A Layer
+     */
+    @Override
+    Layer get(String name) {
+        if (name.endsWith(".properties")) {
+            super.get(name.substring(0,name.lastIndexOf(".properties")))
+        } else {
+            super.get(name)
+        }
     }
 
     /**

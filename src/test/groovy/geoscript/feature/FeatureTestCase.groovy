@@ -33,6 +33,10 @@ class FeatureTestCase {
         assertEquals "feature geom: Point, name: String, price: java.math.BigDecimal", f3.schema.toString()
         assertTrue(f3.geom instanceof Geometry)
         assertTrue(f3.f.defaultGeometry instanceof JtsGeometry)
+
+        // Create a feature from a Map of values where some keys don't match the Schema
+        Feature f4 = new Feature(["geom": new Point(111,-47), "name": "House", "price": 12.5, "description": "very nice", "rating": 4], "house1", s1)
+        assertEquals "houses.house1 geom: POINT (111 -47), name: House, price: 12.5", f4.toString()
     }
 
     @Test void getId() {
@@ -73,6 +77,7 @@ class FeatureTestCase {
         assertEquals "POINT (111 -47)", f1.get("geom").toString()
         assertEquals 12.5, f1.get("price"), 0.1
         assertEquals "House", f1.get("name")
+        assertEquals "House", f1.get(s1.get("name"))
     }
 
     @Test void getAt() {
@@ -81,6 +86,7 @@ class FeatureTestCase {
         assertEquals "POINT (111 -47)", f1["geom"].toString()
         assertEquals 12.5, f1["price"], 0.1
         assertEquals "House", f1["name"]
+        assertEquals "House", f1[s1.get("name")]
     }
 
     @Test void set() {
@@ -98,6 +104,10 @@ class FeatureTestCase {
         assertEquals "House", f1.get("name")
         f1.set("name", "Work")
         assertEquals "Work", f1.get("name")
+
+        assertEquals "Work", f1.get(s1.get("name"))
+        f1.set(s1.get("name"), "Home")
+        assertEquals "Home", f1.get(s1.get("name"))
     }
 
     @Test void putAt() {
@@ -115,6 +125,11 @@ class FeatureTestCase {
         assertEquals "House", f1["name"]
         f1["name"] = "Work"
         assertEquals "Work", f1["name"]
+
+        def fld = s1.get("name")
+        assertEquals "Work", f1[fld]
+        f1[fld] = "Home"
+        assertEquals "Home", f1[fld]
     }
 
     @Test void getAttributes() {

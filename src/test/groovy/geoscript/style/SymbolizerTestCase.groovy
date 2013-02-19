@@ -96,6 +96,15 @@ class SymbolizerTestCase {
         def pointSym2 = Symbolizer.getDefault("point", "black")
         assertTrue pointSym instanceof Shape
         assertEquals pointSym2.color.hex, "#000000"
+
+        def geomSym = Symbolizer.getDefault(null)
+        println geomSym
+        assertTrue geomSym instanceof Composite
+        assertEquals 2, geomSym.parts.size()
+        assertTrue geomSym.parts[0] instanceof Composite
+        assertTrue geomSym.parts[0].parts[0] instanceof Shape
+        assertTrue geomSym.parts[0].parts[1] instanceof Fill
+        assertTrue geomSym.parts[1] instanceof Stroke
     }
 
     @Test void buildString() {
@@ -134,7 +143,7 @@ class SymbolizerTestCase {
 
         // Simple Symbolizer :: Fill
         Symbolizer sym = new Fill("teal")
-        Style style = sym.createGtStyle()
+        Style style = sym.gtStyle
         assertNotNull style
         assertEquals 1, style.featureTypeStyles().size()
         assertEquals 1, style.featureTypeStyles()[0].rules().size()
@@ -150,7 +159,7 @@ class SymbolizerTestCase {
 
         // Simple Composite: Fill and Hatch
         sym = new Fill("teal").hatch("slash",new Stroke("navy"),6)
-        style = sym.createGtStyle()
+        style = sym.gtStyle
         assertNotNull style
         assertEquals 1, style.featureTypeStyles().size()
         assertEquals 1, style.featureTypeStyles()[0].rules().size()
@@ -171,7 +180,7 @@ class SymbolizerTestCase {
 
         // Simple Composite :: Fill and Stroke
         sym = new Fill("teal") + new Stroke("navy")
-        style = sym.createGtStyle()
+        style = sym.gtStyle
         assertNotNull style
         assertEquals 1, style.featureTypeStyles().size()
         assertEquals 1, style.featureTypeStyles()[0].rules().size()
@@ -194,7 +203,7 @@ class SymbolizerTestCase {
     @Test void getStyleWithZindex() {
 
         Symbolizer sym = (new Fill("red") + new Stroke("blue")) + new Fill("green").zindex(1)
-        Style style = sym.createGtStyle()
+        Style style = sym.gtStyle
 
         // There should be 2 FeatureTypeStyles
         assertEquals 2, style.featureTypeStyles().size()
@@ -232,7 +241,7 @@ class SymbolizerTestCase {
     @Test void getStyleWithScale() {
 
         Symbolizer sym = (new Fill("red") + new Stroke("blue")).range(-1, 1000) + new Fill("green").range(1000, -1)
-        Style style = sym.createGtStyle()
+        Style style = sym.gtStyle
 
         // There should only be one FeatureTypeStyle
         assertEquals 1, style.featureTypeStyles().size()
@@ -259,7 +268,7 @@ class SymbolizerTestCase {
     @Test void getScaleWithFilter() {
 
         Symbolizer sym = (new Fill("red") + new Stroke("blue")).where("FOO = 'foo'") + new Fill("green").where("BAR = 'bar'")
-        Style style = sym.createGtStyle()
+        Style style = sym.gtStyle
 
         // There should only be one FeatureTypeStyle
         assertEquals 1, style.featureTypeStyles().size()

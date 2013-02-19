@@ -14,7 +14,8 @@ class BandTestCase {
         File file = new File(getClass().getClassLoader().getResource("alki.tif").toURI())
         assertNotNull(file)
 
-        Raster raster = new GeoTIFF(file)
+        GeoTIFF geotiff = new GeoTIFF()
+        Raster raster = geotiff.read(file)
         assertNotNull(raster)
 
         List<Band> bands = raster.bands

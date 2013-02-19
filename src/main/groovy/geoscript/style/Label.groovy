@@ -242,7 +242,7 @@ class Label extends Symbolizer {
      * Set the space around a Label.  A negative number will allow
      * labels to overlap.  A positive number will create more space
      * between labels
-     * @param distance A negative or positve distance between labels
+     * @param distance A negative or positive distance between labels
      * @return This label
      */
     Label spaceAround(float distance) {

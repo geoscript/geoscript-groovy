@@ -13,7 +13,7 @@ import org.geotools.coverage.grid.GridCoverageFactory
 class MapAlgebra {
 
     /**
-     * Calculate a new Raster by peforming the map algebra specified by the Jiffle/MapCalc script.
+     * Calculate a new Raster by performing the map algebra specified by the Jiffle/MapCalc script.
      * @param script The Jiffle/MapCalc script.  This can be a File, a URL, or a String
      * @param inputRasters A Map of the input Rasters and their names.
      * @param outputName The output Raster name.
@@ -51,7 +51,7 @@ class MapAlgebra {
         RenderedImage image = builder.getImage(outputName)
         GridCoverageFactory gridCoverageFactory = new GridCoverageFactory()
         GridCoverage2D grid = gridCoverageFactory.create(outputName, image, bounds.env)
-        Raster raster = new GeoTIFF(grid)
+        Raster raster = new Raster(grid)
         return raster
     }
 }

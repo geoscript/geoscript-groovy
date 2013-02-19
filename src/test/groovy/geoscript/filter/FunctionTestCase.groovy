@@ -1,5 +1,7 @@
 package geoscript.filter
 
+import geoscript.feature.Feature
+import geoscript.geom.Point
 import org.junit.Test
 import static org.junit.Assert.*
 import geoscript.layer.Shapefile
@@ -69,6 +71,21 @@ class FunctionTestCase {
         assertEquals "my_centroid([the_geom])", f.toString()
     }
 
+    @Test void evalulate() {
+        // Geometry
+        Function func = new Function("centroid(the_geom)")
+        Feature feature = new Feature([the_geom: new Point(100,100).buffer(2)],"poly1")
+        def value = func.evaluate(feature)
+        assertTrue value instanceof Point
+        assertEquals 100, (value as Point).x, 0.1
+        assertEquals 100, (value as Point).y, 0.1
+        // String
+        func = new Function("strToLowerCase(NAME)")
+        feature = new Feature([NAME:"Test"],"test1")
+        value = func.evaluate(feature)
+        assertEquals "test", value
+    }
+
     @Test void registerFunction() {
         Function.registerFunction("lcase", {str -> str.toLowerCase()})
         def f = new Function("lcase(STATE_ABBR)")
@@ -129,5 +146,13 @@ class FunctionTestCase {
         map.addLayer(statesShp)
         map.bounds = statesShp.bounds
         map.render(imgFile)
+    }
+
+    @Test void getFunctionNames() {
+        List names = Function.functionNames
+        assertTrue names.size() > 0
+        assertTrue names.contains("Area")
+        assertTrue names.contains("cos")
+        assertTrue names.contains("within")
     }
 }

@@ -44,7 +44,7 @@ class CsvReaderTestCase {
 "House","12.5", 111 -47
 "School","22.7",121 -45
 """
-        CsvReader reader = new CsvReader("xy")
+        CsvReader reader = new CsvReader("xy", CsvReader.Type.XY)
         Layer layer = reader.read(csv)
         assertEquals("csv name: String, price: String, xy: Point", layer.schema.toString())
         assertEquals(2, layer.count)
@@ -140,5 +140,97 @@ ak,10501917,?,"Thursday, June 28, 2012 02:30:58 UTC",60.0233,-152.9946,2,2.9,?,"
         layer.eachFeature { f ->
             assertTrue(f.geom instanceof geoscript.geom.Point)
         }
+    }
+
+    @Test void readGeoJson() {
+        String csv = """"geom","name","price"
+"{ ""type"": ""Point"", ""coordinates"": [111.0, -47.0] }","House","12.5"
+"{ ""type"": ""Point"", ""coordinates"": [121.0, -45.0] }","School","22.7"
+"""
+        CsvReader reader = new CsvReader("geom", CsvReader.Type.GEOJSON)
+        Layer layer = reader.read(csv)
+        println layer.features
+        assertEquals("csv geom: Point, name: String, price: String", layer.schema.toString())
+        assertEquals(2, layer.count)
+        layer.eachFeature { f ->
+            assertTrue(f.geom instanceof geoscript.geom.Point)
+        }
+    }
+
+    @Test void readWkb() {
+        String csv = """"geom","name","price"
+"0000000001405BC00000000000C047800000000000","House","12.5"
+"0000000001405E400000000000C046800000000000","School","22.7"
+"""
+        CsvReader reader = new CsvReader("geom", CsvReader.Type.WKB)
+        Layer layer = reader.read(csv)
+        println layer.features
+        assertEquals("csv geom: Point, name: String, price: String", layer.schema.toString())
+        assertEquals(2, layer.count)
+        layer.eachFeature { f ->
+            assertTrue(f.geom instanceof geoscript.geom.Point)
+        }
+    }
+
+    @Test void readKml() {
+        String csv = """"geom","name","price"
+"<Point><coordinates>111.0,-47.0</coordinates></Point>","House","12.5"
+"<Point><coordinates>121.0,-45.0</coordinates></Point>","School","22.7"
+"""
+        CsvReader reader = new CsvReader("geom", CsvReader.Type.KML)
+        Layer layer = reader.read(csv)
+        assertEquals("csv geom: Point, name: String, price: String", layer.schema.toString())
+        assertEquals(2, layer.count)
+        layer.eachFeature { f ->
+            assertTrue(f.geom instanceof geoscript.geom.Point)
+        }
+    }
+
+    @Test void readGml2() {
+        String csv = """"geom","name","price"
+"<gml:Point><gml:coordinates>111.0,-47.0</gml:coordinates></gml:Point>","House","12.5"
+"<gml:Point><gml:coordinates>121.0,-45.0</gml:coordinates></gml:Point>","School","22.7"
+"""
+        CsvReader reader = new CsvReader("geom", CsvReader.Type.GML2)
+        Layer layer = reader.read(csv)
+        assertEquals("csv geom: Point, name: String, price: String", layer.schema.toString())
+        assertEquals(2, layer.count)
+        layer.eachFeature { f ->
+            assertTrue(f.geom instanceof geoscript.geom.Point)
+        }
+    }
+
+    @Test void readGml3() {
+        String csv = """"geom","name","price"
+"<gml:Point><gml:pos>111.0 -47.0</gml:pos></gml:Point>","House","12.5"
+"<gml:Point><gml:pos>121.0 -45.0</gml:pos></gml:Point>","School","22.7"
+"""
+        CsvReader reader = new CsvReader("geom", CsvReader.Type.GML3)
+        Layer layer = reader.read(csv)
+        assertEquals("csv geom: Point, name: String, price: String", layer.schema.toString())
+        assertEquals(2, layer.count)
+        layer.eachFeature { f ->
+            assertTrue(f.geom instanceof geoscript.geom.Point)
+        }
+    }
+
+    @Test void readCsvWithBlankLine() {
+        String csv = """"the_geom"
+"POLYGON ((-126.72872789292975 22.964486856824095, -126.72872789292975 51.368178553333294, -64.97359027747028 51.368178553333294, -64.97359027747028 22.964486856824095, -126.72872789292975 22.964486856824095))"
+
+"""
+        CsvReader reader = new CsvReader()
+        Layer layer = reader.read(csv)
+        assertEquals(1, layer.count)
+    }
+
+    @Test void readCsvFromKml() {
+        String csv = """"name","visibility","open","address","phoneNumber","description","LookAt","Style","Region","Geometry"
+,"true","true",,,,,,,"POINT (1 1)"
+
+"""
+        CsvReader reader = new CsvReader()
+        Layer layer = reader.read(csv)
+        assertEquals(1, layer.count)
     }
 }

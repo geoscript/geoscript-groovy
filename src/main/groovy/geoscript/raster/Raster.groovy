@@ -4,26 +4,21 @@ import geoscript.proj.Projection
 import geoscript.geom.Bounds
 import geoscript.geom.Point
 import geoscript.style.Style
-import org.geotools.factory.Hints
+import org.geotools.coverage.processing.CoverageProcessor
 import org.geotools.coverage.grid.AbstractGridCoverage
-import org.opengis.coverage.grid.GridCoverageReader
-import org.geotools.coverage.grid.io.AbstractGridFormat
-import org.geotools.coverage.processing.DefaultProcessor
+import org.geotools.process.raster.ContourProcess
+import org.geotools.process.raster.PolygonExtractionProcess
+import org.geotools.process.raster.RasterAsPointCollectionProcess
+import org.geotools.process.raster.RasterZonalStatistics
 import geoscript.layer.Layer
-import org.geotools.process.raster.gs.ContourProcess
 import geoscript.workspace.Memory
 import geoscript.feature.Schema
-import org.geotools.process.raster.gs.PolygonExtractionProcess
-import org.geotools.process.raster.gs.RasterAsPointCollectionProcess
-import org.geotools.process.raster.gs.AddCoveragesProcess
-import org.geotools.process.raster.gs.MultiplyCoveragesProcess
 import org.jaitools.numeric.Range
-import org.geotools.process.raster.gs.ScaleCoverage
 import org.geotools.coverage.grid.GridCoverageFactory
-import org.geotools.process.raster.gs.RasterZonalStatistics
+import javax.media.jai.Interpolation
 
 /**
- * The Raster base class
+ * The Raster
  * @author Jared Erickson
  */
 class Raster {
@@ -34,16 +29,6 @@ class Raster {
     AbstractGridCoverage coverage
 
     /**
-     * The GeoTools AbstractGridFormat
-     */
-    AbstractGridFormat gridFormat
-
-    /**
-     * The GeoTools GridCoverageReader
-     */
-    GridCoverageReader reader
-
-    /**
      * The Style
      */
     Style style
@@ -52,9 +37,8 @@ class Raster {
      * Create a new Raster from a List of List of float values
      * @param data A List of Lists of float values
      * @param bounds The geographic Bounds
-     * @param format The GeoTools AbstractGridFormat
      */
-    Raster(List data, Bounds bounds, AbstractGridFormat format) {
+    Raster(List data, Bounds bounds) {
         def matrix = data.collect{datum ->
             datum.collect{
                 it as float
@@ -62,44 +46,16 @@ class Raster {
         } as float[][]
         def factory = new GridCoverageFactory()
         this.coverage = factory.create("Raster", matrix, bounds.env)
-        this.gridFormat = format
         this.style = new geoscript.style.Raster()
     }
 
     /**
-     * Create a new Raster using a given Format to read the File.
-     * @param format The GeoTools AbstractGridFormat
-     * @param file The File
-     * @param proj The optional Projection (null by default)
-     */
-    Raster(AbstractGridFormat format, File file, Projection proj = null) {
-        Hints hints = new Hints()
-        if (proj) {
-            hints.put(Hints.DEFAULT_COORDINATE_REFERENCE_SYSTEM, proj.crs)
-        }
-        this.gridFormat = format
-        this.reader = gridFormat.getReader(file, hints)
-        this.coverage = reader.read(null)
-        this.style = new geoscript.style.Raster()
-    }
-
-    /**
-     * Create a Raster from a GeoTools AbstractGridCoverage and an AbstractGridFormat.
+     * Create a Raster from a GeoTools AbstractGridCoverage.
      * @param coverage The GeoTools AbstractGridCoverage
-     * @param format The GeoTools AbstractGridFormat
      */
-    Raster(AbstractGridCoverage coverage, AbstractGridFormat format) {
+    Raster(AbstractGridCoverage coverage) {
        this.coverage = coverage
-       this.gridFormat = format
        this.style = new geoscript.style.Raster()
-    }
-
-    /**
-     * Get the format name
-     * @return The format name
-     */
-    String getFormat() {
-        gridFormat.getName()
     }
 
     /**
@@ -107,7 +63,7 @@ class Raster {
      * @return The Projection
      */
     Projection getProj() {
-        def crs = coverage.coordinateReferenceSystem2D
+        def crs = coverage.coordinateReferenceSystem
         if (crs) {
             new Projection(crs)
         } else {
@@ -135,8 +91,12 @@ class Raster {
      * @return The size [w,h]
      */
     List getSize() {
-        def grid = coverage.gridGeometry.gridRange2D
-        [grid.width, grid.height]
+        def grid = coverage.gridGeometry.gridRange
+        double minX = grid.getLow(0)
+        double maxX = grid.getHigh(0)
+        double minY = grid.getLow(1)
+        double maxY = grid.getHigh(1)
+        [maxX - minX, maxY - minY]
     }
 
     /**
@@ -155,6 +115,7 @@ class Raster {
      */
     List getBlockSize() {
         def (int w, int h) = coverage.optimalDataBlockSizes
+        [w,h]
     }
 
     /**
@@ -180,24 +141,44 @@ class Raster {
      * @return A new Raster
      */
     Raster crop(Bounds bounds) {
-        def processor = new DefaultProcessor()
+        def processor = new CoverageProcessor()
         def params = processor.getOperation("CoverageCrop").parameters
         params.parameter("Source").value = coverage
         params.parameter("Envelope").value = new org.geotools.geometry.GeneralEnvelope(bounds.env)
-        def cropped = processor.doOperation(params)
-        new Raster(cropped, gridFormat)
+        def newCoverage = processor.doOperation(params)
+        new Raster(newCoverage)
     }
 
     /**
      * Scale this Raster
      * @param x The scale factor along the x axis
      * @param y The scale factor along the y axis
+     * @param xTrans The x translation
+     * @param yTrans The y translation
+     * @param interpolation The interpolation method (bicubic, bicubic2, bilinear, nearest)
      * @return A new scaled Raster
      */
-    Raster scale(double x, double y) {
-        def process = new ScaleCoverage()
-        def grid = process.execute(coverage, x, y, 0, 0, null)
-        new Raster(grid, gridFormat)
+    Raster scale(float x, float y, float xTrans = 0, float yTrans = 0, String interpolation = "nearest") {
+        int interp
+        if (interpolation.equalsIgnoreCase("bicubic")) {
+            interp = Interpolation.INTERP_BICUBIC
+        } else if (interpolation.equalsIgnoreCase("bicubic2")) {
+            interp = Interpolation.INTERP_BICUBIC_2
+        } else if (interpolation.equalsIgnoreCase("bilinear")) {
+            interp = Interpolation.INTERP_BILINEAR
+        } else {
+            interp = Interpolation.INTERP_NEAREST
+        }
+        def processor = new CoverageProcessor()
+        def params = processor.getOperation("Scale").parameters
+        params.parameter("Source").value = this.coverage
+        params.parameter("xScale").value = x
+        params.parameter("yScale").value = y
+        params.parameter("xTrans").value = xTrans
+        params.parameter("yTrans").value = yTrans
+        params.parameter("Interpolation").value = Interpolation.getInstance(interp);
+        def newCoverage = processor.doOperation(params)
+        new Raster(newCoverage)
     }
 
     /**
@@ -206,20 +187,12 @@ class Raster {
      * @return A new Raster
      */
     Raster reproject(Projection proj) {
-        def processor = new DefaultProcessor()
+        def processor = new CoverageProcessor()
         def params = processor.getOperation("Resample").parameters
-        params.parameter("Source").value = coverage
+        params.parameter("Source").value = this.coverage
         params.parameter("CoordinateReferenceSystem").value = proj.crs
-        def reprojected = processor.doOperation(params)
-        new Raster(reprojected, gridFormat)
-    }
-
-    /**
-     * Write the Raster to the File
-     * @param file The File
-     */
-    void write(File file) {
-       gridFormat.getWriter(file).write(coverage, null)
+        def newCoverage = processor.doOperation(params)
+        new Raster(newCoverage)
     }
 
     /**
@@ -239,9 +212,12 @@ class Raster {
      * @return A new Raster
      */
     Raster add(Raster other) {
-        def process = new AddCoveragesProcess()
-        def cov = process.execute(this.coverage, other.coverage, null)
-        new Raster(cov, gridFormat)
+        def processor = new CoverageProcessor()
+        def params = processor.getOperation("Add").parameters
+        params.parameter("Source0").value = this.coverage
+        params.parameter("Source1").value = other.coverage
+        def newCoverage = processor.doOperation(params)
+        new Raster(newCoverage)
     }
 
     /**
@@ -261,9 +237,12 @@ class Raster {
      * @return A new Raster
      */
     Raster multiply(Raster other) {
-        def process = new MultiplyCoveragesProcess()
-        def cov = process.execute(this.coverage, other.coverage, null)
-        new Raster(cov, gridFormat)
+        def processor = new CoverageProcessor()
+        def params = processor.getOperation("Multiply").parameters
+        params.parameter("Source0").value = this.coverage
+        params.parameter("Source1").value = other.coverage
+        def newCoverage = processor.doOperation(params)
+        new Raster(newCoverage)
     }
 
     /**

@@ -106,8 +106,11 @@ class Process {
      * @param closure The Groovy Closure
      */
     static void registerProcess(String name, String description, Map inputs, Map outputs, Closure closure) {
-        processFactory.cache.put(name, new ClosureProcessInfo(name:  name, description:  description,
-                parameters: inputs, results: outputs, closure: closure))
+        if (!isGeoServerAvailable) {
+            processFactory.cache.put(name, new ClosureProcessInfo(name:  name, description:  description,
+                    parameters: inputs, results: outputs, closure: closure))
+        }
+
     }
 
     /**
@@ -419,14 +422,19 @@ class Process {
     }
 
     /**
+     * Whether we are embedded in GeoServer or not
+     */
+    private static final isGeoServerAvailable;
+
+    /**
      * The GeoScriptProcessFactory
      */
-    private static final GeoScriptProcessFactory processFactory = new GeoScriptProcessFactory()
+    private static final GeoScriptProcessFactory processFactory
 
     /**
      * The GeoScriptFactoryIteratorProvider
      */
-    private static final GeoScriptFactoryIteratorProvider provider = new GeoScriptFactoryIteratorProvider()
+    private static final GeoScriptFactoryIteratorProvider provider
 
     /**
      * The GeoScriptFactoryIteratorProvider
@@ -442,11 +450,21 @@ class Process {
     }
 
     /**
-     * Add the ability to dynamically create and register custom Functions
+     * Add the ability to dynamically create and register custom Processes
      */
     static {
-        GeoTools.addClassLoader(provider.class.classLoader)
-        GeoTools.addFactoryIteratorProvider(provider)
+        try {
+            Class.forName("org.geoserver.config.GeoServer")
+            isGeoServerAvailable = true
+        } catch (ClassNotFoundException ex) {
+            isGeoServerAvailable = false
+        }
+        if (!isGeoServerAvailable) {
+            processFactory = new GeoScriptProcessFactory()
+            provider = new GeoScriptFactoryIteratorProvider()
+            GeoTools.addClassLoader(provider.class.classLoader)
+            GeoTools.addFactoryIteratorProvider(provider)
+        }
     }
 
     /**
@@ -463,6 +481,8 @@ class Process {
             return org.geotools.feature.FeatureCollection
         } else if (geoscript.layer.Cursor.isAssignableFrom(geoScriptClass)) {
             return org.geotools.feature.FeatureCollection
+        } else if (geoscript.raster.Raster.isAssignableFrom(geoScriptClass)) {
+            return org.opengis.coverage.grid.GridCoverage
         } else {
             return geoScriptClass
         }
@@ -480,6 +500,8 @@ class Process {
             return geoscript.geom.Bounds
         } else if (org.geotools.feature.FeatureCollection.isAssignableFrom(geoToolsClass)) {
             return geoscript.layer.Cursor
+        } else if (org.opengis.coverage.grid.GridCoverage.isAssignableFrom(geoToolsClass)) {
+            return geoscript.raster.Raster
         } else {
             return geoToolsClass
         }
@@ -520,6 +542,13 @@ class Process {
         }
         else if (geoscript.layer.Cursor.isAssignableFrom(target) && org.geotools.feature.FeatureCollection.isInstance(source)) {
             return new geoscript.layer.Cursor(source as org.geotools.feature.FeatureCollection)
+        }
+        // GridCoverage and Raster
+        else if (org.opengis.coverage.grid.GridCoverage.isAssignableFrom(target) && geoscript.raster.Raster.isInstance(source)) {
+            return (source as geoscript.raster.Raster).coverage
+        }
+        else if (geoscript.raster.Raster.isAssignableFrom(target) && org.opengis.coverage.grid.GridCoverage.isInstance(source)) {
+            return new geoscript.raster.Raster(source as org.opengis.coverage.grid.GridCoverage)
         }
         // Just return an unconverted Object
         else {

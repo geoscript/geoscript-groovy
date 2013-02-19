@@ -19,6 +19,7 @@ import org.geotools.data.Query
 import org.opengis.coverage.grid.GridGeometry
 import org.opengis.filter.expression.Literal
 import org.geotools.feature.NameImpl
+import org.opengis.filter.capability.FunctionName
 
 /**
  * A GeoScript Function either wraps an existing GeoTools Function or an CQL String.
@@ -122,12 +123,28 @@ class Function extends Expression {
     }
 
     /**
+     * Get a List of all Function names
+     * @return A List of all Function names
+     */
+    static List<String> getFunctionNames() {
+        List names = []
+        CommonFactoryFinder.getFunctionFactories().each { f ->
+            f.functionNames.each { fn ->
+                names.add((fn instanceof FunctionName) ? fn.functionName.toString() : fn.toString())
+            }
+        }
+        names.sort()
+    }
+
+    /**
      * Register a new Function by name with a Closure.
      * @param name The name of the new Function
      * @param closure The Closure
      */
     static void registerFunction(String name, Closure closure) {
-        functionFactory.cache.put(name, closure)
+        if (!isGeoServerAvailable) {
+            functionFactory.cache.put(name, closure)
+        }
     }
 
     /**
@@ -216,24 +233,39 @@ class Function extends Expression {
     }
 
     /**
+     * Whether we are embedded in GeoServer or not
+     */
+    private static final isGeoServerAvailable;
+
+    /**
      * A GeoScript FunctionFactory
      */
-    private static final GeoScriptFunctionFactory functionFactory = new GeoScriptFunctionFactory()
+    private static final GeoScriptFunctionFactory functionFactory
 
     /**
      * A GeoScript FactoryIteratorProvider
      */
-    private static final GeoScriptFactoryIteratorProvider provider = new GeoScriptFactoryIteratorProvider()
+    private static final GeoScriptFactoryIteratorProvider provider
 
     /**
      * Add the ability to dynamically create and register custom Functions
      */
     static {
-        GeoTools.addClassLoader(provider.class.classLoader)
-        GeoTools.addFactoryIteratorProvider(provider)
-        // If a custom function is called before a standard function,
-        // the standard functions (through CQL) can't be found.
-        org.geotools.filter.text.ecql.ECQL.toExpression("centroid(the_geom)")
+        try {
+            Class.forName("org.geoserver.config.GeoServer")
+            isGeoServerAvailable = true
+        } catch (ClassNotFoundException ex) {
+            isGeoServerAvailable = false
+        }
+        if (!isGeoServerAvailable) {
+            functionFactory = new GeoScriptFunctionFactory()
+            provider = new GeoScriptFactoryIteratorProvider()
+            GeoTools.addClassLoader(provider.class.classLoader)
+            GeoTools.addFactoryIteratorProvider(provider)
+            // If a custom function is called before a standard function,
+            // the standard functions (through CQL) can't be found.
+            org.geotools.filter.text.ecql.ECQL.toExpression("centroid(the_geom)")
+        }
     }
 
     /**

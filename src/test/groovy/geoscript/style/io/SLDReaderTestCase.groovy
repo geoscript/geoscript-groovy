@@ -18,7 +18,7 @@ class SLDReaderTestCase {
         SLDReader reader = new SLDReader()
         Style style = reader.read(file)
         assertNotNull(style)
-        assertNotNull(style.createGtStyle())
+        assertNotNull(style.gtStyle)
     }
 
     @Test void readFromInputStream() {
@@ -29,7 +29,7 @@ class SLDReaderTestCase {
         SLDReader reader = new SLDReader()
         Style style = reader.read(inputStream)
         assertNotNull(style)
-        assertNotNull(style.createGtStyle())
+        assertNotNull(style.gtStyle)
     }
 
     @Test void readFromString() {
@@ -91,7 +91,7 @@ class SLDReaderTestCase {
         SLDReader reader = new SLDReader()
         Style style = reader.read(sld)
         assertNotNull(style)
-        assertNotNull(style.createGtStyle())
+        assertNotNull(style.gtStyle)
     }
 
 }

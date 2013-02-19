@@ -133,6 +133,9 @@ class Feature {
      * @return The attribute value
      */
     Object get(String name) {
+        if (name != null && !schema.has(name) && name.length() >= 10) {
+            name = name.substring(0,10)
+        }
         Object obj = f.getAttribute(name)
         if (obj instanceof JtsGeometry) {
             return Geometry.wrap((JtsGeometry)obj)
@@ -143,23 +146,49 @@ class Feature {
     }
 
     /**
+     * Get a value by a Field.
+     * <p><code>Field fld = feature.schema.get("name")</code></p>
+     * <p><code>String name = feature.get(fld)</code></p>
+     * @param name The Field name
+     * @return The attribute value
+     */
+    Object get(Field field) {
+        get(field.name)
+    }
+
+    /**
      * Get a value by Field name.  This method supports
      * a the following syntax:
      * <p><code>String name = feature["name"]</code></p>
      * @param name The Field name
-     * @return The Field value
+     * @return The attribute value
      */
     Object getAt(String name) {
         get(name)
     }
 
     /**
-     * Set a value for a Field.
+     * Get a value by Field.  This method supports
+     * a the following syntax:
+     * <p><code>Field fld = feature.schema.get("name")</code></p>
+     * <p><code>String name = feature[fld]</code></p>
+     * @param name The Field
+     * @return The attribute value
+     */
+    Object getAt(Field field) {
+        get(field)
+    }
+
+    /**
+     * Set a value.
      * <p><code>feature.set("name") = "lighthouse"</code></p>
      * @param name The Field name
      * @param value The new attribute value
      */
     void set(String name, Object value) {
+        if (name != null && !schema.has(name) && name.length() >= 10) {
+            name = name.substring(0,10)
+        }
         if (name.equalsIgnoreCase(schema.geom.name)) {
             f.defaultGeometry = ((Geometry)value).g
         } else {
@@ -169,7 +198,18 @@ class Feature {
             layer.queueModified(this, name)
         }
     }
-    
+
+    /**
+     * Set a value.
+     * <p><code>Field fld = feature.schema.get("name")</code></p>
+     * <p><code>feature.set(fld) = "lighthouse"</code></p>
+     * @param name The Field
+     * @param value The new attribute value
+     */
+    void set(Field field, Object value) {
+        set(field.name, value)
+    }
+
     /**
      * Another way of setting a value. This method supports
      * the following syntax:
@@ -179,6 +219,17 @@ class Feature {
      */
     void putAt(String name, Object value) {
         set(name, value)
+    }
+
+    /**
+     * Set a value
+     * <p><code>Field fld = feature.schema.get("name")</code></p>
+     * <p><code>feature[fld] = "lighthouse"</code></p>
+     * @param name The Field
+     * @param value The new attribute value
+     */
+    void putAt(Field field, Object value) {
+        set(field, value)
     }
 
     /**
@@ -211,11 +262,21 @@ class Feature {
     private static SimpleFeature buildFeature(Map attributes, String id, Schema schema) {
         SimpleFeatureBuilder featureBuilder = new SimpleFeatureBuilder(schema.featureType)
         attributes.each{
-            if (it.value instanceof Geometry) {
-                featureBuilder.set(it.key, it.value.g)
+            String name = it.key
+            Object value = it.value
+            // Shapefiles can only have field names of 10 characters
+            // or less, so if the schema doesn't contain a Field by the
+            // original name, try truncating it to 10 characters
+            if (!schema.has(name) && name.length() >= 10) {
+                name = name.substring(0,10)
             }
-            else {
-                featureBuilder.set(it.key, it.value);
+            if (schema.has(name)) {
+                if (value instanceof Geometry) {
+                    featureBuilder.set(name, value.g)
+                }
+                else {
+                    featureBuilder.set(name, value);
+                }
             }
         }
         featureBuilder.buildFeature(id)

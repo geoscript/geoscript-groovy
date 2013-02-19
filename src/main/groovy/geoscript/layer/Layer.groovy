@@ -1,6 +1,7 @@
 package geoscript.layer
 
 import geoscript.feature.Schema
+import geoscript.filter.Expression
 import geoscript.geom.*
 import geoscript.proj.Projection
 import geoscript.feature.*
@@ -10,12 +11,14 @@ import geoscript.style.Style
 import geoscript.style.Symbolizer
 import org.geotools.data.FeatureSource
 import org.geotools.data.DefaultQuery
+import org.geotools.data.Query
 import org.geotools.data.Transaction
 import org.geotools.data.FeatureStore
 import org.geotools.data.DefaultTransaction
 import org.geotools.feature.FeatureCollections
 import org.geotools.feature.FeatureCollection
 import org.geotools.feature.FeatureIterator
+import org.geotools.process.vector.VectorToRasterProcess
 import org.opengis.filter.sort.SortOrder
 import org.opengis.feature.simple.SimpleFeatureType
 import org.opengis.feature.simple.SimpleFeature
@@ -31,7 +34,6 @@ import geoscript.layer.io.GmlWriter
 import geoscript.layer.io.GeoJSONWriter
 import org.geotools.data.collection.ListFeatureCollection
 import geoscript.style.Raster
-import org.geotools.process.raster.VectorToRasterProcess
 import java.awt.Dimension
 import org.geotools.coverage.grid.GridCoverage2D
 import geoscript.raster.Raster
@@ -96,7 +98,7 @@ class Layer {
     /**
      * The FilterFactory2 for creating Filters
      */
-    private final static FilterFactory2 filterFactory = org.geotools.factory.CommonFactoryFinder.getFilterFactory2(org.geotools.factory.GeoTools.getDefaultHints())
+    protected final static FilterFactory2 filterFactory = org.geotools.factory.CommonFactoryFinder.getFilterFactory2(org.geotools.factory.GeoTools.getDefaultHints())
 
     /**
      * Create a new Layer from a GeoTools FeatureSource
@@ -108,7 +110,7 @@ class Layer {
         this.fs = fs
         this.schema = new Schema(fs.schema)
         this.projection = new Projection(fs.schema.coordinateReferenceSystem)
-        setDefaultSymbolizer(this.schema.geom.typ)
+        setDefaultSymbolizer(this.schema.geom?.typ)
     }
 
     /**
@@ -121,7 +123,11 @@ class Layer {
         this.fs = layer.fs
         this.schema = layer.schema
         this.projection = new Projection(fs.schema.coordinateReferenceSystem)
-        setDefaultSymbolizer(this.schema.geom.typ)
+        if (layer.style) {
+            this.style = layer.style
+        } else {
+            setDefaultSymbolizer(this.schema.geom?.typ)
+        }
     }
 
     /**
@@ -137,7 +143,7 @@ class Layer {
         this.fs = fs
         this.schema = schema
         this.projection = new Projection(fs.schema.coordinateReferenceSystem)
-        setDefaultSymbolizer(this.schema.geom.typ)
+        setDefaultSymbolizer(this.schema.geom?.typ)
     }
 
     /**
@@ -161,7 +167,7 @@ class Layer {
         this.fs = layer.fs
         this.schema = new Schema(layer.fs.schema)
         this.projection = new Projection(fs.schema.coordinateReferenceSystem)
-        setDefaultSymbolizer(this.schema.geom.typ)
+        setDefaultSymbolizer(this.schema.geom?.typ)
     }
 
     /**
@@ -176,7 +182,7 @@ class Layer {
         this.fs = layer.fs
         this.schema = new Schema(layer.fs.schema)
         this.projection = new Projection(fs.schema.coordinateReferenceSystem)
-        setDefaultSymbolizer(this.schema.geom.typ)
+        setDefaultSymbolizer(this.schema.geom?.typ)
     }
 
     /**
@@ -218,7 +224,7 @@ class Layer {
      */
     private static Layer createLayerFromFeatureCollection(String name, FeatureCollection fc) {
         Schema s = new Schema(fc.schema)
-        Schema schema =  new Schema(name, s.fields)
+        Schema schema =  new Schema(name, s.fields, fc.schema.name.namespaceURI ?: "http://geoscript.org/feature")
         Layer layer = new Memory().create(schema)
         layer.add(fc)
         layer
@@ -229,9 +235,39 @@ class Layer {
      * @param geometryType The geometry type
      * @return A default Symbolizer
      */
-    private void setDefaultSymbolizer(String geometryType) {
+    protected void setDefaultSymbolizer(String geometryType) {
         if(!this.style) {
-            this.style = Symbolizer.getDefault(geometryType)
+            if (this instanceof Shapefile || this.format.equalsIgnoreCase("Directory")) {
+                def dir
+                def fileName
+                if (this instanceof Shapefile) {
+                    def shp = this as Shapefile
+                    fileName = shp.file.name.substring(0, shp.file.name.lastIndexOf(".shp"))
+                    dir = shp.file.parentFile
+                } else {
+                    dir = this.workspace.ds.info.source.path
+                    fileName = this.name
+                }
+                // Check for SLD
+                def f = new File(dir,"${fileName}.sld")
+                if (f.exists()) {
+                    def reader = new geoscript.style.io.SLDReader()
+                    this.style = reader.read(f)
+                }
+                // Check for CSS but only if the style is still falsey
+                if (!this.style) {
+                    f = new File(dir,"${fileName}.css")
+                    if (f.exists()) {
+                        def reader = new geoscript.style.io.CSSReader()
+                        this.style = reader.read(f)
+                    }
+                }
+            }
+            // If the Layer isn't a Shapefile or if the Shapefile didn't
+            // have a companion SLD or CSS file
+            if (!this.style) {
+                this.style = Symbolizer.getDefault(geometryType ?: "geometry")
+            }
         }
     }
 
@@ -394,15 +430,57 @@ class Layer {
     }
 
     /**
-     * Get a Cursor over the Features of the Layer.
-     * @param filer The Filter or Filter String to limit the Features. Defaults to null.
-     * @param sort A List of Lists that define the sort order [[Field or Field name, "ASC" or "DESC"],...]. Not all Layers
-     * support sorting!
+     * Get a Cursor over the Features of the Layer using named parameters.
+     * @param options.  The Map of named parameters can include:
+     * <ul>
+     *  <li>filter = The Filter or Filter String to limit the Features. Defaults to null.</li>
+     *  <li>sort = A List of Lists that define the sort order [[Field or Field name, "ASC" or "DESC"],...]. Not all Layers
+     *  support sorting!</li>
+     *  <li>max= The maximum number of Features to include in the Cursor</li>
+     *  <li>start = The index of the record to start the cursor at.  Together with maxFeatures this simulates paging.
+     * Not all Layers support the start index and paging!</li>
+     *  <li>fields = A List of Fields or Field names to include.  Used to select only a subset of Fields.</li>
+     * </ul>
      * @return A Cursor
      */
-    Cursor getCursor(def filter = null, List sort = null) {
+    Cursor getCursor(Map options) {
+        getCursor(options.get("filter", null), options.get("sort", null),
+            options.get("max",-1), options.get("start", -1),options.get("fields", null))
+    }
+
+    /**
+     * Get a Cursor over the Features of the Layer.
+     * @param filter The Filter or Filter String to limit the Features. Defaults to null.
+     * @param sort A List of Lists [[Field or Field name, "ASC" or "DESC"],...] or a List of Strings ["name DESC", "price ASC"]
+     * that define the sort order. Not all Layers support sorting!
+     * @param max The maximum number of Features to include in the Cursor
+     * @param start The index of the record to start the cursor at.  Together with maxFeatures this simulates paging.
+     * Not all Layers support the start index and paging!
+     * @param fields A List of Fields or Field names to include.  Used to select only a subset of Fields.
+     * @return A Cursor
+     */
+    Cursor getCursor(def filter = null, List sort = null, int max = -1, int start = -1, List fields = null) {
+        Map cursorOptions = [:]
         Filter f = (filter == null) ? Filter.PASS : new Filter(filter)
         DefaultQuery q = new DefaultQuery(getName(), f.filter)
+        if (fields != null && fields.size() > 0) {
+            q.propertyNames = ((fields[0] instanceof Field) ? fields*.name : fields) as String[]
+        }
+        if (max > -1) {
+            q.maxFeatures = max
+        }
+        if (start > -1) {
+            if (fs.queryCapabilities.offsetSupported) {
+                q.startIndex = start
+            } else {
+                cursorOptions.start = start
+                cursorOptions.max = max
+                // Reset max features because the we will
+                // be using the MaxFeaturesIterator in Cursor
+                // and it needs all of the Features to simulate paging
+                q.maxFeatures = Integer.MAX_VALUE
+            }
+        }
         if (getProj()) {
             q.coordinateSystem = getProj().crs
         }
@@ -410,8 +488,25 @@ class Layer {
         if (sort != null && sort.size() > 0) {
             // Create a list of SortBy's
             List sortBy = sort.collect{s ->
-                s = s instanceof List ? s : [s, "ASC"]
-                filterFactory.sort(s[0] instanceof Field ? s[0].name : s[0], SortOrder.valueOf(s[1]))
+                String sortName
+                String sortDirection
+                // ["name","ASC"] or ["name"] or [nameField,"ASC"]
+                if (s instanceof List) {
+                    sortName = s[0] instanceof Field ? s[0].name : s[0]
+                    sortDirection = s.size() > 1 ? s[1] : "ASC"
+                }
+                // "name ASC", "name"
+                else {
+                    List values = s.toString().split(" ") as List
+                    if (values.last().toUpperCase() in ["ASC","DESC"]) {
+                        sortDirection = values.pop().toUpperCase()
+                        sortName = values.join(" ")
+                    } else {
+                        sortName = values.join(" ")
+                        sortDirection = "ASC"
+                    }
+                }
+                filterFactory.sort(sortName, SortOrder.valueOf(sortDirection))
             }
             // Turn it into an array
             def sortByArray = sortBy as org.geotools.filter.SortByImpl[]
@@ -420,11 +515,11 @@ class Layer {
             if (fs.queryCapabilities.supportsSorting(sortByArray)) {
                 q.sortBy = sortByArray
             } else {
-                println "This Layer does not support sorting!"
+                cursorOptions.sort = sortByArray
             }
         }
         def col = fs.getFeatures(q)
-        return new Cursor(col, this)
+        return new Cursor(cursorOptions, col, this)
     }
 
     /**
@@ -438,12 +533,15 @@ class Layer {
 
     /**
      * Update the values of a Field
-     * @param fld The Field whose values will be udpated
-     * @param value Either a static value or a Closure that takes
-     * a Feature and return an Object
+     * @param fld The Field whose values will be updated
+     * @param value Either a static value, a Closure that takes
+     * a Feature and return an Object, an Expression, or a Groovy Script (if isScript is true)
      * @param filter The Filter to limit the Features that will be updated
+     * @param isScript A flag for whether the value is a Groovy script or not (defaults to false).
+     * If the value is a script, it can access the Feature as variable f and the counter as
+     * variable c.
      */
-    void update(Field fld, def value, def filter = null) {
+    void update(Field fld, def value, def filter = null, boolean isScript = false) {
         Filter f = (filter == null) ? Filter.PASS : new Filter(filter)
         Transaction t = new DefaultTransaction("calculateTransaction")
         try {
@@ -456,6 +554,31 @@ class Layer {
                     Feature feature = c.next()
                     def idFilter = filterFactory.id(java.util.Collections.singleton(feature.f.identifier))
                     store.modifyFeatures(ad, value.call(feature), idFilter)
+                }
+                c.close()
+            }
+            else if (value instanceof Expression) {
+                Expression expression = value as Expression
+                Cursor c = getCursor(f)
+                while(c.hasNext()) {
+                    Feature feature = c.next()
+                    def idFilter = filterFactory.id(java.util.Collections.singleton(feature.f.identifier))
+                    store.modifyFeatures(ad, expression.evaluate(feature), idFilter)
+                }
+                c.close()
+            }
+            else if (isScript) {
+                int counter = 0
+                Cursor c = getCursor(f)
+                while(c.hasNext()) {
+                    Feature feature = c.next()
+                    def idFilter = filterFactory.id(java.util.Collections.singleton(feature.f.identifier))
+                    Binding binding = new Binding()
+                    binding.setVariable("f", feature)
+                    binding.setVariable("c", counter)
+                    GroovyShell shell = new GroovyShell(binding)
+                    store.modifyFeatures(ad.name, shell.evaluate(value), idFilter)
+                    counter++
                 }
                 c.close()
             }
@@ -487,6 +610,11 @@ class Layer {
                 FeatureStore<SimpleFeatureType, SimpleFeature> store = (FeatureStore)fs
                 store.transaction = t
                 o.each{f->
+                    if (f.schema == null) {
+                        f.schema = schema
+                    } else if (f.schema != this.schema) {
+                        f = this.schema.feature(o.attributes)
+                    }
                     FeatureCollection fc = FeatureCollections.newCollection()
                     fc.add(f.f)
                     store.addFeatures(fc)
@@ -530,11 +658,13 @@ class Layer {
             if (o instanceof Feature) {
                 f = o
                 if (f.schema == null) {
-                    f.schema = schema
+                    f.schema = this.schema
+                } else if (f.schema != this.schema) {
+                    f = this.schema.feature(o.attributes)
                 }
             }
             else {
-                f = schema.feature(o)
+                f = this.schema.feature(o)
             }
             FeatureCollection fc = FeatureCollections.newCollection()
             fc.add(f.f)
@@ -608,22 +738,49 @@ class Layer {
     Layer reproject(Projection p, String newName = newname(), int chunk=1000) {
         Schema s = schema.reproject(p, newName)
         Layer l = workspace.create(s)
-        DefaultQuery q = new DefaultQuery(getName(), Filter.PASS.filter)
+        reproject(l, chunk)
+    }
+
+    /**
+     * Reproject the Layer to another Layer in the given Workspace
+     * @param p The Projection
+     * @param outputWorkspace The output Workspace
+     * @param newName The name of the new Layer
+     * @param chunk The number of Features to reproject in one batch
+     * @return The reprojected Layer
+     */
+    Layer reproject(Projection p, Workspace outputWorkspace, String newName, int chunk=1000) {
+        Schema s = schema.reproject(p, newName)
+        Layer l = outputWorkspace.create(s)
+        reproject(l, chunk)
+    }
+
+    /**
+     * Reproject this Layer to another Layer that already exists.
+     * @param projectedLayer The already created projected Layer
+     * @param chunk The number of Features to reproject in one batch
+     * @return The projected Layer
+     */
+    Layer reproject(Layer projectedLayer, int chunk = 1000) {
+        Query q = new Query(getName(), Filter.PASS.filter)
         if (getProj() != null) {
             q.coordinateSystem = getProj().crs
         }
-        q.coordinateSystemReproject = p.crs
+        q.coordinateSystemReproject = projectedLayer.proj.crs
         FeatureCollection fc = fs.getFeatures(q)
         FeatureIterator i = fc.features()
-        while (true) {
-            def features = readFeatures(i, fs.schema, chunk)
-            if (features.isEmpty()) {
-                break
+        try {
+            while (true) {
+                def features = readFeatures(i, fs.schema, chunk)
+                if (features.isEmpty()) {
+                    break
+                }
+                projectedLayer.fs.addFeatures(features)
             }
-            l.fs.addFeatures(features)
+        } finally {
+            i.close()
         }
-        i.close()
-        l
+        projectedLayer
     }
 
     /**
@@ -651,7 +808,7 @@ class Layer {
      */
     Layer filter(def filter = null, String newName = newname()) {
         Filter f = (filter == null) ? Filter.PASS : new Filter(filter)
-        Schema s = new Schema(newName, this.schema.fields)
+        Schema s = new Schema(newName, this.schema.fields, this.schema.uri)
         Layer l = this.workspace.create(s)
         DefaultQuery q = new DefaultQuery(getName(), f.filter)
         FeatureCollection fc = this.fs.getFeatures(q)
@@ -791,7 +948,7 @@ class Layer {
         def dim = new Dimension(gridSize[0] as int, gridSize[1] as int)
         def fld =  filterFactory.property(field instanceof Field ? field.name : field)
         def cov = VectorToRasterProcess.process(fs.features, fld, dim, bounds.env, rasterName, null)
-        def tif = new GeoTIFF(cov)
+        def tif = new Raster(cov)
         return tif
     }
 
@@ -850,7 +1007,7 @@ class Layer {
      * @param out A GeoJSON String
      */
     String toJSONString() {
-        geoJSONWriter.write(layer)
+        geoJSONWriter.write(this)
     }
 
     /**

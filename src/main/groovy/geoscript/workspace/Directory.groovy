@@ -1,5 +1,6 @@
 package geoscript.workspace
 
+import geoscript.layer.Layer
 import org.geotools.data.directory.DirectoryDataStore
 import org.geotools.data.shapefile.ShapefileDataStoreFactory
 
@@ -35,6 +36,20 @@ class Directory extends Workspace {
      */
     String getFormat() {
         return "Directory"
+    }
+
+    /**
+     * Get a Layer by name
+     * @param The Layer name
+     * @return A Layer
+     */
+    @Override
+    Layer get(String name) {
+        if (name.endsWith(".shp")) {
+            super.get(name.substring(0,name.lastIndexOf(".shp")))
+        } else {
+            super.get(name)
+        }
     }
 
     /**

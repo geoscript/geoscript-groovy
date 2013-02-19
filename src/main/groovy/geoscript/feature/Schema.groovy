@@ -74,7 +74,7 @@ class Schema {
      * @param uri The namespace uri
      */
     Schema(String name, def fields, String uri = "http://geoscript.org/feature") {
-        this(buildFeatureType(name, fields))
+        this(buildFeatureType(name, fields, uri))
     }
 
     /**
@@ -154,6 +154,15 @@ class Schema {
     }
 
     /**
+     * Whether this Schema contains a Field by the given name or not
+     * @param field The Field or Field name
+     * @return Whether this Schema contains a Field by the given name or not
+     */
+    boolean has(def field) {
+        featureType.getDescriptor(field instanceof Field ? field.name : field as String) != null
+    }
+
+    /**
      * Get the List of Fields
      * @return The List of Fields
      */
@@ -216,22 +225,160 @@ class Schema {
      * Geometry type
      * @param geometryType The new type of Geometry
      * @param name The new Schema name
+     * @return A new Schema
      */
     Schema changeGeometryType(String geometryType, String name) {
+        changeField(this.geom, new Field(this.geom.name, geometryType, this.geom.proj), name)
+    }
+
+    /**
+     * Create a new Schema by changing an existing Field's definition.
+     * @param oldField The old existing Field
+     * @param newField The new Field definition
+     * @param name The new Schema name
+     * @return A new Schema
+     */
+    Schema changeField(Field oldField, Field newField, String name) {
+        Map fieldsToChange = [:]
+        fieldsToChange.put(oldField, newField)
+        changeFields(fieldsToChange, name)
+    }
+
+    /**
+     * Create a new Schema by changing one or more Field's definition.
+     * @param fieldsToChange A Map of old existing Fields as keys and new Fields as values
+     * @param name The new Schema name
+     * @return A new Schema
+     */
+    Schema changeFields(Map<Field, Field> fieldsToChange, String name) {
         List flds = []
         fields.each{fld ->
-            if (fld.isGeometry()) {
-                flds.add(new Field(fld.name, geometryType, fld.proj))
-            }
-            else {
-                flds.add(new Field(fld.name, fld.typ))
+            if (fieldsToChange.containsKey(fld)) {
+                flds.add(fieldsToChange[fld])
+            } else {
+                flds.add(new Field(fld))
             }
         }
         new Schema(name, flds)
     }
 
     /**
-     * The string reprentation
+     * Create a new Schema with a new name by adding a Field to the current Schema
+     * @param field The Field to add
+     * @param name The name of the new Schema
+     * @return The new Schema with the added Field
+     */
+    Schema addField(Field field, String name) {
+        addFields([field], name)
+    }
+
+    /**
+     * Create a new Schema with a new name by adding a List of Fields to the current Schema
+     * @param fields The List of Fields to add
+     * @param name The name of the new Schema
+     * @return The new Schema with the added Fields
+     */
+    Schema addFields(List<Field> newFields, String name) {
+        List flds = []
+        fields.each{fld ->
+            flds.add(new Field(fld))
+        }
+        newFields.each {fld ->
+            flds.add(fld)
+        }
+        new Schema(name, flds)
+    }
+
+    /**
+     * Create a new Schema with a new name by removing a Field from the current Schema
+     * @param field The Field to remove
+     * @param name The name of the new Schema
+     * @return The new Schema with the removed Field
+     */
+    Schema removeField(Field field, String name) {
+        removeFields([field], name)
+    }
+
+    /**
+     * Create a new Schema with a new name by removing a List of Fields from the current Schema
+     * @param fieldsToRemove The List of Fields to remove
+     * @param name The name of the new Schema
+     * @return The new Schema with the removed Fields
+     */
+    Schema removeFields(List<Field> fieldsToRemove, String name) {
+        List fieldNamesToRemove = fieldsToRemove.collect{fld -> fld.name.toLowerCase()}
+        List flds = []
+        fields.each{fld ->
+            if (!fieldNamesToRemove.contains(fld.name.toLowerCase())) {
+                flds.add(new Field(fld))
+            }
+        }
+        new Schema(name, flds)
+    }
+
+    /**
+     * Create a new Schema by adding another Schema to this current Schema. The Geometry Field is taken from the
+     * current Schema.
+     * @param otherSchema The other Schema
+     * @param newName The new Schema's name
+     * @param options A Map of optional parameters:
+     * <ul>
+     * <li>postfixAll: Whether to postfix all field names (true) or not (false). If true, all Fields from the
+     * this current Schema will have '1' at the end of their name while the other Schema's Fields will have '2'.
+     * Defaults to false.</li>
+     * <li>includeDuplicates: Whether or not to include duplicate fields names. Defaults to false. If a duplicate is found
+     * a '2' will be added.</li>
+     * <li>maxFieldNameLength: The maximum new Field name length (mostly to support shapefiles where Field names can't be longer
+     * than 10 characters</li>
+     * </ul>
+     * @return A Map with the new Schema as schema and two Maps containing the old and new Field names as fields.
+     */
+    Map addSchema(Map options = [:], Schema otherSchema, String newName) {
+        boolean postfixAll = options.get("postfixAll", false)
+        boolean includeDuplicates = options.get("includeDuplicates", false)
+        int maxFieldNameLength = options.get("maxFieldNameLength", -1)
+        String firstPostfix = options.get("firstPostfix","1")
+        String secondPostfix = options.get("secondPostfix","2")
+        List flds = []
+        List fieldNames = []
+        Map fieldMap1 = [:]
+        this.fields.each {fld ->
+            Field newField
+            String fieldName = fld.name
+            if (maxFieldNameLength > -1 && fieldName.length() + 1 > maxFieldNameLength) {
+                fieldName = fieldName.substring(0, maxFieldNameLength)
+            }
+            if (fld.isGeometry()) {
+                newField = new Field(fld)
+            } else {
+                newField = new Field ((postfixAll) ? "${fieldName}${firstPostfix}" : fieldName, fld.typ)
+            }
+            fieldMap1[fld.name] = newField.name
+            flds.add(newField)
+            fieldNames.add(newField.name)
+        }
+        Map fieldMap2 = [:]
+        otherSchema.fields.each {fld ->
+            if (!fld.isGeometry()) {
+                String fieldName = fld.name
+                if (maxFieldNameLength > -1 && fieldName.length() + 1 > maxFieldNameLength) {
+                    fieldName = fieldName.substring(0, maxFieldNameLength)
+                }
+                boolean isDuplicate = fieldNames.contains(fld.name)
+                Field newField = new Field ((postfixAll || isDuplicate) ? "${fieldName}${secondPostfix}" : fieldName, fld.typ)
+                if (includeDuplicates || (!includeDuplicates && !isDuplicate)) {
+                    fieldMap2[fld.name] = newField.name
+                    flds.add(newField)
+                    fieldNames.add(newField.name)
+                }
+            }
+        }
+        List fieldMaps = [fieldMap1, fieldMap2]
+        [schema: new Schema(newName, flds), fields: fieldMaps]
+    }
+
+    /**
+     * The string representation
      * @return The string representation
      */
     String toString() {
@@ -326,5 +473,17 @@ class Schema {
             }
         }
         builder.buildFeatureType()
+    }
+
+    boolean equals(Object obj) {
+        if (obj instanceof Schema) {
+            this.featureType.equals(obj.featureType)
+        } else {
+            false
+        }
+    }
+
+    int hashCode() {
+        this.featureType.hashCode()
     }
 }

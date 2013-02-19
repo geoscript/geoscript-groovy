@@ -54,13 +54,22 @@ class ProjectionTestCase {
     @Test void getBounds() {
         Bounds bounds = new Projection("EPSG:2927").bounds
         assertNotNull(bounds)
+        assertEquals "EPSG:2927", bounds.proj.id
+        assertEquals(641400.91, bounds.minX, 0.1)
+        assertEquals(75407.62, bounds.minY, 0.1)
+        assertEquals(2557520.70, bounds.maxX, 0.1)
+        assertEquals(854063.65, bounds.maxY, 0.1)
+    }
+
+    @Test void getGeoBounds() {
+        Bounds bounds = new Projection("EPSG:2927").geoBounds
+        assertNotNull(bounds)
         assertEquals "EPSG:4326", bounds.proj.id
         assertEquals(-124.5, bounds.minX, 0.1)
         assertEquals(45.55, bounds.minY, 0.1)
         assertEquals(-116.9, bounds.maxX, 0.1)
         assertEquals(47.6, bounds.maxY, 0.1)
     }
-    
 
     @Test void transform() {
         Point point = new Point(1181199.82, 652100.72)

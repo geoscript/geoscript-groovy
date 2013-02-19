@@ -40,6 +40,10 @@ class PropertyTestCase {
         assertEquals "POINT (10 10)", features[1].geom.wkt
         assertEquals "POINT (20 20)", features[2].geom.wkt
         assertEquals "POINT (30 30)", features[3].geom.wkt
+
+        layer = property.get("points.properties")
+        assertNotNull(layer)
+        assertEquals 4, layer.count
     }
 
     @Test void create() {

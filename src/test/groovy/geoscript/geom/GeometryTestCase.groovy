@@ -95,6 +95,8 @@ class GeometryTestCase {
     @Test void wrap() {
         Geometry g = Geometry.wrap(Geometry.factory.createPoint(new Coordinate(111,-47)))
         assertEquals "POINT (111 -47)", g.toString()
+        g = Geometry.wrap(null)
+        assertNull g
     }
 	
     @Test void fromWkt() {
@@ -363,9 +365,7 @@ class GeometryTestCase {
         Bounds b = new Bounds(4, 45, 19, 53)
         Geometry g = b.geometry
         Geometry pts = Geometry.createRandomPointsInGrid(b, number, true, 0.75)
-        // Yes, this is actually correct.  More random points can be generated than the number
-        // given if required
-        assertEquals 121, pts.numPoints
+        assertEquals 100, pts.numPoints
         pts.coordinates.each {coord ->
             assertTrue g.contains(new Point(coord.x, coord.y))
         }
@@ -430,5 +430,77 @@ class GeometryTestCase {
         // floating single
         Geometry g4 = g1.reducePrecision("floating_single", pointwise: true, removecollapsed: true)
         assertEquals "POINT (5.19775390625 51.07421875)", g4.wkt
+    }
+
+    @Test void asType() {
+        Geometry g = Geometry.fromWKT("POLYGON ((0 0, 0 10, 10 10, 10 0, 0 0))")
+        Bounds b = g as Bounds
+        assertEquals "(0.0,0.0,10.0,10.0)", b.toString()
+        Point p = g as Point
+        assertEquals "POINT (5 5)", p.wkt
+    }
+
+    @Test void fromString() {
+        // WKT
+        Geometry g = Geometry.fromString("POINT (1 1)")
+        assertNotNull g
+        assertEquals "POINT (1 1)", g.wkt
+        // GeoJSON
+        g = Geometry.fromString("""{ "type": "Point", "coordinates": [1.0, 1.0] }""")
+        assertNotNull g
+        assertEquals "POINT (1 1)", g.wkt
+        // GeoRSS
+        g = Geometry.fromString("<georss:point>1 1</georss:point>")
+        assertNotNull g
+        assertEquals "POINT (1 1)", g.wkt
+        // GML 2
+        g = Geometry.fromString("<gml:Point><gml:coordinates>1,1</gml:coordinates></gml:Point>")
+        assertNotNull g
+        assertEquals "POINT (1 1)", g.wkt
+        // GML 3
+        g = Geometry.fromString("<gml:Point><gml:pos>1 1</gml:pos></gml:Point>")
+        assertNotNull g
+        assertEquals "POINT (1 1)", g.wkt
+        // KML
+        g = Geometry.fromString("<Point><coordinates>1,1</coordinates></Point>")
+        assertNotNull g
+        assertEquals "POINT (1 1)", g.wkt
+        // WKB
+        g = Geometry.fromString("00000000013FF00000000000003FF0000000000000")
+        assertNotNull g
+        assertEquals "POINT (1 1)", g.wkt
+        // Bounds
+        g = Geometry.fromString("1,1,10,10")
+        assertNotNull g
+        assertEquals "POLYGON ((1 1, 1 10, 10 10, 10 1, 1 1))", g.wkt
+        // Point
+        g = Geometry.fromString("1,1")
+        assertNotNull g
+        assertEquals "POINT (1 1)", g.wkt
+        // Bounds
+        g = Geometry.fromString("1 1 10 10")
+        assertNotNull g
+        assertEquals "POLYGON ((1 1, 1 10, 10 10, 10 1, 1 1))", g.wkt
+        // Point
+        g = Geometry.fromString("1 1")
+        assertNotNull g
+        assertEquals "POINT (1 1)", g.wkt
+        // Null
+        g = Geometry.fromString(null)
+        assertNull g
+        // Empty String
+        g = Geometry.fromString("    ")
+        assertNull g
+        // Bad String
+        g = Geometry.fromString("asfasd")
+        assertNull g
+    }
+
+    @Test void cascadedUnion() {
+        def pts = Geometry.createRandomPoints(new Bounds(0,0,10,10).geometry, 100)
+        def polys = pts.collect{it.buffer(0.7)}
+        def union = Geometry.cascadedUnion(polys)
+        assertTrue union instanceof Geometry
+        assertTrue union.numGeometries < pts.numGeometries
     }
 }

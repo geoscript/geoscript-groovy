@@ -51,6 +51,17 @@ class FieldTestCase {
         assertEquals "geom", f7.name
         assertEquals "Point", f7.typ
         assertEquals "EPSG:2927", f7.proj.toString()
+
+        // Create a Field from an existing Field
+        Field f8 = new Field("the_geom","Point")
+        Field f9 = new Field(f8)
+        assertNotSame f8, f9
+        assertEquals "the_geom: Point", f9.toString()
+
+        Field f10 = new Field("the_geom","Point","EPSG:4326")
+        Field f11 = new Field(f10)
+        assertNotSame f10, f11
+        assertEquals "the_geom: Point(EPSG:4326)", f11.toString()
     }
 
     @Test void isGeometry() {
@@ -63,6 +74,19 @@ class FieldTestCase {
 
         Field f3 = new Field("geom","Point", new Projection("EPSG:2927"))
         assertTrue f3.isGeometry()
+    }
+
+    @Test void equalsAndHashCode() {
+        // Same name and type
+        assertTrue new Field("name","String").equals(new Field("name","String"))
+        // Same name, type, and projection
+        assertTrue new Field("geom","Point","EPSG:2927").equals(new Field("geom","Point","EPSG:2927"))
+        // Different name, same type
+        assertFalse new Field("name","String").equals(new Field("description","String"))
+        // Same name, different type
+        assertFalse new Field("name","String").equals(new Field("name","int"))
+        // Same name and type, different projection
+        assertFalse new Field("geom","Point","EPSG:2927").equals(new Field("geom","Point","EPSG:4326"))
     }
 
 }

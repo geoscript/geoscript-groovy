@@ -4,17 +4,15 @@ import geoscript.proj.Projection
 import org.geotools.gce.imagemosaic.ImageMosaicFormat
 
 /**
- * A Mosaic is a Raster that handles a mosaic of images.
+ * A Format that can read and write image Mosaics.
  * @author Jared Erickson
  */
-class Mosaic extends Raster {
+class Mosaic extends Format {
 
     /**
-     * Create a new Mosaic from a File directory
-     * @param dir The File directory
-     * @param proj The optional Projection
+     * Create a new image Mosaic Format
      */
-    Mosaic(File dir, Projection proj = null) {
-        super(new ImageMosaicFormat(), dir, proj)
+    Mosaic() {
+        super(new ImageMosaicFormat())
     }
 }

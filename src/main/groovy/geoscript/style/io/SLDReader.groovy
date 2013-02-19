@@ -58,7 +58,7 @@ class SLDReader implements Reader {
         SLDStyle(GtStyle style) {
             this.style = style
         }
-        GtStyle createGtStyle() {
+        GtStyle getGtStyle() {
             style
         }
     }

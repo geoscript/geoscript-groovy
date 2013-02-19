@@ -1,5 +1,6 @@
 package geoscript.filter
 
+import geoscript.GeoScript
 import org.opengis.filter.expression.Expression as GtExpression
 import org.geotools.factory.CommonFactoryFinder
 import org.opengis.filter.FilterFactory
@@ -66,6 +67,15 @@ class Expression {
     }
 
     /**
+     * Evaluate the Filter against an Object (commonly a Feature)
+     * @param obj Some Object
+     * @return A value
+     */
+    Object evaluate(Object obj = null) {
+        GeoScript.wrap(this.expr.evaluate(GeoScript.unwrap(obj)))
+    }
+
+    /**
      * The String representation
      * @return The String representation
      */
@@ -79,6 +89,15 @@ class Expression {
      * @return An Expression
      */
     static Expression fromCQL(String cql) {
-        new Expression(CQL.toExpression(cql))
+        def e = CQL.toExpression(cql)
+        if (e instanceof org.opengis.filter.expression.Literal) {
+            return new Expression(e)
+        } else if (e instanceof org.opengis.filter.expression.Function) {
+            return new Function(e)
+        } else if (e instanceof org.opengis.filter.expression.PropertyName) {
+            return new Property(e)
+        } else {
+            return new Expression(e)
+        }
     }
 }

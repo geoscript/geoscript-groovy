@@ -40,6 +40,11 @@ class ColorTestCase {
         assertEquals hsl, c2.hsl
     }
 
+    @Test void evaluate() {
+        Color color = new Color("black")
+        assertEquals "#000000", color.evaluate()
+    }
+
     @Test void getColor() {
 
         // java.awt.Color
@@ -141,7 +146,13 @@ class ColorTestCase {
         // Empty
         colors = Color.getPaletteColors("NOT A REAL PALETTE", 5)
         assertTrue(colors.isEmpty())
+        colors = Color.getPaletteColors("NOT A REAL PALETTE")
+        assertTrue(colors.isEmpty())
 
+        // 5 Greens (wrong case)
+        colors = Color.getPaletteColors("greens", 5)
+        colors.each{c -> assertTrue c instanceof Color}
+        assertTrue(colors.size() == 5)
     }
 
     @Test void getHex() {
@@ -221,6 +232,32 @@ class ColorTestCase {
        assertEquals 10, colors.size()
     }
 
+	@Test void darker() {
+		Color c = new Color("red")
+		Color darkerColor = c.darker()
+		assertTrue darkerColor instanceof Color
+		assertEquals("#b20000", darkerColor.hex)
+        darkerColor = c.darker(2)
+        assertTrue darkerColor instanceof Color
+        assertEquals("#7c0000", darkerColor.hex)
+        darkerColor = c.darker(3)
+        assertTrue darkerColor instanceof Color
+        assertEquals("#560000", darkerColor.hex)
+	}
+	
+	@Test void brighter() {
+		Color c = new Color([100,0,0])
+		Color brighterColor = c.brighter()
+		assertTrue brighterColor instanceof Color
+		assertEquals("#8e0000", brighterColor.hex)
+        brighterColor = c.brighter(2)
+        assertTrue brighterColor instanceof Color
+        assertEquals("#ca0000", brighterColor.hex)
+        brighterColor = c.brighter(3)
+        assertTrue brighterColor instanceof Color
+        assertEquals("#ff0000", brighterColor.hex)
+	}
+	
     @Test void drawToImage() {
         def colors = Color.interpolate(new Color("white"), new Color("red"))
         def image = Color.drawToImage(colors)

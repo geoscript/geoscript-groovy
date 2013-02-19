@@ -348,4 +348,93 @@ class BoundsTestCase {
             "7.377641290737883 4.227457514062631, 10 5))",
             g.wkt
     }
+
+    @Test void createHexagon() {
+        def b = new Bounds(0,0,10,10)
+        def g = b.createHexagon()
+        assertEquals "POLYGON ((2.5 0, 7.5 0, 10 5, 7.5 10, 2.5 10, 0 5, 2.5 0))", g.wkt
+        g = b.createHexagon(true)
+        assertEquals "POLYGON ((5 0, 10 2.5, 10 7.5, 5 10, 0 7.5, 0 2.5, 5 0))", g.wkt
+    }
+
+    @Test void boundsAsGeometry() {
+        def b = new Bounds(0,0,10,10)
+        def g = b as Geometry
+        assertEquals "POLYGON ((0 0, 0 10, 10 10, 10 0, 0 0))", g.wkt
+        assertEquals "(0.0,0.0,10.0,10.0)", b as String
+    }
+
+    @Test void generateGridRowsAndColumns() {
+        def b = new Bounds(0,0,100,100)
+        List geoms = []
+        b.generateGrid(20, 20, "polygon", {cell, c, r ->
+            assertEquals "Polygon", cell.geometryType
+            assertEquals 5, cell.numPoints
+            geoms.add(cell)
+        })
+        assertEquals 400, geoms.size()
+    }
+
+    @Test void generateGridCellWidthAndHeight() {
+        def b = new Bounds(0,0,100,100)
+        List geoms = []
+        b.generateGrid(20.0, 20.0, "polygon", {cell, c, r ->
+            assertEquals "Polygon", cell.geometryType
+            assertEquals 5, cell.numPoints
+            geoms.add(cell)
+        })
+        assertEquals 25, geoms.size()
+    }
+
+    @Test void getGridRowsAndColumns() {
+        def b = new Bounds(0,0,100,100)
+        def g = b.getGrid(20,20)
+        g.geometries.each {cell ->
+            assertEquals "Polygon", cell.geometryType
+            assertEquals 5, cell.numPoints
+        }
+        assertEquals 400, g.numGeometries
+
+        b = new Bounds(80, 87, 120, 110)
+        g = b.getGrid(2 as int,2 as int)
+        println g
+    }
+
+    @Test void getGridCellWidthAndHeight() {
+        def b = new Bounds(0,0,100,100)
+        def g = b.getGrid(20.0,20.0)
+        g.geometries.each {cell ->
+            assertEquals "Polygon", cell.geometryType
+            assertEquals 5, cell.numPoints
+        }
+        assertEquals 25, g.numGeometries
+
+        g = b.getGrid(20.0,20.0, "point")
+        g.geometries.each {cell ->
+            assertEquals "Point", cell.geometryType
+            assertEquals 1, cell.numPoints
+        }
+        assertEquals 25, g.numGeometries
+
+        g = b.getGrid(20.0,20.0, "circle")
+        g.geometries.each {cell ->
+            assertEquals "Polygon", cell.geometryType
+            assertEquals 101, cell.numPoints
+        }
+        assertEquals 25, g.numGeometries
+
+        g = b.getGrid(20.0,20.0, "hexagon")
+        g.geometries.each {cell ->
+            assertEquals "Polygon", cell.geometryType
+            assertEquals 7, cell.numPoints
+        }
+        assertEquals 25, g.numGeometries
+
+        g = b.getGrid(20.0,20.0, "hexagon-inv")
+        g.geometries.each {cell ->
+            assertEquals "Polygon", cell.geometryType
+            assertEquals 7, cell.numPoints
+        }
+        assertEquals 25, g.numGeometries
+    }
 }
