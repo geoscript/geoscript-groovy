@@ -12,7 +12,6 @@ import geoscript.filter.Filter
 import geoscript.workspace.Memory
 import geoscript.workspace.Property
 import geoscript.geom.*
-import geoscript.style.Raster
 import geoscript.raster.Raster
 import geoscript.workspace.Workspace
 import geoscript.workspace.H2

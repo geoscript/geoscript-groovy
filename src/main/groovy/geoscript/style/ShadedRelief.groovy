@@ -9,7 +9,7 @@ import org.geotools.styling.Symbolizer as GtSymbolizer
  * Symbolize a Raster with a ShadedRelief
  * @author Jared Erickson
  */
-class ShadedRelief extends Raster {
+class ShadedRelief extends geoscript.style.RasterSymbolizer {
 
     /**
      * Whether to turn on the brightness only flag

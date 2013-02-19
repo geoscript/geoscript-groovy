@@ -12,7 +12,7 @@ import org.opengis.style.ContrastMethod
  * A ConstrastEnhancement Symbolizer
  * @author Jared Erickson
  */
-class ContrastEnhancement extends Raster {
+class ContrastEnhancement extends geoscript.style.RasterSymbolizer {
 
     /**
      * The method: Normalize or Histogram

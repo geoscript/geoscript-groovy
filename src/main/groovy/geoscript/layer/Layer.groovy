@@ -33,14 +33,10 @@ import org.jdom.input.*
 import geoscript.layer.io.GmlWriter
 import geoscript.layer.io.GeoJSONWriter
 import org.geotools.data.collection.ListFeatureCollection
-import geoscript.style.Raster
+
 import java.awt.Dimension
-import org.geotools.coverage.grid.GridCoverage2D
+
 import geoscript.raster.Raster
-import org.geotools.gce.geotiff.GeoTiffFormat
-import org.opengis.coverage.grid.GridCoverageWriter
-import org.geotools.gce.geotiff.GeoTiffWriter
-import geoscript.raster.GeoTIFF
 
 /**
  * A Layer is a source of spatial data that contains a collection of Features.  Most often Layers are accessed from

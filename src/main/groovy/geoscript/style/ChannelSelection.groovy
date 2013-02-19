@@ -9,7 +9,7 @@ import org.geotools.styling.SelectedChannelType
  * The ChannelSelection Symbolizer is used to style Rasters.
  * @author Jared Erickson
  */
-class ChannelSelection extends Raster {
+class ChannelSelection extends geoscript.style.RasterSymbolizer {
 
     /**
      * The red channel name

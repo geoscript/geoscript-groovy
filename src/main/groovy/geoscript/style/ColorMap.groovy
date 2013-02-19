@@ -9,7 +9,7 @@ import org.geotools.styling.Symbolizer as GtSymbolizer
  * A ColorMap is a Symbolizer used to style Rasters.
  * @author Jared Erickson
  */
-class ColorMap extends Raster {
+class ColorMap extends geoscript.style.RasterSymbolizer {
 
     /**
      * The ColorMap type (intervals, values, ramp)

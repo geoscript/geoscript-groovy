@@ -3,6 +3,7 @@ package geoscript.raster
 import geoscript.proj.Projection
 import geoscript.geom.Bounds
 import geoscript.geom.Point
+import geoscript.style.RasterSymbolizer
 import geoscript.style.Style
 import org.geotools.coverage.processing.CoverageProcessor
 import org.geotools.coverage.grid.AbstractGridCoverage
@@ -46,7 +47,7 @@ class Raster {
         } as float[][]
         def factory = new GridCoverageFactory()
         this.coverage = factory.create("Raster", matrix, bounds.env)
-        this.style = new geoscript.style.Raster()
+        this.style = new RasterSymbolizer()
     }
 
     /**
@@ -55,7 +56,7 @@ class Raster {
      */
     Raster(AbstractGridCoverage coverage) {
        this.coverage = coverage
-       this.style = new geoscript.style.Raster()
+       this.style = new RasterSymbolizer()
     }
 
     /**

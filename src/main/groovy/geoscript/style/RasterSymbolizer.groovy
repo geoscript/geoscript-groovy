@@ -2,14 +2,13 @@ package geoscript.style
 
 import geoscript.filter.Expression
 import org.geotools.styling.Rule
-import org.geotools.styling.RasterSymbolizer
 import org.geotools.styling.Symbolizer as GtSymbolizer
 
 /**
  * A Raster Symbolizer
  * @author Jared Erickson
  */
-class Raster extends Symbolizer {
+class RasterSymbolizer extends Symbolizer {
 
     /**
      * The overall opacity of the Raster Symbolizer
@@ -32,7 +31,7 @@ class Raster extends Symbolizer {
      * @param overlap The overlap value
      * @param geometry The geometry name
      */
-    Raster(def opacity = 1.0, def overlap = null, def geometry = null) {
+    RasterSymbolizer(def opacity = 1.0, def overlap = null, def geometry = null) {
         this.opacity = new Expression(opacity)
         if (overlap) this.overlap = new Expression(overlap)
         if (geometry) this.geometry = new Expression(geometry)
@@ -42,7 +41,7 @@ class Raster extends Symbolizer {
      * Create a new Raster Symbolizer from named parameters.
      * @param map The map of named parameters
      */
-    Raster(Map map) {
+    RasterSymbolizer(Map map) {
         super()
         map.each{k,v->
             if(this.hasProperty(k as String)){
@@ -84,7 +83,7 @@ class Raster extends Symbolizer {
      * @param opacity The opacity (0-1)
      * @return This Raster Symbolizer
      */
-    Raster opacity(def opacity) {
+    RasterSymbolizer opacity(def opacity) {
         setOpacity(opacity)
         this
     }
@@ -94,7 +93,7 @@ class Raster extends Symbolizer {
      * @param overlap The overlap value (LATEST_ON_TOP, EARLIEST_ON_TOP, AVERAGE, RANDOM)
      * @return This Raster Symbolizer
      */
-    Raster overlap(def overlap) {
+    RasterSymbolizer overlap(def overlap) {
         setOverlap(overlap)
         this
     }
@@ -104,7 +103,7 @@ class Raster extends Symbolizer {
      * @param geometry The geometry name
      * @return This Raster Symbolizer
      */
-    Raster geometry(def geometry) {
+    RasterSymbolizer geometry(def geometry) {
         setGeometry(geometry)
         this
     }
@@ -116,7 +115,7 @@ class Raster extends Symbolizer {
     @Override
     protected void prepare(Rule rule) {
         super.prepare(rule)
-        getGeoToolsSymbolizers(rule, RasterSymbolizer.class).each{s ->
+        getGeoToolsSymbolizers(rule, org.geotools.styling.RasterSymbolizer.class).each{s ->
             apply(s)
         }
     }
