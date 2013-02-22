@@ -137,6 +137,31 @@ class Polygon extends Geometry {
     }
 
     /**
+     * Split a Polygon with a LineString
+     * @param lineString The LineString
+     * @return The split Geometry
+     */
+    Geometry split(LineString lineString) {
+        split(new MultiLineString([lineString]))
+    }
+
+    /**
+     * Split a Polygon with a MultiLineString
+     * @param multiLineString The MultiLineString
+     * @return The split Geometry
+     */
+    Geometry split(MultiLineString multiLineString) {
+        Geometry polygons = this.boundary.union(multiLineString).polygonize()
+        List polygonsToKeep = []
+        polygons.geometries.each{p ->
+            if (polygons.contains(p.interiorPoint)) {
+                polygonsToKeep.add(p)
+            }
+        }
+        polygonsToKeep.size() > 1 ? new MultiPolygon(polygonsToKeep) : polygonsToKeep[0]
+    }
+
+    /**
      * Create a JTS Polygon from a List of List of List of Doubles
      */
     private static JtsPolygon create(List rings) {

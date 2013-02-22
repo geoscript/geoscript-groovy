@@ -4,6 +4,8 @@ import org.junit.Test
 import static org.junit.Assert.assertEquals
 import com.vividsolutions.jts.geom.LinearRing as JtsLinearRing
 
+import static org.junit.Assert.assertTrue
+
 class PolygonTestCase {
 	
     @Test void constructors() {
@@ -61,5 +63,14 @@ class PolygonTestCase {
         def m = p + new Polygon([[[11,12],[13,14],[15,16],[11,12]]])
         assertEquals "MULTIPOLYGON (((1 2, 3 4, 5 6, 1 2)), ((11 12, 13 14, 15 16, 11 12)))", m.wkt
     }
-	
+
+    @Test void split() {
+        Geometry g = new Bounds(0,0,10,10).geometry
+        Geometry split1 = g.split(new LineString([[0,0],[10,10]]))
+        assertTrue split1 instanceof MultiPolygon
+        assertEquals 2, split1.numGeometries
+        Geometry split2 = split1.split(new LineString([[0,10], [10,0]]))
+        assertTrue split2 instanceof MultiPolygon
+        assertEquals 4, split2.numGeometries
+    }
 }
