@@ -604,7 +604,7 @@ class Layer {
                     if (f.schema == null) {
                         f.schema = schema
                     } else if (f.schema != this.schema) {
-                        f = this.schema.feature(o.attributes)
+                        f = this.schema.feature(f.attributes)
                     }
                     FeatureCollection fc = FeatureCollections.newCollection()
                     fc.add(f.f)
@@ -627,10 +627,13 @@ class Layer {
             try {
                 FeatureStore<SimpleFeatureType, SimpleFeature> store = (FeatureStore)fs
                 store.transaction = t
-                if (o instanceof FeatureCollection) {
-                    store.addFeatures(o as FeatureCollection)
-                } else {
-                    store.addFeatures((o as Cursor).col)
+                int chunk = 1000
+                Cursor c = o instanceof FeatureCollection ? new Cursor(o) : o as Cursor
+                while(true) {
+                    def features = readFeatures(c, this.schema, chunk)
+                    if (features.isEmpty()) break
+                    store.addFeatures(features)
+                    if (features.size() < chunk) break
                 }
                 t.commit()
             }
@@ -759,33 +762,34 @@ class Layer {
         }
         q.coordinateSystemReproject = projectedLayer.proj.crs
         FeatureCollection fc = fs.getFeatures(q)
-        FeatureIterator i = fc.features()
-        try {
-            while (true) {
-                def features = readFeatures(i, fs.schema, chunk)
-                if (features.isEmpty()) {
-                    break
-                }
-                projectedLayer.fs.addFeatures(features)
-            }
-        } finally {
-            i.close()
+        Cursor c = new Cursor(fc)
+        while(true) {
+            def features = readFeatures(c, projectedLayer.schema, chunk)
+            if (features.isEmpty()) break
+            projectedLayer.fs.addFeatures(features)
+            if (features.size() < chunk) break
         }
         projectedLayer
     }
 
     /**
-     * Read Features from a FeatureIterator in batches
-     * @param it The FeatureIterator
-     * @param type The SimpleFeatureType
-     * @param chunk The number of Features to read in one batch
-     * @return A FeatureCollection
+     * Read Features from a Cursor in Batches.
+     * @param cursor The Cursor
+     * @param schema The output Schema
+     * @param chunk The number of Features to be read
+     * @return A GeoTools FeatureCollection
      */
-    private FeatureCollection readFeatures(FeatureIterator it, SimpleFeatureType type, int chunk) {
+    private FeatureCollection readFeatures(Cursor cursor, Schema schema, int chunk) {
         int i = 0
-        def features = new ListFeatureCollection(type)
-        while (it.hasNext() && i < chunk) {
-            features.add(it.next())
+        def features = new ListFeatureCollection(schema.featureType)
+        while(cursor.hasNext() && i < chunk) {
+            Feature f = cursor.next()
+            if (f.schema == null) {
+                f.schema = schema
+            } else if (f.schema != schema) {
+                f = schema.feature(f.attributes)
+            }
+            features.add(f.f)
             i++
         }
         features

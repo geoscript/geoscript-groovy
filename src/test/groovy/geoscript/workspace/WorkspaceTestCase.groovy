@@ -4,7 +4,6 @@ import geoscript.feature.Schema
 import geoscript.geom.Point
 import org.junit.Test
 import static org.junit.Assert.*
-import geoscript.feature.Field
 import geoscript.layer.Layer
 
 /**

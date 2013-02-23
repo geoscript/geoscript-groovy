@@ -1,13 +1,13 @@
 package geoscript.workspace
 
+import geoscript.feature.Feature
 import geoscript.feature.Field
 import geoscript.feature.Schema
+import geoscript.layer.Cursor
 import geoscript.layer.Layer
 import org.geotools.data.DataStore
 import org.geotools.data.DataUtilities
-import org.geotools.feature.FeatureIterator
 import org.geotools.feature.FeatureCollection
-import org.opengis.feature.simple.SimpleFeatureType
 import org.geotools.data.collection.ListFeatureCollection
 import org.geotools.data.DataStoreFinder
 
@@ -148,32 +148,38 @@ class Workspace {
             }
         }
         Layer l = create(name, flds)
-        FeatureIterator it = layer.fs.getFeatures().features()
-        try {
-            while(true) {
-                def features = readFeatures(it, layer.fs.schema, chunk)
-                if (features.isEmpty()) break
-                l.fs.addFeatures(features)
+        Cursor c = layer.getCursor()
+        while(true) {
+            def features = readFeatures(c, l.schema, chunk)
+            if (features.isEmpty()) {
+                break
             }
-        }
-        finally {
-            it.close()
+            l.fs.addFeatures(features)
+            if (features.size() < chunk) {
+                break
+            }
         }
         l
     }
 
     /**
-     * Read Features from a FeatureIterator in batches
-     * @param it The FeatureIterator
-     * @param type The SimpleFeatureType
-     * @param chunk The number of Features to read in one batch
-     * @return A FeatureCollection
+     * Read Features from a Cursor in Batches.
+     * @param cursor The Cursor
+     * @param schema The output Schema
+     * @param chunk The number of Features to be read
+     * @return A GeoTools FeatureCollection
      */
-    protected FeatureCollection readFeatures(FeatureIterator it, SimpleFeatureType type, int chunk) {
+    private FeatureCollection readFeatures(Cursor cursor, Schema schema, int chunk) {
         int i = 0
-        def features = new ListFeatureCollection(type)
-        while (it.hasNext() && i < chunk) {
-            features.add(it.next())
+        def features = new ListFeatureCollection(schema.featureType)
+        while(cursor.hasNext() && i < chunk) {
+            Feature f = cursor.next()
+            if (f.schema == null) {
+                f.schema = schema
+            } else if (f.schema != schema) {
+                f = schema.feature(f.attributes)
+            }
+            features.add(f.f)
             i++
         }
         features
