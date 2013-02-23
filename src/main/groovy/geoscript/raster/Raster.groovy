@@ -232,6 +232,47 @@ class Raster {
     }
 
     /**
+     * Add a constant value to this Raster
+     * @param value The constant number
+     * @return A new Raster
+     */
+    Raster add(double value) {
+        add([value])
+    }
+
+    /**
+     * Add a List of constant values to this Raster
+     * @param values The List of constant numbers
+     * @return A new Raster
+     */
+    Raster add(List<Double> values) {
+        def processor = new CoverageProcessor()
+        def params = processor.getOperation("AddConst").parameters
+        params.parameter("Source").value = this.coverage
+        params.parameter("constants").value = values as double[]
+        def newCoverage = processor.doOperation(params)
+        new Raster(newCoverage)
+    }
+
+    /**
+     * Add a constant value to this Raster
+     * @param value The constant number
+     * @return A new Raster
+     */
+    Raster plus(double value) {
+        add(value)
+    }
+
+    /**
+     * Add a List of constant values to this Raster
+     * @param values The List of constant numbers
+     * @return A new Raster
+     */
+    Raster plus(List<Double> values) {
+        add(values)
+    }
+
+    /**
      * Multiple this Raster with another Raster
      * <p><code>def r3 = r1 * r2</code></p>
      * @param other Another a Raster
@@ -244,6 +285,29 @@ class Raster {
         params.parameter("Source1").value = other.coverage
         def newCoverage = processor.doOperation(params)
         new Raster(newCoverage)
+    }
+
+    /**
+     * Multiply this Raster by a List of constant values
+     * @param values The list of constant values
+     * @return A new Raster
+     */
+    Raster multiply(List<Double> values) {
+        def processor = new CoverageProcessor()
+        def params = processor.getOperation("MultiplyConst").parameters
+        params.parameter("Source").value = this.coverage
+        params.parameter("constants").value = values as double[]
+        def newCoverage = processor.doOperation(params)
+        new Raster(newCoverage)
+    }
+
+    /**
+     * Multiply this Raster by a constant value
+     * @param values The constant value
+     * @return A new Raster
+     */
+    Raster multiply(double value) {
+        multiply([value])
     }
 
     /**

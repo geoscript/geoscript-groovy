@@ -149,6 +149,23 @@ class RasterTestCase {
         assertEquals 7, raster3.evaluate(new Point(3.5,2.5))[0], 0.1
     }
 
+    @Test void addConstant() {
+        Bounds bounds = new Bounds(0, 0, 7, 5, "EPSG:4326")
+        List data1 = [
+                [0,0,0,0,0,0,0],
+                [0,1,1,1,1,1,0],
+                [0,1,2,3,2,1,0],
+                [0,1,1,1,1,1,0],
+                [0,0,0,0,0,0,0]
+        ]
+        Raster raster1 = new Raster(data1, bounds)
+        Raster raster2 = raster1 + 5.0
+        assertEquals 5, raster2.evaluate(new Point(0.5,0.5))[0], 0.1
+        assertEquals 6, raster2.evaluate(new Point(1.5,1.5))[0], 0.1
+        assertEquals 7, raster2.evaluate(new Point(2.5,2.5))[0], 0.1
+        assertEquals 8, raster2.evaluate(new Point(3.5,2.5))[0], 0.1
+    }
+
     @Test void multiply() {
         Bounds bounds = new Bounds(0, 0, 7, 5, "EPSG:4326")
         List data1 = [
@@ -174,6 +191,24 @@ class RasterTestCase {
         assertEquals 2, raster3.evaluate(new Point(1.5,1.5))[0], 0.1
         assertEquals 6, raster3.evaluate(new Point(2.5,2.5))[0], 0.1
         assertEquals 12, raster3.evaluate(new Point(3.5,2.5))[0], 0.1
+    }
+
+    @Test void multiplyConstant() {
+        Bounds bounds = new Bounds(0, 0, 7, 5, "EPSG:4326")
+        List data1 = [
+                [0,0,0,0,0,0,0],
+                [0,1,1,1,1,1,0],
+                [0,1,2,3,2,1,0],
+                [0,1,1,1,1,1,0],
+                [0,0,0,0,0,0,0]
+        ]
+        Raster raster1 = new Raster(data1, bounds)
+        Raster raster2 = raster1 * 5.0
+
+        assertEquals 0, raster2.evaluate(new Point(0.5,0.5))[0], 0.1
+        assertEquals 5, raster2.evaluate(new Point(1.5,1.5))[0], 0.1
+        assertEquals 10, raster2.evaluate(new Point(2.5,2.5))[0], 0.1
+        assertEquals 15, raster2.evaluate(new Point(3.5,2.5))[0], 0.1
     }
 
     @Test void contours() {
