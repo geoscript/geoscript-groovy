@@ -19,6 +19,7 @@ class H2TestCase {
         }
             
         H2 h2 = new H2("acme", "target/h2")
+        assertEquals "H2", h2.format
         Layer l = h2.create('widgets',[new Field("geom", "Point"), new Field("name", "String")])
         assertNotNull(l)
         l.add([new Point(1,1), "one"])

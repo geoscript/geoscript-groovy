@@ -35,6 +35,15 @@ class H2 extends Database {
     }
 
     /**
+     * Get the format
+     * @return The workspace format name
+     */
+    @Override
+    String getFormat() {
+        return "H2"
+    }
+
+    /**
      * Create a new H2 Workspace with a name and directory
      */
     private static DataStore createDataStore(String name, File dir) {
