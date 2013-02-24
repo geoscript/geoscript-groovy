@@ -23,6 +23,14 @@ class Property extends Workspace {
     }
 
     /**
+     * Create a new Property Workspace
+     * @param directory The File directory
+     */
+    Property(String directory) {
+        this(new File(directory).absoluteFile)
+    }
+
+    /**
      * Create a new Property Workspace with a directory
      * @param directory The directory
      */
