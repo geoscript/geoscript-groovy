@@ -1,7 +1,11 @@
 package geoscript.style.io
 
 import geoscript.style.Style
+import org.geotools.factory.CommonFactoryFinder
 import org.geotools.styling.SLDTransformer
+import org.geotools.styling.StyleFactory
+import org.geotools.styling.StyledLayerDescriptor
+import org.geotools.styling.UserLayer
 
 /**
  * Write a Style to an SLD document
@@ -25,11 +29,16 @@ class SLDWriter implements Writer {
      * @param The OutputStream
      */
     void write(Style style, OutputStream out) {
+        StyleFactory sf = CommonFactoryFinder.getStyleFactory(null)
+        UserLayer userLayer = sf.createUserLayer()
+        userLayer.addUserStyle(style.gtStyle)
+        StyledLayerDescriptor sld = sf.createStyledLayerDescriptor()
+        sld.addStyledLayer(userLayer)
         def transformer = new SLDTransformer()
         if (format) {
             transformer.indentation = 2
         }
-        transformer.transform(style.gtStyle, out)
+        transformer.transform(sld, out)
     }
 
     /**

@@ -296,30 +296,38 @@ class SymbolizerTestCase {
         String NEW_LINE = System.getProperty("line.separator")
 
         String expectedSld = """<?xml version="1.0" encoding="UTF-8"?>
-<sld:UserStyle xmlns="http://www.opengis.net/sld" xmlns:sld="http://www.opengis.net/sld" xmlns:ogc="http://www.opengis.net/ogc" xmlns:gml="http://www.opengis.net/gml">
-  <sld:Name>Default Styler</sld:Name>
-  <sld:Title/>
-  <sld:FeatureTypeStyle>
-    <sld:Name>name</sld:Name>
-    <sld:Rule>
-      <sld:PolygonSymbolizer>
-        <sld:Fill>
-          <sld:CssParameter name="fill">#f5deb3</sld:CssParameter>
-        </sld:Fill>
-      </sld:PolygonSymbolizer>
-      <sld:LineSymbolizer>
-        <sld:Stroke>
-          <sld:CssParameter name="stroke">#a52a2a</sld:CssParameter>
-        </sld:Stroke>
-      </sld:LineSymbolizer>
-    </sld:Rule>
-  </sld:FeatureTypeStyle>
-</sld:UserStyle>""".trim().replaceAll("\n","")
+<sld:StyledLayerDescriptor xmlns="http://www.opengis.net/sld" xmlns:sld="http://www.opengis.net/sld" xmlns:ogc="http://www.opengis.net/ogc" xmlns:gml="http://www.opengis.net/gml" version="1.0.0">
+  <sld:UserLayer>
+    <sld:LayerFeatureConstraints>
+      <sld:FeatureTypeConstraint/>
+    </sld:LayerFeatureConstraints>
+    <sld:UserStyle>
+      <sld:Name>Default Styler</sld:Name>
+      <sld:Title/>
+      <sld:FeatureTypeStyle>
+        <sld:Name>name</sld:Name>
+        <sld:Rule>
+          <sld:PolygonSymbolizer>
+            <sld:Fill>
+              <sld:CssParameter name="fill">#f5deb3</sld:CssParameter>
+            </sld:Fill>
+          </sld:PolygonSymbolizer>
+          <sld:LineSymbolizer>
+            <sld:Stroke>
+              <sld:CssParameter name="stroke">#a52a2a</sld:CssParameter>
+            </sld:Stroke>
+          </sld:LineSymbolizer>
+        </sld:Rule>
+      </sld:FeatureTypeStyle>
+    </sld:UserStyle>
+  </sld:UserLayer>
+</sld:StyledLayerDescriptor>""".trim().replaceAll("\n","")
 
         Symbolizer sym = new Fill("wheat") + new Stroke("brown")
 
         ByteArrayOutputStream out = new ByteArrayOutputStream()
         sym.asSLD(out)
+        println out.toString()
         String sld = out.toString().trim().replaceAll(NEW_LINE,"")
         assertNotNull sld
         assertTrue sld.length() > 0
