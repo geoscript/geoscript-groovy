@@ -211,6 +211,120 @@ class RasterTestCase {
         assertEquals 15, raster2.evaluate(new Point(3.5,2.5))[0], 0.1
     }
 
+    @Test void divide() {
+
+        Bounds bounds = new Bounds(0, 0, 7, 5, "EPSG:4326")
+        List data1 = [
+                [0,0,0,0,0,0,0],
+                [0,1,1,1,1,1,0],
+                [0,1,2,3,2,1,0],
+                [0,1,1,1,1,1,0],
+                [0,0,0,0,0,0,0]
+        ]
+        Raster raster1 = new Raster(data1, bounds)
+
+        List data2 = [
+                [1,1,1,1,1,1,1],
+                [1,2,2,2,2,2,1],
+                [1,2,3,4,3,2,1],
+                [1,2,2,2,2,2,1],
+                [1,1,1,1,1,1,1]
+        ]
+        Raster raster2 = new Raster(data2, bounds)
+
+        Raster raster3 = raster1 / raster2
+
+        assertEquals 0, raster3.evaluate(new Point(0.5,0.5))[0], 0.1
+        assertEquals 0.5, raster3.evaluate(new Point(1.5,1.5))[0], 0.1
+        assertEquals 0.6667, raster3.evaluate(new Point(2.5,2.5))[0], 0.1
+        assertEquals 0.75, raster3.evaluate(new Point(3.5,2.5))[0], 0.1
+    }
+
+    @Test void divideConstant() {
+        Bounds bounds = new Bounds(0, 0, 7, 5, "EPSG:4326")
+        List data1 = [
+                [0,0,0,0,0,0,0],
+                [0,1,1,1,1,1,0],
+                [0,1,2,3,2,1,0],
+                [0,1,1,1,1,1,0],
+                [0,0,0,0,0,0,0]
+        ]
+        Raster raster1 = new Raster(data1, bounds)
+        Raster raster2 = raster1 / 1.2
+
+        assertEquals 0, raster2.evaluate(new Point(0.5,0.5))[0], 0.1
+        assertEquals 0.833, raster2.evaluate(new Point(1.5,1.5))[0], 0.1
+        assertEquals 1.666, raster2.evaluate(new Point(2.5,2.5))[0], 0.1
+        assertEquals 2.5, raster2.evaluate(new Point(3.5,2.5))[0], 0.1
+    }
+
+    @Test void minus() {
+
+        Bounds bounds = new Bounds(0, 0, 7, 5, "EPSG:4326")
+        List data1 = [
+                [0,0,0,0,0,0,0],
+                [0,1,1,1,1,1,0],
+                [0,1,2,3,2,1,0],
+                [0,1,1,1,1,1,0],
+                [0,0,0,0,0,0,0]
+        ]
+        Raster raster1 = new Raster(data1, bounds)
+        println "Raster 1: ${raster1.size}"
+
+        List data2 = [
+                [1,1,1,1,1,1,1],
+                [1,2,2,2,2,2,1],
+                [1,2,3,4,3,2,1],
+                [1,2,2,2,2,2,1],
+                [1,1,1,1,1,1,1]
+        ]
+        Raster raster2 = new Raster(data2, bounds)
+        println "Raster 2: ${raster2.size}"
+
+        Raster raster3 = raster1 - raster2
+
+        assertEquals(-1.0, raster3.evaluate(new Point(0.5,0.5))[0], 0.1)
+        assertEquals(-1.0, raster3.evaluate(new Point(1.5,1.5))[0], 0.1)
+        assertEquals(-1.0, raster3.evaluate(new Point(2.5,2.5))[0], 0.1)
+        assertEquals(-1.0, raster3.evaluate(new Point(3.5,2.5))[0], 0.1)
+    }
+
+    @Test void minusConstant() {
+        Bounds bounds = new Bounds(0, 0, 7, 5, "EPSG:4326")
+        List data1 = [
+                [0,0,0,0,0,0,0],
+                [0,1,1,1,1,1,0],
+                [0,1,2,3,2,1,0],
+                [0,1,1,1,1,1,0],
+                [0,0,0,0,0,0,0]
+        ]
+        Raster raster1 = new Raster(data1, bounds)
+        Raster raster2 = raster1 - 0.5
+
+        assertEquals(-0.5, raster2.evaluate(new Point(0.5,0.5))[0], 0.1)
+        assertEquals 0.5, raster2.evaluate(new Point(1.5,1.5))[0], 0.1
+        assertEquals 1.5, raster2.evaluate(new Point(2.5,2.5))[0], 0.1
+        assertEquals 2.5, raster2.evaluate(new Point(3.5,2.5))[0], 0.1
+    }
+
+    @Test void minusFromConstant() {
+        Bounds bounds = new Bounds(0, 0, 7, 5, "EPSG:4326")
+        List data1 = [
+                [0,0,0,0,0,0,0],
+                [0,1,1,1,1,1,0],
+                [0,1,2,3,2,1,0],
+                [0,1,1,1,1,1,0],
+                [0,0,0,0,0,0,0]
+        ]
+        Raster raster1 = new Raster(data1, bounds)
+        Raster raster2 = raster1.minusFrom(6)
+
+        assertEquals 6, raster2.evaluate(new Point(0.5,0.5))[0], 0.1
+        assertEquals 5, raster2.evaluate(new Point(1.5,1.5))[0], 0.1
+        assertEquals 4, raster2.evaluate(new Point(2.5,2.5))[0], 0.1
+        assertEquals 3, raster2.evaluate(new Point(3.5,2.5))[0], 0.1
+    }
+
     @Test void contours() {
         Bounds bounds = new Bounds(0, 0, 7, 5, "EPSG:4326")
         List data = [

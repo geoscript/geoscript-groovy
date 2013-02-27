@@ -5,8 +5,10 @@ import geoscript.geom.Bounds
 import geoscript.geom.Point
 import geoscript.style.RasterSymbolizer
 import geoscript.style.Style
+import org.geotools.coverage.grid.GridCoverage2D
 import org.geotools.coverage.processing.CoverageProcessor
 import org.geotools.coverage.grid.AbstractGridCoverage
+import org.geotools.coverage.processing.OperationJAI
 import org.geotools.process.raster.ContourProcess
 import org.geotools.process.raster.PolygonExtractionProcess
 import org.geotools.process.raster.RasterAsPointCollectionProcess
@@ -14,9 +16,13 @@ import org.geotools.process.raster.RasterZonalStatistics
 import geoscript.layer.Layer
 import geoscript.workspace.Memory
 import geoscript.feature.Schema
+import org.geotools.util.NumberRange
 import org.jaitools.numeric.Range
 import org.geotools.coverage.grid.GridCoverageFactory
+
+import javax.measure.unit.Unit
 import javax.media.jai.Interpolation
+import java.awt.image.RenderedImage
 
 /**
  * The Raster
@@ -57,6 +63,17 @@ class Raster {
     Raster(AbstractGridCoverage coverage) {
        this.coverage = coverage
        this.style = new RasterSymbolizer()
+    }
+
+    /**
+     * Create a Raster from an Image and Bounds
+     * @param image The image
+     * @param bounds The Bounds
+     */
+    Raster(RenderedImage image, Bounds bounds) {
+        GridCoverageFactory gridCoverageFactory = new GridCoverageFactory()
+        this.coverage = gridCoverageFactory.create("Raster", image, bounds.env)
+        this.style = new RasterSymbolizer()
     }
 
     /**
@@ -310,6 +327,75 @@ class Raster {
         multiply([value])
     }
 
+    Raster div(Raster other) {
+        def processor = new CoverageProcessor()
+        def params = processor.getOperation("Divide").parameters
+        params.parameter("Source0").value = this.coverage
+        params.parameter("Source1").value = other.coverage
+        def newCoverage = processor.doOperation(params)
+        new Raster(newCoverage)
+    }
+
+    Raster div(double value) {
+        div([value])
+    }
+
+    Raster div(List<Double> values) {
+        divide(values)
+    }
+
+    Raster divide(double value) {
+        divide([value])
+    }
+
+    Raster divide(List<Double> values) {
+        def processor = new CoverageProcessor()
+        def params = processor.getOperation("DivideByConst").parameters
+        params.parameter("Source").value = this.coverage
+        params.parameter("constants").value = values as double[]
+        def newCoverage = processor.doOperation(params)
+        new Raster(newCoverage)
+    }
+
+    Raster minus(Raster other) {
+        /*def processor = new CoverageProcessor()
+        def params = processor.getOperation("Subtract").parameters
+        params.parameter("Source0").value = this.coverage
+        params.parameter("Source1").value = other.coverage
+        def newCoverage = processor.doOperation(params)
+        new Raster(newCoverage)*/
+        MapAlgebra mapAlgebra = new MapAlgebra()
+        List size = this.size
+        Raster output = mapAlgebra.calculate("dest = src1 - src2;", [src1: this, src2: other])
+        output
+    }
+
+    Raster minus(double value) {
+        minus([value])
+    }
+
+    Raster minus(List<Double> values) {
+        def processor = new CoverageProcessor()
+        def params = processor.getOperation("SubtractConst").parameters
+        params.parameter("Source").value = this.coverage
+        params.parameter("constants").value = values as double[]
+        def newCoverage = processor.doOperation(params)
+        new Raster(newCoverage)
+    }
+
+    Raster minusFrom(double value) {
+        minusFrom([value])
+    }
+
+    Raster minusFrom(List<Double> values) {
+        def processor = new CoverageProcessor()
+        def params = processor.getOperation("SubtractFromConst").parameters
+        params.parameter("Source").value = this.coverage
+        params.parameter("constants").value = values as double[]
+        def newCoverage = processor.doOperation(params)
+        new Raster(newCoverage)
+    }
+
     /**
      * Create contours
      * @param band The Raster band
@@ -387,6 +473,56 @@ class Raster {
         Layer layer = new Memory().create(schema)
         layer.add(fc)
         layer
+    }
+
+    static class Divide extends OperationJAI {
+
+        private static final long serialVersionUID = 3559075474256896861L
+
+        Divide() {
+            super("Divide");
+        }
+
+        @Override
+        protected NumberRange deriveRange(final NumberRange[] ranges, final OperationJAI.Parameters parameters) {
+            if (ranges != null && ranges.length == 2){
+                final NumberRange range0 = ranges[0]
+                final NumberRange range1 = ranges[1]
+                final double min0 = range0.getMinimum()
+                final double min1 = range1.getMinimum()
+                final double max0 = range0.getMaximum()
+                final double max1 = range1.getMaximum()
+                final double max = max0 != 0.0 ? max0 / max1 : 0.0
+                final double min = min0 != 0.0 ? min0 / min1 : 0.0
+                return NumberRange.create(min, max)
+            }
+            return null
+        }
+    }
+
+    static class Subtract extends OperationJAI {
+
+        private static final long serialVersionUID = -4029879625681129215L
+
+        Subtract() {
+            super("Subtract");
+        }
+
+        @Override
+        protected NumberRange deriveRange(final NumberRange[] ranges, final OperationJAI.Parameters parameters) {
+            if (ranges != null && ranges.length == 2){
+                final NumberRange range0 = ranges[0]
+                final NumberRange range1 = ranges[1]
+                final double min0 = range0.getMinimum()
+                final double min1 = range1.getMinimum()
+                final double max0 = range0.getMaximum()
+                final double max1 = range1.getMaximum()
+                final double max = max0 - max1
+                final double min = min0 - min1
+                return NumberRange.create(min, max)
+            }
+            return null
+        }
     }
 }
 
