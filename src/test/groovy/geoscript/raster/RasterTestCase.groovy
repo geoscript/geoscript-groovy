@@ -3,11 +3,9 @@ package geoscript.raster
 import geoscript.geom.*
 import geoscript.proj.Projection
 import org.junit.Test
+import javax.imageio.ImageIO
 import static org.junit.Assert.*
 import geoscript.layer.Layer
-import geoscript.layer.Shapefile
-import geoscript.workspace.Directory
-import org.geotools.gce.geotiff.GeoTiffFormat
 import geoscript.workspace.Memory
 import geoscript.feature.Field
 
@@ -51,6 +49,16 @@ class RasterTestCase {
         def (double pw, double ph) = raster.pixelSize
         assertEquals(1.5010870921970836, pw, 0.000000000001)
         assertEquals(1.5022218047840352, ph, 0.000000000001)
+    }
+
+    @Test void rasterFromImage() {
+        File file = new File(getClass().getClassLoader().getResource("alki.tif").toURI())
+        assertNotNull(file)
+        def image = ImageIO.read(file)
+        def bounds = new Bounds(1166191.0260847565,1167331.8522748263,822960.0090852415,824226.3820666744,"EPSG:2927")
+        Raster raster = new Raster(image, bounds)
+        assertNotNull raster
+        assertNotNull raster.coverage
     }
 
     @Test void crop() {
@@ -269,7 +277,6 @@ class RasterTestCase {
                 [0,0,0,0,0,0,0]
         ]
         Raster raster1 = new Raster(data1, bounds)
-        println "Raster 1: ${raster1.size}"
 
         List data2 = [
                 [1,1,1,1,1,1,1],
@@ -279,7 +286,6 @@ class RasterTestCase {
                 [1,1,1,1,1,1,1]
         ]
         Raster raster2 = new Raster(data2, bounds)
-        println "Raster 2: ${raster2.size}"
 
         Raster raster3 = raster1 - raster2
 
