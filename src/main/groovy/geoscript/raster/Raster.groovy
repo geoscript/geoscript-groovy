@@ -327,6 +327,11 @@ class Raster {
         multiply([value])
     }
 
+    /**
+     * Divide this Raster by another Raster
+     * @param other The other Raster
+     * @return A new Raster
+     */
     Raster div(Raster other) {
         def processor = new CoverageProcessor()
         def params = processor.getOperation("Divide").parameters
@@ -336,18 +341,38 @@ class Raster {
         new Raster(newCoverage)
     }
 
+    /**
+     * Divide this Raster by a constant value
+     * @param value The constant value
+     * @return A new Raster
+     */
     Raster div(double value) {
         div([value])
     }
 
+    /**
+     * Divide this Raster by a List of constant values
+     * @param values A List of constant values
+     * @return A new Raster
+     */
     Raster div(List<Double> values) {
         divide(values)
     }
 
+    /**
+     * Divide this Raster by a constant value
+     * @param value The constant value
+     * @return A new Raster
+     */
     Raster divide(double value) {
         divide([value])
     }
 
+    /**
+     * Divide this Raster by a List of constant values
+     * @param values A List of constant values
+     * @return A new Raster
+     */
     Raster divide(List<Double> values) {
         def processor = new CoverageProcessor()
         def params = processor.getOperation("DivideByConst").parameters
@@ -357,6 +382,11 @@ class Raster {
         new Raster(newCoverage)
     }
 
+    /**
+     * Subtract this Raster from an other Raster
+     * @param other The other Raster
+     * @return A new Raster
+     */
     Raster minus(Raster other) {
         /*def processor = new CoverageProcessor()
         def params = processor.getOperation("Subtract").parameters
@@ -370,10 +400,20 @@ class Raster {
         output
     }
 
+    /**
+     * Subtract this Raster from a constant value
+     * @param value The constant value
+     * @return A new Raster
+     */
     Raster minus(double value) {
         minus([value])
     }
 
+    /**
+     * Subtract this Raster from a List of constant values
+     * @param values The List of constant values
+     * @return A new Raster
+     */
     Raster minus(List<Double> values) {
         def processor = new CoverageProcessor()
         def params = processor.getOperation("SubtractConst").parameters
@@ -383,10 +423,20 @@ class Raster {
         new Raster(newCoverage)
     }
 
+    /**
+     * Subtract a constant value from this Raster
+     * @param value The constant value
+     * @return A new Raster
+     */
     Raster minusFrom(double value) {
         minusFrom([value])
     }
 
+    /**
+     * Subtract a List of constant values from this Raster
+     * @param values The List of constant values
+     * @return A new Raster
+     */
     Raster minusFrom(List<Double> values) {
         def processor = new CoverageProcessor()
         def params = processor.getOperation("SubtractFromConst").parameters
