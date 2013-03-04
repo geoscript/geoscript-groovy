@@ -75,6 +75,11 @@ class BoundsTestCase {
         assertEquals 6.0, b.area, 0.1
     }
 
+    @Test void getAspect() {
+        Bounds b = new Bounds(1,2,3,5)
+        assertEquals 0.6666, b.aspect, 0.1
+    }
+
     @Test void quadTree() {
         Bounds b = new Bounds(-180, -90, 180, 90, "EPSG:4326")
         List quads = [

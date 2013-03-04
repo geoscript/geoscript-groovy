@@ -153,6 +153,14 @@ class Bounds {
     }
 
     /**
+     * Get the ratio of width to height for this bounds.
+     * @return The aspect ratio
+     */
+    double getAspect() {
+        width / height
+    }
+
+    /**
      * Expand the Bounds by the given distance in all directions
      * @param distance The distance
      * @return The modified Bounds
