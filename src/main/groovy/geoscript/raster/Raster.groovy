@@ -1,14 +1,18 @@
 package geoscript.raster
 
+import geoscript.geom.Geometry
 import geoscript.proj.Projection
 import geoscript.geom.Bounds
 import geoscript.geom.Point
 import geoscript.style.RasterSymbolizer
 import geoscript.style.Style
-import org.geotools.coverage.grid.GridCoverage2D
+import org.geotools.coverage.grid.GridCoordinates2D
+import org.geotools.coverage.grid.GridEnvelope2D
+import org.geotools.coverage.grid.GridGeometry2D
 import org.geotools.coverage.processing.CoverageProcessor
 import org.geotools.coverage.grid.AbstractGridCoverage
 import org.geotools.coverage.processing.OperationJAI
+import org.geotools.geometry.DirectPosition2D
 import org.geotools.process.raster.ContourProcess
 import org.geotools.process.raster.PolygonExtractionProcess
 import org.geotools.process.raster.RasterAsPointCollectionProcess
@@ -19,13 +23,14 @@ import geoscript.feature.Schema
 import org.geotools.util.NumberRange
 import org.jaitools.numeric.Range
 import org.geotools.coverage.grid.GridCoverageFactory
+import org.opengis.coverage.grid.GridGeometry
+import org.opengis.geometry.DirectPosition
 
-import javax.measure.unit.Unit
 import javax.media.jai.Interpolation
 import java.awt.image.RenderedImage
 
 /**
- * The Raster
+ * A Raster
  * @author Jared Erickson
  */
 class Raster {
@@ -154,6 +159,21 @@ class Raster {
     }
 
     /**
+     * Dispose of this Raster
+     */
+    void dispose() {
+        coverage.dispose(false)
+    }
+
+    /**
+     * Get the underlying java.awt.image.Raster
+     * @return The java.awt.image.Raster
+     */
+    java.awt.image.Raster getData() {
+        coverage.renderedImage.getData()
+    }
+
+    /**
      * Crop this Raster
      * @param bounds The Bounds
      * @return A new Raster
@@ -214,14 +234,186 @@ class Raster {
     }
 
     /**
-     * Get the value of the Raster at the given Location.
+     * Reclassify this Raster with a List of ranges.
+     * @param options Optional named parameters can include the band to reclassify and the noData value.
+     * @param ranges The List of Ranges contains one or more Maps with min, max, and value keys.
+     * @return A new Raster
+     */
+    Raster reclassify(Map options=[:], List ranges) {
+        int band = options.get("band",0)
+        double noData = options.get("noData",0)
+        List<Range> rangeList = ranges.collect{r ->
+            Range.create(r.get("min"), r.get("minIncluded", true), r.get("max"), r.get("maxIncluded", true))
+        }
+        List pixelValues = ranges.collect{r -> r.get("value")}
+        def process = new org.geotools.process.raster.RangeLookupProcess()
+        def cov = process.execute(this.coverage, band, rangeList, pixelValues as int[], noData, null)
+        new Raster(cov)
+    }
+
+    /**
+     * Calculate the min and max values for each band in this Raster.
+     * @return A Map containing the min and max values
+     */
+    Map extrema() {
+        def processor = new CoverageProcessor()
+        def params = processor.getOperation("Extrema").parameters
+        params.parameter("Source").value = this.coverage
+        def result = processor.doOperation(params).getProperty("extrema")
+        [
+            min: result[0],
+            max: result[1]
+        ]
+    }
+
+    /**
+     * Resample this Raster
+     * @param options Optional named parameters can include:
+     * <ul>
+     *     <li>bbox: A geographic Bounds</li>
+     *     <li>rect: A List of 4 pixel coordinates representing a rectangle.</li>
+     *     <li>size: A List resulting width and height</li>
+     * </ul>
+     * @return A new Raster
+     */
+    Raster resample(Map options = [:]) {
+        // Options
+        Bounds bbox = options.get("bbox")
+        List rect = options.get("rect")
+        List size = options.get("size")
+        // Calculate bbox
+        if (!bbox) {
+            if (options.containsKey("rect")) {
+                def (double dx, double dy) = pixelSize
+                Bounds b = bounds
+                bbox = new Bounds(
+                    b.minX + rect[0] * dx,
+                    b.minY + rect[1] * dy,
+                    b.maxX + rect[2] * dx,
+                    b.maxY + rect[3] * dy,
+                    b.proj
+                )
+            } else {
+                bbox = bounds
+            }
+        }
+        // Calculate size
+        if (!size) {
+            if (!rect) {
+                Bounds b = bounds
+                int w = this.size[0] * bbox.width / b.width
+                size = [w, (w * b.aspect) as int]
+            } else {
+                size = [rect[2], rect[3]]
+            }
+        }
+        // Resample
+        GridGeometry2D gg = new GridGeometry2D(new GridEnvelope2D(0,0,size[0],size[1]), bbox.env)
+        def processor = new CoverageProcessor()
+        def params = processor.getOperation("Resample").parameters
+        params.parameter("Source").value = this.coverage
+        params.parameter("CoordinateReferenceSystem").value = proj.crs
+        params.parameter("GridGeometry").value = gg
+        def newCoverage = processor.doOperation(params)
+        new Raster(newCoverage)
+    }
+
+    /**
+     * Get a Histogram for this Raster
+     * @param options Optional named parameters can include low, high, and numBins
+     * @return A Histogram
+     */
+    Histogram histogram(Map options = [:]) {
+        def low = options.get("low")
+        def high = options.get("high")
+        def numberOfBins = options.get("numBins")
+        int numberOfBands = bands.size()
+
+        def processor = new CoverageProcessor()
+        def params = processor.getOperation("Histogram").parameters
+        params.parameter("Source").value = this.coverage
+        if (low) {
+            if (!(low instanceof List)) {
+                low = [low] * numberOfBands
+                params.parameter("lowValue").value = low as double[]
+            }
+        }
+        if (high) {
+            if (!(high instanceof List)) {
+                high = [high] * numberOfBands
+                params.parameter("highValue").value = high as double[]
+            }
+        }
+        if (numberOfBins) {
+            if (!(numberOfBins instanceof List)) {
+                numberOfBins = [numberOfBins] * numberOfBands
+                params.parameter("numBins").value = numberOfBins as int[]
+            }
+        }
+        def h = processor.doOperation(params)
+        new Histogram(h.getProperty("histogram"))
+    }
+
+    /**
+     * Get the value of the Raster at the given geographic Location.
      * If the Raster contains multiple bands a Collection of values, one for
      * each band, will be returned.
      * @param point The Point where we want a value from the Raster
      * @return A value
      */
-    def evaluate(Point point) {
-        coverage.evaluate(new org.geotools.geometry.GeneralDirectPosition(point.x, point.y))
+    List eval(Point point) {
+        coverage.evaluate(new DirectPosition2D(point.x, point.y))
+    }
+
+    /**
+     * Get the value of the Raster at the given pixel Location.
+     * If the Raster contains multiple bands a Collection of values, one for
+     * each band, will be returned.
+     * @param x The pixel x coordinate
+     * @param y The pixel y coordinate
+     * @return A value
+     */
+    List eval(int x, int y) {
+        eval(getPoint(x,y))
+    }
+
+    /**
+     * Get the value of the Raster at the given geographic Location or pixel
+     * location.
+     * If the Raster contains multiple bands a Collection of values, one for
+     * each band, will be returned.
+     * @param point The Point where we want a value from the Raster
+     * @return A value
+     */
+    List getAt(def p) {
+        if (p instanceof Point) {
+            eval(p as Point)
+        } else {
+            eval(p[0] as int, p[1] as int)
+        }
+    }
+
+    /**
+     * Get a geographic Point from pixel coordinates
+     * @param x The x pixel coordinate
+     * @param y The y pixel coordinate
+     * @return A geographic Point
+     */
+    Point getPoint(int x, int y) {
+        GridGeometry2D gg = coverage.gridGeometry
+        DirectPosition2D dp = gg.gridToWorld(new GridCoordinates2D(x,y))
+        new Point(dp.x, dp.y)
+    }
+
+    /**
+     * Get pixel coordinates from the geographic Point
+     * @param p The geographic Point
+     * @return A List of pixel coordinates
+     */
+    List getPixel(Point p) {
+        GridGeometry2D gg = coverage.gridGeometry
+        GridCoordinates2D gc = gg.worldToGrid(new DirectPosition2D(p.x, p.y))
+        [gc.x, gc.y]
     }
 
     /**
@@ -236,16 +428,6 @@ class Raster {
         params.parameter("Source1").value = other.coverage
         def newCoverage = processor.doOperation(params)
         new Raster(newCoverage)
-    }
-
-    /**
-     * Add this Raster with another Raster
-     * <p><code>def r3 = r1 + r2</code></p>
-     * @param other Another a Raster
-     * @return A new Raster
-     */
-    Raster plus(Raster other) {
-        add(other)
     }
 
     /**
@@ -269,6 +451,16 @@ class Raster {
         params.parameter("constants").value = values as double[]
         def newCoverage = processor.doOperation(params)
         new Raster(newCoverage)
+    }
+
+    /**
+     * Add this Raster with another Raster
+     * <p><code>def r3 = r1 + r2</code></p>
+     * @param other Another a Raster
+     * @return A new Raster
+     */
+    Raster plus(Raster other) {
+        add(other)
     }
 
     /**
@@ -360,6 +552,15 @@ class Raster {
     }
 
     /**
+     * Divide this Raster by another Raster
+     * @param other The other Raster
+     * @return A new Raster
+     */
+    Raster divide(Raster other) {
+        div(other)
+    }
+
+    /**
      * Divide this Raster by a constant value
      * @param value The constant value
      * @return A new Raster
@@ -388,16 +589,12 @@ class Raster {
      * @return A new Raster
      */
     Raster minus(Raster other) {
-        /*def processor = new CoverageProcessor()
+        def processor = new CoverageProcessor()
         def params = processor.getOperation("Subtract").parameters
         params.parameter("Source0").value = this.coverage
         params.parameter("Source1").value = other.coverage
         def newCoverage = processor.doOperation(params)
-        new Raster(newCoverage)*/
-        MapAlgebra mapAlgebra = new MapAlgebra()
-        List size = this.size
-        Raster output = mapAlgebra.calculate("dest = src1 - src2;", [src1: this, src2: other])
-        output
+        new Raster(newCoverage)
     }
 
     /**
@@ -447,6 +644,30 @@ class Raster {
     }
 
     /**
+     * Create a new Raster by inverting the values of this Raster
+     * @return A new Raster
+     */
+    Raster invert() {
+        def processor = new CoverageProcessor()
+        def params = processor.getOperation("Invert").parameters
+        params.parameter("Source").value = this.coverage
+        def newCoverage = processor.doOperation(params)
+        new Raster(newCoverage)
+    }
+
+    /**
+     * Create a new Raster by inverting the values of this Raster.
+     * Overrides the - operator
+     * <p><blockquote><pre>
+     * def invertedRaster = -raster
+     * </pre></blockquote></p>
+     * @return A new Raster
+     */
+    Raster negative() {
+        invert()
+    }
+
+    /**
      * Create contours
      * @param band The Raster band
      * @param intervalOrLevels The contour interval or a List of levels
@@ -484,17 +705,29 @@ class Raster {
     }
 
     /**
-     * Extract Polygons.
-     * @param band The band
-     * @param insideEdges Whether to include the inside edges or not
-     * @param bounds The geographic Bounds
-     * @param noData The List of no data values
-     * @param range A List of range Maps with min, minIncluded, max, and maxIncluded keys
-     * @return A Layer
+     * Convert this Raster to a Layer of polygons.
+     * @param options Optional named parameters may include:
+     * <ul>
+     * <li>band The band defaults to 0</li>
+     * <li>insideEdges Whether to include the inside edges or not. Defaults to true</li>
+     * <li>roi The Geometry region of interest.  Defaults to null.</li>
+     * <li>noData The List of no data values.  Defaults to null.</li>
+     * <li>range A List of range Maps with min, minIncluded, max, and maxIncluded keys.  Defaults to null.</li>
+     * @return A Layer of polygons
      */
-    Layer toPolygons(int band, boolean insideEdges = true, Bounds bounds = null, List noData = null, List ranges = null) {
+    Layer getPolygonLayer(Map options = [:]) {
+        // Options
+        int band = options.get("band",0)
+        boolean insideEdges = options.get("insideEdges", true)
+        Geometry roi = options.get("roi", null)
+        def noData = options.get("noData", null)
+        List ranges = options.get("ranges", null)
+        // Prepare
         if (noData != null) {
-            noData = noData as Number[]
+            if (!(noData instanceof List)) {
+                noData = [noData]
+            }
+            //noData = noData as Number[]
         }
         List rangeList = null
         if (ranges != null) {
@@ -502,8 +735,9 @@ class Raster {
                 Range.create(rng.get("min"), rng.get("minIncluded", true), rng.get("max"), rng.get("maxIncluded", true))
             }
         }
+        // Extract Polygons
         PolygonExtractionProcess process = new PolygonExtractionProcess()
-        def fc = process.execute(coverage, band, insideEdges, bounds.geometry.g, noData, rangeList, null)
+        def fc = process.execute(this.coverage, band, insideEdges, roi?.g, noData, rangeList, null)
         Schema s = new Schema(fc.schema)
         Schema schema =  new Schema("polygons", s.fields)
         Layer layer = new Memory().create(schema)
@@ -515,7 +749,7 @@ class Raster {
      * Convert this Raster into a Layer of Points
      * @return A Layer
      */
-    Layer toPoints() {
+    Layer getPointLayer() {
         def process = new RasterAsPointCollectionProcess()
         def fc = process.execute(coverage)
         Schema s = new Schema(fc.schema)
