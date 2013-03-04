@@ -72,9 +72,9 @@ class MapAlgebraTestCase {
         MapAlgebra mapAlgebra = new MapAlgebra()
         Raster raster3 = mapAlgebra.calculate("dest = src1 - src2;", [src1: raster1, src2: raster2])
 
-        assertEquals(4, raster3.evaluate(new Point(0.5,0.5))[0], 0.1)
-        assertEquals(4, raster3.evaluate(new Point(1.5,1.5))[0], 0.1)
-        assertEquals(4, raster3.evaluate(new Point(2.5,2.5))[0], 0.1)
-        assertEquals(2, raster3.evaluate(new Point(3.5,2.5))[0], 0.1)
+        assertEquals(4, raster3.eval(new Point(0.5,0.5))[0], 0.1)
+        assertEquals(4, raster3.eval(new Point(1.5,1.5))[0], 0.1)
+        assertEquals(4, raster3.eval(new Point(2.5,2.5))[0], 0.1)
+        assertEquals(2, raster3.eval(new Point(3.5,2.5))[0], 0.1)
     }
 }
