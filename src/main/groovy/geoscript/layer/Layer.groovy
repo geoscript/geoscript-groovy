@@ -940,7 +940,7 @@ class Layer {
      * @param name The name of the Raster
      * @return A Raster
      */
-    Raster toRaster(def field, List gridSize, Bounds bounds, String rasterName) {
+    Raster getRaster(def field, List gridSize, Bounds bounds, String rasterName) {
         def dim = new Dimension(gridSize[0] as int, gridSize[1] as int)
         def fld =  filterFactory.property(field instanceof Field ? field.name : field)
         def cov = VectorToRasterProcess.process(fs.features, fld, dim, bounds.env, rasterName, null)

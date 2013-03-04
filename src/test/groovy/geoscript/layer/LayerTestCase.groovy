@@ -597,10 +597,10 @@ class LayerTestCase {
         h2.close()
     }
 
-    @Test void toRaster() {
+    @Test void getRaster() {
         File file = new File(getClass().getClassLoader().getResource("states.shp").toURI())
         Shapefile shp = new Shapefile(file)
-        Raster raster = shp.toRaster("SAMP_POP", [800,600], shp.bounds, "SAMP_POP")
+        Raster raster = shp.getRaster("SAMP_POP", [800,600], shp.bounds, "SAMP_POP")
         assertNotNull raster
         File rasterFile = File.createTempFile("states_pop_",".tif")
         println rasterFile
