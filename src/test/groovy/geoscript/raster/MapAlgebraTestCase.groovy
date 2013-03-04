@@ -1,5 +1,7 @@
 package geoscript.raster
 
+import geoscript.geom.Bounds
+import geoscript.geom.Point
 import org.junit.Test
 import static org.junit.Assert.*
 
@@ -44,5 +46,35 @@ class MapAlgebraTestCase {
         GeoTIFF geotiff = new GeoTIFF()
         geotiff.write(output, file)
         assertTrue file.size() > 0
+    }
+
+    @Test void minus() {
+
+        Bounds bounds = new Bounds(0, 0, 7, 5, "EPSG:4326")
+        List data1 = [
+                [5,5,5,5,5,5,5],
+                [5,6,6,6,6,6,5],
+                [5,6,7,6,7,6,5],
+                [5,6,6,6,6,6,5],
+                [5,5,5,5,5,5,5]
+        ]
+        Raster raster1 = new Raster(data1, bounds)
+
+        List data2 = [
+                [1,1,1,1,1,1,1],
+                [1,2,2,2,2,2,1],
+                [1,2,3,4,3,2,1],
+                [1,2,2,2,2,2,1],
+                [1,1,1,1,1,1,1]
+        ]
+        Raster raster2 = new Raster(data2, bounds)
+
+        MapAlgebra mapAlgebra = new MapAlgebra()
+        Raster raster3 = mapAlgebra.calculate("dest = src1 - src2;", [src1: raster1, src2: raster2])
+
+        assertEquals(4, raster3.evaluate(new Point(0.5,0.5))[0], 0.1)
+        assertEquals(4, raster3.evaluate(new Point(1.5,1.5))[0], 0.1)
+        assertEquals(4, raster3.evaluate(new Point(2.5,2.5))[0], 0.1)
+        assertEquals(2, raster3.evaluate(new Point(3.5,2.5))[0], 0.1)
     }
 }
