@@ -23,8 +23,6 @@ import geoscript.feature.Schema
 import org.geotools.util.NumberRange
 import org.jaitools.numeric.Range
 import org.geotools.coverage.grid.GridCoverageFactory
-import org.opengis.coverage.grid.GridGeometry
-import org.opengis.geometry.DirectPosition
 
 import javax.media.jai.Interpolation
 import java.awt.image.RenderedImage
