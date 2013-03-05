@@ -1,5 +1,8 @@
 package geoscript.process
 
+import geoscript.feature.Field
+import geoscript.raster.Raster
+import geoscript.workspace.Memory
 import org.junit.Test
 import static org.junit.Assert.*
 import geoscript.geom.*
@@ -232,5 +235,77 @@ class ProcessTestCase {
         int count = 0
         c.each {f -> f.geom instanceof Point; count++}
         assertEquals 49, count
+    }
+
+    @Test void rasterAddProcess() {
+        Bounds bounds = new Bounds(0, 0, 7, 5, "EPSG:4326")
+        List data1 = [
+                [0,0,0,0,0,0,0],
+                [0,1,1,1,1,1,0],
+                [0,1,2,3,2,1,0],
+                [0,1,1,1,1,1,0],
+                [0,0,0,0,0,0,0]
+        ]
+        Raster raster1 = new Raster(data1, bounds)
+
+        List data2 = [
+                [1,1,1,1,1,1,1],
+                [1,2,2,2,2,2,1],
+                [1,2,3,4,3,2,1],
+                [1,2,2,2,2,2,1],
+                [1,1,1,1,1,1,1]
+        ]
+        Raster raster2 = new Raster(data2, bounds)
+
+        Process p = new Process("ras:AddCoverages")
+        Map results = p.execute(["coverageA": raster1, "coverageB": raster2])
+        Raster raster3 = results.result
+
+        assertEquals 1, raster3.eval(new Point(0.5,0.5))[0], 0.1
+        assertEquals 3, raster3.eval(new Point(1.5,1.5))[0], 0.1
+        assertEquals 5, raster3.eval(new Point(2.5,2.5))[0], 0.1
+        assertEquals 7, raster3.eval(new Point(3.5,2.5))[0], 0.1
+    }
+
+    @Test void rasterToPointsProcess() {
+        Bounds bounds = new Bounds(0, 0, 7, 5, "EPSG:4326")
+        List data = [
+                [0,0,0,0,0,0,0],
+                [0,1,1,1,1,1,0],
+                [0,1,2,3,2,1,0],
+                [0,1,1,1,1,1,0],
+                [0,0,0,0,0,0,0]
+        ]
+        Raster raster = new Raster(data, bounds)
+
+        Process p = new Process("ras:RasterAsPointCollection")
+        Map results = p.execute(["data": raster])
+        Cursor c = results.result
+        int count = 0
+        c.each {f -> f.geom instanceof Point; count++}
+        assertEquals 35, count
+    }
+
+    @Test void vectorToRasterProcess() {
+        Bounds bounds = new Bounds(0,0,10,11,"EPSG:4326")
+        Geometry geom = bounds.getGrid(5,5,"poygon")
+        Layer layer = new Memory().create("grid",[
+            new Field("geom","Polygon","EPSG:4326"),
+            new Field("value","Double")
+        ])
+        geom.geometries.eachWithIndex{g,i ->
+            layer.add([geom:g, value: i + 10])
+        }
+        Process p = new Process("vec:VectorToRaster")
+        Map results = p.execute([
+            features: layer,
+            rasterWidth: 400,
+            rasterHeight: 400,
+            attribute: "value",
+            bounds: layer.bounds
+        ])
+        Raster raster = results.result
+        assertNotNull raster
+        assertEquals layer.bounds, raster.bounds
     }
 }
