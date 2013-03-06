@@ -25,6 +25,9 @@ class RasterTestCase {
         assertEquals("GeoTIFF", geoTIFF.format)
         assertEquals("EPSG:2927", raster.proj.id)
 
+        assertNotNull raster.data
+        assertNotNull raster.image
+
         Bounds bounds = raster.bounds
         assertEquals(1166191.0260847565, bounds.minX, 0.0000000001)
         assertEquals(1167331.8522748263, bounds.maxX, 0.0000000001)
@@ -557,11 +560,11 @@ class RasterTestCase {
         assertTrue data instanceof java.awt.image.Raster
     }
 
-    @Test void extrema() {
+    @Test void getExtrema() {
         File file = new File(getClass().getClassLoader().getResource("alki.tif").toURI())
         GeoTIFF geoTIFF = new GeoTIFF()
         Raster raster = geoTIFF.read(file)
-        Map result = raster.extrema()
+        Map result = raster.extrema
         assertTrue result.containsKey("min")
         assertTrue result.containsKey("max")
         assertEquals 10.0, result.min[0], 0.1
@@ -596,11 +599,11 @@ class RasterTestCase {
         assertEquals 500.0, raster3.size[1], 1.0
     }
 
-    @Test void histogram() {
+    @Test void getHistogram() {
         File file = new File(getClass().getClassLoader().getResource("alki.tif").toURI())
         GeoTIFF geoTIFF = new GeoTIFF()
         Raster raster = geoTIFF.read(file)
-        Histogram histogram = raster.histogram()
+        Histogram histogram = raster.histogram
         assertNotNull histogram
         assertEquals 3, histogram.numberOfBands
         (0..<histogram.numberOfBands).each{b ->
