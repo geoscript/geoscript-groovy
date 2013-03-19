@@ -195,7 +195,11 @@ class Geometry {
      * @return The difference between this Geometry and the other Geometry
      */
     Geometry difference(Geometry other) {
-        wrap(this.g.difference(other.g))
+        try {
+            return wrap(this.g.difference(other.g))
+        } catch (com.vividsolutions.jts.geom.TopologyException e) {
+            return wrap(this.g.buffer(0).difference(other.g))
+        }
     }
 
     /**
