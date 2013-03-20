@@ -1314,7 +1314,11 @@ class Layer {
 
     /**
      * Clip this Layer by another Layer.
-     * @param options Named parameters can include the outLayer as a Layer or Layer name and outWorkspace as the output Workspace
+     * @param options Named parameters
+     * <ul>
+     *     <li>outLayer = The name of the output Layer (defaults to this.layer.name_clipLayer.name_clipped)</li>
+     *     <li>outWorkspace = The output Workspace (defaults to the Memory Workspace)</li>
+     * </ul>
      * @param clipLayer The clip Layer
      * @return The clipped Layer
      */
@@ -1351,7 +1355,14 @@ class Layer {
 
     /**
      * Union this Layer with another Layer.
-     * @param options Optional options can include the outLayer as a Layer or Layer name and outWorkspace as the output Workspace
+     * @param options Named parameters
+     * <ul>
+     *     <li>outLayer = The name of the output Layer (defaults to this.layer.name_layer2.name_union)</li>
+     *     <li>outWorkspace = The output Workspace (defaults to the Memory Workspace)</li>
+     *     <li>postfixAll = Whether to postfix all field names when combinging schemas (defaults to false)</li>
+     *     <li>includeDuplicates = Whether to include duplicate field names (defaults to true)</li>
+     *     <li>maxFieldNameLength = The maximum field name length (defaults to 10 if output Workspace is Directory, otherwise there is no limit)</li>
+     * </ul>
      * @param layer2 The second Layer
      * @return The unioned Layer
      */
@@ -1432,7 +1443,14 @@ class Layer {
 
     /**
      * Intersect this Layer with another Layer.
-     * @param options A Map of options that can contain outWorkspace and outLayer.  outLayer can be a Layer or Layer name.
+     * @param options Named parameters
+     * <ul>
+     *     <li>outLayer = The name of the output Layer (defaults to this.layer.name_layer2.name_intersection)</li>
+     *     <li>outWorkspace = The output Workspace (defaults to the Memory Workspace)</li>
+     *     <li>postfixAll = Whether to postfix all field names when combinging schemas (defaults to false)</li>
+     *     <li>includeDuplicates = Whether to include duplicate field names (defaults to true)</li>
+     *     <li>maxFieldNameLength = The maximum field name length (defaults to 10 if output Workspace is Directory, otherwise there is no limit)</li>
+     * </ul>
      * @param layer2 The second Layer
      * @return The output Layer
      */
@@ -1498,7 +1516,11 @@ class Layer {
 
     /**
      * Erase this Layer with another Layer.
-     * @param layer1 The first Layer
+     * @param options Named parameters
+     * <ul>
+     *     <li>outLayer = The name of the output Layer (defaults to this.layer.name_layer2.name_erase)</li>
+     *     <li>outWorkspace = The output Workspace (defaults to the Memory Workspace)</li>
+     * </ul>
      * @param layer2 The second Layer
      * @return The output Layer
      */
@@ -1545,7 +1567,14 @@ class Layer {
 
     /**
      * Calculate the identity between this Layer and another Layer.
-     * @param options A Map of options that can contain outWorkspace and outLayer.  outLayer can be a Layer or Layer name.
+     * @param options Named parameters
+     * <ul>
+     *     <li>outLayer = The name of the output Layer (defaults to this.layer.name_layer2.name_identity)</li>
+     *     <li>outWorkspace = The output Workspace (defaults to the Memory Workspace)</li>
+     *     <li>postfixAll = Whether to postfix all field names when combinging schemas (defaults to false)</li>
+     *     <li>includeDuplicates = Whether to include duplicate field names (defaults to true)</li>
+     *     <li>maxFieldNameLength = The maximum field name length (defaults to 10 if output Workspace is Directory, otherwise there is no limit)</li>
+     * </ul>
      * @param layer2 The second Layer
      * @return The output Layer
      */
@@ -1619,7 +1648,11 @@ class Layer {
 
     /**
      * Calculate the update between this Layer and another Layer.
-     * @param options A Map of options that can contain outWorkspace and outLayer (which can be a Layer or a Layer name).
+     * @param options Named parameters
+     * <ul>
+     *     <li>outLayer = The name of the output Layer (defaults to this.layer.name_layer2.name_update)</li>
+     *     <li>outWorkspace = The output Workspace (defaults to the Memory Workspace)</li>
+     * </ul>
      * @param layer2 The second Layer
      * @return The output Layer
      */
@@ -1676,7 +1709,14 @@ class Layer {
 
     /**
      * Calculate the symmetric difference between this Layer and another Layer.
-     * @param options A Map of options that can contain outWorkspace and outLayer (which can be a Layer or a Layer name).
+     * @param options Named parameters
+     * <ul>
+     *     <li>outLayer = The name of the output Layer (defaults to this.layer.name_layer2.name_symdifference)</li>
+     *     <li>outWorkspace = The output Workspace (defaults to the Memory Workspace)</li>
+     *     <li>postfixAll = Whether to postfix all field names when combinging schemas (defaults to false)</li>
+     *     <li>includeDuplicates = Whether to include duplicate field names (defaults to true)</li>
+     *     <li>maxFieldNameLength = The maximum field name length (defaults to 10 if output Workspace is Directory, otherwise there is no limit)</li>
+     * </ul>
      * @param layer2 The second Layer
      * @return The output Layer
      */
