@@ -3,6 +3,7 @@ package geoscript.raster
 import geoscript.geom.Bounds
 import org.junit.Test
 import static org.junit.Assert.assertEquals
+import static org.junit.Assert.assertFalse
 import static org.junit.Assert.assertNotNull
 
 /**
@@ -24,6 +25,8 @@ class BandTestCase {
         assertEquals("GREEN_BAND", bands[1].toString())
         assertEquals("BLUE_BAND", bands[2].toString())
 
+        assertFalse(bands[0].isNoData(-99))
+
         bands.eachWithIndex {band,i ->
             println("Band ${i}")
             println("  ${band}")
@@ -35,7 +38,5 @@ class BandTestCase {
             println("  Offset = ${band.offset}")
             println("  Sample Dimension Type = ${band.dim.sampleDimensionType}")
         }
-
     }
-	
 }

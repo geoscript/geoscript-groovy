@@ -46,6 +46,15 @@ class Band {
     }
 
     /**
+     * Check whether the value is a NODATA value
+     * @param value The value
+     * @return Whether the value is a NODATA value
+     */
+    boolean isNoData(double value) {
+        (noData) ? noData.contains(value) : false
+    }
+
+    /**
      * Get the unit information
      * @return The unit information
      */
