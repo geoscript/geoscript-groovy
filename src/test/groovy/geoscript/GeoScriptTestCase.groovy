@@ -72,7 +72,7 @@ class GeoScriptTestCase {
                 [0,0,0,0,0,0,0]
         ]
         Bounds bounds = new Bounds(0, 0, 7, 5, "EPSG:4326")
-        assertTrue GeoScript.unwrap(new Raster(data, bounds)) instanceof org.geotools.coverage.grid.AbstractGridCoverage
+        assertTrue GeoScript.unwrap(new Raster(data, bounds)) instanceof org.geotools.coverage.grid.GridCoverage2D
         assertTrue GeoScript.unwrap(new GeoTIFF()) instanceof org.geotools.coverage.grid.io.AbstractGridFormat
         assertTrue GeoScript.unwrap(1) instanceof Integer
         assertTrue GeoScript.unwrap("ABC") instanceof String

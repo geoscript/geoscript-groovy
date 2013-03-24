@@ -2,21 +2,12 @@ package geoscript.filter
 
 import org.opengis.filter.expression.Function as GtFunction
 import org.opengis.filter.expression.Expression as GtExpression
-
 import org.geotools.factory.CommonFactoryFinder
 import org.geotools.factory.FactoryIteratorProvider
 import org.geotools.factory.GeoTools
 import org.geotools.filter.FunctionExpressionImpl
 import org.geotools.filter.FunctionFactory
 import org.opengis.feature.type.Name
-import org.geotools.feature.FeatureCollection
-import geoscript.layer.Layer
-import org.geotools.coverage.grid.AbstractGridCoverage
-import geoscript.raster.Raster
-import org.geotools.gce.geotiff.GeoTiffFormat
-import org.geotools.filter.function.RenderingTransformation
-import org.geotools.data.Query
-import org.opengis.coverage.grid.GridGeometry
 import org.opengis.filter.expression.Literal
 import org.geotools.feature.NameImpl
 import org.opengis.filter.capability.FunctionName

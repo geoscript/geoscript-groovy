@@ -557,8 +557,8 @@ class Process {
         else if (org.opengis.coverage.grid.GridCoverage.isAssignableFrom(target) && geoscript.raster.Raster.isInstance(source)) {
             return (source as geoscript.raster.Raster).coverage
         }
-        else if (geoscript.raster.Raster.isAssignableFrom(target) && org.geotools.coverage.grid.AbstractGridCoverage.isInstance(source)) {
-            return new geoscript.raster.Raster(source as org.geotools.coverage.grid.AbstractGridCoverage)
+        else if (geoscript.raster.Raster.isAssignableFrom(target) && org.geotools.coverage.grid.GridCoverage2D.isInstance(source)) {
+            return new geoscript.raster.Raster(source as org.geotools.coverage.grid.GridCoverage2D)
         }
         // Just return an unconverted Object
         else {

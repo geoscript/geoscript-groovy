@@ -7,10 +7,10 @@ import geoscript.geom.Point
 import geoscript.style.RasterSymbolizer
 import geoscript.style.Style
 import org.geotools.coverage.grid.GridCoordinates2D
+import org.geotools.coverage.grid.GridCoverage2D
 import org.geotools.coverage.grid.GridEnvelope2D
 import org.geotools.coverage.grid.GridGeometry2D
 import org.geotools.coverage.processing.CoverageProcessor
-import org.geotools.coverage.grid.AbstractGridCoverage
 import org.geotools.coverage.processing.OperationJAI
 import org.geotools.geometry.DirectPosition2D
 import org.geotools.process.raster.ContourProcess
@@ -34,9 +34,9 @@ import java.awt.image.RenderedImage
 class Raster {
 
     /**
-     * A GeoScript Raster wraps a GeoTools AbstractGridCoverage
+     * A GeoScript Raster wraps a GeoTools GridCoverage2D
      */
-    AbstractGridCoverage coverage
+    GridCoverage2D coverage
 
     /**
      * The Style
@@ -60,10 +60,10 @@ class Raster {
     }
 
     /**
-     * Create a Raster from a GeoTools AbstractGridCoverage.
-     * @param coverage The GeoTools AbstractGridCoverage
+     * Create a Raster from a GeoTools GridCoverage2D.
+     * @param coverage The GeoTools GridCoverage2D
      */
-    Raster(AbstractGridCoverage coverage) {
+    Raster(GridCoverage2D coverage) {
        this.coverage = coverage
        this.style = new RasterSymbolizer()
     }
@@ -112,12 +112,24 @@ class Raster {
      * @return The size [w,h]
      */
     List getSize() {
-        def grid = coverage.gridGeometry.gridRange
-        double minX = grid.getLow(0)
-        double maxX = grid.getHigh(0)
-        double minY = grid.getLow(1)
-        double maxY = grid.getHigh(1)
-        [maxX - minX, maxY - minY]
+        def grid = coverage.gridGeometry.gridRange2D
+        [grid.width as int, grid.height as int]
+    }
+
+    /**
+     * Get the number of columns
+     * @return The number of columns
+     */
+    int getCols() {
+        size[0]
+    }
+
+    /**
+     * Get the number of rows
+     * @return The number rows
+     */
+    int getRows() {
+        size[1]
     }
 
     /**

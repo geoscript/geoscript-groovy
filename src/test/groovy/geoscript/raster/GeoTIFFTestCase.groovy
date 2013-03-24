@@ -30,9 +30,9 @@ class GeoTIFFTestCase {
         assertEquals(824226.3820666744, bounds.maxY, 0.0000000001)
         assertEquals("EPSG:2927", raster.proj.id)
 
-        def (double w, double h) = raster.size
-        assertEquals(760, w, 0.1)
-        assertEquals(843, h, 0.1)
+        def (int w, int h) = raster.size
+        assertEquals(761, w)
+        assertEquals(844, h)
 
         List<Band> bands = raster.bands
         assertEquals(3, bands.size())
@@ -45,7 +45,7 @@ class GeoTIFFTestCase {
         assertEquals(3, bh)
 
         def (double pw, double ph) = raster.pixelSize
-        assertEquals(1.5010870921970836, pw, 0.000000000001)
-        assertEquals(1.5022218047840352, ph, 0.000000000001)
+        assertEquals(1.4991145730220545, pw, 0.000000000001)
+        assertEquals(1.5004419211290778, ph, 0.000000000001)
     }
 }
