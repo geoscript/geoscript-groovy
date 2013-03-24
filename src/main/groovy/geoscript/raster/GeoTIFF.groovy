@@ -1,12 +1,6 @@
 package geoscript.raster
 
-import geoscript.geom.Bounds
-import geoscript.proj.Projection
-import org.geotools.coverage.grid.io.AbstractGridFormat
 import org.geotools.gce.geotiff.GeoTiffFormat
-import org.geotools.gce.geotiff.GeoTiffReader
-import org.geotools.coverage.grid.io.imageio.IIOMetadataDumper
-import org.geotools.coverage.grid.AbstractGridCoverage
 
 /**
  * A Format that can read and write GeoTIFFs.
