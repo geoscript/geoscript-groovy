@@ -316,6 +316,10 @@ class Raster {
     /**
      * Reclassify this Raster with a List of ranges.
      * @param options Optional named parameters can include the band to reclassify and the noData value.
+     * <ul>
+     *      <li>band: The band (defaults to 0)</li>
+     *      <li>noData: The NO DATA value (defaults to 0)</li>
+     * </ul>
      * @param ranges The List of Ranges contains one or more Maps with min, max, and value keys.
      * @return A new Raster
      */
@@ -349,6 +353,11 @@ class Raster {
     /**
      * Get a Histogram for this Raster
      * @param options Optional named parameters can include low, high, and numBins
+     * <ul>
+     *     <li>low: The low value</li>
+     *     <li>high: The high value</li>
+     *     <li>numBins: The number of bins</li>
+     * </ul>
      * @return A Histogram
      */
     Histogram getHistogram(Map options = [:]) {
@@ -475,11 +484,12 @@ class Raster {
      * Convert this Raster to a Layer of polygons.
      * @param options Optional named parameters may include:
      * <ul>
-     * <li>band The band defaults to 0</li>
-     * <li>insideEdges Whether to include the inside edges or not. Defaults to true</li>
-     * <li>roi The Geometry region of interest.  Defaults to null.</li>
-     * <li>noData The List of no data values.  Defaults to null.</li>
-     * <li>range A List of range Maps with min, minIncluded, max, and maxIncluded keys.  Defaults to null.</li>
+     *      <li>band: The band defaults to 0</li>
+     *      <li>insideEdges: Whether to include the inside edges or not. Defaults to true</li>
+     *      <li>roi: The Geometry region of interest.  Defaults to null.</li>
+     *      <li>noData: The List of no data values.  Defaults to null.</li>
+     *      <li>range: A List of range Maps with min, minIncluded, max, and maxIncluded keys.  Defaults to null.</li>
+     * </ul>
      * @return A Layer of polygons
      */
     Layer getPolygonLayer(Map options = [:]) {
