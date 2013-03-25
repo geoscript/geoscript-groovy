@@ -25,6 +25,10 @@ import org.jaitools.numeric.Range
 import org.geotools.coverage.grid.GridCoverageFactory
 
 import javax.media.jai.Interpolation
+import javax.media.jai.TiledImage
+import javax.media.jai.iterator.RandomIterFactory
+import javax.media.jai.iterator.WritableRandomIter
+import java.awt.image.DataBuffer
 import java.awt.image.RenderedImage
 
 /**
@@ -42,6 +46,11 @@ class Raster {
      * The Style
      */
     Style style
+
+    /**
+     * Enable write support, but only on demand
+     */
+    private WritableRandomIter writable
 
     /**
      * Create a new Raster from a List of List of float values
@@ -228,6 +237,42 @@ class Raster {
         } else {
             eval(p[0] as int, p[1] as int)
         }
+    }
+
+    /**
+     * Set the value for the given Point or Pixel
+     * @param p The Point or Pixel (as List of xy coordinates)
+     * @param value The new value
+     * @param band The band (defaults to 0)
+     */
+    void setValue(def p, def value, int band = 0) {
+        if (!writable) {
+            enableWriteSupport()
+        }
+        def pixel = (p instanceof Point) ? getPixel(p) : p
+        writable.setSample(pixel[0], pixel[1], band, value)
+    }
+
+    /**
+     * Set the value for the given Point or Pixel
+     * @param p The Point or Pixel (as List of xy coordinates)
+     * @param value The new value
+     */
+    void putAt(def p, def value) {
+        setValue(p, value)
+    }
+
+    /**
+     * Enable write support on demand.
+     */
+    private void enableWriteSupport() {
+        def writableImage
+        if (!coverage.isDataEditable()) {
+            writableImage = new TiledImage(coverage.renderedImage, true)
+        } else {
+            writableImage = coverage.renderedImage
+        }
+        writable = RandomIterFactory.createWritable(writableImage, null)
     }
 
     /**

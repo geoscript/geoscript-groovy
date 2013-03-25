@@ -189,6 +189,25 @@ class RasterTestCase {
         assertEquals(100, value[2])
     }
 
+    @Test void setValue() {
+        Bounds bounds = new Bounds(0, 0, 7, 5, "EPSG:4326")
+        List data = [
+                [0,0,0,0,0,0,0],
+                [0,1,1,1,1,1,0],
+                [0,1,2,3,2,1,0],
+                [0,1,1,1,1,1,0],
+                [0,0,0,0,0,0,0]
+        ]
+        Raster raster = new Raster(data, bounds)
+        assertEquals 1, raster.eval([1,1])[0], 0.1
+        raster.setValue([1,1],5)
+        assertEquals 5, raster.eval([1,1])[0], 0.1
+
+        assertEquals 3, raster[[3,2]][0], 0.1
+        raster[[3,2]] = 10
+        assertEquals 10, raster[[3,2]][0], 0.1
+    }
+
     @Test void add() {
         Bounds bounds = new Bounds(0, 0, 7, 5, "EPSG:4326")
         List data1 = [
