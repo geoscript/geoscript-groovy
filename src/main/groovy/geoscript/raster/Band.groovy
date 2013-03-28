@@ -1,5 +1,7 @@
 package geoscript.raster
 
+import org.geotools.coverage.TypeMap
+import java.awt.image.DataBuffer
 import org.opengis.coverage.SampleDimension
 
 /**
@@ -19,6 +21,7 @@ class Band {
      */
     Band(SampleDimension dim) {
          this.dim = dim
+        dim.getSampleDimensionType()
     }
 
     /**
@@ -76,6 +79,29 @@ class Band {
      */
     double getOffset() {
         dim.offset
+    }
+
+    /**
+     * Get the type of data
+     * @return The type of data
+     */
+    String getType() {
+        int type = TypeMap.getDataBufferType(dim.sampleDimensionType)
+        if (type == DataBuffer.TYPE_BYTE) {
+            return "byte"
+        } else if (type == DataBuffer.TYPE_DOUBLE) {
+            return "double"
+        } else if (type == DataBuffer.TYPE_FLOAT) {
+            return "float"
+        } else if (type == DataBuffer.TYPE_INT) {
+            return "int"
+        } else if (type == DataBuffer.TYPE_SHORT) {
+            return "short"
+        } else if (type == DataBuffer.TYPE_USHORT) {
+            return "short"
+        } else {
+            return "undefined"
+        }
     }
 
     /**

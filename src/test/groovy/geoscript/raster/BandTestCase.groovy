@@ -1,6 +1,7 @@
 package geoscript.raster
 
 import geoscript.geom.Bounds
+import org.geotools.coverage.TypeMap
 import org.junit.Test
 import static org.junit.Assert.assertEquals
 import static org.junit.Assert.assertFalse
@@ -36,7 +37,7 @@ class BandTestCase {
             println("  Unit = ${band.unit}")
             println("  Scale = ${band.scale}")
             println("  Offset = ${band.offset}")
-            println("  Sample Dimension Type = ${band.dim.sampleDimensionType}")
+            println("  Type = ${band.type}")
         }
     }
 }
