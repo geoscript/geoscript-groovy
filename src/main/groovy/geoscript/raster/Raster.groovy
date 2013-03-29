@@ -21,6 +21,9 @@ import geoscript.layer.Layer
 import geoscript.workspace.Memory
 import geoscript.feature.Schema
 import org.geotools.util.NumberRange
+import org.jaitools.imageutils.iterator.AbstractSimpleIterator
+import org.jaitools.imageutils.iterator.SimpleIterator
+import org.jaitools.imageutils.iterator.WindowIterator
 import org.jaitools.numeric.Range
 import org.geotools.coverage.grid.GridCoverageFactory
 
@@ -28,7 +31,8 @@ import javax.media.jai.Interpolation
 import javax.media.jai.TiledImage
 import javax.media.jai.iterator.RandomIterFactory
 import javax.media.jai.iterator.WritableRandomIter
-import java.awt.image.DataBuffer
+import java.awt.Dimension
+import java.awt.Rectangle
 import java.awt.image.RenderedImage
 
 /**
@@ -117,8 +121,8 @@ class Raster {
     }
 
     /**
-     * Get the size
-     * @return The size [w,h]
+     * Get the size [w,h] or [columns,rows]
+     * @return The size [w,h] or [columns,rows]
      */
     List getSize() {
         def grid = coverage.gridGeometry.gridRange2D
@@ -240,6 +244,174 @@ class Raster {
     }
 
     /**
+     * Get the value at the given geographic location (Point) or pixel location ([x,y])
+     * for the given band
+     * @param p The Point or Pixel (list x,y)
+     * @param band The band zero based
+     * @return The value
+     */
+    def getValue(def p, int band = 0) {
+        if (p instanceof Point) {
+            eval(p as Point)[band]
+        } else {
+            eval(p[0] as int, p[1] as int)[band]
+        }
+    }
+
+    /**
+     * Get the value at the given pixel location ([x,y])
+     * for the given band
+     * @param x The pixel x
+     * @param y The pixel y
+     * @param band The band zero based
+     * @return The value
+     */
+    def getValue(int x, int y, int band = 0) {
+        eval(x,y)[band]
+    }
+
+    /**
+     * Get a List of values from the Raster
+     * @param x The pixel x or col to start from
+     * @param y The pixel y or row to start from
+     * @param w The number of columns
+     * @param h The number of rows
+     * @param band The band to get values from (defaults to 0)
+     * @param flat Whether the List should be returned flat (true, the default) or with nested Lists (false)
+     * @return A List of values
+     */
+    List getValues(int x, int y, int w, int h, int band = 0, boolean flat = true) {
+        Band b = bands[band]
+        def array
+        if (b.type.equalsIgnoreCase("byte")) {
+            array = new byte[w * h]
+        } else if (b.type.equalsIgnoreCase("int")) {
+            array = new int[w * h]
+        } else if (b.type.equalsIgnoreCase("float")) {
+            array = new float[w * h]
+        } else if (b.type.equalsIgnoreCase("double")) {
+            array = new double[w * h]
+        } else if (b.type.equalsIgnoreCase("short")) {
+            array = new short[w * h]
+        }
+        List list = data.getSamples(x,y,w,h,band,array)
+        if (!flat) {
+            list = (0..<h).collect{i ->
+                int from = i * w
+                int to = from + w
+                list.subList(from, to)
+            }
+        }
+        list
+    }
+
+    /**
+     * Call the Closure for each cell in this Raster
+     * @param Named parameters
+     * <ul>
+     *     <li>bounds = The x,y,w,h List</li>
+     *     <li>band = The band to get values from</li>
+     *     <li>outside = The value for cells that land outside the Raster</li>
+     *     <li>order = The order imagexy or tilexy</li>
+     * </ul>
+     * @param closure The Closure to call which is passed the value, the pixel x, and the pixel y
+     */
+    void eachCell(Map options = [:], Closure closure) {
+        List bounds = options.get("bounds")
+        int band = options.get("band",0)
+        Number outsideValue = options.get("outside",0)
+        String optionName = options.get("order","imagexy")
+        SimpleIterator it = new SimpleIterator(
+            image,
+            bounds != null ? new Rectangle(bounds[0], bounds[1], bounds[2], bounds[3]) : null,
+            outsideValue,
+            optionName.equalsIgnoreCase("imagexy") ? AbstractSimpleIterator.Order.IMAGE_X_Y : AbstractSimpleIterator.Order.TILE_X_Y
+        )
+        while(it.hasNext()) {
+            def value = it.getSample(band)
+            def pt = it.getPos()
+            closure.call(value, pt.x, pt.y)
+            it.next()
+        }
+    }
+
+    /**
+     * Call the Closure for each window of values in this Raster
+     * @param options Named parameters
+     * <ul>
+     *     <li>bounds = The x,y,w,h as a List</li>
+     *     <li>window = The size of the window (w,h)</li>
+     *     <li>key = The key [x,y]</li>
+     *     <li>steps = The x and y steps</li>
+     *     <li>outside = The value for cells that land outside the Raster</li>
+     * </ul>
+     * @param closure The Closure to call which is passed the values, the pixel x, and the pixel y
+     */
+    void eachWindow(Map options=[:], Closure closure) {
+        List bounds = options.get("bounds")
+        List window = options.get("window",[3,3])
+        List key = options.get("key",[0,0])
+        List steps = options.get("steps",[1,1])
+        Number outsideValue = options.get("outside",0)
+        WindowIterator it = new WindowIterator(image,
+            bounds != null ? new Rectangle(bounds[0], bounds[1], bounds[2], bounds[3]) : null,
+            new Dimension(window[0], window[1]),
+            new java.awt.Point(key[0], key[1]),
+            steps[0], steps[1],
+            outsideValue
+        )
+        Number[][] values
+        while(it.hasNext()) {
+            values = it.getWindow(values)
+            def pt = it.getPos()
+            closure.call(values, pt.x, pt.y)
+            it.next()
+        }
+    }
+
+    /**
+     * Determine whether this Raster contains the geographic Point
+     * @param point The Point
+     * @return Whether this Raster contains the geographic Point
+     */
+    boolean contains(Point point) {
+        List pixel = getPixel(point)
+        contains(pixel[0] as int, pixel[1] as int)
+    }
+
+    /**
+     * Determine whether this Raster contains the pixel coordinates
+     * @param x The x pixel coordinate
+     * @param y The y pixel coordinate
+     * @return Whether this Raster contains the pixel coordinates
+     */
+    boolean contains(int x, int y) {
+        (x >= 0 && x < cols) && (y >= 0 && y < rows)
+    }
+
+    /**
+     * Get the value of the neighboring cells: NW N NE E SE S SE W
+     * @param p The Point or Pixel
+     * @param band The band (defaults to 0)
+     * @return A Map of neighboring cell values
+     */
+    Map getNeighbors(def p, int band = 0) {
+        List pixel = (p instanceof Point) ? getPixel(p) : p
+        int c = pixel[0]
+        int r = pixel[1]
+        Map values = [:]
+        values.put("nw", contains(c - 1, r - 1) ? getValue(c - 1, r - 1, band) : null)
+        values.put("n", contains(c, r - 1) ? getValue(c, r - 1, band) : null)
+        values.put("ne", contains(c + 1, r - 1) ? getValue(c + 1, r - 1, band) : null)
+        values.put("e", contains(c + 1, r) ? getValue(c + 1, r, band) : null)
+        values.put("se", contains(c + 1, r + 1) ? getValue(c + 1, r + 1, band) : null)
+        values.put("s", contains(c, r + 1) ? getValue(c, r + 1, band) : null)
+        values.put("sw", contains(c - 1, r + 1) ? getValue(c - 1, r + 1, band) : null)
+        values.put("w", contains(c - 1, r) ? getValue(c - 1, r, band) : null)
+        values
+    }
+
+    /**
      * Set the value for the given Point or Pixel
      * @param p The Point or Pixel (as List of xy coordinates)
      * @param value The new value
@@ -266,13 +438,10 @@ class Raster {
      * Enable write support on demand.
      */
     private void enableWriteSupport() {
-        def writableImage
-        if (!coverage.isDataEditable()) {
-            writableImage = new TiledImage(coverage.renderedImage, true)
-        } else {
-            writableImage = coverage.renderedImage
-        }
-        writable = RandomIterFactory.createWritable(writableImage, null)
+        writable = RandomIterFactory.createWritable(
+            coverage.dataEditable ? coverage.renderedImage : new TiledImage(coverage.renderedImage, true),
+            null
+        )
     }
 
     /**

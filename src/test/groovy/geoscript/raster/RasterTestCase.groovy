@@ -187,6 +187,16 @@ class RasterTestCase {
         assertEquals(39, value[0])
         assertEquals(83, value[1])
         assertEquals(100, value[2])
+
+        // getValue with Pixel
+        assertEquals(39, raster.getValue([10,15], 0))
+        assertEquals(83, raster.getValue([10,15], 1))
+        assertEquals(100, raster.getValue([10,15], 2))
+
+        // getValue with Point
+        assertEquals(-30, raster.getValue(new Point(1166761.4391797914, 823593.1955759579), 0))
+        assertEquals(-22, raster.getValue(new Point(1166761.4391797914, 823593.1955759579), 1))
+        assertEquals(-46, raster.getValue(new Point(1166761.4391797914, 823593.1955759579), 2))
     }
 
     @Test void setValue() {
@@ -584,6 +594,154 @@ class RasterTestCase {
         List pixel = raster.getPixel(new Point(9.14, 11))
         assertEquals 1.0, pixel[0], 0.01
         assertEquals 2.0, pixel[1], 0.01
+    }
+
+    @Test void contains() {
+        Bounds bounds = new Bounds(7, 7, 17, 15, "EPSG:4326")
+        List data = [
+                [0,0,0,0,0,0,0],
+                [0,1,1,1,1,1,0],
+                [0,1,2,3,2,1,0],
+                [0,1,1,1,1,1,0],
+                [0,0,0,0,0,0,0]
+        ]
+        Raster raster = new Raster(data, bounds)
+        // Pixel
+        assertTrue(raster.contains(0,0))
+        assertTrue(raster.contains(1,1))
+        assertTrue(raster.contains(6,1))
+        assertTrue(raster.contains(6,4))
+        assertFalse(raster.contains(-1,3))
+        assertFalse(raster.contains(1,-3))
+        assertFalse(raster.contains(8,2))
+        assertFalse(raster.contains(1,8))
+        // Point
+        assertTrue(raster.contains(new Point(8,8)))
+        assertTrue(raster.contains(new Point(7.1,14)))
+        assertTrue(raster.contains(new Point(16,12)))
+        assertFalse(raster.contains(new Point(7,14)))
+        assertFalse(raster.contains(new Point(6,14)))
+        assertFalse(raster.contains(new Point(10,15)))
+        assertFalse(raster.contains(new Point(10,21)))
+    }
+
+    @Test void getNeighbors() {
+        Bounds bounds = new Bounds(7, 7, 17, 15, "EPSG:4326")
+        List data = [
+                [0,0,0,0,0,0,0],
+                [0,1,1,1,1,1,0],
+                [0,1,2,3,2,1,0],
+                [0,1,1,1,1,1,0],
+                [0,0,0,0,0,0,0]
+        ]
+        Raster raster = new Raster(data, bounds)
+
+        Map neighbors = raster.getNeighbors([3,2])
+        assertEquals(1, neighbors.nw, 0.1)
+        assertEquals(1, neighbors.n, 0.1)
+        assertEquals(1, neighbors.ne, 0.1)
+        assertEquals(2, neighbors.e, 0.1)
+        assertEquals(1, neighbors.se, 0.1)
+        assertEquals(1, neighbors.s, 0.1)
+        assertEquals(1, neighbors.sw, 0.1)
+        assertEquals(2, neighbors.w, 0.1)
+
+        neighbors = raster.getNeighbors([0,0])
+        assertNull neighbors.nw
+        assertNull neighbors.n
+        assertNull neighbors.ne
+        assertEquals(0, neighbors.e, 0.1)
+        assertEquals(1, neighbors.se, 0.1)
+        assertEquals(0, neighbors.s, 0.1)
+        assertNull neighbors.sw
+        assertNull neighbors.w
+
+        neighbors = raster.getNeighbors([6,4])
+        assertEquals(1, neighbors.nw, 0.1)
+        assertEquals(0, neighbors.n, 0.1)
+        assertNull neighbors.ne
+        assertNull neighbors.e
+        assertNull neighbors.se
+        assertNull neighbors.s
+        assertNull neighbors.sw
+        assertEquals(0, neighbors.w, 0.1)
+    }
+
+    @Test void eachCell() {
+        Bounds bounds = new Bounds(7, 7, 17, 15, "EPSG:4326")
+        List data = [
+                [0,0,0,0,0,0,0],
+                [0,1,1,1,1,1,0],
+                [0,1,2,3,2,1,0],
+                [0,1,1,1,1,1,0],
+                [0,0,0,0,0,0,0]
+        ]
+        Raster raster = new Raster(data, bounds)
+        raster.eachCell(bounds:[0,0,4,4], band: 0,{v, x, y ->
+           println "${v} @ ${x},${y}"
+        })
+    }
+
+    @Test void eachWindow() {
+        Bounds bounds = new Bounds(7, 7, 17, 15, "EPSG:4326")
+        List data = [
+                [0,0,0,0,0,0,0],
+                [0,1,1,1,1,1,0],
+                [0,1,2,3,2,1,0],
+                [0,1,1,1,1,1,0],
+                [0,0,0,0,0,0,0]
+        ]
+        Raster raster = new Raster(data, bounds)
+        raster.eachWindow(bounds: [0,0,raster.cols, raster.rows],window: [4,4], key:[0,0], outside: -1, {v, x, y ->
+            println "${v} @ ${x},${y}"
+        })
+    }
+
+    @Test void getValues() {
+        Bounds bounds = new Bounds(7, 7, 17, 15, "EPSG:4326")
+        List data = [
+                [0,0,0,0,0,0,0],
+                [0,1,1,1,1,1,0],
+                [0,1,2,3,2,1,0],
+                [0,1,1,1,1,1,0],
+                [0,0,0,0,0,0,0]
+        ]
+        Raster raster = new Raster(data, bounds)
+        List d = raster.getValues(0,0,3,2)
+        [0.0, 0.0, 0.0, 0.0, 1.0, 1.0].eachWithIndex{v,i ->
+            assertEquals(v, d[i], 0.1)
+        }
+        d = raster.getValues(0,0,3,2,0,false)
+        assertEquals 2, d.size()
+        [[0.0, 0.0, 0.0], [0.0, 1.0, 1.0]].eachWithIndex{v1,i1 ->
+            assertEquals 3, v1.size()
+            v1.eachWithIndex{v2,i2 ->
+                assertEquals(v2, d[i1][i2], 0.1)
+            }
+
+        }
+        d = raster.getValues(1,1,4,3)
+        [1.0, 1.0, 1.0, 1.0, 1.0, 2.0, 3.0, 2.0, 1.0, 1.0, 1.0, 1.0].eachWithIndex{v,i ->
+            assertEquals(v, d[i], 0.1)
+        }
+        d = raster.getValues(1,1,4,3,0,false)
+        assertEquals 3, d.size()
+        [[1.0, 1.0, 1.0, 1.0], [1.0, 2.0, 3.0, 2.0], [1.0, 1.0, 1.0, 1.0]].eachWithIndex{v1,i1 ->
+            assertEquals 4, v1.size()
+            v1.eachWithIndex{v2,i2 ->
+                assertEquals(v2, d[i1][i2], 0.1)
+            }
+
+        }
+        d = raster.getValues(1,1,4,4,0,false)
+        assertEquals 4, d.size()
+        [[1.0, 1.0, 1.0, 1.0], [1.0, 2.0, 3.0, 2.0], [1.0, 1.0, 1.0, 1.0],[0.0, 0.0, 0.0, 0.0]].eachWithIndex{v1,i1 ->
+            assertEquals 4, v1.size()
+            v1.eachWithIndex{v2,i2 ->
+                assertEquals(v2, d[i1][i2], 0.1)
+            }
+
+        }
     }
 
     @Test void getData() {
