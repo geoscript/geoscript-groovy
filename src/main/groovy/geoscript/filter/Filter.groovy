@@ -149,6 +149,14 @@ class Filter {
     }
 
     /**
+     * Get a new Filter that is the negation of the current Filter
+     * @return A new Filter that is the negation of the current Filter
+     */
+    Filter negative() {
+        not
+    }
+
+    /**
      * The string representation
      * @return The string representation
      */
