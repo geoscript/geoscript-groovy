@@ -157,5 +157,24 @@ class FilterTestCase {
         Filter f1 = new Filter("name='foo'")
         assertEquals new Filter("name <> 'foo'"), f1.not
     }
+
+    @Test void simplify() {
+        Filter p = new Filter("name = 'test'")
+
+        Filter f = Filter.PASS + Filter.PASS
+        assertEquals Filter.PASS, f.simplify()
+
+        f = Filter.PASS + Filter.FAIL
+        assertEquals Filter.FAIL, f.simplify()
+
+        f = Filter.FAIL + Filter.FAIL
+        assertEquals Filter.FAIL, f.simplify()
+
+        f = Filter.PASS + p
+        assertEquals p, f.simplify()
+
+        f = Filter.FAIL.or(p)
+        assertEquals p, f.simplify()
+    }
 }
 

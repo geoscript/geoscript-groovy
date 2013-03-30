@@ -3,6 +3,7 @@ package geoscript.filter
 import geoscript.geom.Bounds
 import geoscript.geom.Geometry
 import geoscript.feature.Feature
+import org.geotools.filter.visitor.SimplifyingFilterVisitor
 import org.opengis.filter.Filter as GTFilter
 import org.geotools.filter.text.cql2.CQL
 import org.geotools.filter.text.ecql.ECQL
@@ -131,6 +132,15 @@ class Filter {
     }
 
     /**
+     * Simplify this Filter
+     * @return The new simplified Filter
+     */
+    Filter simplify() {
+        def simplifier = new SimplifyingFilterVisitor()
+        new Filter(filter.accept(simplifier, null))
+    }
+
+    /**
      * Get a new Filter that is the negation of the current Filter
      * @return A new Filter that is the negation of the current Filter
      */
@@ -178,7 +188,7 @@ class Filter {
      */
     Filter and(def other) {
         if (filter == GTFilter.INCLUDE) {
-            return new Filter(other)
+            return new Filter(other )
         } else {
             return new Filter(factory.and(filter, new Filter(other).filter))
         }
