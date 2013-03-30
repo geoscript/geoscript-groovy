@@ -608,5 +608,18 @@ class LayerTestCase {
             assertNull f["price"]
         }
     }
+
+    @Test void first() {
+        Schema s = new Schema("facilities", [new Field("geom","Point", "EPSG:2927"), new Field("name","string"), new Field("price","float")])
+        Layer layer = new Layer("facilities", s)
+        layer.add(new Feature([new Point(111,-47), "House 1", 12.5], "house1", s))
+        layer.add(new Feature([new Point(112,-46), "House 2", 13.5], "house2", s))
+        layer.add(new Feature([new Point(113,-45), "House 3", 14.5], "house3", s))
+
+        assertEquals "House 3", layer.first(sort: "price DESC").get("name")
+        assertEquals "House 1", layer.first(sort: "price ASC").get("name")
+        assertEquals "House 2", layer.first(filter: "price > 13 AND price < 14").get("name")
+        assertEquals "House 3", layer.first(filter: "price > 13 AND price < 15", sort: "price DESC").get("name")
+    }
 }
 

@@ -514,6 +514,27 @@ class Layer {
     }
 
     /**
+     * Get the first Feature that matches
+     * @param options Named parameters
+     * <ul>
+     *     <li>filter = A geoscript.filter.Filter or CQL String</li>
+     *     <li>sort = A String (FIELD ASC | DESC) or List of Strings</li>
+     * </ul>
+     * @return
+     */
+    Feature first(Map options = [:]) {
+        def filter = options.get("filter")
+        def sort = options.get("sort")
+        if (sort != null && !(sort instanceof List)) {
+            sort = [sort]
+        }
+        Cursor c = getCursor(filter: filter, sort: sort)
+        Feature f = c.next()
+        c.close()
+        f
+    }
+
+    /**
      * Delete Features from the Layer
      * @param filer The Filter or Filter String to limit the Features to delete. Defaults to null.
      */
