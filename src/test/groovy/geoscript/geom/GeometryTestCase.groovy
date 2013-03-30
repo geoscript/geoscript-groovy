@@ -503,4 +503,11 @@ class GeometryTestCase {
         assertTrue union instanceof Geometry
         assertTrue union.numGeometries < pts.numGeometries
     }
+
+    @Test void smooth() {
+        def geom = Geometry.fromWKT("POLYGON((10 0, 10 20, 0 20, 0 30, 30 30, 30 20, 20 20, 20 0, 10 0))")
+        def smoothed = geom.smooth(0.75)
+        assertTrue smoothed instanceof Geometry
+        assertEquals "Polygon", smoothed.geometryType
+    }
 }

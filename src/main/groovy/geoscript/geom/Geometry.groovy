@@ -487,6 +487,15 @@ class Geometry {
     }
 
     /**
+     * Smooth this Geometry
+     * @param fit The amount of smoothing (between 0 - more and 1 - less)
+     * @return A new smoothed Geometry
+     */
+    Geometry smooth(double fit) {
+        Geometry.wrap(org.geotools.geometry.jts.JTS.smooth(this.g, fit))
+    }
+
+    /**
      * Get the Minimum Bounding Circle
      * @return The minimum bouding circle as a Geometry
      */
