@@ -1297,5 +1297,49 @@ class LayerTestCase {
         assertEquals 1, layer.count("name = 'C'")
         assertEquals 1, layer.count("name = 'D'")
     }
+
+    @Test void dissolveByField() {
+        Schema schema = new Schema("grid",[
+            new Field("geom","Polygon","EPSG:4326"),
+            new Field("col","int"),
+            new Field("row","int")
+        ])
+        Layer layer = new Memory().create(schema)
+        Bounds bounds = new Bounds(0,0,10,10)
+        bounds.generateGrid(2, 2, "polygon", {cell, col, row ->
+            layer.add([
+                "geom": cell,
+                "col": col,
+                "row": row
+            ])
+        })
+
+        Layer rowLayer = layer.dissolve(layer.schema.get("row"))
+        assertEquals 2, rowLayer.count
+        assertEquals "POLYGON ((0 0, 0 5, 5 5, 10 5, 10 0, 5 0, 0 0))", rowLayer.first(filter: "row = 1").geom.wkt
+        assertEquals "POLYGON ((0 5, 0 10, 5 10, 10 10, 10 5, 5 5, 0 5))", rowLayer.first(filter: "row = 2").geom.wkt
+
+        Layer colLayer = layer.dissolve(layer.schema.get("col"))
+        assertEquals 2, colLayer.count
+        assertEquals "POLYGON ((0 0, 0 5, 0 10, 5 10, 5 5, 5 0, 0 0))", colLayer.first(filter: "col = 1").geom.wkt
+        assertEquals "POLYGON ((5 0, 5 5, 5 10, 10 10, 10 5, 10 0, 5 0))", colLayer.first(filter: "col = 2").geom.wkt
+    }
+
+    @Test void dissolveIntersecting() {
+        Schema schema = new Schema("grid",[
+            new Field("geom","Polygon","EPSG:4326")
+        ])
+        Layer layer = new Memory().create(schema)
+
+        Bounds b = new Bounds(0,0,10,10)
+        b.generateGrid(3, 3, "point", {cell, col, row ->
+            layer.add([geom: cell.buffer(col * 1)])
+        })
+
+        Layer dissolved = layer.dissolve()
+        assertEquals 4, dissolved.count
+        assertEquals 1, dissolved.count("count = 6")
+        assertEquals 3, dissolved.count("count = 1")
+    }
 }
 

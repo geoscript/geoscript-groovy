@@ -1139,6 +1139,102 @@ class Layer {
     }
 
     /**
+     * Dissolve the Features of a Layer by a Field.
+     * @param options A Map of options that can include outLayer, outWorkspace, idFieldName, and countFieldName
+     * @param layer The input Layer
+     * @param field The Field
+     * @return The output Layer
+     */
+    Layer dissolve(Map options = [:], Field field) {
+
+        String idFieldName = options.get("idFieldName","id")
+        String countFieldName = options.get("countFieldName","count")
+
+        String outLayerName = options.get("outLayer", "${this.name}_${field.name}_dissolve")
+        Workspace outWorkspace = options.get("outWorkspace", new Memory())
+        Layer outLayer = outWorkspace.create(outLayerName, [
+            new Field(idFieldName, "int"),
+            new Field(countFieldName, "int"),
+            new Field(field.name, field.typ),
+            new Field(this.schema.geom)
+        ])
+
+        Map<Object, Geometry> values = [:]
+        this.eachFeature { f->
+            Object value = f.get(field.name)
+            if (!values.containsKey(value)) {
+                values.put(value, [geom: f.geom, count: 1])
+            } else {
+                Map v = values.get(value)
+                v.geom = v.geom.union(f.geom)
+                v.count = v.count + 1
+                values.put(value, v)
+            }
+        }
+
+        String geomFieldName = outLayer.schema.geom.name
+        values.eachWithIndex { value, i ->
+            Map v = [:]
+            v[idFieldName] = i
+            v[field.name] = value.key
+            v[countFieldName] = value.value.count
+            v[geomFieldName] = value.value.geom
+            outLayer.add(v)
+        }
+
+        outLayer
+    }
+
+    /**
+     * Dissolve intersecting Features of a Layer.
+     * @param options A Map of options that can include outLayer, outWorkspace, idFieldName, and countFieldName
+     * @param layer The input Layer
+     * @param field The Field
+     * @return The output Layer
+     */
+    Layer dissolve(Map options = [:]) {
+
+        String idFieldName = options.get("idFieldName","id")
+        String countFieldName = options.get("countFieldName","count")
+
+        String outLayerName = options.get("outLayer", "${this.name}_dissolve")
+        Workspace outWorkspace = options.get("outWorkspace", new Memory())
+        Layer outLayer = outWorkspace.create(outLayerName, [
+            new Field(idFieldName, "int"),
+            new Field(countFieldName, "int"),
+            new Field(this.schema.geom)
+        ])
+
+        Quadtree index = new Quadtree()
+        this.eachFeature { f->
+            Geometry unionGeom = f.geom
+            int count = 1
+            index.query(unionGeom.bounds).each { Map v ->
+                Geometry g = v.geom
+                if(unionGeom.intersects(g)) {
+                    index.remove(g.bounds, v)
+                    unionGeom = unionGeom.union(g)
+                    count = v.count + 1
+                }
+            }
+            index.insert(unionGeom.bounds, [geom: unionGeom, count: count])
+        }
+
+        String geomFieldName = outLayer.schema.geom.name
+        int i = 0
+        index.queryAll().each { v ->
+            Map values = [:]
+            values[idFieldName] = i
+            values[countFieldName] = v.count
+            values[geomFieldName] = v.geom
+            outLayer.add(values)
+            i++
+        }
+
+        outLayer
+    }
+
+    /**
      * The GML Layer Writer
      */
     private static final GmlWriter gmlWriter = new GmlWriter()
