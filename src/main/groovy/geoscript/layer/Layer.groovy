@@ -1235,6 +1235,56 @@ class Layer {
     }
 
     /**
+     * Merge this Layer with another Layer to create an output Layer
+     * @param options A Map of options that can include outLayer or outWorkspace
+     * <ul>
+     *     <li>outLayer = The output Layer's name</li>
+     *     <li>outWorkspace = The output Workspace</li>
+     *     <li>postfixAll = Whether to add a postfix to all field names</li>
+     *     <li>includeDuplicates = Whether to include duplicate fields</li>
+     *     <li>maxFieldNameLength = The maximum Field name length</li>
+     * </ul>
+     * @param otherLayer The other layer
+     * @return The merged Layer
+     */
+    Layer merge(Map options = [:], Layer otherLayer) {
+
+        String outLayerName = options.get("outLayer", "${this.name}_${otherLayer.name}")
+        Workspace outWorkspace = options.get("outWorkspace", new Memory())
+        Map schemaAndFields = this.schema.addSchema(otherLayer.schema, outLayerName,
+            postfixAll: options.get("postfixAll",false),
+            includeDuplicates: options.get("includeDuplicates",true),
+            maxFieldNameLength: outWorkspace instanceof Directory ? 10 : -1)
+        Layer outLayer = outWorkspace.create(schemaAndFields.schema)
+
+        this.eachFeature{ f ->
+            Map attributes = [:]
+            Map fieldMap = schemaAndFields.fields[0]
+            f.attributes.each {String k, Object v ->
+                if (fieldMap.containsKey(k)) {
+                    attributes[fieldMap[k]] = v
+                }
+            }
+            outLayer.add(attributes)
+        }
+
+        otherLayer.eachFeature{ f->
+            Map attributes = [:]
+            Map fieldMap = schemaAndFields.fields[1]
+            f.attributes.each {String k, Object v ->
+                if (v instanceof Geometry) {
+                    attributes[outLayer.schema.geom.name] = v
+                } else if (fieldMap.containsKey(k)) {
+                    attributes[fieldMap[k]] = v
+                }
+            }
+            outLayer.add(attributes)
+        }
+
+        outLayer
+    }
+
+    /**
      * The GML Layer Writer
      */
     private static final GmlWriter gmlWriter = new GmlWriter()

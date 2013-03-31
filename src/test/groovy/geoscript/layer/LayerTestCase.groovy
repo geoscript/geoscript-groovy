@@ -1341,5 +1341,55 @@ class LayerTestCase {
         assertEquals 1, dissolved.count("count = 6")
         assertEquals 3, dissolved.count("count = 1")
     }
+
+    @Test void merge() {
+
+        // Create the first Layer
+        Schema schema1 = new Schema("grid1",[
+            new Field("geom","Polygon","EPSG:4326"),
+            new Field("col","int"),
+            new Field("row","int")
+        ])
+        Layer layer1 = new Memory().create(schema1)
+        new Bounds(0,0,10,10).generateGrid(3, 3, "polygon", {cell, col, row ->
+            layer1.add([
+                "geom": cell,
+                "col": col,
+                "row": row
+            ])
+        })
+
+        // Create the second Layer
+        Schema schema2 = new Schema("grid2",[
+            new Field("geom","Polygon","EPSG:4326"),
+            new Field("col","int"),
+            new Field("row","int")
+        ])
+        Layer layer2 = new Memory().create(schema2)
+        new Bounds(20,20,40,40).generateGrid(4, 4, "polygon", {cell, col, row ->
+            layer2.add([
+                "geom": cell,
+                "col": col,
+                "row": row
+            ])
+        })
+
+        // Merge
+        Layer merged = layer1.merge(layer2)
+        assertEquals 25, merged.count
+        assertTrue merged.schema.has("geom")
+        assertTrue merged.schema.has("col")
+        assertTrue merged.schema.has("row")
+        assertTrue merged.schema.has("col2")
+        assertTrue merged.schema.has("row2")
+        assertEquals 9, merged.count("col IS NOT NULL and row IS NOT NULL")
+        assertEquals 9, merged.count("col2 IS NULL and row2 IS NULL")
+        assertEquals 16, merged.count("col2 IS NOT NULL and row2 IS NOT NULL")
+        assertEquals 16, merged.count("col IS NULL and row IS NULL")
+        merged.eachFeature{f ->
+            assertNotNull f.geom
+            assertTrue f.geom instanceof Geometry
+        }
+    }
 }
 
