@@ -1188,6 +1188,12 @@ class Layer {
     /**
      * Dissolve intersecting Features of a Layer.
      * @param options A Map of options that can include outLayer, outWorkspace, idFieldName, and countFieldName
+     * <ul>
+     *     <li>outLayer = The output Layer's name</li>
+     *     <li>outWorkspace = The output Workspace</li>
+     *     <li>idFieldName = The ID Field name (id)</li>
+     *     <li>countyFieldName = The count Field name (count)</li>
+     * </ul>
      * @param layer The input Layer
      * @param field The Field
      * @return The output Layer
@@ -1222,7 +1228,7 @@ class Layer {
 
         String geomFieldName = outLayer.schema.geom.name
         int i = 0
-        index.queryAll().each { v ->
+        index.queryAll().each { Map v ->
             Map values = [:]
             values[idFieldName] = i
             values[countFieldName] = v.count
