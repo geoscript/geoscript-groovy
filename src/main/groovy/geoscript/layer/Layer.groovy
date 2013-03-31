@@ -1272,10 +1272,17 @@ class Layer {
             Map attributes = [:]
             Map fieldMap = schemaAndFields.fields[1]
             f.attributes.each {String k, Object v ->
+                // Always set the Geometry
                 if (v instanceof Geometry) {
                     attributes[outLayer.schema.geom.name] = v
-                } else if (fieldMap.containsKey(k)) {
+                }
+                // Set value if present in the field map
+                else if (fieldMap.containsKey(k)) {
                     attributes[fieldMap[k]] = v
+                }
+                // Set the value if field is present in output Layer
+                else if (outLayer.schema.has(k)) {
+                    attributes[k] = v
                 }
             }
             outLayer.add(attributes)

@@ -1374,7 +1374,7 @@ class LayerTestCase {
             ])
         })
 
-        // Merge
+        // Merge (include duplicate fields)
         Layer merged = layer1.merge(layer2)
         assertEquals 25, merged.count
         assertTrue merged.schema.has("geom")
@@ -1386,6 +1386,21 @@ class LayerTestCase {
         assertEquals 9, merged.count("col2 IS NULL and row2 IS NULL")
         assertEquals 16, merged.count("col2 IS NOT NULL and row2 IS NOT NULL")
         assertEquals 16, merged.count("col IS NULL and row IS NULL")
+        merged.eachFeature{f ->
+            assertNotNull f.geom
+            assertTrue f.geom instanceof Geometry
+        }
+
+        // Merge (don't include duplicate fields but set values if present)
+        merged = layer1.merge(layer2, includeDuplicates: false)
+        assertEquals 25, merged.count
+        assertTrue merged.schema.has("geom")
+        assertTrue merged.schema.has("col")
+        assertTrue merged.schema.has("row")
+        assertFalse merged.schema.has("col2")
+        assertFalse merged.schema.has("row2")
+        assertEquals 25, merged.count("col IS NOT NULL and row IS NOT NULL")
+        assertEquals 0, merged.count("col IS NULL or row IS NULL")
         merged.eachFeature{f ->
             assertNotNull f.geom
             assertTrue f.geom instanceof Geometry
