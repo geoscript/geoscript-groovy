@@ -437,4 +437,13 @@ class BoundsTestCase {
         }
         assertEquals 25, g.numGeometries
     }
+
+    @Test void containsPoint() {
+        Bounds b = new Bounds(10,10,20,20)
+        assertTrue b.contains(new Point(10,10))
+        assertTrue b.contains(new Point(11,11))
+        assertTrue b.contains(new Point(20,20))
+        assertFalse b.contains(new Point(21,21))
+        assertFalse b.contains(new Point(1,1))
+    }
 }

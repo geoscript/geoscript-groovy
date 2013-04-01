@@ -302,6 +302,15 @@ class Bounds {
     boolean contains(Bounds other) {
         env.contains(other.env)
     }
+
+    /**
+     * Determine whether this Bounds contains the Point
+     * @param point The Point
+     * @return Whether this Bounds contains the Point
+     */
+    boolean contains(Point point) {
+        env.contains(point.g.coordinate)
+    }
     
     /**
      * Determine whether this Bounds intersects with the other Bounds
