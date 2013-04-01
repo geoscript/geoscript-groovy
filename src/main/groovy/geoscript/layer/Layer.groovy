@@ -1298,6 +1298,126 @@ class Layer {
     }
 
     /**
+     * Split this Layer into sub Layers based on values taken from the Field. The new Layers
+     * are created in the given Workspace.
+     * @param field The Field that contains the values that will be used to split the Layer
+     * @param workspace The Workspace where the new Layers will be created
+     */
+    void split(Field field, Workspace workspace) {
+
+        // Get unique values
+        Set values = []
+        this.eachFeature{ f ->
+            values.add(f.get(field))
+        }
+
+        // The quote character for creating a CQL Filter
+        String quote = field.typ.equalsIgnoreCase("String") ? "'" : ""
+
+        // For each unique value create a Layer and add Features
+        values.each{ v ->
+            Layer outLayer = workspace.create("${this.name}_${v.toString().replaceAll(' ','_')}", this.schema.fields)
+            Filter filter = new Filter("${field.name} = ${quote}${v}${quote}")
+            this.getFeatures(filter).each{ f->
+                outLayer.add(f)
+            }
+        }
+    }
+
+    /**
+     * Split this Layer into multiple Layers based on the Features from the split Layer.
+     * @param splitLayer The split Layer whose Features are used to split this Layer into multiple Layers
+     * @param field The Field from the split Layer used to name the new Layers
+     * @param workspace The Workspace where the new Layers are created
+     */
+    void split(Layer splitLayer, Field field, Workspace workspace) {
+
+        // Put all of the Features in the input Layer in a spatial index
+        SpatialIndex index = new STRtree()
+        this.eachFeature { f ->
+            index.insert(f.bounds, f)
+        }
+
+        // Iterate through all of the Features in the input Layer
+        splitLayer.eachFeature { f ->
+            // Create the new output Layer
+            Layer outLayer = workspace.create("${this.name}_${f.get(field).toString().replaceAll(' ','_')}", this.schema.fields)
+            // See if the Feature intersects with the Bounds of any Feature in the spatial index
+            index.query(f.bounds).each { layerFeature ->
+                // Make sure it actually intersects the Geometry of a Feature in the spatial index
+                if (f.geom.intersects(layerFeature.geom)) {
+                    // Clip the geometry from the input Layer
+                    Geometry intersection = layerFeature.geom.intersection(f.geom)
+                    // Create a new Feature and add if to the clipped Layer
+                    Map values = layerFeature.attributes
+                    values[outLayer.schema.geom.name] = intersection
+                    outLayer.add(outLayer.schema.feature(values))
+                }
+            }
+        }
+    }
+
+    /**
+     * Buffer all of the Features in the this Layer.
+     * @param options The Map of options which can include outWorkspace and outLayer
+     * <ul>
+     *     <li>outLayer = The output Layer's name</li>
+     *     <li>outWorkspace = The output Workspace</li>
+     *     <li>quadrantSegments = The number of quadrant segments</li>
+     *     <li>capStyle = The end cap style</li>
+     *     <li>singleSided = Whether the buffer should be single sided or not</li>
+     * </ul>
+     * @param distance The buffer distance
+     * @return A Layer with the buffered Features
+     */
+    Layer buffer(Map options = [:], double distance) {
+        buffer(options, new Expression(distance))
+    }
+
+    /**
+     * Buffer all of the Features in the this Layer.
+     * @param options The Map of options which can include outWorkspace and outLayer
+     * <ul>
+     *     <li>outLayer = The output Layer's name</li>
+     *     <li>outWorkspace = The output Workspace</li>
+     *     <li>quadrantSegments = The number of quadrant segments</li>
+     *     <li>capStyle = The end cap style</li>
+     *     <li>singleSided = Whether the buffer should be single sided or not</li>
+     * </ul>
+     * @param distance An Expression that represents the buffer distance (can be a Literal, Function, or Property)
+     * @return A Layer with the buffered Features
+     */
+    Layer buffer(Map options = [:], Expression distance) {
+
+        String outLayerName = options.get("outLayer", "${this.name}_buffer")
+        Workspace outWorkspace = options.get("outWorkspace", new Memory())
+        Schema schema = this.schema.changeGeometryType("Polygon", outLayerName)
+        Layer outLayer = outWorkspace.create(schema)
+
+        int quadrantSegments = options.get("quadrantSegments", 8)
+        int capStyle = options.get("capStyle", Geometry.CAP_ROUND)
+        boolean singleSided = options.get("singleSided", false)
+
+        this.eachFeature {Feature f ->
+            Map values = [:]
+            f.attributes.each{k,v ->
+                if (v instanceof geoscript.geom.Geometry) {
+                    double d = distance.evaluate(f) as double
+                    Geometry b = singleSided ?
+                        v.buffer(d, quadrantSegments, capStyle) :
+                        v.singleSidedBuffer(d, quadrantSegments, capStyle)
+                    values[k] = b
+                } else {
+                    values[k] = v
+                }
+            }
+            outLayer.add(values)
+        }
+
+        outLayer
+    }
+
+    /**
      * The GML Layer Writer
      */
     private static final GmlWriter gmlWriter = new GmlWriter()

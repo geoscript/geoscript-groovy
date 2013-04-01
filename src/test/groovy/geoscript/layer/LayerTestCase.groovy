@@ -1406,5 +1406,133 @@ class LayerTestCase {
             assertTrue f.geom instanceof Geometry
         }
     }
+
+    @Test void splitByField() {
+        Schema schema = new Schema("grid",[
+            new Field("geom","Polygon","EPSG:4326"),
+            new Field("col","int"),
+            new Field("row","int")
+        ])
+        Layer layer = new Memory().create(schema)
+        Bounds bounds = new Bounds(0,0,10,10)
+        bounds.generateGrid(2, 2, "polygon", {cell, col, row ->
+            layer.add([
+                "geom": cell,
+                "col": col,
+                "row": row
+            ])
+        })
+
+        Memory workspace = new Memory()
+        layer.split(layer.schema.get("col"), workspace)
+        println workspace.names
+        Layer grid1 = workspace.get("grid_1")
+        Layer grid2 = workspace.get("grid_2")
+        assertNotNull grid1
+        assertNotNull grid2
+        assertEquals 2, grid1.count("col = 1")
+        assertEquals 0, grid1.count("col = 2")
+        assertEquals 2, grid2.count("col = 2")
+        assertEquals 0, grid2.count("col = 1")
+    }
+
+    @Test void splitByLayer() {
+
+        // Create the Layer
+        Schema schema = new Schema("grid",[
+            new Field("geom","Polygon","EPSG:4326"),
+            new Field("col","int"),
+            new Field("row","int")
+        ])
+        Layer layer = new Memory().create(schema)
+        new Bounds(0,0,10,10).generateGrid(4, 4, "polygon", {cell, col, row ->
+            layer.add([
+                "geom": cell,
+                "col": col,
+                "row": row
+            ])
+        })
+
+        // Create the split Layer
+        Schema splitSchema = new Schema("grid",[
+            new Field("geom","Polygon","EPSG:4326"),
+            new Field("col","int"),
+            new Field("row","int"),
+            new Field("row_col","String")
+        ])
+        Layer splitLayer = new Memory().create(splitSchema)
+        new Bounds(0,0,10,10).generateGrid(2, 1, "polygon", {cell, col, row ->
+            splitLayer.add([
+                "geom": cell,
+                "col": col,
+                "row": row,
+                "row_col": "${row} ${col}"
+            ])
+        })
+
+        Memory workspace = new Memory()
+        layer.split(splitLayer,splitLayer.schema.get("row_col"),workspace)
+        Layer grid11 = workspace.get("grid_1_1")
+        Layer grid12 = workspace.get("grid_1_2")
+        assertNotNull grid11
+        assertNotNull grid12
+        assertEquals splitLayer.bounds("col = 1"), grid11.bounds
+        assertEquals splitLayer.bounds("col = 2"), grid12.bounds
+    }
+
+    @Test void buffer() {
+        Schema schema = new Schema("points",[
+            new Field("geom","Point","EPSG:4326"),
+            new Field("col","int"),
+            new Field("row","int")
+        ])
+        Layer layer = new Memory().create(schema)
+        new Bounds(0,0,10,10).generateGrid(2, 2, "point", {cell, col, row ->
+            layer.add([
+                "geom": cell,
+                "col": col,
+                "row": row
+            ])
+        })
+
+        // Buffer by distance
+        Layer buffer = layer.buffer(2)
+        assertEquals 4, buffer.count
+        buffer.eachFeature{f ->
+            assertTrue f.geom instanceof Polygon
+            assertEquals 12.48, f.geom.area, 0.01
+        }
+
+        // Buffer by Field
+        buffer = layer.buffer(new geoscript.filter.Property("col"))
+        assertEquals 4, buffer.count
+        buffer.eachFeature("col = 1", {f ->
+            assertTrue f.geom instanceof Polygon
+            assertEquals 3.12, f.geom.area, 0.01
+        })
+        buffer.eachFeature("col = 2", {f ->
+            assertTrue f.geom instanceof Polygon
+            assertEquals 12.48, f.geom.area, 0.01
+        })
+
+        // Buffer by Expression
+        buffer = layer.buffer(geoscript.filter.Expression.fromCQL("col * 2"))
+        assertEquals 4, buffer.count
+        buffer.eachFeature("col = 1", {f ->
+            assertTrue f.geom instanceof Polygon
+            assertEquals 12.48, f.geom.area, 0.01
+        })
+        buffer.eachFeature("col = 2", {f ->
+            assertTrue f.geom instanceof Polygon
+            assertEquals 49.94, f.geom.area, 0.01
+        })
+
+        // Buffer by Function
+        buffer = layer.buffer(new geoscript.filter.Function("calc_buffer(row,col)", {row, col -> row + col}))
+        assertEquals 4, buffer.count
+        assertEquals 12.48, buffer.first(filter: "col = 1 and row = 1").geom.area, 0.01
+        assertEquals 28.09, buffer.first(filter: "(col = 1 and row = 2) or (col = 2 and row = 1)").geom.area, 0.01
+        assertEquals 49.94, buffer.first(filter: "col = 2 and row = 2").geom.area, 0.01
+    }
 }
 
