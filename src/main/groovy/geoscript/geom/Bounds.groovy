@@ -101,7 +101,7 @@ class Bounds {
      * @return The left/west most coordinate (minX)
      */
     double getMinX() {
-        env.minX()
+        env.minX
     }
 
     /**
@@ -109,7 +109,7 @@ class Bounds {
      * @return The right/east most coordinate (maxX)
      */
     double getMaxX() {
-        env.maxX()
+        env.maxX
     }
 
     /**
@@ -117,7 +117,7 @@ class Bounds {
      * @return The bottom/south most coordinate (minY)
      */
     double getMinY() {
-        env.minY()
+        env.minY
     }
 
     /**
@@ -125,7 +125,7 @@ class Bounds {
      * @return The top/north most coordinate (maxY)
      */
     double getMaxY() {
-        env.maxY()
+        env.maxY
     }
 
     /**
