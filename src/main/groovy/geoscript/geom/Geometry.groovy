@@ -204,7 +204,7 @@ class Geometry {
      * @return Whether this Geometry is disjoint from the other Geometry
      */
     boolean disjoint(Geometry other) {
-        this.g.disjoin(other.g)
+        this.g.disjoint(other.g)
     }
 
     /**
