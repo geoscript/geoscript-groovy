@@ -114,4 +114,32 @@ class LineStringTestCase {
         LineString subLine = line.subLine(0.33, 0.67)
         assertEquals "LINESTRING (1156010.153864557 649246.3016361536, 1175115.6870342216 648021.5879714314)", subLine.wkt
     }
+
+    @Test void addPoint() {
+        def line = new LineString([new Point(0,0), new Point(5,5)])
+        def newLine = line.addPoint(1, new Point(3,3))
+        assertEquals 3, newLine.numPoints
+        assertEquals "LINESTRING (0 0, 3 3, 5 5)", newLine.wkt
+        newLine = newLine + new Point(10,10)
+        assertEquals 4, newLine.numPoints
+        assertEquals "LINESTRING (0 0, 3 3, 5 5, 10 10)", newLine.wkt
+    }
+
+    @Test void removePoint() {
+        def line = new LineString([1,1],[2,2],[3,3],[4,4],[5,5])
+        line = line.removePoint(1)
+        assertEquals "LINESTRING (1 1, 3 3, 4 4, 5 5)", line.wkt
+        line = -line
+        assertEquals "LINESTRING (1 1, 3 3, 4 4)", line.wkt
+        line = line.removePoint(0)
+        assertEquals "LINESTRING (3 3, 4 4)", line.wkt
+    }
+
+    @Test void setPoint() {
+        def line = new LineString([1,1],[2,2],[3,3],[4,4],[5,5])
+        line = line.setPoint(0, new Point(0,0))
+        assertEquals "LINESTRING (0 0, 2 2, 3 3, 4 4, 5 5)", line.wkt
+        line = line.setPoint(4, new Point(10,10))
+        assertEquals "LINESTRING (0 0, 2 2, 3 3, 4 4, 10 10)", line.wkt
+    }
 }

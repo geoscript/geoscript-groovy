@@ -117,6 +117,58 @@ class LineString extends Geometry {
     }
 
     /**
+     * Add a Point at the given index
+     * @param index The index where to insert the Point
+     * @param pt The Point to add
+     * @return A new LineString
+     */
+    LineString addPoint(int index, Point pt) {
+        List points = this.getPoints()
+        points.add(index, pt)
+        new LineString(points)
+    }
+
+    /**
+     * Add a Point to the end of this LineString
+     * @param point The Point
+     * @return The new LineString
+     */
+    LineString plus(Point point) {
+        addPoint(this.numPoints, point)
+    }
+
+    /**
+     * Set or replace the Point at the given index to create a new LineString
+     * @param index The index of the Point we want to replace
+     * @param pt The new Point
+     * @return The new LineString
+     */
+    LineString setPoint(int index, Point pt) {
+        List points = this.getPoints()
+        points.set(index, pt)
+        new LineString(points)
+    }
+
+    /**
+     * Remove the Point at the given index and create a new LineString
+     * @param index The index of the Point to remove
+     * @return The new LineString
+     */
+    LineString removePoint(int index) {
+        List points = this.getPoints()
+        points.remove(index)
+        new LineString(points)
+    }
+
+    /**
+     * Remove the last Point from this LineString to create a new LineString
+     * @return A new LineString
+     */
+    LineString negative() {
+        removePoint(this.numPoints - 1)
+    }
+
+    /**
      * Interpolate a {@link Point} on this LineString at the given position from
      * 0 to 1.
      * @param position The position along the LineString from 0 to 1
