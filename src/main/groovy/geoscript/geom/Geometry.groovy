@@ -327,6 +327,14 @@ class Geometry {
     }
 
     /**
+     * Get a List of Points that make up this Geometry
+     * @return A List of Points
+     */
+    List<Point> getPoints() {
+        this.coordinates.collect{c -> new Point(c.x, c.y)}
+    }
+
+    /**
      * Calculate the intersection between this Geometry and the other Geometry
      * @param The other Geometry
      * @return The intersection between this Geometry and the other Geometry

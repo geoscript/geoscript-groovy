@@ -510,4 +510,11 @@ class GeometryTestCase {
         assertTrue smoothed instanceof Geometry
         assertEquals "Polygon", smoothed.geometryType
     }
+
+    @Test void getPoints() {
+        def line = new LineString([new Point(0,0), new Point(5,5)])
+        assertEquals 2, line.numPoints
+        assertEquals "POINT (0 0)", line.points[0].wkt
+        assertEquals "POINT (5 5)", line.points[1].wkt
+    }
 }
