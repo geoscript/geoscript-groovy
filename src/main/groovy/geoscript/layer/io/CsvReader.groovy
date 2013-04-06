@@ -255,6 +255,21 @@ class CsvReader implements Reader {
                 }
             }
         }
+        // The Layer can still be null if there were no Features
+        if (layer == null) {
+            boolean hasGeom = false
+            List fields = cols.collect {c ->
+                String fieldType = "String"
+                // Try to guess the geometry Field
+                if (!hasGeom && (c.toLowerCase().contains("geom") || c.toLowerCase().contains("shape"))) {
+                    fieldType = "Point"
+                    hasGeom = true
+                }
+                new Field(c, fieldType)
+            }
+            Schema schema = new Schema("csv", fields)
+            layer = new Layer("csv", schema)
+        }
         return layer
     }
 

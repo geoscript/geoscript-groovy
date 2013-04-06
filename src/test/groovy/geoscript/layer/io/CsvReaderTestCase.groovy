@@ -233,4 +233,13 @@ ak,10501917,?,"Thursday, June 28, 2012 02:30:58 UTC",60.0233,-152.9946,2,2.9,?,"
         Layer layer = reader.read(csv)
         assertEquals(1, layer.count)
     }
+
+    @Test void readNoFeatures() {
+        String csv = """"geom","id","name"
+"""
+        CsvReader reader = new CsvReader()
+        Layer layer = reader.read(csv)
+        assertEquals(0, layer.count)
+        assertEquals("csv geom: Point, id: String, name: String", layer.schema.toString())
+    }
 }
