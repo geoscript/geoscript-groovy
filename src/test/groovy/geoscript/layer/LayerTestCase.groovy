@@ -1,6 +1,7 @@
 package geoscript.layer
 
 import geoscript.filter.Expression
+import geoscript.workspace.Directory
 import org.junit.Test
 import static org.junit.Assert.*
 import geoscript.feature.Schema
@@ -117,6 +118,36 @@ class LayerTestCase {
 
         layer2.add(layer1.features)
         assertEquals 6, layer2.count()
+    }
+
+    @Test void addFeaturesToLayerWithDifferentGeomName() {
+        Schema schema1 = new Schema("points", [
+            new Field("geom","Point","EPSG:4326"),
+            new Field("id","int")
+        ])
+        Layer layer1 = new Memory().create(schema1)
+        layer1.add([
+            new Feature([geom: new Point(0,0), id: 1], "feature1"),
+            new Feature([geom: new Point(1,1), id: 2], "feature2"),
+            new Feature([geom: new Point(2,2), id: 3], "feature3")
+        ])
+        assertEquals 3, layer1.count
+
+        File file = File.createTempFile("points",".shp")
+        String name = file.name.substring(0, file.name.lastIndexOf(".shp"))
+        Schema schema2 = new Schema(name, [
+            new Field("the_geom","Point","EPSG:4326"),
+            new Field("id","int")
+        ])
+        Layer layer2 = new Directory(file.parentFile).create(schema2)
+        layer1.eachFeature{ f ->
+            layer2.add(f)
+        }
+        assertEquals 3, layer2.count
+        layer2.eachFeature{ f->
+            assertNotNull f.geom
+            assertNotNull f["id"]
+        }
     }
 
     @Test void plus() {

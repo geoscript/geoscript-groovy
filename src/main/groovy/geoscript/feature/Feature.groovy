@@ -278,6 +278,11 @@ class Feature {
                     featureBuilder.set(name, value);
                 }
             }
+            // Shapefiles always have a geometry field named the_geom,
+            // so always set the Geometry using the schema's geom field name
+            else if (value instanceof Geometry) {
+                featureBuilder.set(schema.geom.name, value.g)
+            }
         }
         featureBuilder.buildFeature(id)
     }
@@ -306,7 +311,7 @@ class Feature {
         }
         Schema schema = new Schema("feature", fields)
         SimpleFeatureBuilder featureBuilder = new SimpleFeatureBuilder(schema.featureType)
-        attributes.each{at -> 
+        attributes.each{at ->
             String name = at.key.toString()
             Object value = (at.value instanceof Geometry) ? ((Geometry)at.value).g : at.value
             featureBuilder.set(name, value)
