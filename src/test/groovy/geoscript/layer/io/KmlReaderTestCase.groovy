@@ -2,12 +2,7 @@ package geoscript.layer.io
 
 import org.junit.Test
 import static org.junit.Assert.*
-import geoscript.geom.Point
-import geoscript.workspace.Memory
 import geoscript.layer.Layer
-import geoscript.feature.Schema
-import geoscript.feature.Field
-import geoscript.feature.Feature
 
 /**
  * The KmlReader UnitTest
