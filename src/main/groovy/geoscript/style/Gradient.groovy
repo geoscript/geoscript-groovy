@@ -5,6 +5,8 @@ import geoscript.filter.Filter
 import geoscript.filter.Color
 import geoscript.layer.Layer
 import geoscript.feature.Field
+import org.geotools.styling.LineSymbolizer
+import org.geotools.styling.PointSymbolizer
 
 /**
  * The Gradient Composite Symbolizer creates gradients between a series of values and symbolizers or from
@@ -107,9 +109,12 @@ class Gradient extends Composite {
             if (geometryType.equalsIgnoreCase("polygon") || geometryType.equalsIgnoreCase("multipolygon")) {
                 return (new Fill(sym.fill.color.value) + new Stroke(sym.stroke.color.value)).where(new Filter(rule.filter))
             } else if (geometryType.equalsIgnoreCase("line") || geometryType.equalsIgnoreCase("multiline")) {
-                return new Stroke(sym.stroke.color.value).where(new Filter(rule.filter))
+                def lineSym = sym as LineSymbolizer
+                return new Stroke(lineSym.stroke.color.value).where(new Filter(rule.filter))
             }  else if (geometryType.equalsIgnoreCase("point") || geometryType.equalsIgnoreCase("multipoint")) {
-                return new Shape(sym.graphic.mark.fill.color.value, sym.graphic.size.value, sym.graphic.mark.wellKnownName.vallue).where(new Filter(rule.filter))
+                def ptSym = sym as PointSymbolizer
+                def size = ptSym.graphic.size != org.opengis.filter.expression.Expression.NIL ? ptSym.graphic.size : 8
+                return new Shape(ptSym.graphic.graphicalSymbols()[0].fill.color.value, size, ptSym.graphic.graphicalSymbols()[0].wellKnownName.value).where(new Filter(rule.filter))
             } else {
                 null
             }
