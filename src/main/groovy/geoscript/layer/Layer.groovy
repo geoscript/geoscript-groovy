@@ -100,7 +100,9 @@ class Layer {
         this.workspace = new Workspace(fs.dataStore)
         this.fs = fs
         this.schema = new Schema(fs.schema)
-        this.projection = new Projection(fs.schema.coordinateReferenceSystem)
+        if (fs.schema.coordinateReferenceSystem != null) {
+            this.projection = new Projection(fs.schema.coordinateReferenceSystem)
+        }
         setDefaultSymbolizer(this.schema.geom?.typ)
     }
 
@@ -113,7 +115,9 @@ class Layer {
         this.workspace = layer.workspace
         this.fs = layer.fs
         this.schema = layer.schema
-        this.projection = new Projection(fs.schema.coordinateReferenceSystem)
+        if (fs.schema.coordinateReferenceSystem != null) {
+            this.projection = new Projection(fs.schema.coordinateReferenceSystem)
+        }
         if (layer.style) {
             this.style = layer.style
         } else {
@@ -133,7 +137,9 @@ class Layer {
         this.workspace = workspace
         this.fs = fs
         this.schema = schema
-        this.projection = new Projection(fs.schema.coordinateReferenceSystem)
+        if (fs.schema.coordinateReferenceSystem != null) {
+            this.projection = new Projection(fs.schema.coordinateReferenceSystem)
+        }
         setDefaultSymbolizer(this.schema.geom?.typ)
     }
 
@@ -157,7 +163,9 @@ class Layer {
         this.workspace = workspace
         this.fs = layer.fs
         this.schema = new Schema(layer.fs.schema)
-        this.projection = new Projection(fs.schema.coordinateReferenceSystem)
+        if (fs.schema.coordinateReferenceSystem != null) {
+            this.projection = new Projection(fs.schema.coordinateReferenceSystem)
+        }
         setDefaultSymbolizer(this.schema.geom?.typ)
     }
 
@@ -172,7 +180,9 @@ class Layer {
         this.name = name
         this.fs = layer.fs
         this.schema = new Schema(layer.fs.schema)
-        this.projection = new Projection(fs.schema.coordinateReferenceSystem)
+        if (fs.schema.coordinateReferenceSystem != null) {
+            this.projection = new Projection(fs.schema.coordinateReferenceSystem)
+        }
         setDefaultSymbolizer(this.schema.geom?.typ)
     }
 
