@@ -330,6 +330,8 @@ class Schema {
      * a '2' will be added.</li>
      * <li>maxFieldNameLength: The maximum new Field name length (mostly to support shapefiles where Field names can't be longer
      * than 10 characters</li>
+     * <li>firstPostfix: The postfix string (default is '1') for Fields from the current Schema. Only applicable when postfixAll or includeDuplicates is true.</li>
+     * <li>secondPostfix: The postfix string (default is '2') for Fields from the other Schema. Only applicable when postfixAll or includeDuplicates is true.</li>
      * </ul>
      * @return A Map with the new Schema as schema and two Maps containing the old and new Field names as fields.
      */
