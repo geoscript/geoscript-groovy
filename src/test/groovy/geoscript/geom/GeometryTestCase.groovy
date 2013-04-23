@@ -517,4 +517,14 @@ class GeometryTestCase {
         assertEquals "POINT (0 0)", line.points[0].wkt
         assertEquals "POINT (5 5)", line.points[1].wkt
     }
+
+    @Test void getNearestPoints() {
+        def geom1 = Geometry.fromWKT("POLYGON ((90 90, 90 110, 110 110, 110 90, 90 90))")
+        def geom2 = Geometry.fromWKT("POLYGON ((173.96210441769105 -94.53669248798772, 193.14058991095382 -88.86344877872318, 198.81383362021836 -108.04193427198595, 179.6353481269556 -113.71517798125049, 173.96210441769105 -94.53669248798772))")
+        List points = geom1.getNearestPoints(geom2)
+        assertEquals 2, points.size()
+        assertEquals "POINT (110 90)", points[0].wkt
+        assertEquals "POINT (173.96210441769105 -94.53669248798772)", points[1].wkt
+    }
+
 }

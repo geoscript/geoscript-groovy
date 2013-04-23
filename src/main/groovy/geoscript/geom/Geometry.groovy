@@ -713,6 +713,17 @@ class Geometry {
     }
 
     /**
+     * Find the nearest Points between this Geometry and another Geometry
+     * @param other The other Geometry
+     * @return A List of Points
+     */
+    List<Point> getNearestPoints(Geometry other) {
+        com.vividsolutions.jts.operation.distance.DistanceOp.nearestPoints(this.g, other.g).collect {c->
+            new Point(c.x, c.y)
+        }
+    }
+
+    /**
      * Reduce the precision of this Geometry.
      * @param options Options can include scale (used when type is 'fixed'), pointwise (whether the reductions occurs
      * pointwise or not), or removecollapsed (whether collapsed geometries should be removed)
