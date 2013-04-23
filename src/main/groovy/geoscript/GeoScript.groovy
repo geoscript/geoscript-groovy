@@ -9,6 +9,7 @@ import geoscript.layer.Cursor
 import geoscript.layer.Shapefile
 import geoscript.process.Process
 import geoscript.proj.Geodetic
+import geoscript.layer.Property
 import org.codehaus.groovy.runtime.DefaultGroovyMethods
 import geoscript.layer.io.CsvReader
 import geoscript.layer.Layer
@@ -58,6 +59,8 @@ class GeoScript {
     static Object asType(File file, Class type) {
         if (type == Shapefile && file.name.endsWith(".shp")) {
             return new Shapefile(file)
+        } else if (type == Property && file.name.endsWith(".properties")) {
+            return new Property(file)
         } else if (type == Layer && file.name.endsWith(".csv")) {
             return new CsvReader().read(file)
         } else if (type == Layer && file.name.endsWith(".json")) {

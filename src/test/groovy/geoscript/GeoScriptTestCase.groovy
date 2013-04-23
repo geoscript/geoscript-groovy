@@ -7,6 +7,7 @@ import geoscript.feature.Schema
 import geoscript.filter.Expression
 import geoscript.geom.Point
 import geoscript.layer.Cursor
+import geoscript.layer.Property
 import geoscript.proj.Geodetic
 import geoscript.workspace.Memory
 import org.junit.Test
@@ -109,6 +110,14 @@ class GeoScriptTestCase {
             File file = new File(getClass().getClassLoader().getResource("states.shp").toURI())
             Shapefile shp = file as Shapefile
             assertEquals 49, shp.count
+        }
+    }
+
+    @Test void fileAsProperty() {
+        use(GeoScript) {
+            File file = new File(getClass().getClassLoader().getResource("points.properties").toURI())
+            Property prop = file as Property
+            assertEquals 4, prop.count
         }
     }
 
