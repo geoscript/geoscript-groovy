@@ -35,6 +35,14 @@ class H2 extends Database {
     }
 
     /**
+     * Create a new H2 Workspace from a database file
+     * @param file The H2 database file
+     */
+    H2 (File file) {
+        this(file.name, file.parentFile)
+    }
+
+    /**
      * Get the format
      * @return The workspace format name
      */
