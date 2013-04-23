@@ -623,8 +623,8 @@ class Geometry {
      * Scale the Geometry relative to the origin
      * @param xScale The x direction value
      * @param yScale The y direction value
-     * @param x The x oordinate
-     * @param y The y oordinate
+     * @param x The x coordinate
+     * @param y The y coordinate
      */
     Geometry scale(double xScale, double yScale, double x, double y) {
         Geometry.wrap(AffineTransformation.scaleInstance(xScale, yScale, x, y).transform(g))
@@ -652,8 +652,8 @@ class Geometry {
     /**
      * Rotate the current Geometry around the xy coordinate by a given angle theta(in radians)
      * @param theta The angle of rotation in radians
-     * @param x The x oordinate
-     * @param y The y oordinate
+     * @param x The x coordinate
+     * @param y The y coordinate
      * @return A new rotated Geometry
      */
     Geometry rotate(double theta, double x, double y) {
@@ -664,8 +664,8 @@ class Geometry {
      * Rotate the current Geometry around the xy coordinate by a given angle theta(in radians)
      * @param sin The sin of the angle of rotation in radians
      * @param cos The cos of the angle of rotation in radians
-     * @param x The x oordinate
-     * @param y The y oordinate
+     * @param x The x coordinate
+     * @param y The y coordinate
      * @return A new rotated Geometry
      */
     Geometry rotate(double sin, double cos, double x, double y) {
@@ -676,7 +676,7 @@ class Geometry {
      * Shear the Geometry in X and Y direction
      * @param xShear The distance to shear in the x direction
      * @param yShear The distance to shear in the y direction
-     * @return The new sheard Geometry
+     * @return The new sheared Geometry
      */
     Geometry shear(double xShear, double yShear) {
         Geometry.wrap(AffineTransformation.shearInstance(xShear, yShear).transform(g))
@@ -684,8 +684,8 @@ class Geometry {
 
     /**
      * Reflect the Geometry about the line (0 0, x y)
-     * @param x The x oordinate
-     * @param y The y oordinate
+     * @param x The x coordinate
+     * @param y The y coordinate
      */
     Geometry reflect(double x, double y) {
         Geometry.wrap(AffineTransformation.reflectionInstance(x, y).transform(g))
@@ -693,10 +693,10 @@ class Geometry {
 
     /**
      * Reflect the Geometry about the line (x1 y1, x2 y2)
-     * @param x1 The x oordinate of the first coordinate
-     * @param y1 The y oordinate of the first coordinate
-     * @param x2 The x oordinate of the second coordinate
-     * @param y2 The y oordinate of the second coordinate
+     * @param x1 The x cordinate of the first coordinate
+     * @param y1 The y cordinate of the first coordinate
+     * @param x2 The x cordinate of the second coordinate
+     * @param y2 The y cordinate of the second coordinate
      */
     Geometry reflect(double x1, double y1, double x2, double y2) {
         Geometry.wrap(AffineTransformation.reflectionInstance(x1, y1, x2, y2).transform(g))
