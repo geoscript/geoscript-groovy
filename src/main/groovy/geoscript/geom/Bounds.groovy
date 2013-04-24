@@ -352,6 +352,32 @@ class Bounds {
     }
 
     /**
+     * Fix the aspect ration of this Bounds based on the given width and height.
+     * @param w The image width
+     * @param h The image height
+     * @return A new Bounds
+     */
+    Bounds fixAspectRatio(int w, int h) {
+        double mapWidth = this.width
+        double mapHeight = this.height
+        double scaleX = w / mapWidth
+        double scaleY = h / mapHeight
+        double scale
+        if (scaleX < scaleY) {
+            scale = scaleX
+        } else {
+            scale = scaleY
+        }
+        double deltaX = w / scale - mapWidth
+        double deltaY = h / scale - mapHeight
+        double minX = this.minX - deltaX / 2D
+        double maxX = this.maxX + deltaX / 2D
+        double minY = this.minY - deltaY / 2D
+        double maxY = this.maxY + deltaY / 2D
+        new Bounds(minX, minY, maxX, maxY, this.proj)
+    }
+
+    /**
      * Get a value from this Bounds at the given index (minX = 0, minY = 1,
      * maxX = 2, maxY = 3).
      * <p><code>Bounds b = new Bounds(1,2,3,4)</code></p>

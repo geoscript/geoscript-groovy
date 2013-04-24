@@ -446,4 +446,10 @@ class BoundsTestCase {
         assertFalse b.contains(new Point(21,21))
         assertFalse b.contains(new Point(1,1))
     }
+
+    @Test void fixAspectRatio() {
+        Bounds b1 = new Bounds(10,10,20,20)
+        Bounds b2 = b1.fixAspectRatio(100,300)
+        assertEquals new Bounds(10.0,0.0,20.0,30.0), b2
+    }
 }
