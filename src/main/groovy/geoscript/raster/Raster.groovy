@@ -6,6 +6,7 @@ import geoscript.geom.Bounds
 import geoscript.geom.Point
 import geoscript.style.RasterSymbolizer
 import geoscript.style.Style
+import geoscript.style.Symbolizer
 import org.geotools.coverage.grid.GridCoordinates2D
 import org.geotools.coverage.grid.GridCoverage2D
 import org.geotools.coverage.grid.GridEnvelope2D
@@ -20,6 +21,7 @@ import org.geotools.process.raster.RasterZonalStatistics
 import geoscript.layer.Layer
 import geoscript.workspace.Memory
 import geoscript.feature.Schema
+import org.geotools.process.raster.StyleCoverage
 import org.geotools.util.NumberRange
 import org.jaitools.imageutils.iterator.AbstractSimpleIterator
 import org.jaitools.imageutils.iterator.SimpleIterator
@@ -655,6 +657,27 @@ class Raster {
         params.parameter("GridGeometry").value = gg
         def newCoverage = processor.doOperation(params)
         new Raster(newCoverage)
+    }
+
+    /**
+     * Create a new Raster with styling baked in.
+     * @param sym The Symobolizer
+     * @return A new Raster
+     */
+    Raster stylize(Symbolizer sym) {
+        def style = new StyleCoverage()
+        def cov = style.execute(this.coverage, sym.gtStyle)
+        new Raster(cov)
+    }
+
+    /**
+     * Create a new Raster with current styling baked in.
+     * @return A new Raster
+     */
+    Raster stylize() {
+        def style = new StyleCoverage()
+        def cov = style.execute(this.coverage, this.style.gtStyle)
+        new Raster(cov)
     }
 
     /**

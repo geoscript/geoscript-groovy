@@ -2,6 +2,8 @@ package geoscript.raster
 
 import geoscript.geom.*
 import geoscript.proj.Projection
+import geoscript.style.ColorMap
+import geoscript.style.Symbolizer
 import org.junit.Test
 import javax.imageio.ImageIO
 import static org.junit.Assert.*
@@ -828,5 +830,26 @@ class RasterTestCase {
         values = histogram.bin(245,2)
         assertEquals 245.0, values[0], 0.1
         assertEquals 246.0, values[1], 0.1
+    }
+
+    @Test void stylize() {
+        File file = new File(getClass().getClassLoader().getResource("raster.tif").toURI())
+        GeoTIFF geoTIFF = new GeoTIFF()
+        Raster raster = geoTIFF.read(file)
+        raster.style = new ColorMap([[color: "#008000", quantity: 70], [color: "#663333", quantity: 256]])
+        Raster raster2 = raster.stylize()
+        assertTrue raster.eval(10,10) != raster2.eval(10,10)
+        Symbolizer sym = new ColorMap([
+                [color: "#000000", quantity: 70],
+                [color: "#0000FF", quantity: 110],
+                [color: "#00FF00", quantity: 135],
+                [color: "#FF0000", quantity: 160],
+                [color: "#FF00FF", quantity: 185],
+                [color: "#FFFF00", quantity: 210],
+                [color: "#00FFFF", quantity: 235],
+                [color: "#FFFFFF", quantity: 256]
+        ])
+        Raster raster3 = raster.stylize(sym)
+        assertTrue raster.eval(10,10) != raster3.eval(10,10)
     }
 }
