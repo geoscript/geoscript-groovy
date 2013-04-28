@@ -52,6 +52,8 @@ class ColorTestCase {
 
         // RGB String
         assertColorsEqual new java.awt.Color(0,255,0), Color.getColor("0,255,0")
+        assertColorsEqual new java.awt.Color(0,255,0), Color.getColor("0:255:0")
+        assertColorsEqual new java.awt.Color(0,255,0), Color.getColor("0 255 0")
 
         // Hexadecimal
         assertColorsEqual new java.awt.Color(0,255,0), Color.getColor("#00ff00")
@@ -71,6 +73,8 @@ class ColorTestCase {
 
         // Null
         assertNull Color.getColor("NOT A COLOR")
+        assertNull Color.getColor("0 1 COLOR")
+        assertNull Color.getColor("0 1")
 
     }
 
