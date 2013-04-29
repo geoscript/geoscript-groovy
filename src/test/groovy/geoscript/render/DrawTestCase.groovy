@@ -16,8 +16,8 @@ import geoscript.feature.Feature
 import geoscript.feature.Schema
 import geoscript.layer.Layer
 import geoscript.layer.Shapefile
-import geoscript.raster.Raster
-import geoscript.raster.GeoTIFF
+import geoscript.layer.Raster
+import geoscript.layer.GeoTIFF
 
 /**
  * The Draw UnitTest

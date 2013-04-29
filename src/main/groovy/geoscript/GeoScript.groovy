@@ -9,8 +9,8 @@ import geoscript.layer.Cursor
 import geoscript.layer.Shapefile
 import geoscript.process.Process
 import geoscript.proj.Geodetic
-import geoscript.raster.Format
-import geoscript.raster.Raster
+import geoscript.layer.Format
+import geoscript.layer.Raster
 import org.codehaus.groovy.runtime.DefaultGroovyMethods
 import geoscript.layer.io.CsvReader
 import geoscript.layer.Layer

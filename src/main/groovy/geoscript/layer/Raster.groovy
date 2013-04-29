@@ -1,4 +1,4 @@
-package geoscript.raster
+package geoscript.layer
 
 import geoscript.geom.Geometry
 import geoscript.proj.Projection
@@ -18,7 +18,6 @@ import org.geotools.process.raster.ContourProcess
 import org.geotools.process.raster.PolygonExtractionProcess
 import org.geotools.process.raster.RasterAsPointCollectionProcess
 import org.geotools.process.raster.RasterZonalStatistics
-import geoscript.layer.Layer
 import geoscript.workspace.Memory
 import geoscript.feature.Schema
 import org.geotools.process.raster.StyleCoverage

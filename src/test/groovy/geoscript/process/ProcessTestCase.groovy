@@ -1,7 +1,7 @@
 package geoscript.process
 
 import geoscript.feature.Field
-import geoscript.raster.Raster
+import geoscript.layer.Raster
 import geoscript.workspace.Memory
 import org.junit.Test
 import static org.junit.Assert.*
@@ -11,10 +11,6 @@ import org.geotools.process.Processors
 import org.opengis.feature.type.Name
 import org.geotools.feature.NameImpl
 import org.geotools.process.ProcessFactory
-import org.geotools.feature.FeatureCollection
-import org.geotools.parameter.Parameter
-import geoscript.feature.Feature
-import org.geotools.process.function.ProcessFunctionFactory
 
 /**
  *  The Process UnitTest

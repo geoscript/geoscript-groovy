@@ -1,4 +1,4 @@
-package geoscript.raster
+package geoscript.layer
 
 import geoscript.geom.Bounds
 import geoscript.geom.Point

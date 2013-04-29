@@ -3,7 +3,6 @@ package geoscript.style
 import org.junit.Test
 import static org.junit.Assert.*
 import geoscript.filter.*
-import geoscript.raster.GeoTIFF
 import geoscript.process.Process
 import geoscript.geom.GeometryCollection
 import geoscript.layer.Layer

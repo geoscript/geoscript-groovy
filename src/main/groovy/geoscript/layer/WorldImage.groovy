@@ -1,8 +1,6 @@
-package geoscript.raster
+package geoscript.layer
 
-import geoscript.proj.Projection
 import org.geotools.gce.image.WorldImageFormat
-import org.geotools.gce.image.WorldImageReader
 
 /**
  * A Format that can read and write WorldImage Rasters.  The WorkImage Format

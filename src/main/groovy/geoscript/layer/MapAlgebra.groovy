@@ -1,4 +1,4 @@
-package geoscript.raster
+package geoscript.layer
 
 import geoscript.geom.Bounds
 import java.awt.image.RenderedImage

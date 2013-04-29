@@ -1,7 +1,6 @@
 package geoscript.layer
 
 import geoscript.filter.Expression
-import geoscript.raster.GeoTIFF
 import org.junit.Test
 import static org.junit.Assert.*
 import geoscript.feature.Schema
@@ -12,7 +11,6 @@ import geoscript.filter.Filter
 import geoscript.workspace.Memory
 import geoscript.workspace.Property
 import geoscript.geom.*
-import geoscript.raster.Raster
 import geoscript.workspace.Workspace
 import geoscript.workspace.H2
 

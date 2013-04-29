@@ -1,20 +1,18 @@
 package geoscript
 
-import com.vividsolutions.jts.geom.Coordinate
-import com.vividsolutions.jts.geom.Point
 import geoscript.feature.Feature
 import geoscript.feature.Schema
 import geoscript.filter.Expression
 import geoscript.geom.Point
 import geoscript.layer.Cursor
 import geoscript.proj.Geodetic
-import geoscript.raster.Format
-import geoscript.raster.GeoTIFF
-import geoscript.raster.Raster
+import geoscript.layer.Format
+import geoscript.layer.GeoTIFF
+import geoscript.layer.Raster
 import geoscript.workspace.Memory
 import org.junit.Test
 import static org.junit.Assert.*
-import geoscript.GeoScript
+
 import geoscript.geom.*
 import geoscript.layer.Shapefile
 import geoscript.layer.Layer

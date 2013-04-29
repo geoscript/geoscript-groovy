@@ -3,8 +3,8 @@ package geoscript.render
 import geoscript.geom.Bounds
 import geoscript.layer.Shapefile
 import geoscript.proj.Projection
-import geoscript.raster.GeoTIFF
-import geoscript.raster.Raster
+import geoscript.layer.GeoTIFF
+import geoscript.layer.Raster
 import geoscript.style.Fill
 import geoscript.style.Stroke
 import org.junit.Test

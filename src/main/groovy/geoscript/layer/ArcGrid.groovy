@@ -1,7 +1,4 @@
-package geoscript.raster
-
-import org.geotools.coverage.grid.io.AbstractGridFormat
-
+package geoscript.layer
 /**
  * A Format that can read and write ArcGrids
  * @author Jared Erickson

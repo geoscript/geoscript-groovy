@@ -1,4 +1,4 @@
-package geoscript.raster
+package geoscript.layer
 
 import org.geotools.gce.gtopo30.GTopo30Format
 

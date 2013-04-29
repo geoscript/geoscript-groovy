@@ -1,7 +1,10 @@
-package geoscript.raster
+package geoscript.layer
 
 import geoscript.geom.Bounds
 import geoscript.geom.Point
+import geoscript.layer.GeoTIFF
+import geoscript.layer.MapAlgebra
+import geoscript.layer.Raster
 import org.junit.Test
 import static org.junit.Assert.*
 

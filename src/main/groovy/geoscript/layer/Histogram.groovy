@@ -1,4 +1,4 @@
-package geoscript.raster
+package geoscript.layer
 
 import javax.media.jai.Histogram as JaiHistogram
 

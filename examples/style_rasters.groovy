@@ -6,7 +6,7 @@
  * To run, download the example raster.
  *
  */
-import geoscript.raster.GeoTIFF
+import geoscript.layer.GeoTIFF
 import geoscript.style.*
 import geoscript.render.Map
 

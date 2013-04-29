@@ -1,10 +1,12 @@
-package geoscript.raster
+package geoscript.layer
 
 import geoscript.geom.Bounds
+import geoscript.layer.Band
+import geoscript.layer.GeoTIFF
+import geoscript.layer.Raster
 import org.junit.Test
 import static org.junit.Assert.assertEquals
 import static org.junit.Assert.assertNotNull
-import geoscript.geom.Point
 
 /**
  * The Raster unit test

@@ -1,4 +1,4 @@
-package geoscript.raster
+package geoscript.layer
 
 import geoscript.proj.Projection
 import org.geotools.coverage.grid.io.AbstractGridFormat

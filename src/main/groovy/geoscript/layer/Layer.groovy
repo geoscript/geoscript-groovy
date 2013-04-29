@@ -36,8 +36,6 @@ import org.geotools.data.collection.ListFeatureCollection
 
 import java.awt.Dimension
 
-import geoscript.raster.Raster
-
 /**
  * A Layer is a source of spatial data that contains a collection of Features.  Most often Layers are accessed from
  * a {@link geoscript.workspace.Workspace Workspace} but you can create an in memory Layer by simply passing a name
@@ -1074,7 +1072,7 @@ class Layer {
 
         }
 
-        XMLOutputter outputter = new XMLOutputter(Format.getPrettyFormat())
+        XMLOutputter outputter = new XMLOutputter(org.jdom.output.Format.getPrettyFormat())
         outputter.output(doc, out)
     }
 

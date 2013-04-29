@@ -1,4 +1,4 @@
-package geoscript.raster
+package geoscript.layer
 
 import org.geotools.coverage.TypeMap
 import java.awt.image.DataBuffer

@@ -3,7 +3,7 @@ package geoscript.render
 import geoscript.feature.Feature
 import geoscript.geom.Geometry
 import geoscript.layer.Layer
-import geoscript.raster.Raster
+import geoscript.layer.Raster
 import geoscript.style.Symbolizer
 import geoscript.workspace.Memory
 import java.awt.image.BufferedImage

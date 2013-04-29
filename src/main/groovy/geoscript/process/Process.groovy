@@ -1,5 +1,6 @@
 package geoscript.process
 
+import geoscript.layer.Raster
 import org.geotools.process.Process as GtProcess
 import org.geotools.process.ProcessFactory
 import org.geotools.feature.NameImpl
@@ -481,7 +482,7 @@ class Process {
             return org.geotools.feature.FeatureCollection
         } else if (geoscript.layer.Cursor.isAssignableFrom(geoScriptClass)) {
             return org.geotools.feature.FeatureCollection
-        } else if (geoscript.raster.Raster.isAssignableFrom(geoScriptClass)) {
+        } else if (Raster.isAssignableFrom(geoScriptClass)) {
             return org.opengis.coverage.grid.GridCoverage
         } else {
             return geoScriptClass
@@ -503,7 +504,7 @@ class Process {
         } else if (org.geotools.feature.FeatureCollection.isAssignableFrom(geoToolsClass)) {
             return geoscript.layer.Cursor
         } else if (org.opengis.coverage.grid.GridCoverage.isAssignableFrom(geoToolsClass)) {
-            return geoscript.raster.Raster
+            return Raster
         } else {
             return geoToolsClass
         }
@@ -554,11 +555,11 @@ class Process {
             return new geoscript.layer.Cursor(source as org.geotools.feature.FeatureCollection)
         }
         // GridCoverage and Raster
-        else if (org.opengis.coverage.grid.GridCoverage.isAssignableFrom(target) && geoscript.raster.Raster.isInstance(source)) {
-            return (source as geoscript.raster.Raster).coverage
+        else if (org.opengis.coverage.grid.GridCoverage.isAssignableFrom(target) && Raster.isInstance(source)) {
+            return (source as Raster).coverage
         }
-        else if (geoscript.raster.Raster.isAssignableFrom(target) && org.geotools.coverage.grid.GridCoverage2D.isInstance(source)) {
-            return new geoscript.raster.Raster(source as org.geotools.coverage.grid.GridCoverage2D)
+        else if (Raster.isAssignableFrom(target) && org.geotools.coverage.grid.GridCoverage2D.isInstance(source)) {
+            return new Raster(source as org.geotools.coverage.grid.GridCoverage2D)
         }
         // Just return an unconverted Object
         else {

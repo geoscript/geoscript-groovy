@@ -1,6 +1,7 @@
-package geoscript.raster
+package geoscript.layer
 
 import geoscript.geom.Bounds
+import geoscript.layer.WorldFile
 import org.junit.Test
 import static org.junit.Assert.*
 

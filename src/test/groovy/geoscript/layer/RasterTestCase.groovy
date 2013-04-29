@@ -1,6 +1,10 @@
-package geoscript.raster
+package geoscript.layer
 
 import geoscript.geom.*
+import geoscript.layer.Band
+import geoscript.layer.GeoTIFF
+import geoscript.layer.Histogram
+import geoscript.layer.Raster
 import geoscript.proj.Projection
 import geoscript.style.ColorMap
 import geoscript.style.Symbolizer
