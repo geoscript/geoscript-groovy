@@ -1,5 +1,7 @@
 package geoscript.style
 
+import geoscript.layer.GeoTIFF
+import geoscript.layer.Raster
 import org.junit.Test
 import static org.junit.Assert.*
 
@@ -24,6 +26,19 @@ class ColorMapTestCase {
         assertEquals "interval", colorMap.type
         assertEquals 2, colorMap.values.size()
         assertTrue colorMap.extended
+
+        GeoTIFF geoTIFF = new GeoTIFF()
+        File file = new File(getClass().getClassLoader().getResource("raster.tif").toURI())
+        Raster raster = geoTIFF.read(file)
+        Map extrema = raster.extrema
+        double min = extrema.min[0]
+        double max = extrema.max[0]
+        colorMap = new ColorMap(raster,"Greens", 5)
+        assertEquals "ramp", colorMap.type
+        assertFalse colorMap.extended
+        assertEquals 5, colorMap.values.size()
+        assertEquals min, colorMap.values[0].quantity, 0.1
+        assertEquals max, colorMap.values[4].quantity, 0.1
     }
 
     @Test void apply() {

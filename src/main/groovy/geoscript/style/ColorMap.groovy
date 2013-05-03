@@ -1,6 +1,8 @@
 package geoscript.style
 
+import geoscript.filter.Color
 import geoscript.filter.Expression
+import geoscript.layer.Raster
 import org.geotools.styling.Rule
 import org.geotools.styling.RasterSymbolizer
 import org.geotools.styling.Symbolizer as GtSymbolizer
@@ -50,6 +52,33 @@ class ColorMap extends geoscript.style.RasterSymbolizer {
                 this."$k" = v
             }
         }
+    }
+
+    /**
+     * Create a ColorMap for a Raster with a palette of colors (from Color Brewer) with the given
+     * number of categories
+     * @param raster The Raster
+     * @param palette The color palette name (from Color Brewer)
+     * @param numberOfCategories The number of categories
+     * @param band The band to use for min and max values
+     * @param type The type of interpolation
+     * @param extended Whether to use extended colors
+     */
+    ColorMap (Raster raster, String palette, int numberOfCategories, int band = 0, String type = "ramp", boolean extended = false) {
+        Map extrema = raster.extrema
+        double min = extrema.min[band]
+        double max = extrema.max[band]
+        double spread = (max - min) / (numberOfCategories - 1)
+        List colors = Color.getPaletteColors(palette, numberOfCategories)
+        double quantity = min
+        List values = (0..<numberOfCategories).collect{i ->
+            def value = [quantity: quantity, color: colors[i]]
+            quantity += spread
+            value
+        }
+        this.values = values
+        this.type = type
+        this.extended = extended
     }
 
     /**
