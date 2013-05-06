@@ -190,7 +190,7 @@ class Stroke extends Symbolizer {
      * Create a GeoTools Stroke from this GeoScript Stroke
      * @return A GeoTools Stroke
      */
-    protected GtStroke createStroke(GtSymbolizer sym) {
+    protected GtStroke createStroke() {
         GtStroke stroke = styleFactory.createStroke(color?.expr, width?.expr)
         if (dash) {
             if (dash instanceof List) {

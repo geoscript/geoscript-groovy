@@ -3,6 +3,7 @@ package geoscript.render
 import geoscript.feature.Feature
 import geoscript.geom.Geometry
 import geoscript.layer.Layer
+import geoscript.layer.Raster
 import geoscript.style.Symbolizer
 import geoscript.workspace.Memory
 import java.awt.image.BufferedImage
@@ -120,6 +121,44 @@ class Draw {
     }
 
     /**
+     * Draw a Raster
+     * @param options A java.util.Map of options or named parameters (style, bounds, size, out, format, proj)
+     * <ul>
+     *  <li>bounds = The Bounds</li>
+     *  <li>size = The size of the canvas ([400,350])</li>
+     *  <li>out = The OutputStream, File, or File name.  If null (which is the default) a GUI will be opened.</li>
+     *  <li>format = The format ("jpeg", "png", "pdf", "svg")</li>
+     *  <li>proj = The Projection</li>
+     * </ul>
+     * @param raster The Raster
+     */
+    static void draw(java.util.Map options = [:], Raster raster) {
+        List size = options.get("size",[500,500])
+        Map map = new Map(
+                layers: [raster],
+                bounds: options.get("bounds", raster.bounds.scale(1.1)),
+                width: size[0],
+                height: size[1],
+                type: options.get("format","png"),
+                proj: options.get("proj", raster.proj)
+        )
+        def out = options.get("out", null)
+        // Display in a Window
+        if (out == null) {
+            new Window(map)
+        }
+        // Draw to an OutputStream
+        else if (out instanceof OutputStream) {
+            map.render(out)
+        }
+        // Draw to a File
+        else {
+            File file = out instanceof File ? out : new File(out.toString())
+            map.render(file)
+        }
+    }
+
+    /**
      * Draw a Geometry to an image
      * @param options A java.util.Map of options or named parameters (style, bounds, size, out, format, proj)
      * <ul>
@@ -205,6 +244,33 @@ class Draw {
             height: size[1],
             type: options.get("imageType","png"),
             proj: options.get("proj", layer.proj)
+        )
+        map.renderToImage()
+    }
+
+    /**
+     * Draw a Raster to an image
+     * @param options A java.util.Map of options or named parameters (style, bounds, size, out, imageType, proj)
+     * <ul>
+     *  <li>style = A Style</li>
+     *  <li>bounds = The Bounds</li>
+     *  <li>size = The size of the canvas ([400,350])</li>
+     *  <li>out = The OutputStream, File, or File name.  If null (which is the default) a GUI will be opened.</li>
+     *  <li>imageType = The format ("jpeg", "png", "gif")</li>
+     *  <li>proj = The Projection</li>
+     * </ul>
+     * @param raster The Raster
+     * @return A BufferedImage
+     */
+    static BufferedImage drawToImage(java.util.Map options = [:], Raster raster) {
+        List size = options.get("size",[500,500])
+        Map map = new Map(
+            layers: [raster],
+            bounds: options.get("bounds", raster.bounds.scale(1.1)),
+            width: size[0],
+            height: size[1],
+            type: options.get("imageType","png"),
+            proj: options.get("proj", raster.proj)
         )
         map.renderToImage()
     }

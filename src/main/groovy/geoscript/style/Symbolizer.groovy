@@ -13,6 +13,7 @@ import org.geotools.styling.PointSymbolizer
 import org.geotools.styling.LineSymbolizer
 import org.geotools.styling.PolygonSymbolizer
 import org.geotools.styling.TextSymbolizer
+import org.geotools.styling.RasterSymbolizer
 import geoscript.filter.Color
 import org.geotools.styling.FeatureTypeStyle
 
@@ -167,7 +168,7 @@ class Symbolizer implements Style, Cloneable {
     }
 
     /**
-     * Prepare the GeoTools Rule by applying this Symbolizer
+     * Prepare the GeoTools Rule by applying this Symbolizer.
      * @param rule The GeoTools Rule
      */
     protected void prepare(Rule rule) {
@@ -226,6 +227,8 @@ class Symbolizer implements Style, Cloneable {
             sym = styleBuilder.createLineSymbolizer()
         } else if (TextSymbolizer.isAssignableFrom(clazz)) {
             sym = styleBuilder.createTextSymbolizer()
+        } else if (RasterSymbolizer.isAssignableFrom(clazz)) {
+            sym = styleBuilder.createRasterSymbolizer()
         }
         sym
     }

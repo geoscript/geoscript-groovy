@@ -626,6 +626,17 @@ class LayerTestCase {
         h2.close()
     }
 
+    @Test void getRaster() {
+        File file = new File(getClass().getClassLoader().getResource("states.shp").toURI())
+        Shapefile shp = new Shapefile(file)
+        Raster raster = shp.getRaster("SAMP_POP", [800,600], shp.bounds, "SAMP_POP")
+        assertNotNull raster
+        File rasterFile = File.createTempFile("states_pop_",".tif")
+        println rasterFile
+        GeoTIFF geotiff = new GeoTIFF()
+        geotiff.write(raster, rasterFile)
+    }
+
     @Test void cursorSubFields() {
         Schema s = new Schema("facilities", [new Field("geom","Point", "EPSG:2927"), new Field("name","string"), new Field("price","float")])
         Layer layer = new Layer("facilities", s)

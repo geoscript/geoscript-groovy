@@ -71,5 +71,4 @@ class TransformTestCase {
         assertTrue rule.symbolizers()[0].geometry instanceof org.opengis.filter.expression.Function
         assertTrue rule.symbolizers()[1].label instanceof org.opengis.filter.expression.Function
     }
-
 }

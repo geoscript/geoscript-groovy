@@ -10,6 +10,8 @@ import geoscript.layer.Shapefile
 import geoscript.process.Process
 import geoscript.proj.Geodetic
 import geoscript.layer.Property
+import geoscript.layer.Format
+import geoscript.layer.Raster
 import org.codehaus.groovy.runtime.DefaultGroovyMethods
 import geoscript.layer.io.CsvReader
 import geoscript.layer.Layer
@@ -149,6 +151,16 @@ class GeoScript {
         else if (obj instanceof org.geotools.data.DataStore) {
             return new Workspace(obj as org.geotools.data.DataStore)
         }
+        // GridCoverage -> Raster
+        else if (obj instanceof org.opengis.coverage.grid.GridCoverage) {
+            def grid = obj as org.opengis.coverage.grid.GridCoverage
+            return new Raster(grid)
+        }
+        // GridFormat -> Format
+        else if (obj instanceof org.geotools.coverage.grid.io.AbstractGridFormat) {
+            def gridFormat = obj as org.geotools.coverage.grid.io.AbstractGridFormat
+            return new Format(gridFormat)
+        }
         // Not a wrapped GeoTools object just just return
         else {
             return obj
@@ -208,6 +220,14 @@ class GeoScript {
         // Workspace -> DataStore
         else if (obj instanceof Workspace) {
             return (obj as Workspace).ds
+        }
+        // Raster -> GridCoverage
+        else if (obj instanceof Raster) {
+            return (obj as Raster).coverage
+        }
+        // Format -> AbstractGridFormat
+        else if (obj instanceof Format) {
+            return (obj as Format).gridFormat
         }
         // Not a supported GeoScript object
         else {

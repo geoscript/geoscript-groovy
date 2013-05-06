@@ -138,6 +138,66 @@
             <version>0.7.4</version>
         </dependency>
         <dependency>
+            <groupId>org.geotools</groupId>
+            <artifactId>gt-geotiff</artifactId>
+            <version>${gt.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.geotools</groupId>
+            <artifactId>gt-image</artifactId>
+            <version>${gt.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.geotools</groupId>
+            <artifactId>gt-imagemosaic</artifactId>
+            <version>${gt.version}</version>
+        </dependency>
+		<dependency>
+			<groupId>org.geotools</groupId>
+			<artifactId>gt-arcgrid</artifactId>
+			<version>${gt.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.geotools</groupId>
+			<artifactId>gt-grassraster</artifactId>
+			<version>${gt.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.geotools</groupId>
+			<artifactId>gt-gtopo30</artifactId>
+			<version>${gt.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.geotools</groupId>
+			<artifactId>gt-imagepyramid</artifactId>
+			<version>${gt.version}</version>
+		</dependency>
+        <dependency>
+            <groupId>org.geotools</groupId>
+            <artifactId>gt-imageio-ext-gdal</artifactId>
+            <version>${gt.version}</version>
+        </dependency>
+		<dependency>
+            <groupId>org.geotools</groupId>
+            <artifactId>gt-process-raster</artifactId>
+            <version>${gt.version}</version>
+        </dependency>
+		<dependency>
+			<groupId>org.geotools</groupId>
+			<artifactId>gt-wms</artifactId>
+			<version>${gt.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.jaitools</groupId>
+			<artifactId>jt-jiffleop</artifactId>
+			<version>0.2.0</version>
+		</dependency>
+		<dependency>
+			<groupId>org.jaitools</groupId>
+			<artifactId>jt-jiffle-language</artifactId>
+			<version>0.2.0</version>
+		</dependency>
+        <dependency>
             <groupId>org.codehaus.groovy</groupId>
             <artifactId>groovy</artifactId>
             <version>1.8.9</version>
@@ -219,6 +279,15 @@
                     </execution>
                 </executions>
             </plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<configuration>
+					<!-- once, never, always, perthread -->
+					<forkMode>once</forkMode>
+					<argLine>-Xms512m -Xmx1024m -XX:PermSize=256m -XX:MaxPermSize=1024m</argLine>
+				</configuration>
+			</plugin>
             <plugin>
                 <artifactId>maven-assembly-plugin</artifactId>
                 <version>2.2-beta-5</version>

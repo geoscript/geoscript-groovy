@@ -1,5 +1,6 @@
 package geoscript.process
 
+import geoscript.layer.Raster
 import org.geotools.process.Process as GtProcess
 import org.geotools.process.ProcessFactory
 import org.geotools.feature.NameImpl
@@ -481,6 +482,8 @@ class Process {
             return org.geotools.feature.FeatureCollection
         } else if (geoscript.layer.Cursor.isAssignableFrom(geoScriptClass)) {
             return org.geotools.feature.FeatureCollection
+        } else if (Raster.isAssignableFrom(geoScriptClass)) {
+            return org.opengis.coverage.grid.GridCoverage
         } else {
             return geoScriptClass
         }
@@ -496,8 +499,12 @@ class Process {
             return geoscript.geom.Geometry
         } else if (org.geotools.geometry.jts.ReferencedEnvelope.isAssignableFrom(geoToolsClass)) {
             return geoscript.geom.Bounds
+        } else if (org.opengis.geometry.Envelope.isAssignableFrom(geoToolsClass)) {
+            return geoscript.geom.Bounds
         } else if (org.geotools.feature.FeatureCollection.isAssignableFrom(geoToolsClass)) {
             return geoscript.layer.Cursor
+        } else if (org.opengis.coverage.grid.GridCoverage.isAssignableFrom(geoToolsClass)) {
+            return Raster
         } else {
             return geoToolsClass
         }
@@ -525,6 +532,14 @@ class Process {
         else if (geoscript.geom.Bounds.isAssignableFrom(target) && org.geotools.geometry.jts.ReferencedEnvelope.isInstance(source)) {
             return new Bounds(source as org.geotools.geometry.jts.ReferencedEnvelope)
         }
+        // org.opengis.geometry.Envelope and Bounds
+        else if (org.opengis.geometry.Envelope.isAssignableFrom(target) && geoscript.geom.Bounds.isInstance(source)) {
+            return (source as geoscript.geom.Bounds).env
+        }
+        else if (geoscript.geom.Bounds.isAssignableFrom(target) && org.opengis.geometry.Envelope.isInstance(source)) {
+            def env = source as org.opengis.geometry.Envelope
+            return new Bounds(env.getMinimum(1), env.getMinimum(0), env.getMaximum(1), env.getMaximum(0))
+        }
         // FeatureCollection and Layer
         else if ( org.geotools.feature.FeatureCollection.isAssignableFrom(target) && geoscript.layer.Layer.isInstance(source)) {
             return (source as geoscript.layer.Layer).fs.features
@@ -538,6 +553,13 @@ class Process {
         }
         else if (geoscript.layer.Cursor.isAssignableFrom(target) && org.geotools.feature.FeatureCollection.isInstance(source)) {
             return new geoscript.layer.Cursor(source as org.geotools.feature.FeatureCollection)
+        }
+        // GridCoverage and Raster
+        else if (org.opengis.coverage.grid.GridCoverage.isAssignableFrom(target) && Raster.isInstance(source)) {
+            return (source as Raster).coverage
+        }
+        else if (Raster.isAssignableFrom(target) && org.geotools.coverage.grid.GridCoverage2D.isInstance(source)) {
+            return new Raster(source as org.geotools.coverage.grid.GridCoverage2D)
         }
         // Just return an unconverted Object
         else {

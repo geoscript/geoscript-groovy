@@ -87,10 +87,10 @@ class Font extends Symbolizer {
 
     /**
      * Set the font style (normal, italic, oblique)
-     * @param style The font style
+     * @param fontStyle The font style
      */
-    void setStyle(def style) {
-        this.style = new Expression(style)
+    void setStyle(def fontStyle) {
+        this.style = new Expression(fontStyle)
     }
 
     /**

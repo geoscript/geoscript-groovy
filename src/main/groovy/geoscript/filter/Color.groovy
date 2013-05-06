@@ -166,8 +166,26 @@ class Color extends Expression {
             return color
         }
         // RGB as String: "255,255,255"
-        else if (color instanceof String && color.split(",").length >= 3) {
+        else if (color instanceof String && color.split(",").length >= 3 && allItemsAreInegers(color.split(","))) {
             String[] parts = color.split(",")
+            int r = parts[0] as int
+            int g = parts[1] as int
+            int b =  parts[2] as int
+            int a = parts.length > 3 ? parts[3] as int : 0
+            return new java.awt.Color(r, g, b, a)
+        }
+        // RGB as String: "255:255:255"
+        else if (color instanceof String && color.split(":").length >= 3 && allItemsAreInegers(color.split(":"))) {
+            String[] parts = color.split(":")
+            int r = parts[0] as int
+            int g = parts[1] as int
+            int b =  parts[2] as int
+            int a = parts.length > 3 ? parts[3] as int : 0
+            return new java.awt.Color(r, g, b, a)
+        }
+        // RGB as String: "255 255 255"
+        else if (color instanceof String && color.split(" ").length >= 3 && allItemsAreInegers(color.split(" "))) {
+            String[] parts = color.split(" ")
             int r = parts[0] as int
             int g = parts[1] as int
             int b =  parts[2] as int
@@ -221,6 +239,17 @@ class Color extends Expression {
         }
         else {
             return null
+        }
+    }
+
+    /**
+     * Make sure every item in the Array is a number
+     * @param items The array of items
+     * @return Whether every item is a number
+     */
+    private static boolean allItemsAreInegers(String[] items) {
+        items.every {i ->
+            i.isNumber()
         }
     }
 

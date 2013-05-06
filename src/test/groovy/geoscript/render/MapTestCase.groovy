@@ -1,12 +1,14 @@
 package geoscript.render
 
+import geoscript.geom.Bounds
+import geoscript.layer.Shapefile
+import geoscript.proj.Projection
+import geoscript.layer.GeoTIFF
+import geoscript.layer.Raster
+import geoscript.style.Fill
+import geoscript.style.Stroke
 import org.junit.Test
 import static org.junit.Assert.*
-import geoscript.layer.*
-import geoscript.proj.Projection
-import geoscript.geom.Bounds
-import geoscript.style.Stroke
-import geoscript.style.Fill
 
 /**
  * The Map UnitTest
@@ -52,6 +54,47 @@ class MapTestCase {
 
         File out = File.createTempFile("map",".png")
         println("renderToImage: ${out}")
+        javax.imageio.ImageIO.write(image, "png", out);
+        assertTrue(out.exists())
+        map.close()
+    }
+
+    @Test void renderRasterToImage() {
+        File file = new File(getClass().getClassLoader().getResource("alki.tif").toURI())
+        assertNotNull(file)
+
+        GeoTIFF geoTIFF = new GeoTIFF()
+        Raster raster = geoTIFF.read(file)
+
+        Map map = new Map()
+        map.proj = new Projection("EPSG:2927")
+        map.addRaster(raster)
+        map.bounds = raster.bounds
+        def image = map.renderToImage()
+        assertNotNull(image)
+
+        File out = File.createTempFile("raster",".png")
+        println("renderRasterToImage: ${out}")
+        javax.imageio.ImageIO.write(image, "png", out);
+        assertTrue(out.exists())
+        map.close()
+    }
+
+    @Test void renderDemRaster() {
+        File file = new File(getClass().getClassLoader().getResource("raster.tif").toURI())
+        assertNotNull(file)
+
+        GeoTIFF geoTIFF = new GeoTIFF()
+        Raster raster = geoTIFF.read(file)
+        raster.style = new  geoscript.style.ColorMap([[color: "#008000", quantity:70], [color:"#663333", quantity:256]])
+
+        Map map = new Map()
+        map.addRaster(raster)
+        def image = map.renderToImage()
+        assertNotNull(image)
+
+        File out = File.createTempFile("raster",".png")
+        println("renderDemRaster: ${out}")
         javax.imageio.ImageIO.write(image, "png", out);
         assertTrue(out.exists())
         map.close()

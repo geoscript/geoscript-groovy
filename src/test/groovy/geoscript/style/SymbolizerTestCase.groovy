@@ -3,7 +3,7 @@ package geoscript.style
 import org.junit.Test
 import static org.junit.Assert.*
 import geoscript.filter.Filter
-import geoscript.layer.Shapefile
+
 import org.geotools.styling.Style
 import org.opengis.filter.Filter as GTFilter
 import org.geotools.styling.LineSymbolizer
@@ -11,7 +11,6 @@ import org.geotools.styling.PointSymbolizer
 import org.geotools.styling.PointSymbolizerImpl
 import org.geotools.styling.PolygonSymbolizer
 import org.geotools.styling.TextSymbolizer
-import geoscript.filter.Color
 
 /**
  * The Symbolizer Unit Test

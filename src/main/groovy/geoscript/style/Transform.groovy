@@ -52,6 +52,7 @@ class Transform extends Symbolizer {
      * Transform transform1 = new Transform(new Function("myCentroid", {g -> g.centroid}))
      * </pre></blockquote></p>
      * @param function The geoscript.filter.Function
+     * @param type The optional Transformation type (GEOMETRY or RENDERING)
      */
     Transform(Function function, Type type = Type.NORMAL) {
         super()
@@ -108,7 +109,7 @@ class Transform extends Symbolizer {
         super.apply(sym)
         if (sym instanceof TextSymbolizer) {
             sym.label = function.function
-        } else {
+        }  else {
             sym.geometry = function.function
         }
     }

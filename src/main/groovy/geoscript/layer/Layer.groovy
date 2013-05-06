@@ -18,6 +18,7 @@ import org.geotools.data.DefaultTransaction
 import org.geotools.feature.FeatureCollections
 import org.geotools.feature.FeatureCollection
 import org.geotools.feature.FeatureIterator
+import org.geotools.process.vector.VectorToRasterProcess
 import org.opengis.filter.sort.SortOrder
 import org.opengis.feature.simple.SimpleFeatureType
 import org.opengis.feature.simple.SimpleFeature
@@ -32,6 +33,8 @@ import org.jdom.input.*
 import geoscript.layer.io.GmlWriter
 import geoscript.layer.io.GeoJSONWriter
 import org.geotools.data.collection.ListFeatureCollection
+
+import java.awt.Dimension
 
 /**
  * A Layer is a source of spatial data that contains a collection of Features.  Most often Layers are accessed from
@@ -963,6 +966,22 @@ class Layer {
     }
 
     /**
+     * Convert this Layer into a Raster
+     * @param field The numeric Field or Field name from which to get values
+     * @param gridSize The grid size (width and height)
+     * @param bounds The Bounds of the Raster
+     * @param name The name of the Raster
+     * @return A Raster
+     */
+    Raster getRaster(def field, List gridSize, Bounds bounds, String rasterName) {
+        def dim = new Dimension(gridSize[0] as int, gridSize[1] as int)
+        def fld =  filterFactory.property(field instanceof Field ? field.name : field)
+        def cov = VectorToRasterProcess.process(fs.features, fld, dim, bounds.env, rasterName, null)
+        def tif = new Raster(cov)
+        return tif
+    }
+
+    /**
      * The GML Layer Writer
      */
     private static final GmlWriter gmlWriter = new GmlWriter()
@@ -1088,7 +1107,7 @@ class Layer {
 
         }
 
-        XMLOutputter outputter = new XMLOutputter(Format.getPrettyFormat())
+        XMLOutputter outputter = new XMLOutputter(org.jdom.output.Format.getPrettyFormat())
         outputter.output(doc, out)
     }
 

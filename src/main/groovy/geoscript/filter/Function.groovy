@@ -2,7 +2,6 @@ package geoscript.filter
 
 import org.opengis.filter.expression.Function as GtFunction
 import org.opengis.filter.expression.Expression as GtExpression
-
 import org.geotools.factory.CommonFactoryFinder
 import org.geotools.factory.FactoryIteratorProvider
 import org.geotools.factory.GeoTools

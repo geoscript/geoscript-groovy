@@ -3,7 +3,11 @@ package geoscript.render
 import geoscript.filter.Color
 import geoscript.geom.Bounds
 import geoscript.layer.Layer
+import geoscript.layer.WMS
 import geoscript.proj.Projection
+import geoscript.layer.Raster
+import org.geotools.map.WMSLayer
+
 import java.awt.Graphics2D
 import java.awt.Rectangle
 import java.awt.RenderingHints
@@ -17,7 +21,7 @@ import org.geotools.renderer.label.LabelCacheImpl
 import org.geotools.renderer.lite.LabelCache
 import org.geotools.renderer.lite.RendererUtilities
 import org.geotools.renderer.lite.StreamingRenderer
-import org.geotools.referencing.factory.epsg.CartesianAuthorityFactory
+
 import org.geotools.referencing.crs.DefaultGeographicCRS
 
 /**
@@ -148,6 +152,22 @@ class Map {
     }
 
     /**
+     * Add a Raster
+     * @param raster The Raster
+     */
+    void addRaster(Raster raster) {
+        layers.add(raster)
+    }
+
+    /**
+     * Add a WMS Layer
+     * @param wms The WMS Layer
+     */
+    void addWMSLayer(WMS wms) {
+        layers.add(wms)
+    }
+
+    /**
      * Get the Bounds
      * @return The Bounds
      */
@@ -256,7 +276,19 @@ class Map {
     protected void setUpRendering() {
         // Add Layers
         layers.each{layer ->
-            MapLayer mapLayer = new DefaultMapLayer(layer.fs, layer.style.gtStyle)
+            MapLayer mapLayer
+            if (layer instanceof Layer) {
+                mapLayer = new DefaultMapLayer(layer.fs, layer.style.gtStyle)
+            } else if (layer instanceof Raster) {
+                mapLayer = new DefaultMapLayer(layer.coverage, layer.style.gtStyle)
+            } else if (layer instanceof geoscript.layer.WMSLayer) {
+                def wmsLayer = layer as geoscript.layer.WMSLayer
+                def gtWmsLayer = new WMSLayer(wmsLayer.wms.wms, wmsLayer.layers[0].layer)
+                (1..<wmsLayer.layers.size()).each{i ->
+                    gtWmsLayer.addLayer(wmsLayer.layers[i].layer)
+                }
+                mapLayer = new DefaultMapLayer(gtWmsLayer)
+            }
             context.addLayer(mapLayer)
         }
         // Set Bounds and Projections

@@ -1,7 +1,5 @@
 package geoscript
 
-import com.vividsolutions.jts.geom.Coordinate
-import com.vividsolutions.jts.geom.Point
 import geoscript.feature.Feature
 import geoscript.feature.Schema
 import geoscript.filter.Expression
@@ -9,10 +7,13 @@ import geoscript.geom.Point
 import geoscript.layer.Cursor
 import geoscript.layer.Property
 import geoscript.proj.Geodetic
+import geoscript.layer.Format
+import geoscript.layer.GeoTIFF
+import geoscript.layer.Raster
 import geoscript.workspace.Memory
 import org.junit.Test
 import static org.junit.Assert.*
-import geoscript.GeoScript
+
 import geoscript.geom.*
 import geoscript.layer.Shapefile
 import geoscript.layer.Layer
@@ -37,6 +38,16 @@ class GeoScriptTestCase {
         assertTrue GeoScript.wrap(new Projection("EPSG:4326").crs) instanceof Projection
         assertTrue GeoScript.wrap(new Geodetic("clrk66").ellipsoid) instanceof Geodetic
         assertTrue GeoScript.wrap(new Memory().ds) instanceof Workspace
+        List data = [
+                [0,0,0,0,0,0,0],
+                [0,1,1,1,1,1,0],
+                [0,1,2,3,2,1,0],
+                [0,1,1,1,1,1,0],
+                [0,0,0,0,0,0,0]
+        ]
+        Bounds bounds = new Bounds(0, 0, 7, 5, "EPSG:4326")
+        assertTrue GeoScript.wrap(new Raster(data, bounds).coverage) instanceof Raster
+        assertTrue GeoScript.wrap(new GeoTIFF().gridFormat) instanceof Format
         assertTrue GeoScript.wrap(1) instanceof Integer
         assertTrue GeoScript.wrap("ABC") instanceof String
     }
@@ -52,6 +63,16 @@ class GeoScriptTestCase {
         assertTrue GeoScript.unwrap(new Projection("EPSG:4326")) instanceof org.opengis.referencing.crs.CoordinateReferenceSystem
         assertTrue GeoScript.unwrap(new Geodetic("clrk66")) instanceof org.geotools.referencing.datum.DefaultEllipsoid
         assertTrue GeoScript.unwrap(new Memory()) instanceof org.geotools.data.DataStore
+        List data = [
+                [0,0,0,0,0,0,0],
+                [0,1,1,1,1,1,0],
+                [0,1,2,3,2,1,0],
+                [0,1,1,1,1,1,0],
+                [0,0,0,0,0,0,0]
+        ]
+        Bounds bounds = new Bounds(0, 0, 7, 5, "EPSG:4326")
+        assertTrue GeoScript.unwrap(new Raster(data, bounds)) instanceof org.geotools.coverage.grid.GridCoverage2D
+        assertTrue GeoScript.unwrap(new GeoTIFF()) instanceof org.geotools.coverage.grid.io.AbstractGridFormat
         assertTrue GeoScript.unwrap(1) instanceof Integer
         assertTrue GeoScript.unwrap("ABC") instanceof String
     }
