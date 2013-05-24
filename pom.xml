@@ -286,6 +286,9 @@
 					<!-- once, never, always, perthread -->
 					<forkMode>once</forkMode>
 					<argLine>-Xms512m -Xmx1024m -XX:PermSize=256m -XX:MaxPermSize=1024m</argLine>
+					<systemPropertyVariables>
+							<org.geotools.referencing.forceXY>true</org.geotools.referencing.forceXY>
+					</systemPropertyVariables>
 				</configuration>
 			</plugin>
             <plugin>
