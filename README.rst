@@ -22,7 +22,7 @@ The distribution can be found in target/geoscript-groovy-1.0-app/geoscript-groov
 
 Use
 ---
-To use GeoScript Groovy you need Java and Groovy installed and on your PATH.  Next, download the `latest release <https://github.com/jericks/geoscript-groovy/downloads>`_ or build the code yourself.  Then put the GeoScript Groovy bin directory on your PATH.  You are now ready to use GeoScript Groovy!
+To use GeoScript Groovy you need Java and Groovy installed and on your PATH.  Next, download the `latest stable release 1.0 <https://docs.google.com/file/d/0B8cwqNmbcThpQlBmaWsyNDlQMVU/edit?usp=sharing>`_, try the `latest unstable release 1.1-SNAPSHOT <https://docs.google.com/file/d/0B8cwqNmbcThpWFRxQzlHQVJlVW8/edit?usp=sharing>`_  or build the code yourself.  Then put the GeoScript Groovy bin directory on your PATH.  You are now ready to use GeoScript Groovy!
 
 GeoScript Groovy has three commands:
 
