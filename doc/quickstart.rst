@@ -29,7 +29,7 @@ Groovy version greater than *1.7* is required for GeoScript. The current version
 Install GeoScript
 -----------------
 
-#. Download `GeoScript <http://github.com/downloads/jericks/geoscript-groovy/geoscript-groovy-1.0.zip>`_
+#. Download `GeoScript <https://docs.google.com/file/d/0B8cwqNmbcThpQlBmaWsyNDlQMVU/edit?usp=sharing>`_
 
 #. Unpack the GeoScript tarball::
 
