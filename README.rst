@@ -4,7 +4,7 @@ GeoScript Groovy is the `Groovy <http://groovy.codehaus.org/>`_ implementation o
 
 GeoScript is built the shoulders of giants and essentially wraps the `Java Topology Suite <http://tsusiatsoftware.net/jts/main.html>`_ and the `GeoTools <http://geotools.org/>`_ libraries.
 
-GeoScript provides several modules that includes geometry, projection, features, workspaces, styling and rendering.
+GeoScript provides several modules that includes geometry, projection, features, layers, workspaces, styling and rendering.
 
 Build
 -----
