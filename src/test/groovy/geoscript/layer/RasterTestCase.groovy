@@ -28,7 +28,7 @@ class RasterTestCase {
         Raster raster = geoTIFF.read(file)
         assertNotNull(raster)
 
-        assertEquals("GeoTIFF", geoTIFF.format)
+        assertEquals("GeoTIFF", geoTIFF.name)
         assertEquals("EPSG:2927", raster.proj.id)
 
         assertNotNull raster.data
@@ -440,6 +440,10 @@ class RasterTestCase {
         assertTrue layer.count > 0
 
         layer = raster.contours(0, [0.25,0.5,0.75], true, true, bounds)
+        assertNotNull layer
+        assertTrue layer.count > 0
+
+        layer = raster.contours(0, [0.25,0.5,0.75], true, true)
         assertNotNull layer
         assertTrue layer.count > 0
     }

@@ -2,7 +2,20 @@ package geoscript.layer
 
 import geoscript.proj.Projection
 import org.geotools.coverage.grid.io.AbstractGridFormat
+import org.geotools.coverage.grid.io.GridFormatFinder
+import org.geotools.coverage.grid.io.UnknownFormat
+import org.geotools.coverageio.gdal.mrsid.MrSIDFormat
 import org.geotools.factory.Hints
+import org.geotools.gce.arcgrid.ArcGridFormat
+import org.geotools.gce.geotiff.GeoTiffFormat
+import org.geotools.gce.grassraster.format.GrassCoverageFormat
+import org.geotools.gce.gtopo30.GTopo30Format
+import org.geotools.gce.image.WorldImageFormat
+import org.geotools.gce.imagemosaic.ImageMosaicFormat
+import org.geotools.gce.imagepyramid.ImagePyramidFormat
+import org.geotools.parameter.Parameter
+import org.opengis.parameter.GeneralParameterValue
+import org.opengis.parameter.ParameterValueGroup
 
 /**
  * A Raster Format can read and write Rasters
@@ -60,6 +73,62 @@ class Format {
             hints.put(Hints.DEFAULT_COORDINATE_REFERENCE_SYSTEM, proj.crs)
         }
         def reader = gridFormat.getReader(source, hints)
-        new Raster(reader.read(null))
+        new Raster(reader.read(null), this)
+    }
+
+    /**
+     * Get a String representation of this Format
+     * @return The Format's name
+     */
+    String toString() {
+        name
+    }
+
+    /**
+     * Get the Format that can read the given File
+     * @param file The File
+     * @return A Format
+     */
+    static Format getFormat(File file) {
+        if (file.exists()) {
+            AbstractGridFormat format = GridFormatFinder.findFormat(file);
+            if (format == null || format instanceof UnknownFormat) {
+                return null
+            }
+            if (format instanceof GeoTiffFormat) {
+                return new GeoTIFF()
+            } else if (format instanceof ArcGridFormat) {
+                return new ArcGrid()
+            } else if (format instanceof GrassCoverageFormat) {
+                return new Grass()
+            } else if (format instanceof GTopo30Format) {
+                return new GTopo30()
+            } else if (format instanceof ImagePyramidFormat) {
+                return new ImagePyramid()
+            } else if (format instanceof ImageMosaicFormat) {
+                return new Mosaic()
+            } else if (format instanceof MrSIDFormat) {
+                return new MrSID()
+            } else if (format instanceof WorldImageFormat) {
+                return new WorldImage()
+            } else {
+                return new Format(format)
+            }
+        } else {
+            String ext = file.name.substring(file.name.lastIndexOf(".") + 1).toLowerCase()
+            if (ext in ["tif"]) {
+                return new GeoTIFF()
+            } else if (ext in ["png","jpg","jpeg","gif"]) {
+                return new WorldImage()
+            } else if (ext in ["arx"]) {
+                return new Grass()
+            } else if (ext in ["sid"]) {
+                return new MrSID()
+            } else if (ext in ["asc"]) {
+                return new ArcGrid()
+            } else {
+                return null
+            }
+        }
     }
 }

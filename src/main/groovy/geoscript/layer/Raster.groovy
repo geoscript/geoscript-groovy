@@ -53,6 +53,11 @@ class Raster {
     Style style
 
     /**
+     * The Format
+     */
+    Format format
+
+    /**
      * Enable write support, but only on demand
      */
     private WritableRandomIter writable
@@ -76,10 +81,12 @@ class Raster {
     /**
      * Create a Raster from a GeoTools GridCoverage2D.
      * @param coverage The GeoTools GridCoverage2D
+     * @param format The Format
      */
-    Raster(GridCoverage2D coverage) {
+    Raster(GridCoverage2D coverage, Format format = null) {
        this.coverage = coverage
        this.style = new RasterSymbolizer()
+       this.format = format
     }
 
     /**
@@ -695,7 +702,7 @@ class Raster {
         } else {
             interval = intervalOrLevels as double
         }
-        def fc = ContourProcess.process(coverage, band, levels, interval, simplify, smooth, bounds.geometry.g, null)
+        def fc = ContourProcess.process(coverage, band, levels, interval, simplify, smooth, bounds?.geometry?.g, null)
         Schema s = new Schema(fc.schema)
         Schema schema =  new Schema("contours", s.fields)
         Layer layer = new Memory().create(schema)

@@ -1,26 +1,27 @@
 package geoscript.layer
 
 import geoscript.geom.Bounds
-import geoscript.layer.Band
-import geoscript.layer.GeoTIFF
-import geoscript.layer.Raster
 import org.junit.Test
-import static org.junit.Assert.assertEquals
-import static org.junit.Assert.assertNotNull
+
+import static org.junit.Assert.*
 
 /**
  * The Raster unit test
  */
 class GeoTIFFTestCase {
-	
-    @Test void geotiff() {
+
+    @Test
+    void geotiff() {
 
         File file = new File(getClass().getClassLoader().getResource("alki.tif").toURI())
         assertNotNull(file)
 
         GeoTIFF geoTIFF = new GeoTIFF()
         assertNotNull(geoTIFF)
-        assertEquals("GeoTIFF", geoTIFF.format)
+        assertEquals("GeoTIFF", geoTIFF.name)
+
+        def fmt = Format.getFormat(file)
+        assertTrue(fmt instanceof GeoTIFF)
 
         Raster raster = geoTIFF.read(file)
         assertEquals("EPSG:2927", raster.proj.id)

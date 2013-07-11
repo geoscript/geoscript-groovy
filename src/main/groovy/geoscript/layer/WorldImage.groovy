@@ -23,7 +23,7 @@ class WorldImage extends Format {
      * @param destination The destination object (usually a File)
      */
     @Override
-    void write(Raster raster, def destination) {
+    void write(Map options = [:], Raster raster, def destination) {
         String format = WorldImageFormat.FORMAT.getDefaultValue();
         if (destination instanceof File) {
             String fileName = ((File)destination).getName()
