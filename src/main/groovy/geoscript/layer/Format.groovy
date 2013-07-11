@@ -27,8 +27,8 @@ class Format {
      * Get the format name
      * @return The format name
      */
-    String getFormat() {
-        gridFormat.getName()
+    String getName() {
+        gridFormat.name
     }
 
     /**
