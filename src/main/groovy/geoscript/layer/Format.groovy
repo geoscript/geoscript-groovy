@@ -36,8 +36,16 @@ class Format {
      * @param raster The Raster to write
      * @param destination The destination object (usually a File)
      */
-    void write(Raster raster, def destination) {
-        gridFormat.getWriter(destination).write(raster.coverage, null)
+    void write(Map options = [:], Raster raster, def destination) {
+        def writer = gridFormat.getWriter(destination)
+        ParameterValueGroup params = writer.format.writeParameters
+        options.each{k,v ->
+            params.parameter(k).setValue(v)
+        }
+        def gpv = options.collect{k,v ->
+            params.parameter(k)
+        }
+        writer.write(raster.coverage, gpv as GeneralParameterValue[])
     }
 
     /**
