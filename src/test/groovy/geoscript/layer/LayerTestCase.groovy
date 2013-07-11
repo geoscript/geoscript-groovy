@@ -663,5 +663,34 @@ class LayerTestCase {
         assertEquals "House 2", layer.first(filter: "price > 13 AND price < 14").get("name")
         assertEquals "House 3", layer.first(filter: "price > 13 AND price < 15", sort: "price DESC").get("name")
     }
+
+    @Test void transform() {
+        Schema s = new Schema("facilities", [new Field("geom","Point", "EPSG:2927"), new Field("name","string"), new Field("price","float")])
+        Layer layer = new Layer("facilities", s)
+        layer.add(new Feature([new Point(111,-47), "House 1", 12.5], "house1", s))
+        layer.add(new Feature([new Point(112,-46), "House 2", 13.5], "house2", s))
+        layer.add(new Feature([new Point(113,-45), "House 3", 14.5], "house3", s))
+
+        Layer layer2 = layer.transform("buffered_facilities", [
+            geom: "buffer(geom, 10)",
+            name: "strToUpperCase(name)",
+            price: "price * 10"
+        ])
+
+        List features1 = layer.features
+        List features2 = layer2.features
+        // 1
+        assertTrue(features2[0].geom instanceof Polygon)
+        assertEquals(features1[0].get("name").toString().toUpperCase(),  features2[0].get("name"))
+        assertEquals(features1[0].get("price") * 10,  features2[0].get("price"), 0.1)
+        // 2
+        assertTrue(features2[1].geom instanceof Polygon)
+        assertEquals(features1[1].get("name").toString().toUpperCase(),  features2[1].get("name"))
+        assertEquals(features1[1].get("price") * 10,  features2[1].get("price"), 0.1)
+        // 3
+        assertTrue(features2[2].geom instanceof Polygon)
+        assertEquals(features1[2].get("name").toString().toUpperCase(),  features2[2].get("name"))
+        assertEquals(features1[2].get("price") * 10,  features2[2].get("price"), 0.1)
+    }
 }
 

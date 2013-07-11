@@ -15,6 +15,8 @@ import org.geotools.data.Query
 import org.geotools.data.Transaction
 import org.geotools.data.FeatureStore
 import org.geotools.data.DefaultTransaction
+import org.geotools.data.transform.Definition
+import org.geotools.data.transform.TransformFactory
 import org.geotools.feature.FeatureCollections
 import org.geotools.feature.FeatureCollection
 import org.geotools.feature.FeatureIterator
@@ -979,6 +981,24 @@ class Layer {
         def cov = VectorToRasterProcess.process(fs.features, fld, dim, bounds.env, rasterName, null)
         def tif = new Raster(cov)
         return tif
+    }
+
+    /**
+     * Transform this Layer into a Layer with a new name using a Map
+     * of definitions.
+     * @param name The new name
+     * @param definitions A Map of Definitions (key=Field name, value=Expression)
+     * @return A new transformed Layer
+     */
+    Layer transform(String name, Map definitions) {
+        List defs = []
+        definitions.each{k,v ->
+            def e = v instanceof Expression ? v as Expression : Expression.fromCQL(v)
+            def d = new Definition(k, e.expr)
+            defs.add(d)
+        }
+        def tfs = TransformFactory.transform(this.fs, name, defs)
+        new Layer(tfs)
     }
 
     /**
