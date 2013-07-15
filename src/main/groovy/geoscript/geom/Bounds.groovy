@@ -97,6 +97,28 @@ class Bounds {
     }
 
     /**
+     * Create a Bounds from a String or return null
+     * @param str The string
+     * @return A Bounds or null
+     */
+    static Bounds fromString(String str) {
+        Bounds bounds = null
+        if (str && str.trim()) {
+            def parts = str.split(",")
+            if (parts.length == 4) {
+                bounds = new Bounds(parts[0] as double, parts[1] as double, parts[2] as double, parts[3] as double)
+            }
+            if (!bounds) {
+                parts = str.split(" ")
+                if (parts.length == 4) {
+                    bounds = new Bounds(parts[0] as double, parts[1] as double, parts[2] as double, parts[3] as double)
+                }
+            }
+        }
+        bounds
+    }
+
+    /**
      * Get the left/west most coordinate (minX)
      * @return The left/west most coordinate (minX)
      */

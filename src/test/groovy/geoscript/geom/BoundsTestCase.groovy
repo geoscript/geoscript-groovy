@@ -457,4 +457,18 @@ class BoundsTestCase {
         Bounds b2 = b1.fixAspectRatio(100,300)
         assertEquals new Bounds(10.0,0.0,20.0,30.0), b2
     }
+
+    @Test void fromString() {
+        Bounds b1 = Bounds.fromString("0,0,10,10")
+        assertEquals(b1, new Bounds(0,0,10,10))
+        Bounds b2 = Bounds.fromString("0 0 10 10")
+        assertEquals(b2, new Bounds(0,0,10,10))
+        assertNull(Bounds.fromString(""))
+        assertNull(Bounds.fromString("   "))
+        assertNull(Bounds.fromString(null))
+        assertNull(Bounds.fromString("1,2,3"))
+        assertNull(Bounds.fromString("1,2,3,4,5"))
+        assertNull(Bounds.fromString("1 2 3"))
+        assertNull(Bounds.fromString("1 2 3 4 5"))
+    }
 }
