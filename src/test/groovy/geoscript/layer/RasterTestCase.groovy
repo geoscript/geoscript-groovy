@@ -15,6 +15,8 @@ import geoscript.layer.Layer
 import geoscript.workspace.Memory
 import geoscript.feature.Field
 
+import static org.junit.Assert.assertEquals
+
 /**
  * The Raster unit test
  */
@@ -172,37 +174,57 @@ class RasterTestCase {
 
         // eval with Point
         def value = raster.eval(new Point(1166761.4391797914, 823593.1955759579))
-        assertEquals(-30, value[0])
-        assertEquals(-22, value[1])
-        assertEquals(-46, value[2])
+        assertEquals(226, value[0], 0.1)
+        assertEquals(234, value[1], 0.1)
+        assertEquals(210, value[2], 0.1)
 
         // eval with Pixel
         value = raster.eval(10,15)
-        assertEquals(39, value[0])
-        assertEquals(83, value[1])
-        assertEquals(100, value[2])
+        assertEquals(39, value[0], 0.1)
+        assertEquals(83, value[1], 0.1)
+        assertEquals(100, value[2], 0.1)
 
         // getAt with Point
         value = raster[new Point(1166761.4391797914, 823593.1955759579)]
-        assertEquals(-30, value[0])
-        assertEquals(-22, value[1])
-        assertEquals(-46, value[2])
+        assertEquals(226, value[0], 0.1)
+        assertEquals(234, value[1], 0.1)
+        assertEquals(210, value[2], 0.1)
 
         // getAt with Pixel
         value = raster[[10,15]]
-        assertEquals(39, value[0])
-        assertEquals(83, value[1])
-        assertEquals(100, value[2])
+        assertEquals(39, value[0], 0.1)
+        assertEquals(83, value[1], 0.1)
+        assertEquals(100, value[2], 0.1)
 
         // getValue with Pixel
-        assertEquals(39, raster.getValue([10,15], 0))
-        assertEquals(83, raster.getValue([10,15], 1))
-        assertEquals(100, raster.getValue([10,15], 2))
+        assertEquals(39, raster.getValue([10,15], 0), 0.1)
+        assertEquals(83, raster.getValue([10,15], 1), 0.1)
+        assertEquals(100, raster.getValue([10,15], 2), 0.1)
 
         // getValue with Point
-        assertEquals(-30, raster.getValue(new Point(1166761.4391797914, 823593.1955759579), 0))
-        assertEquals(-22, raster.getValue(new Point(1166761.4391797914, 823593.1955759579), 1))
-        assertEquals(-46, raster.getValue(new Point(1166761.4391797914, 823593.1955759579), 2))
+        assertEquals(226, raster.getValue(new Point(1166761.4391797914, 823593.1955759579), 0), 0.1)
+        assertEquals(234, raster.getValue(new Point(1166761.4391797914, 823593.1955759579), 1), 0.1)
+        assertEquals(210, raster.getValue(new Point(1166761.4391797914, 823593.1955759579), 2), 0.1)
+    }
+
+    @Test void getValueFromRaster() {
+        File file = new File(getClass().getClassLoader().getResource("raster.tif").toURI())
+        assertNotNull(file)
+        GeoTIFF geoTIFF = new GeoTIFF()
+        Raster raster = geoTIFF.read(file)
+        assertNotNull(raster)
+
+        // By default values are returned as doubles
+        assertEquals(raster.eval(new Point(-179, 89))[0], 184, 0.1)
+        assertEquals(raster.eval(new Point(0, 0))[0], 227, 0.1)
+        assertEquals(raster.eval(1,1)[0], 184, 0.1)
+
+        // Make sure explicit types also work (boolean won't work in this case)
+        assertEquals(raster.eval(new Point(-179, 89), "int")[0], 184)
+        assertEquals(raster.eval(new Point(-179, 89), "double")[0], 184.0, 0.1)
+        assertEquals(raster.eval(new Point(-179, 89), "float")[0], 184.0, 0.1)
+        assertEquals(raster.eval(new Point(-179, 89), "byte")[0], -72)
+        assertEquals(raster.eval(new Point(-179, 89), "default")[0], -72)
     }
 
     @Test void setValue() {
@@ -792,6 +814,7 @@ class RasterTestCase {
 
         // BBox
         Bounds bounds = raster.bounds.scale(-2)
+        println bounds
         Raster raster2 = raster.resample(bbox: bounds)
         assertEquals bounds.minX, raster2.bounds.minX, 0.1
         assertEquals bounds.minY, raster2.bounds.minY, 0.1

@@ -217,10 +217,24 @@ class Raster {
      * If the Raster contains multiple bands a Collection of values, one for
      * each band, will be returned.
      * @param point The Point where we want a value from the Raster
+     * @param type The type of value to return (double, float, int, byte, boolean, default)
      * @return A value
      */
-    List eval(Point point) {
-        coverage.evaluate(new DirectPosition2D(point.x, point.y))
+    List eval(Point point, String type = "double") {
+        def dp = new DirectPosition2D(coverage.coordinateReferenceSystem, point.x, point.y)
+        if (type.equalsIgnoreCase("double")) {
+            coverage.evaluate(dp, (double[]) null)
+        } else if (type.equalsIgnoreCase("float")) {
+            coverage.evaluate(dp, (float[]) null)
+        } else if (type.equalsIgnoreCase("int")) {
+            coverage.evaluate(dp, (int[]) null)
+        } else if (type.equalsIgnoreCase("byte")) {
+            coverage.evaluate(dp, (byte[]) null)
+        } else if (type.equalsIgnoreCase("boolean")) {
+            coverage.evaluate(dp, (boolean[]) null)
+        } else {
+            coverage.evaluate(dp)
+        }
     }
 
     /**
@@ -229,10 +243,11 @@ class Raster {
      * each band, will be returned.
      * @param x The pixel x coordinate
      * @param y The pixel y coordinate
+     * @param type The type of value to return (double, float, int, byte, boolean, default)
      * @return A value
      */
-    List eval(int x, int y) {
-        eval(getPoint(x,y))
+    List eval(int x, int y, String type = "double") {
+        eval(getPoint(x,y), type)
     }
 
     /**
@@ -256,13 +271,14 @@ class Raster {
      * for the given band
      * @param p The Point or Pixel (list x,y)
      * @param band The band zero based
+     * @param type The type of value to return (double, float, int, byte, boolean, default)
      * @return The value
      */
-    def getValue(def p, int band = 0) {
+    def getValue(def p, int band = 0, String type = "double") {
         if (p instanceof Point) {
-            eval(p as Point)[band]
+            eval(p as Point, type)[band]
         } else {
-            eval(p[0] as int, p[1] as int)[band]
+            eval(p[0] as int, p[1] as int, type)[band]
         }
     }
 
@@ -272,10 +288,11 @@ class Raster {
      * @param x The pixel x
      * @param y The pixel y
      * @param band The band zero based
+     * @param type The type of value to return (double, float, int, byte, boolean, default)
      * @return The value
      */
-    def getValue(int x, int y, int band = 0) {
-        eval(x,y)[band]
+    def getValue(int x, int y, int band = 0, String type = "double") {
+        eval(x,y,type)[band]
     }
 
     /**
