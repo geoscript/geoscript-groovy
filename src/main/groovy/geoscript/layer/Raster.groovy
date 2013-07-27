@@ -698,10 +698,10 @@ class Raster {
 
     /**
      * Create a new Raster with styling baked in.
-     * @param sym The Symobolizer
+     * @param style The Style/Symobolizer
      * @return A new Raster
      */
-    Raster stylize(Symbolizer sym) {
+    Raster stylize(Style sym) {
         def style = new StyleCoverage()
         def cov = style.execute(this.coverage, sym.gtStyle)
         new Raster(cov)
