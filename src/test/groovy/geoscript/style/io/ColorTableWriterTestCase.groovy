@@ -1,5 +1,6 @@
 package geoscript.style.io
 
+import geoscript.AssertUtil
 import geoscript.style.ColorMap
 import geoscript.style.Symbolizer
 import org.junit.Test
@@ -17,7 +18,7 @@ class ColorTableWriterTestCase {
         String actual = writer.write(colorMap)
         String expected = """70 0 128 0
 256 102 51 51"""
-        assertEquals expected, actual
+        AssertUtil.assertStringsEqual(expected, actual)
     }
 
     @Test void writeToFile() {
@@ -28,7 +29,7 @@ class ColorTableWriterTestCase {
         String actual = file.text
         String expected = """70 0 128 0
 256 102 51 51"""
-        assertEquals expected, actual
+        AssertUtil.assertStringsEqual(expected, actual)
     }
 
     @Test void writeToOutputStream() {
@@ -39,7 +40,7 @@ class ColorTableWriterTestCase {
         String actual = file.text
         String expected = """70 0 128 0
 256 102 51 51"""
-        assertEquals expected, actual
+        AssertUtil.assertStringsEqual(expected, actual)
     }
 
 }

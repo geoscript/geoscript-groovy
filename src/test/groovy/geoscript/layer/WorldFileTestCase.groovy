@@ -25,6 +25,7 @@ class WorldFileTestCase {
         assertNotNull(worldFile.file)
         assertEquals(file.name, worldFile.file.name)
         assertEquals("WorldFile: ${file.absolutePath}".toString(), worldFile.toString())
+        assertNotNull(worldFile.file.text)
 
         // Create a WorldFile from a File
         worldFile = new WorldFile(file)
@@ -37,5 +38,6 @@ class WorldFileTestCase {
         assertNotNull(worldFile.file)
         assertEquals(file.name, worldFile.file.name)
         assertEquals("WorldFile: ${file.absolutePath}".toString(), worldFile.toString())
+        assertNotNull(worldFile.file.text)
     }
 }

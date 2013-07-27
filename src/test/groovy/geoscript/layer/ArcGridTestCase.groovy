@@ -1,5 +1,6 @@
 package geoscript.layer
 
+import geoscript.AssertUtil
 import org.junit.Test
 
 import static org.junit.Assert.assertEquals
@@ -44,7 +45,7 @@ class ArcGridTestCase {
         File destFile = File.createTempFile("raster",".asc")
         arcGrid.write(raster, destFile)
         String str = destFile.text
-        assertEquals("""NCOLS 4
+        AssertUtil.assertStringsEqual("""NCOLS 4
 NROWS 6
 XLLCORNER 0.0
 YLLCORNER 0.0
@@ -68,7 +69,7 @@ NODATA_VALUE -9999.0
         assertNotNull(raster)
         String str = arcGrid.writeToString(raster)
         assertNotNull(str)
-        assertEquals("""NCOLS 4
+        AssertUtil.assertStringsEqual("""NCOLS 4
 NROWS 6
 XLLCORNER 0.0
 YLLCORNER 0.0
@@ -91,7 +92,7 @@ NODATA_VALUE -9999.0
         assertNotNull(raster)
         String str = arcGrid.writeToString(raster, "grass")
         assertNotNull(str)
-        assertEquals("""NORTH: 300.0
+        AssertUtil.assertStringsEqual("""NORTH: 300.0
 SOUTH: 0.0
 EAST: 200.0
 WEST: 0.0
