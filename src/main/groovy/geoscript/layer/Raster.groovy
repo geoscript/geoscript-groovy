@@ -507,6 +507,20 @@ class Raster {
     }
 
     /**
+     * Crop this Raster using pixel coordinates
+     * @param x1 The x of the min pixel
+     * @param y1 The y of the min pixel
+     * @param x2 The x of the max pixel
+     * @param y2 The y of the max pixel
+     * @return A new Raster
+     */
+    Raster crop(int x1, int y1, int x2, int y2) {
+        def pt1 = getPoint(x1,y1)
+        def pt2 = getPoint(x2,y2)
+        crop(new Bounds(pt1.x, pt1.y, pt2.x, pt2.y))
+    }
+
+    /**
      * Scale this Raster
      * @param x The scale factor along the x axis
      * @param y The scale factor along the y axis

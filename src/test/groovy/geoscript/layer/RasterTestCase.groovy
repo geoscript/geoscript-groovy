@@ -105,6 +105,23 @@ class RasterTestCase {
         assertEquals(bounds.maxY, cropped.bounds.maxY, 1d)
     }
 
+    @Test void cropWithPixels() {
+        File file = new File(getClass().getClassLoader().getResource("alki.tif").toURI())
+        assertNotNull(file)
+
+        GeoTIFF geoTIFF = new GeoTIFF()
+        Raster raster = geoTIFF.read(file)
+        assertNotNull(raster)
+
+        Raster cropped = raster.crop(0,0,10,10)
+        assertNotNull(cropped)
+        Bounds bounds = new Bounds(1166191.0260847565,824209.8772055419,1166207.5163450597,824226.3820666744,"EPSG:2927")
+        assertEquals(bounds.minX, cropped.bounds.minX, 1d)
+        assertEquals(bounds.maxX, cropped.bounds.maxX, 1d)
+        assertEquals(bounds.minY, cropped.bounds.minY, 1d)
+        assertEquals(bounds.maxY, cropped.bounds.maxY, 1d)
+    }
+
     @Test void reproject() {
         File file = new File(getClass().getClassLoader().getResource("alki.tif").toURI())
         assertNotNull(file)
