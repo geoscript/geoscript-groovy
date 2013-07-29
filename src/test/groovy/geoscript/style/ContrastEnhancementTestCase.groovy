@@ -4,7 +4,8 @@ import org.junit.Test
 import static org.junit.Assert.*
 
 /**
- *
+ * The ContrastEnhancement Unit Test
+ * @author Jared Erickson
  */
 class ContrastEnhancementTestCase {
 
