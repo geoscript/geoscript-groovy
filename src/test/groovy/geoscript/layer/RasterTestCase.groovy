@@ -72,6 +72,20 @@ class RasterTestCase {
         assertNotNull raster.coverage
     }
 
+    @Test void getSetProj() {
+        File file = new File(getClass().getClassLoader().getResource("alki.tif").toURI())
+        GeoTIFF geoTIFF = new GeoTIFF()
+        Raster raster = geoTIFF.read(file)
+        // Get Proj
+        assertEquals("EPSG:2927", raster.proj.id)
+        // Set Proj (projection unecessary)
+        raster.proj = "EPSG:2927"
+        assertEquals("EPSG:2927", raster.proj.id)
+        // Set Proj (projection is necessary)
+        raster.proj = "EPSG:4326"
+        assertEquals("EPSG:4326", raster.proj.id)
+    }
+
     @Test void getColumnsAndRows() {
         Bounds bounds = new Bounds(7, 7, 17, 17, "EPSG:4326")
         List data = [

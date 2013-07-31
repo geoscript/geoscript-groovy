@@ -7,6 +7,7 @@ import geoscript.geom.Point
 import geoscript.style.RasterSymbolizer
 import geoscript.style.Style
 import geoscript.style.Symbolizer
+import org.geotools.coverage.grid.AbstractGridCoverage
 import org.geotools.coverage.grid.GridCoordinates2D
 import org.geotools.coverage.grid.GridCoverage2D
 import org.geotools.coverage.grid.GridEnvelope2D
@@ -110,6 +111,17 @@ class Raster {
             new Projection(crs)
         } else {
             null
+        }
+    }
+
+    /**
+     * Set the Projection of this Raster (reprojecting if necessary)
+     * @param projection The Projection
+     */
+    void setProj(def projection) {
+        Projection p = new Projection(projection)
+        if (!p.equals(getProj())) {
+            this.coverage = reproject(p).coverage
         }
     }
 
