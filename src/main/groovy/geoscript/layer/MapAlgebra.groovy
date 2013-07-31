@@ -67,6 +67,9 @@ class MapAlgebra {
                 bounds = new Bounds(0, 0, size[0], size[1], "EPSG:4326")
             }
         }
+        if (!bounds.proj) {
+            bounds = new Bounds(bounds.minX, bounds.minX, bounds.maxX, bounds.maxY, "EPSG:4326")
+        }
         builder.dest(outputName, size[0] as int, size[1] as int)
         builder.run()
         RenderedImage image = builder.getImage(outputName)
