@@ -105,13 +105,15 @@ class Bounds {
         Bounds bounds = null
         if (str && str.trim()) {
             def parts = str.split(",")
-            if (parts.length == 4) {
-                bounds = new Bounds(parts[0] as double, parts[1] as double, parts[2] as double, parts[3] as double)
+            if (parts.length >= 4) {
+                bounds = new Bounds(parts[0] as double, parts[1] as double, parts[2] as double, parts[3] as double,
+                        parts.length == 5 ? new Projection(parts[4]) : null)
             }
             if (!bounds) {
                 parts = str.split(" ")
-                if (parts.length == 4) {
-                    bounds = new Bounds(parts[0] as double, parts[1] as double, parts[2] as double, parts[3] as double)
+                if (parts.length >= 4) {
+                    bounds = new Bounds(parts[0] as double, parts[1] as double, parts[2] as double, parts[3] as double,
+                            parts.length == 5 ? new Projection(parts[4]) : null)
                 }
             }
         }

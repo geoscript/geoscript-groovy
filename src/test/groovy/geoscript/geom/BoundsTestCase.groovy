@@ -463,12 +463,14 @@ class BoundsTestCase {
         assertEquals(b1, new Bounds(0,0,10,10))
         Bounds b2 = Bounds.fromString("0 0 10 10")
         assertEquals(b2, new Bounds(0,0,10,10))
+        Bounds b3 = Bounds.fromString("0,0,10,10,EPSG:4326")
+        assertEquals(b3, new Bounds(0,0,10,10,"EPSG:4326"))
+        Bounds b4 = Bounds.fromString("0 0 10 10 EPSG:4326")
+        assertEquals(b4, new Bounds(0,0,10,10,"EPSG:4326"))
         assertNull(Bounds.fromString(""))
         assertNull(Bounds.fromString("   "))
         assertNull(Bounds.fromString(null))
         assertNull(Bounds.fromString("1,2,3"))
-        assertNull(Bounds.fromString("1,2,3,4,5"))
         assertNull(Bounds.fromString("1 2 3"))
-        assertNull(Bounds.fromString("1 2 3 4 5"))
     }
 }
