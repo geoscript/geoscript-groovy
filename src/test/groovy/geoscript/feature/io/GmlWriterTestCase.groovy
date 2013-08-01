@@ -22,18 +22,17 @@ class GmlWriterTestCase {
 
         // Write the Feature to a GML String
         GmlWriter writer = new GmlWriter()
-        String expected = """<gsf:houses fid="house1" xmlns:gml="http://www.opengis.net/gml"
-    xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:gsf="http://geoscript.org/feature">
-    <gml:name>House</gml:name>
-    <gsf:geom>
-        <gml:Point>
-            <gml:coord>
-                <gml:X>111.0</gml:X>
-                <gml:Y>-47.0</gml:Y>
-            </gml:coord>
-        </gml:Point>
-    </gsf:geom>
-    <gsf:price>12.5</gsf:price>
+        String expected = """<gsf:houses xmlns:gsf="http://geoscript.org/feature" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:gml="http://www.opengis.net/gml" fid="house1">
+<gml:name>House</gml:name>
+<gsf:geom>
+<gml:Point>
+<gml:coord>
+<gml:X>111.0</gml:X>
+<gml:Y>-47.0</gml:Y>
+</gml:coord>
+</gml:Point>
+</gsf:geom>
+<gsf:price>12.5</gsf:price>
 </gsf:houses>
 """
         String actual = writer.write(feature)

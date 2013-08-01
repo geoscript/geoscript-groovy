@@ -22,7 +22,7 @@ class WorkspaceTestCase {
         URL url = getClass().getClassLoader().getResource("states.shp")
         Workspace shp = new Workspace(["url": url])
         assertNotNull(shp.ds)
-        assertEquals("org.geotools.data.shapefile.indexed.IndexedShapefileDataStore", shp.format)
+        assertEquals("org.geotools.data.shapefile.ShapefileDataStore", shp.format)
     }
 
     @Test void constructorWithParamString() {
@@ -35,7 +35,7 @@ class WorkspaceTestCase {
         URL url = getClass().getClassLoader().getResource("states.shp")
         Workspace shp = new Workspace("url='${url}' 'create spatial index'=true")
         assertNotNull(shp.ds)
-        assertEquals("org.geotools.data.shapefile.indexed.IndexedShapefileDataStore", shp.format)
+        assertEquals("org.geotools.data.shapefile.ShapefileDataStore", shp.format)
 
         Workspace shp2 = new Workspace("${url}")
         assertNotNull(shp2.ds)

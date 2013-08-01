@@ -213,7 +213,7 @@ class GeoScriptTestCase {
             URL url = getClass().getClassLoader().getResource("states.shp")
             Workspace w = new Workspace("url='${url}' 'create spatial index'=true")
             assertNotNull(w)
-            assertEquals("org.geotools.data.shapefile.indexed.IndexedShapefileDataStore", w.format)
+            assertEquals("org.geotools.data.shapefile.ShapefileDataStore", w.format)
         }
     }
 
@@ -222,7 +222,7 @@ class GeoScriptTestCase {
             URL url = getClass().getClassLoader().getResource("states.shp")
             Workspace w = new Workspace(["url": url])
             assertNotNull(w)
-            assertEquals("org.geotools.data.shapefile.indexed.IndexedShapefileDataStore", w.format)
+            assertEquals("org.geotools.data.shapefile.ShapefileDataStore", w.format)
         }
     }
 }
