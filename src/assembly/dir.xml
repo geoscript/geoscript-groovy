@@ -35,5 +35,12 @@
                 <include>LICENSE.txt</include>
             </includes>
         </fileSet>
+        <fileSet>
+            <directory>target/groovydoc</directory>
+            <outputDirectory>/docs</outputDirectory>
+            <includes>
+                <include>**</include>
+            </includes>
+        </fileSet>
     </fileSets>
 </assembly>
