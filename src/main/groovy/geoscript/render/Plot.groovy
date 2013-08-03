@@ -71,6 +71,7 @@ class Plot {
             }
             frame.contentPane = panel
             frame.setSize(size[0] as int, size[1] as int)
+            frame.resizable = false
             frame.visible = true
         } else if (out instanceof OutputStream) {
             String
