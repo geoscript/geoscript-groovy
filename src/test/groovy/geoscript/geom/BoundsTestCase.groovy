@@ -171,6 +171,33 @@ class BoundsTestCase {
         assertEquals(4972328, b2.maxY as int)
     }
 
+    @Test void setProj() {
+        // Reproject
+        Bounds b1 = new Bounds(-111, 44.7, -110, 44.9, "EPSG:4326")
+        b1.setProj("EPSG:26912")
+        assertEquals("EPSG:26912", b1.proj.id)
+        assertEquals(500000, b1.minX as int)
+        assertEquals(4949625, b1.minY as int)
+        assertEquals(579225, b1.maxX as int)
+        assertEquals(4972328, b1.maxY as int)
+        // Set
+        Bounds b2 = new Bounds(-111, 44.7, -110, 44.9)
+        b2.setProj("EPSG:4326")
+        assertEquals("EPSG:4326", b2.proj.id)
+        assertEquals(-111, b2.minX, 0.1)
+        assertEquals(44.7, b2.minY, 0.1)
+        assertEquals(-110, b2.maxX, 0.1)
+        assertEquals(44.9, b2.maxY, 0.1)
+        // Do nothing
+        Bounds b3 = new Bounds(-111, 44.7, -110, 44.9, "EPSG:4326")
+        b3.setProj("EPSG:4326")
+        assertEquals("EPSG:4326", b3.proj.id)
+        assertEquals(-111, b2.minX, 0.1)
+        assertEquals(44.7, b2.minY, 0.1)
+        assertEquals(-110, b2.maxX, 0.1)
+        assertEquals(44.9, b2.maxY, 0.1)
+    }
+
     @Test void string() {
         ReferencedEnvelope e = new ReferencedEnvelope(1,3,2,4,null)
         Bounds b1 = new Bounds(e)

@@ -226,7 +226,21 @@ class Bounds {
         else
             return null
     }
-	
+
+    /**
+     * Set a Projection if the current Projection is not set
+     * or reproject if needed
+     * @param projection The new Projection
+     */
+    void setProj(def projection) {
+        def p = new Projection(projection)
+        if (!getProj()) {
+            this.env = new Bounds(minX, minY, maxX, maxY, p).env
+        } else if (!p.equals(getProj())) {
+            this.env = reproject(p).env
+        }
+    }
+
     /**
      * Reprojects the Bounds
      * @param proj A Projection or String
