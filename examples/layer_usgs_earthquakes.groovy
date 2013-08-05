@@ -30,6 +30,7 @@ rss.entry.each{e ->
     def title = e.title.text()
     def date = Date.parse(dateFormat, e.updated.text())
     def coordinate = e."georss:point".text().split(" ")
+    if (coordinate.length > 1) {
     double x = coordinate[1] as Double
     double y = coordinate[0] as Double
     def point = new Point(x,y)
@@ -42,4 +43,5 @@ rss.entry.each{e ->
     ],"earthquake_${c}")
     layer.add(f)
     c++
+    }
 }
