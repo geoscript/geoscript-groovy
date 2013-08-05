@@ -697,6 +697,10 @@ class Raster {
                 size = [rect[2], rect[3]]
             }
         }
+        // Try really hard to make sure the Bound's projection is set
+        if (!bbox.proj) {
+            bbox.setProj(this.getProj())
+        }
         // Resample
         GridGeometry2D gg = new GridGeometry2D(new GridEnvelope2D(0,0,size[0],size[1]), bbox.env)
         def processor = new CoverageProcessor()
