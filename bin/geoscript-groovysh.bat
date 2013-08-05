@@ -27,16 +27,13 @@ set GROOVY="%GROOVY_HOME%\bin\groovysh.bat"
 
 @REM change directory to the lib directory
 set CWD=%CD%
-cd %~dp0../lib
+cd %~dp0
 
 @REM build up the classpath
-set CLASSPATH=;
-FOR /R %%G IN (*.jar) DO (
-     SET CLASSPATH=!CLASSPATH!;%%G
-)
+set CLASSPATH=%CD%\lib\*
 
 cd %CWD%
-%GROOVY% -cp "%CLASSPATH%" %*
+%GROOVY% %*
 goto end
 
 :error
