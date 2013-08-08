@@ -631,12 +631,15 @@ class Layer {
      */
     void add(def o) {
         // If it is a List of Features, then add it inside of a Transaction
-        if (o instanceof List && o.size() > 0 && o.get(0) instanceof Feature) {
+        if (o instanceof List && o.size() > 0 && (o.get(0) instanceof Feature || o.get(0) instanceof java.util.Map)) {
             Transaction t = new DefaultTransaction("addTransaction")
             try {
                 FeatureStore<SimpleFeatureType, SimpleFeature> store = (FeatureStore)fs
                 store.transaction = t
                 o.each{f->
+                    if (f instanceof java.util.Map) {
+                        f = this.schema.feature(f as java.util.Map)
+                    }
                     if (f.schema == null) {
                         f.schema = schema
                     } else if (f.schema != this.schema) {

@@ -95,6 +95,13 @@ class LayerTestCase {
             new Feature([new Point(107,-43), "House 5", 17.5], "house4", s1)
         ])
         assertEquals 5, layer1.count()
+        // Add a List of Maps
+        layer1.add([
+            [geom: new Point(100,-45), name: "Point 1", price: 1.0],
+            [geom: new Point(101,-46), name: "Point 2", price: 10.0],
+            [geom: new Point(102,-47), name: "Point 3", price: 100.0],
+        ])
+        assertEquals 8, layer1.count()
     }
 
     @Test void addFeaturesFromOneLayerToAnother() {
