@@ -236,10 +236,20 @@ class LayerTestCase {
     }
 
     @Test void reproject() {
+        // With Layer Projection
         Schema s1 = new Schema("facilities", [new Field("geom","Point", "EPSG:4326"), new Field("name","string"), new Field("price","float")])
         Layer layer1 = new Layer("facilities", s1)
         layer1.add(new Feature([new Point(-122.494165, 47.198096), "House", 12.5], "house1", s1))
         Layer layer2 = layer1.reproject(new Projection("EPSG:2927"))
+        assertEquals 1, layer2.count()
+        assertEquals 1144731.06, layer2.features[0].geom.x, 0.01
+        assertEquals 686299.16, layer2.features[0].geom.y, 0.01
+
+        // Without Layer Projection
+        s1 = new Schema("facilities", [new Field("geom","Point"), new Field("name","string"), new Field("price","float")])
+        layer1 = new Layer("facilities", s1)
+        layer1.add(new Feature([new Point(-122.494165, 47.198096), "House", 12.5], "house1", s1))
+        layer2 = layer1.reproject(new Projection("EPSG:2927"), "projected_facilties", 1000, new Projection("EPSG:4326"))
         assertEquals 1, layer2.count()
         assertEquals 1144731.06, layer2.features[0].geom.x, 0.01
         assertEquals 686299.16, layer2.features[0].geom.y, 0.01

@@ -766,12 +766,13 @@ class Layer {
      * @param p The Projection
      * @param newName The new name (defaults to a default new name)
      * @param chunk The number of Features to reproject in one batch
+     * @param sourceProjection The optional default source Projection if the Layer doesn't have a Projection defined
      * @return The reprojected Layer
      */
-    Layer reproject(Projection p, String newName = newname(), int chunk=1000) {
+    Layer reproject(Projection p, String newName = newname(), int chunk=1000, Projection sourceProjection = new Projection("EPSG:4326")) {
         Schema s = schema.reproject(p, newName)
         Layer l = workspace.create(s)
-        reproject(l, chunk)
+        reproject(l, chunk, sourceProjection)
     }
 
     /**
@@ -780,24 +781,28 @@ class Layer {
      * @param outputWorkspace The output Workspace
      * @param newName The name of the new Layer
      * @param chunk The number of Features to reproject in one batch
+     * @param sourceProjection The optional default source Projection if the Layer doesn't have a Projection defined
      * @return The reprojected Layer
      */
-    Layer reproject(Projection p, Workspace outputWorkspace, String newName, int chunk=1000) {
+    Layer reproject(Projection p, Workspace outputWorkspace, String newName, int chunk=1000, Projection sourceProjection = new Projection("EPSG:4326")) {
         Schema s = schema.reproject(p, newName)
         Layer l = outputWorkspace.create(s)
-        reproject(l, chunk)
+        reproject(l, chunk, sourceProjection)
     }
 
     /**
      * Reproject this Layer to another Layer that already exists.
      * @param projectedLayer The already created projected Layer
      * @param chunk The number of Features to reproject in one batch
+     * @param sourceProjection The optional default source Projection if the Layer doesn't have a Projection defined
      * @return The projected Layer
      */
-    Layer reproject(Layer projectedLayer, int chunk = 1000) {
+    Layer reproject(Layer projectedLayer, int chunk = 1000, Projection sourceProjection = new Projection("EPSG:4326")) {
         Query q = new Query(getName(), Filter.PASS.filter)
         if (getProj() != null) {
             q.coordinateSystem = getProj().crs
+        } else {
+            q.coordinateSystem = sourceProjection.crs
         }
         q.coordinateSystemReproject = projectedLayer.proj.crs
         FeatureCollection fc = fs.getFeatures(q)
