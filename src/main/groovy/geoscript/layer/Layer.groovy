@@ -451,7 +451,8 @@ class Layer {
      */
     Cursor getCursor(Map options) {
         getCursor(options.get("filter", null), options.get("sort", null),
-            options.get("max",-1), options.get("start", -1),options.get("fields", null))
+            options.get("max",-1), options.get("start", -1),options.get("fields", null),
+            options.get("sourceProj", null), options.get("destProj", null))
     }
 
     /**
@@ -465,7 +466,7 @@ class Layer {
      * @param fields A List of Fields or Field names to include.  Used to select only a subset of Fields.
      * @return A Cursor
      */
-    Cursor getCursor(def filter = null, List sort = null, int max = -1, int start = -1, List fields = null) {
+    Cursor getCursor(def filter = null, List sort = null, int max = -1, int start = -1, List fields = null, def sourceProj = null, def destProj = null) {
         Map cursorOptions = [:]
         Filter f = (filter == null) ? Filter.PASS : new Filter(filter)
         DefaultQuery q = new DefaultQuery(getName(), f.filter)
@@ -487,8 +488,15 @@ class Layer {
                 q.maxFeatures = Integer.MAX_VALUE
             }
         }
+        // Set source Projection
         if (getProj()) {
             q.coordinateSystem = getProj().crs
+        } else if (sourceProj) {
+            q.coordinateSystem = new Projection(sourceProj).crs
+        }
+        // Set destination Projection
+        if (destProj) {
+            q.coordinateSystemReproject = new Projection(destProj).crs
         }
         // Add sorting to the Query
         if (sort != null && sort.size() > 0) {

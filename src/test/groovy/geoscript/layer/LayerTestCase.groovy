@@ -643,6 +643,40 @@ class LayerTestCase {
         h2.close()
     }
 
+    @Test void cursorProjecting() {
+        // With source Projection from Layer
+        Schema s = new Schema("points", [new Field("geom","Point", "EPSG:4326")])
+        Layer layer = new Layer("points", s)
+        layer.add(new Feature([new Point(-122.316261, 47.084539)], "p1", s))
+        layer.add(new Feature([new Point(-122.253802, 46.997483)], "p2", s))
+
+        Cursor c = layer.getCursor(destProj: "EPSG:2927")
+        Point pt = c.next().geom as Point
+        assertEquals 1187990.8097648006, pt.x, 0.01
+        assertEquals 643824.5636732922, pt.y, 0.01
+        pt = c.next().geom as Point
+        assertEquals 1202840.788220999, pt.x, 0.01
+        assertEquals 611729.5935845084, pt.y, 0.01
+        assertFalse c.hasNext()
+        c.close()
+
+        // Without source projection from layer
+        s = new Schema("points", [new Field("geom","Point")])
+        layer = new Layer("points", s)
+        layer.add(new Feature([new Point(-122.316261, 47.084539)], "p1", s))
+        layer.add(new Feature([new Point(-122.253802, 46.997483)], "p2", s))
+
+        c = layer.getCursor(sourceProj: "EPSG:4326", destProj: "EPSG:2927")
+        pt = c.next().geom as Point
+        assertEquals 1187990.8097648006, pt.x, 0.01
+        assertEquals 643824.5636732922, pt.y, 0.01
+        pt = c.next().geom as Point
+        assertEquals 1202840.788220999, pt.x, 0.01
+        assertEquals 611729.5935845084, pt.y, 0.01
+        assertFalse c.hasNext()
+        c.close()
+    }
+
     @Test void getRaster() {
         File file = new File(getClass().getClassLoader().getResource("states.shp").toURI())
         Shapefile shp = new Shapefile(file)
