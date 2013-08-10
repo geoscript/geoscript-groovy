@@ -3,7 +3,6 @@ package geoscript.layer
 import geoscript.AssertUtil
 import org.junit.Test
 
-import static org.junit.Assert.assertEquals
 import static org.junit.Assert.assertNotNull
 
 /**
@@ -12,7 +11,8 @@ import static org.junit.Assert.assertNotNull
  */
 class ArcGridTestCase {
 
-    @Test void readFromFile() {
+    @Test
+    void readFromFile() {
         File file = new File(getClass().getClassLoader().getResource("raster.asc").toURI())
         assertNotNull(file)
         ArcGrid arcGrid = new ArcGrid()
@@ -20,7 +20,8 @@ class ArcGridTestCase {
         assertNotNull(raster)
     }
 
-    @Test void readFromGrassFile() {
+    @Test
+    void readFromGrassFile() {
         File file = new File(getClass().getClassLoader().getResource("grass.arx").toURI())
         assertNotNull(file)
         ArcGrid arcGrid = new ArcGrid()
@@ -28,7 +29,8 @@ class ArcGridTestCase {
         assertNotNull(raster)
     }
 
-    @Test void readFromString() {
+    @Test
+    void readFromString() {
         File file = new File(getClass().getClassLoader().getResource("raster.asc").toURI())
         assertNotNull(file)
         ArcGrid arcGrid = new ArcGrid()
@@ -36,13 +38,14 @@ class ArcGridTestCase {
         assertNotNull(raster)
     }
 
-    @Test void writeToFile() {
+    @Test
+    void writeToFile() {
         File file = new File(getClass().getClassLoader().getResource("raster.asc").toURI())
         assertNotNull(file)
         ArcGrid arcGrid = new ArcGrid()
         Raster raster = arcGrid.read(file)
         assertNotNull(raster)
-        File destFile = File.createTempFile("raster",".asc")
+        File destFile = File.createTempFile("raster", ".asc")
         arcGrid.write(raster, destFile)
         String str = destFile.text
         AssertUtil.assertStringsEqual("""NCOLS 4
@@ -61,7 +64,8 @@ NODATA_VALUE -9999.0
 
     }
 
-    @Test void writeToString() {
+    @Test
+    void writeToString() {
         File file = new File(getClass().getClassLoader().getResource("raster.asc").toURI())
         assertNotNull(file)
         ArcGrid arcGrid = new ArcGrid()
@@ -84,7 +88,8 @@ NODATA_VALUE -9999.0
 """, str)
     }
 
-    @Test void writeToGrassString() {
+    @Test
+    void writeToGrassString() {
         File file = new File(getClass().getClassLoader().getResource("raster.asc").toURI())
         assertNotNull(file)
         ArcGrid arcGrid = new ArcGrid()

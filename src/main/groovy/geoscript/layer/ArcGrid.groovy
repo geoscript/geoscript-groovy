@@ -3,7 +3,6 @@ package geoscript.layer
 import geoscript.proj.Projection
 import org.apache.commons.io.input.ReaderInputStream
 import org.geotools.factory.Hints
-import org.geotools.gce.arcgrid.ArcGridReader
 
 import java.nio.charset.Charset
 
@@ -45,7 +44,7 @@ class ArcGrid extends Format {
      */
     String writeToString(Raster raster, String format = "arc") {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
-        write(raster, out, GRASS: format.equalsIgnoreCase("grass") ? true: false)
+        write(raster, out, GRASS: format.equalsIgnoreCase("grass") ? true : false)
         out.close()
         out.toString()
     }
