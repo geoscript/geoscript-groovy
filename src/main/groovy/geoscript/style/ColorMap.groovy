@@ -65,18 +65,50 @@ class ColorMap extends geoscript.style.RasterSymbolizer {
      * @param extended Whether to use extended colors
      */
     ColorMap (Raster raster, String palette, int numberOfCategories, int band = 0, String type = "ramp", boolean extended = false) {
-        Map extrema = raster.extrema
-        double min = extrema.min[band]
-        double max = extrema.max[band]
-        double spread = (max - min) / (numberOfCategories - 1)
-        List colors = Color.getPaletteColors(palette, numberOfCategories)
+        this(raster.extrema.min[band], raster.extrema.max[band], palette, numberOfCategories, type, extended)
+    }
+
+    /**
+     * Create a ColorMap for a min and max values with a palette of colors (from Color Brewer) with the given
+     * @param min The min value
+     * @param max The max value
+     * @param palette The color palette name (from Color Brewer)
+     * @param numberOfCategories The number of categories
+     * @param type The type of interpolation
+     * @param extended Whether to use extended colors
+     */
+    ColorMap (double min, double max, String palette, int numberOfCategories, String type = "ramp", boolean extended = false) {
+        this(min, max, Color.getPaletteColors(palette, numberOfCategories), type, extended)
+    }
+
+    /**
+     * Create a ColorMap for a Raster from a list of colors
+     * @param raster The Raster
+     * @param colors The list of colors
+     * @param band The band The band
+     * @param type The type of interpolation
+     * @param extended Whether to use extended colors
+     */
+    ColorMap(Raster raster, List colors, int band = 0, String type = "ramp", boolean extended = false) {
+        this(raster.extrema.min[band], raster.extrema.max[band], colors, type, extended)
+    }
+
+    /**
+     * Create a ColorMap for min and max values with a List of colors
+     * @param min The min value
+     * @param max The max value
+     * @param colors The list of colors
+     * @param type The type of interpolation
+     * @param extended Whether to use extended colors
+     */
+    ColorMap(double min, double max, List colors, String type = "ramp", boolean extended = false) {
+        double spread = (max - min) / (colors.size() -1)
         double quantity = min
-        List values = (0..<numberOfCategories).collect{i ->
-            def value = [quantity: quantity, color: colors[i]]
+        this.values = (0..<colors.size()).collect{i ->
+            def value = [quantity: quantity, color: colors.get(i)]
             quantity += spread
             value
         }
-        this.values = values
         this.type = type
         this.extended = extended
     }

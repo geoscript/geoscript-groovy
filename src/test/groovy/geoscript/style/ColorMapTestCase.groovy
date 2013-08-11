@@ -1,5 +1,6 @@
 package geoscript.style
 
+import geoscript.filter.Color
 import geoscript.layer.GeoTIFF
 import geoscript.layer.Raster
 import org.junit.Test
@@ -12,6 +13,8 @@ import static org.junit.Assert.*
 class ColorMapTestCase {
 
     @Test void colorMap() {
+
+        // Create a ColorMap from a List of Maps
         def colorMap = new ColorMap([[color: "#008000", quantity:70], [color:"#663333", quantity:256]])
         assertEquals "ramp", colorMap.type
         assertEquals 2, colorMap.values.size()
@@ -27,18 +30,53 @@ class ColorMapTestCase {
         assertEquals 2, colorMap.values.size()
         assertTrue colorMap.extended
 
+        // Load a Raster
         GeoTIFF geoTIFF = new GeoTIFF()
         File file = new File(getClass().getClassLoader().getResource("raster.tif").toURI())
         Raster raster = geoTIFF.read(file)
         Map extrema = raster.extrema
         double min = extrema.min[0]
         double max = extrema.max[0]
+
+        // Create a ColorMap for a Raster and a color palette
         colorMap = new ColorMap(raster,"Greens", 5)
         assertEquals "ramp", colorMap.type
         assertFalse colorMap.extended
         assertEquals 5, colorMap.values.size()
         assertEquals min, colorMap.values[0].quantity, 0.1
+        assertEquals "#edf8e9", colorMap.values[0].color.hex
         assertEquals max, colorMap.values[4].quantity, 0.1
+        assertEquals "#006d2c", colorMap.values[4].color.hex
+
+        // Create a ColorMap for min and max values and a color palette
+        colorMap = new ColorMap(min, max, "Greens", 5)
+        assertEquals "ramp", colorMap.type
+        assertFalse colorMap.extended
+        assertEquals 5, colorMap.values.size()
+        assertEquals min, colorMap.values[0].quantity, 0.1
+        assertEquals "#edf8e9", colorMap.values[0].color.hex
+        assertEquals max, colorMap.values[4].quantity, 0.1
+        assertEquals "#006d2c", colorMap.values[4].color.hex
+
+        // Create a ColorMap for a Raster and a List of Colors
+        colorMap = new ColorMap(raster, Color.getPaletteColors("Greens", 5))
+        assertEquals "ramp", colorMap.type
+        assertFalse colorMap.extended
+        assertEquals 5, colorMap.values.size()
+        assertEquals min, colorMap.values[0].quantity, 0.1
+        assertEquals "#edf8e9", colorMap.values[0].color.hex
+        assertEquals max, colorMap.values[4].quantity, 0.1
+        assertEquals "#006d2c", colorMap.values[4].color.hex
+
+        // Create a ColorMap for a min and max value and a List of Colors
+        colorMap = new ColorMap(min, max, Color.getPaletteColors("Greens", 5))
+        assertEquals "ramp", colorMap.type
+        assertFalse colorMap.extended
+        assertEquals 5, colorMap.values.size()
+        assertEquals min, colorMap.values[0].quantity, 0.1
+        assertEquals "#edf8e9", colorMap.values[0].color.hex
+        assertEquals max, colorMap.values[4].quantity, 0.1
+        assertEquals "#006d2c", colorMap.values[4].color.hex
     }
 
     @Test void apply() {
