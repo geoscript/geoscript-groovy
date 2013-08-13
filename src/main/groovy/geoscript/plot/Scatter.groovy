@@ -8,7 +8,14 @@ import org.jfree.data.xy.XYSeriesCollection
 import org.jfree.util.ShapeUtilities
 
 /**
- * Create a scatter plot Chart
+ * Create a scatter plot Chart.
+ * <p><blockquote><pre>
+ * def points = Geometry.createRandomPoints(new Bounds(0,0,100,100).geometry, 10)
+ * List data = points.geometries.collect{pt ->
+ *    [pt.x,pt.y]
+ * }
+ * Chart chart = Scatter.scatterplot(data)
+ * </pre></blockquote></p>
  * @author Jared Erickson
  */
 class Scatter {

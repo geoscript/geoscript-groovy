@@ -4,7 +4,10 @@ import org.jfree.chart.ChartFactory
 import org.jfree.data.general.DefaultPieDataset
 
 /**
- * Create a pie Chart
+ * Create a pie Chart.
+ * <p><blockquote><pre>
+ * Chart chart = Pie.pie(["A":20,"B":45,"C":2,"D":14])
+ * </pre></blockquote></p>
  * @author Jared Erickson
  */
 class Pie {

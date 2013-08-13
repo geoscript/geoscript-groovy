@@ -9,6 +9,12 @@ import org.jfree.data.xy.XYSeriesCollection
 
 /**
  * Create bar Charts.
+ * <p><blockquote><pre>
+ * Chart chart = Bar.xy([[1,10],[45,12],[23,3],[5,20]])
+ * </pre></blockquote></p>
+ * <p><blockquote><pre>
+ * Chart chart = Bar.category(["A":20,"B":45,"C":2,"D":14])
+ * </pre></blockquote></p>
  * @author Jared Erickson
  */
 class Bar {

@@ -13,7 +13,23 @@ import org.jfree.data.xy.XYSeriesCollection
 import org.jfree.data.statistics.Regression as JFreeRegression
 
 /**
- * Create a regression Chart
+ * Create a regression Chart.
+ * <p>You can create a linear regression chart:</p>
+ * <p><blockquote><pre>
+ * def points = Geometry.createRandomPoints(new Bounds(0,0,100,100).geometry, 10)
+ * List data = points.geometries.collect{pt ->
+ *    [pt.x,pt.y]
+ * }
+ * Chart chart = Regression.linear(data)
+ * </pre></blockquote></p>
+ * <p>Or you can create a power regression chart:</p>
+ * <p><blockquote><pre>
+ * def points = Geometry.createRandomPoints(new Bounds(0,0,100,100).geometry, 10)
+ * List data = points.geometries.collect{pt ->
+ *    [pt.x,pt.y]
+ * }
+ * Chart chart = Regression.power(data)
+ * </pre></blockquote></p>
  * @author Jared Erickson
  */
 class Regression {

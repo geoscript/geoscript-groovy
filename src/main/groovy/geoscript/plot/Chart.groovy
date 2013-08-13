@@ -14,6 +14,22 @@ import java.awt.image.BufferedImage
 
 /**
  * A Chart.
+ * <p>Once you create a Chart</p>
+ * <p><blockquote><pre>
+ * Chart chart = Box.box(["A":[1,10,20],"B":[45,39,10],"C":[2,4,9],"D":[14,15,19]])
+ * </pre></blockquote></p>
+ * <p>You can show it as an interactive app:</p>
+ * <p><blockquote><pre>
+ * chart.show()
+ * </pre></blockquote></p>
+ * <p>or you can save it to a File:</p>
+ * <p><blockquote><pre>
+ * chart.save(file)
+ * </pre></blockquote></p>
+ * <p>or you can get an image (which is useful when using geoscript-groovyConsole:</p>
+ * <p><blockquote><pre>
+ * chart.image
+ * </pre></blockquote></p>
  * @author Jared Erickson
  */
 class Chart {

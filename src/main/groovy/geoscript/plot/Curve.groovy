@@ -8,7 +8,10 @@ import org.jfree.data.xy.XYSeries
 import org.jfree.data.xy.XYSeriesCollection
 
 /**
- * Create a curved line Chart
+ * Create a curved line Chart.
+ * <p><blockquote><pre>
+ * Chart chart = Curve.curve([[1,10],[45,12],[23,3],[5,20]])
+ * </pre></blockquote></p>
  * @author Jared Erickson
  */
 class Curve {
