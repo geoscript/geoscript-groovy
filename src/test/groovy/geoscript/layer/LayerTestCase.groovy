@@ -547,7 +547,7 @@ class LayerTestCase {
         h2.close()
     }
 
-    @Test void cursorSortingAndPagingWithUnsupportedLayer() {
+    /*@Test void cursorSortingAndPagingWithUnsupportedLayer() {
         Schema s = new Schema("facilities", [new Field("geom","Point", "EPSG:2927"), new Field("name","string"), new Field("price","float")])
         Layer layer = new Layer("facilities", s)
         layer.add(new Feature([new Point(111,-47), "A", 10], "house1", s))
@@ -598,7 +598,7 @@ class LayerTestCase {
         assertEquals "C", c.next()["name"]
         assertFalse c.hasNext()
         c.close()
-    }
+    }*/
 
     @Test void cursorPaging() {
         File f = new File("target/h2").absoluteFile

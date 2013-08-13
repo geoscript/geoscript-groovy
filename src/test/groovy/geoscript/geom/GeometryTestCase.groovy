@@ -365,7 +365,7 @@ class GeometryTestCase {
         Bounds b = new Bounds(4, 45, 19, 53)
         Geometry g = b.geometry
         Geometry pts = Geometry.createRandomPointsInGrid(b, number, true, 0.75)
-        assertEquals 100, pts.numPoints
+        assertTrue pts.numPoints >= 100
         pts.coordinates.each {coord ->
             assertTrue g.contains(new Point(coord.x, coord.y))
         }
