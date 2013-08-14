@@ -29,9 +29,7 @@ class WorldImage extends Format {
             String fileName = ((File)destination).getName()
             format = fileName.substring(fileName.lastIndexOf(".") + 1)
         }
-        def params = gridFormat.getWriteParameters()
-        params.parameter(WorldImageFormat.FORMAT.getName().toString()).setValue(format)
-        def gpv = [params.parameter(WorldImageFormat.FORMAT.getName().toString())] as GeneralParameterValue[]
-        gridFormat.getWriter(destination).write(raster.coverage, gpv)
+        options.put(WorldImageFormat.FORMAT.getName().toString(), format)
+        super.write(options, raster, destination)
     }
 }

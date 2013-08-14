@@ -1,6 +1,10 @@
 package geoscript.layer
 
 import geoscript.AssertUtil
+import geoscript.proj.Projection
+import org.apache.commons.io.input.ReaderInputStream
+import org.geotools.factory.GeoTools
+import org.geotools.factory.Hints
 import org.junit.Test
 
 import static org.junit.Assert.assertNotNull
@@ -35,6 +39,26 @@ class ArcGridTestCase {
         assertNotNull(file)
         ArcGrid arcGrid = new ArcGrid()
         Raster raster = arcGrid.read(file.text)
+        assertNotNull(raster)
+    }
+
+    @Test
+    void readFromInputStream() {
+        File file = new File(getClass().getClassLoader().getResource("raster.asc").toURI())
+        assertNotNull(file)
+        ArcGrid arcGrid = new ArcGrid()
+        Raster raster = arcGrid.read(new ReaderInputStream(new StringReader(file.text)), new Projection("EPSG:4326"))
+        assertNotNull(raster)
+    }
+
+    @Test
+    void readFromInputStreamWithHints() {
+        File file = new File(getClass().getClassLoader().getResource("raster.asc").toURI())
+        assertNotNull(file)
+        ArcGrid arcGrid = new ArcGrid()
+        Hints hints = GeoTools.getDefaultHints()
+        hints.put(Hints.DEFAULT_COORDINATE_REFERENCE_SYSTEM, new Projection("EPSG:4326").crs)
+        Raster raster = arcGrid.read(new ReaderInputStream(new StringReader(file.text)), hints)
         assertNotNull(raster)
     }
 

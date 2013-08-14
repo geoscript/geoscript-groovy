@@ -5,6 +5,7 @@ import org.geotools.coverage.grid.io.AbstractGridFormat
 import org.geotools.coverage.grid.io.GridFormatFinder
 import org.geotools.coverage.grid.io.UnknownFormat
 import org.geotools.coverageio.gdal.mrsid.MrSIDFormat
+import org.geotools.factory.GeoTools
 import org.geotools.factory.Hints
 import org.geotools.gce.arcgrid.ArcGridFormat
 import org.geotools.gce.geotiff.GeoTiffFormat
@@ -13,7 +14,6 @@ import org.geotools.gce.gtopo30.GTopo30Format
 import org.geotools.gce.image.WorldImageFormat
 import org.geotools.gce.imagemosaic.ImageMosaicFormat
 import org.geotools.gce.imagepyramid.ImagePyramidFormat
-import org.geotools.parameter.Parameter
 import org.opengis.parameter.GeneralParameterValue
 import org.opengis.parameter.ParameterValueGroup
 
@@ -63,17 +63,53 @@ class Format {
 
     /**
      * Read a Raster from the source (usually a File)
+     * @param options Optional named parameters that are turned into an array
+     * of GeoTools GeneralParameterValues
+     * @param source The source (usually a File)
+     * @return A Raster
+     */
+    Raster read(Map options = [:], def source) {
+        this.read(options, source, GeoTools.getDefaultHints())
+    }
+
+    /**
+     * Read a Raster from the source (usually a File)
+     * @param options Optional named parameters that are turned into an array
+     * of GeoTools GeneralParameterValues
      * @param source The source (usually a File)
      * @param proj The Projection
      * @return A Raster
      */
-    Raster read(def source, Projection proj = null) {
-        Hints hints = new Hints()
+    Raster read(Map options = [:], def source, Projection proj) {
+        // Create Hints
+        Hints hints = GeoTools.getDefaultHints()
         if (proj) {
             hints.put(Hints.DEFAULT_COORDINATE_REFERENCE_SYSTEM, proj.crs)
         }
+        this.read(options, source, hints)
+    }
+
+    /**
+     * Read a Raster from the source (usually a File)
+     * @param options Optional named parameters that are turned into an array
+     * of GeoTools GeneralParameterValues
+     * @param source The source (usually a File)
+     * @param hints GeoTools Hints
+     * @return A Raster
+     */
+    Raster read(Map options = [:], def source, Hints hints) {
+        // Create Reader
         def reader = gridFormat.getReader(source, hints)
-        new Raster(reader.read(null), this)
+        // Create GeneralParameterValues
+        ParameterValueGroup params = reader.format.readParameters
+        options.each{k,v ->
+            params.parameter(k).setValue(v)
+        }
+        def gpv = options.collect{k,v ->
+            params.parameter(k)
+        }
+        // Read the Raster
+        new Raster(reader.read(gpv as GeneralParameterValue[]), this)
     }
 
     /**
