@@ -6,7 +6,23 @@ import org.geotools.styling.Symbolizer as GtSymbolizer
 import org.geotools.styling.SelectedChannelType
 
 /**
- * The ChannelSelection Symbolizer is used to style Rasters.
+ * The ChannelSelection Symbolizer is used to style multi-spectral Rasters
+ * such as multi-band satellite imagery.
+ * <p>You can create a ChannelSelection for RGB channels:</p>
+ * <p><blockquote><pre>
+ * def channel = new ChannelSelection("red", "green", "blue")
+ * </pre></blockquote></p>
+ * <p>Or you can create a ChannelSelection for a gray scale channel:</p>
+ * <p><blockquote><pre>
+ * def channel = new ChannelSelection("gray")
+ * </pre></blockquote></p>
+ * <p>Or you can create a ChannelSelection for a RBG channels with specific ContrastEnhancement values:</p>
+ * <p><blockquote><pre>
+ * def channel = new ChannelSelection()
+ *    .red("red", new ContrastEnhancement("histogram", 0.35))
+ *    .green("green", new ContrastEnhancement("histogram", 0.45))
+ *    .blue("blue", new ContrastEnhancement("histogram", 0.55))
+ * </pre></blockquote></p>
  * @author Jared Erickson
  */
 class ChannelSelection extends geoscript.style.RasterSymbolizer {

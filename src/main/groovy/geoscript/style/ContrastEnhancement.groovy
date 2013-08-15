@@ -9,7 +9,15 @@ import org.geotools.styling.Rule
 import org.opengis.style.ContrastMethod
 
 /**
- * A ConstrastEnhancement Symbolizer
+ * A ContrastEnhancement is a Symbolizer used to style Rasters by modifying the contrast.
+ * <p>You can create a ContrastEnhancement using the normalize method:</p>
+ * <p><blockquote><pre>
+ * def c = new ContrastEnhancement("normalize")
+ * </pre></blockquote></p>
+ * <p>Or you can create a ContrastEnhancement using the normalize histogram method and a gamma value:</p>
+ * <p><blockquote><pre>
+ * def c = new ContrastEnhancement("histogram", 0.5)
+ * </pre></blockquote></p>
  * @author Jared Erickson
  */
 class ContrastEnhancement extends geoscript.style.RasterSymbolizer {

@@ -6,7 +6,15 @@ import org.geotools.styling.RasterSymbolizer
 import org.geotools.styling.Symbolizer as GtSymbolizer
 
 /**
- * Symbolize a Raster with a ShadedRelief
+ * Symbolize a Raster with a ShadedRelief or hill shading.
+ * <p>You can create ShadedRelief Symbolizer by using defaults (relief factor of 55 and brightness only to false):</p>
+ * <p><blockquote><pre>
+ * def shadedRelief = new ShadedRelief()
+ * </pre></blockquote></p>
+ * <p>Or you can create explicity set those values:</p>
+ * <p><blockquote><pre>
+ * def shadedRelief = new ShadedRelief(35, true)
+ * </pre></blockquote></p>
  * @author Jared Erickson
  */
 class ShadedRelief extends geoscript.style.RasterSymbolizer {

@@ -5,7 +5,15 @@ import org.geotools.styling.Rule
 import org.geotools.styling.Symbolizer as GtSymbolizer
 
 /**
- * A Raster Symbolizer
+ * A Raster Symbolizer is used to style Rasters. It is also a base class for all other Raster Symbolizers.
+ * <p>Most commonly you will only use the RasterSymbolizer to control opacity:</p>
+ * <p><blockquote><pre>
+ * def raster = new RasterSymbolizer(0.5)
+ * </pre></blockquote></p>
+ * <p>But you can also control overlap and geometry name properties:</p>
+ * <p><blockquote><pre>
+ * def raster = new RasterSymbolizer(0.75, "AVERAGE", "the_geom")
+ * </pre></blockquote></p>
  * @author Jared Erickson
  */
 class RasterSymbolizer extends Symbolizer {

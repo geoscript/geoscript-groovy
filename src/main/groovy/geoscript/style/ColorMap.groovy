@@ -8,7 +8,19 @@ import org.geotools.styling.RasterSymbolizer
 import org.geotools.styling.Symbolizer as GtSymbolizer
 
 /**
- * A ColorMap is a Symbolizer used to style Rasters.
+ * A ColorMap is a Symbolizer used to style Rasters by mapping pixel values to colors.
+ * <p>You can create a ColorMap from a List of Maps with color and quantity keys:</p>
+ * <p><blockquote><pre>
+ * def colorMap = new ColorMap([[color: "#008000", quantity:70], [color:"#663333", quantity:256]])
+ * </pre></blockquote></p>
+ * <p>Or you can create a ColorMap for a Raster from a ColorBrewer color palette:</p>
+ * <p><blockquote><pre>
+ * def colorMap = new ColorMap(raster,"Greens", 5)
+ * </pre></blockquote></p>
+ * <p>Or you can create a ColorMap for min and max values from a List of Colors:</p>
+ * <p><blockquote><pre>
+ * def colorMap = new ColorMap(min, max, Color.getPaletteColors("Greens", 5))
+ * </pre></blockquote></p>
  * @author Jared Erickson
  */
 class ColorMap extends geoscript.style.RasterSymbolizer {
