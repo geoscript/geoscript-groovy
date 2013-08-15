@@ -5,6 +5,9 @@ import org.geotools.data.wfs.WFSDataStoreFactory
 
 /**
  * A WFS Workspace.
+ * <p><blockquote><pre>
+ * WFS wfs = new WFS("http://localhost:8080/geoserver/ows?service=wfs&version=1.1.0&request=GetCapabilities")
+ * </pre></blockquote></p>
  * @author Jared Erickson
  */
 class WFS extends Workspace {
