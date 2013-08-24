@@ -18,11 +18,11 @@ Use maven to build, test, and package::
 
     mvn clean install
 
-The distribution can be found in target/geoscript-groovy-1.0-app/geoscript-groovy-1.0.
+The distribution can be found in target/geoscript-groovy-1.1-app/geoscript-groovy-1.1.
 
 Use
 ---
-To use GeoScript Groovy you need Java and Groovy installed and on your PATH.  Next, download the `latest stable release 1.0 <https://docs.google.com/file/d/0B8cwqNmbcThpQlBmaWsyNDlQMVU/edit?usp=sharing>`_, try the `latest unstable release 1.1-SNAPSHOT <https://docs.google.com/file/d/0B8cwqNmbcThpWFRxQzlHQVJlVW8/edit?usp=sharing>`_  or build the code yourself.  Then put the GeoScript Groovy bin directory on your PATH.  You are now ready to use GeoScript Groovy!
+To use GeoScript Groovy you need Java and Groovy installed and on your PATH.  Next, download the `latest stable release <https://github.com/jericks/geoscript-groovy/releases>`_  or build the code yourself.  Then put the GeoScript Groovy bin directory on your PATH.  You are now ready to use GeoScript Groovy!
 
 GeoScript Groovy has three commands:
 
@@ -67,6 +67,25 @@ Drawing a Shapefile::
     def shp = new Shapefile("states.shp")
     shp.style = new Stroke("#999999", 0.1)
     draw(shp)
+
+Reading a Raster::
+
+    import geoscript.layer.GeoTIFF
+
+    def format = new GeoTIFF()
+    def raster = format.read(new File("raster.tif"))
+
+    println "Format = ${raster.format}"
+    println "Proj EPSG = ${raster.proj.id}"
+    println "Proj WKT = ${raster.proj.wkt}"
+    println "Bounds = ${raster.bounds.geometry.wkt}"
+    println "Size = ${raster.size}"
+    println "Block Size = ${raster.blockSize}"
+    println "Pixel Size = ${raster.pixelSize}"
+    println "Band:"
+    raster.bands.eachWithIndex{b,i ->
+        println "   ${i}). ${b}"
+    }
 
 See the `web site <http://geoscript.org>`_ or the `examples directory <https://github.com/jericks/geoscript-groovy/tree/master/examples>`_ for more examples.
 
