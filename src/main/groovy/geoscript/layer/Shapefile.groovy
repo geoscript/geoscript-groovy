@@ -1,6 +1,8 @@
 package geoscript.layer
 
 import geoscript.workspace.Directory
+import org.geotools.data.DataUtilities
+import org.geotools.data.shapefile.files.ShpFileType
 
 /**
  * A Shapefile Layer.
@@ -33,7 +35,7 @@ class Shapefile extends Layer {
      * @return The Shapefile's File
      */
     File getFile() {
-        new File(fs.dataStore.info.source.toURL().file)
+        DataUtilities.urlToFile(new URL(fs.dataStore.shpFiles.get(ShpFileType.SHP)))
     }
 
     /**
