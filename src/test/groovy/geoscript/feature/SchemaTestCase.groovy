@@ -273,5 +273,16 @@ class SchemaTestCase {
         assertEquals "descriptionB", result.fields[1]["description"]
         assertEquals "priceB", result.fields[1]["price"]
     }
+
+    @Test void includeFields() {
+        Schema s1 = new Schema("points", [new Field("geom","Point","EPSG:4326"), new Field("name","String"), new Field("x", "Double"), new Field("y", "Double")])
+        assertEquals "points geom: Point(EPSG:4326), name: String, x: Double, y: Double", s1.toString()
+        Schema s2 = s1.includeFields([s1.get("geom"), s1.get("name")], "points_new")
+        assertEquals "points_new geom: Point(EPSG:4326), name: String", s2.toString()
+        assertEquals "points geom: Point(EPSG:4326), name: String, x: Double, y: Double", s1.toString()
+        Schema s3 = s1.includeFields(["geom","x","y"], "points_new")
+        assertEquals "points_new geom: Point(EPSG:4326), x: Double, y: Double", s3.toString()
+        assertEquals "points geom: Point(EPSG:4326), name: String, x: Double, y: Double", s1.toString()
+    }
 }
 

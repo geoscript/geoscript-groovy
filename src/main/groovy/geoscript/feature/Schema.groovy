@@ -317,6 +317,25 @@ class Schema {
     }
 
     /**
+     * Create a new Schema with only a subset of Fields
+     * @param fieldsToInclude A List of Fields or Field names to include
+     * @param name The new name
+     * @return The new Schema
+     */
+    Schema includeFields(List fieldsToInclude, String name) {
+        List<String> fieldNames = fieldsToInclude.collect{ fld ->
+            if (fld instanceof Field) {
+                fld.name
+            } else {
+                fld
+            }
+        }
+        new Schema(name, fields.findAll{fld ->
+            fieldNames.contains(fld.name)
+        })
+    }
+
+    /**
      * Create a new Schema by adding another Schema to this current Schema. The Geometry Field is taken from the
      * current Schema.
      * @param otherSchema The other Schema
