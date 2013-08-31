@@ -212,7 +212,7 @@ class Schema {
      * @return The reprojected Schema
      */
     Schema reproject(def prj, String name) {
-        Projection proj = new Projection(prj)
+        Projection proj = prj != null ? new Projection(prj) : null
         Field geom = geom
         List<Field> flds = fields.collect{
             fld -> (fld.name == geom.name) ? new Field(fld.name, fld.typ, proj) : new Field(fld.name, fld.typ)
