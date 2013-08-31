@@ -6,7 +6,7 @@ import org.geotools.kml.KML
 import org.geotools.kml.KMLConfiguration
 
 /**
- * The KML Layer Writer.
+ * Write a {@link geoscript.layer.Layer Layer}  to a KML InputStream, File, or String.
  * @author Jared Erickson
  */
 class KmlWriter implements Writer {

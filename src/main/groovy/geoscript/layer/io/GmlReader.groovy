@@ -14,7 +14,7 @@ import org.geotools.wfs.v1_1.WFSConfiguration as WFS11
 import org.geotools.wfs.v2_0.WFSConfiguration as WFS20
 
 /**
- * Read a {@geoscript.layer.Layer Layer} from a GeoJSON InputStream, File, or String.
+ * Read a {@link geoscript.layer.Layer Layer} from a GeoJSON InputStream, File, or String.
  * <p><blockquote><pre>
  * String gml = """<wfs:FeatureCollection>...</wfs:FeatureCollection>"""
  * GmlReader reader = new GmlReader()

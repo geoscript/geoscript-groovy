@@ -16,7 +16,7 @@ import geoscript.geom.io.Gml3Reader
 import geoscript.proj.Projection
 
 /**
- * Read a CSV String, File, or InputStream and create a {@geoscript.layer.Layer Layer}.
+ * Read a CSV String, File, or InputStream and create a {@link geoscript.layer.Layer Layer}.
  * <p><blockquote><pre>
  * String csv = """"geom","name","price"
  * "POINT (111 -47)","House","12.5"

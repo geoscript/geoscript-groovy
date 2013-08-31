@@ -4,7 +4,7 @@ import geoscript.layer.Layer
 import org.geotools.geojson.feature.FeatureJSON
 
 /**
- * Write a {@geoscript.layer.Layer Layer} to a GeoJSON InputStream, File, or String.
+ * Write a {@link geoscript.layer.Layer Layer} to a GeoJSON InputStream, File, or String.
  * <p><blockquote><pre>
  * def layer = new Shapefile("states.shp")
  * GeoJSONWriter writer = new GeoJSONWriter()

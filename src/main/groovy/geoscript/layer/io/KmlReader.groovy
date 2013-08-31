@@ -12,7 +12,7 @@ import org.geotools.kml.KMLConfiguration
 import org.opengis.feature.simple.SimpleFeature
 
 /**
- * Read a GeoScript Layer from a KML InputStream, File, or String.
+ * Read a GeoScript {@link geoscript.layer.Layer Layer} from a KML InputStream, File, or String.
  * @author Jared Erickson
  */
 class KmlReader implements Reader {

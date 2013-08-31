@@ -14,7 +14,7 @@ import geoscript.geom.io.Gml2Writer
 import geoscript.geom.io.Gml3Writer
 
 /**
- * Write a {@geoscript.layer.Layer Layer} to a CSV String.
+ * Write a {@link geoscript.layer.Layer Layer} to a CSV String.
  * <p><blockquote><pre>
  * def layer = new Shapefile("states.shp")
  * CsvWriter writer = new CsvWriter()

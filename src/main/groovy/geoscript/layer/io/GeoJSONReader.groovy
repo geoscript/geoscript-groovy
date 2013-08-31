@@ -9,7 +9,7 @@ import geoscript.workspace.Workspace
 import org.geotools.geojson.feature.FeatureJSON
 
 /**
- * Read a {@geoscript.layer.Layer Layer} from a GeoJSON InputStream, File, or String.
+ * Read a {@link geoscript.layer.Layer Layer} from a GeoJSON InputStream, File, or String.
  * <p><blockquote><pre>
  * String json = """{"type":"FeatureCollection","features":[
  * {"type":"Feature","geometry":{"type":"Point","coordinates":[111,-47]},

@@ -3,7 +3,7 @@ package geoscript.layer.io
 import geoscript.layer.Layer
 
 /**
- * Write a {@geoscript.layer.Layer Layer} to an InputStream, File, or String.
+ * Write a {@link geoscript.layer.Layer Layer} to an InputStream, File, or String.
  * @author Jared Erickson
  */
 interface Writer {
