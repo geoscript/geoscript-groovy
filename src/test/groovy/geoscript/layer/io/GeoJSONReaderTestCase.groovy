@@ -1,5 +1,7 @@
 package geoscript.layer.io
 
+import geoscript.proj.Projection
+import geoscript.workspace.Memory
 import org.junit.Test
 import static org.junit.Assert.*
 import geoscript.layer.Layer
@@ -19,6 +21,17 @@ class GeoJSONReaderTestCase {
         // Read from a String
         Layer layer = reader.read(json)
         assertNotNull layer
+        assertEquals "geojson", layer.name
+        assertTrue layer.workspace instanceof Memory
+        assertNull layer.proj
+        assertEquals 2, layer.count
+
+        // Read from a String with custom workspace, name, projection
+        layer = reader.read(json, workspace: new Memory(), name: "points", projection: new Projection("EPSG:4326"))
+        assertNotNull layer
+        assertEquals "points", layer.name
+        assertTrue layer.workspace instanceof Memory
+        assertEquals "EPSG:4326", layer.proj.id
         assertEquals 2, layer.count
 
         // Read from an InputStream

@@ -1,5 +1,7 @@
 package geoscript.layer.io
 
+import geoscript.proj.Projection
+import geoscript.workspace.Memory
 import org.junit.Test
 import static org.junit.Assert.*
 import geoscript.layer.Layer
@@ -62,12 +64,26 @@ class GmlReaderTestCase {
         // Read from a String
         Layer layer = reader.read(gml)
         assertNotNull layer
+        assertEquals "gml", layer.name
+        assertTrue layer.workspace instanceof Memory
+        assertNull layer.proj
+        assertEquals 2, layer.count
+
+        // Read from a String with custom workspace, name, projection
+        layer = reader.read(gml, workspace: new Memory(), name: "points", projection: new Projection("EPSG:4326"))
+        assertNotNull layer
+        assertEquals "points", layer.name
+        assertTrue layer.workspace instanceof Memory
+        assertEquals "EPSG:4326", layer.proj.id
         assertEquals 2, layer.count
 
         // Read from an InputStream
         ByteArrayInputStream input = new ByteArrayInputStream(gml.getBytes("UTF-8"))
         layer = reader.read(input)
         assertNotNull layer
+        assertEquals "gml", layer.name
+        assertTrue layer.workspace instanceof Memory
+        assertNull layer.proj
         assertEquals 2, layer.count
 
         // Read from a File
@@ -75,6 +91,9 @@ class GmlReaderTestCase {
         file.write(gml)
         layer = reader.read(file)
         assertNotNull layer
+        assertEquals "gml", layer.name
+        assertTrue layer.workspace instanceof Memory
+        assertNull layer.proj
         assertEquals 2, layer.count
 
     }

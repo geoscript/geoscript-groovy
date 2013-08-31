@@ -1,6 +1,11 @@
 package geoscript.layer.io
 
+import geoscript.feature.Schema
+import geoscript.layer.Cursor
 import geoscript.layer.Layer
+import geoscript.proj.Projection
+import geoscript.workspace.Memory
+import geoscript.workspace.Workspace
 import org.geotools.geojson.feature.FeatureJSON
 
 /**
@@ -25,32 +30,57 @@ class GeoJSONReader implements Reader {
 
     /**
      * Read a GeoScript Layer from an InputStream
+     * @param options The optional named parameters:
+     * <ul>
+     *     <li>workspace: The Workspace used to create the Layer (defaults to Memory)</li>
+     *     <li>projection: The Projection assigned to the Layer (defaults to null)</li>
+     *     <li>name: The name of the Layer (defaults to geojson)</li>
+     * </ul>
      * @param input An InputStream
      * @return A GeoScript Layer
      */
-    Layer read(InputStream input) {
+    Layer read(Map options = [:], InputStream input) {
+        // Default parameters
+        Workspace workspace = options.get("workspace", new Memory())
+        Projection proj = options.get("projection")
+        String name = options.get("name", "geojson")
+        // Parse GeoJSON
         def featureCollection = featureJSON.readFeatureCollection(input)
-        geoscript.workspace.Workspace ws = new geoscript.workspace.Memory()
-        ws.ds.addFeatures(featureCollection)
-        return ws.layers[0]
+        // Create Schema and Layer
+        Schema schema = new Schema(featureCollection.schema).reproject(proj, name)
+        Layer layer = workspace.create(schema)
+        layer.add(new Cursor(featureCollection))
+        layer
     }
 
     /**
      * Read a GeoScript Layer from a File
+     * @param options The optional named parameters:
+     * <ul>
+     *     <li>workspace: The Workspace used to create the Layer (defaults to Memory)</li>
+     *     <li>projection: The Projection assigned to the Layer (defaults to null)</li>
+     *     <li>name: The name of the Layer (defaults to geojson)</li>
+     * </ul>
      * @param file A File
      * @return A GeoScript Layer
      */
-    Layer read(File file) {
-        read(new FileInputStream(file))
+    Layer read(Map options = [:], File file) {
+        read(options, new FileInputStream(file))
     }
 
     /**
      * Read a GeoScript Layer from a String
+     * @param options The optional named parameters:
+     * <ul>
+     *     <li>workspace: The Workspace used to create the Layer (defaults to Memory)</li>
+     *     <li>projection: The Projection assigned to the Layer (defaults to null)</li>
+     *     <li>name: The name of the Layer (defaults to geojson)</li>
+     * </ul>
      * @param str A String
      * @return A GeoScript Layer
      */
-    Layer read(String str) {
-        read(new ByteArrayInputStream(str.getBytes("UTF-8")))
+    Layer read(Map options = [:], String str) {
+        read(options, new ByteArrayInputStream(str.getBytes("UTF-8")))
     }
 
 }
