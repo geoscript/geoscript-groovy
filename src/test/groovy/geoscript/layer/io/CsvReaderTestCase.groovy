@@ -25,6 +25,35 @@ class CsvReaderTestCase {
         }
     }
 
+    @Test void readWKTWithTypes() {
+        String csv = """"geom:Point","name:String","price:double"
+"POINT (111 -47)","House","12.5"
+"POINT (121 -45)","School","22.7"
+"""
+        CsvReader reader = new CsvReader()
+        Layer layer = reader.read(csv)
+        assertEquals("csv geom: Point, name: String, price: Double", layer.schema.toString())
+        assertEquals(2, layer.count)
+        layer.eachFeature { f ->
+            assertTrue(f.geom instanceof geoscript.geom.Point)
+        }
+    }
+
+    @Test void readWKTWithTypesAndProj() {
+        String csv = """"geom:Point:EPSG:4326","name:String","price:Double"
+"POINT (111 -47)","House","12.5"
+"POINT (121 -45)","School","22.7"
+"""
+        CsvReader reader = new CsvReader()
+        Layer layer = reader.read(csv)
+        assertEquals("csv geom: Point(EPSG:4326), name: String, price: Double", layer.schema.toString())
+        assertEquals "EPSG:4326", layer.proj.id
+        assertEquals(2, layer.count)
+        layer.eachFeature { f ->
+            assertTrue(f.geom instanceof geoscript.geom.Point)
+        }
+    }
+
     @Test void readWKTLines() {
         String csv = """"geom","name","price"
 "LINESTRING (0 0, 5 5)","House","12.5"
@@ -53,6 +82,35 @@ class CsvReaderTestCase {
         }
     }
 
+    @Test void readXYInOneFieldWithTypes() {
+        String csv = """"name:String","price:Float","xy:Point"
+"House","12.5", 111 -47
+"School","22.7",121 -45
+"""
+        CsvReader reader = new CsvReader("xy", CsvReader.Type.XY)
+        Layer layer = reader.read(csv)
+        assertEquals("csv name: String, price: Float, xy: Point", layer.schema.toString())
+        assertEquals(2, layer.count)
+        layer.eachFeature { f ->
+            assertTrue(f.geom instanceof geoscript.geom.Point)
+        }
+    }
+
+    @Test void readXYInOneFieldWithTypesAndProj() {
+        String csv = """"name:String","price:Float","xy:Point:EPSG:4326"
+"House","12.5", 111 -47
+"School","22.7",121 -45
+"""
+        CsvReader reader = new CsvReader("xy", CsvReader.Type.XY)
+        Layer layer = reader.read(csv)
+        assertEquals("csv name: String, price: Float, xy: Point(EPSG:4326)", layer.schema.toString())
+        assertEquals "EPSG:4326", layer.proj.id
+        assertEquals(2, layer.count)
+        layer.eachFeature { f ->
+            assertTrue(f.geom instanceof geoscript.geom.Point)
+        }
+    }
+
     @Test void readXY() {
         String csv = """"name","price","x","y"
 "House","12.5",111,-47
@@ -61,6 +119,20 @@ class CsvReaderTestCase {
         CsvReader reader = new CsvReader("x","y")
         Layer layer = reader.read(csv)
         assertEquals("csv name: String, price: String, x: String, y: String, geom: Point", layer.schema.toString())
+        assertEquals(2, layer.count)
+        layer.eachFeature { f ->
+            assertTrue(f.geom instanceof geoscript.geom.Point)
+        }
+    }
+
+    @Test void readXYWithTypes() {
+        String csv = """"name:String","price:Float","x:Double","y:Double"
+"House","12.5",111,-47
+"School","22.7",121,-45
+"""
+        CsvReader reader = new CsvReader("x","y")
+        Layer layer = reader.read(csv)
+        assertEquals("csv name: String, price: Float, x: Double, y: Double, geom: Point", layer.schema.toString())
         assertEquals(2, layer.count)
         layer.eachFeature { f ->
             assertTrue(f.geom instanceof geoscript.geom.Point)
@@ -81,6 +153,20 @@ class CsvReaderTestCase {
         }
     }
 
+    @Test void readLatLonWithTypes() {
+        String csv = """"lon:Double"|"lat:Double"|"name:String"|"price:Float"
+"111.0"|"-47.0"|"House"|"12.5"
+"121.0"|"-45.0"|"School"|"22.7"
+"""
+        CsvReader reader = new CsvReader("lon","lat", separator: "|")
+        Layer layer = reader.read(csv)
+        assertEquals("csv lon: Double, lat: Double, name: String, price: Float, geom: Point", layer.schema.toString())
+        assertEquals(2, layer.count)
+        layer.eachFeature { f ->
+            assertTrue(f.geom instanceof geoscript.geom.Point)
+        }
+    }
+
     @Test void readDMS() {
         String csv = """"lon"|"lat"|"name"|"price"
 "-122\u00B0 31' 32.2284\\" W"|"47\u00B0 12' 43.2828\\" N"|"House"|"12.5"
@@ -89,6 +175,20 @@ class CsvReaderTestCase {
         CsvReader reader = new CsvReader("lon","lat", separator: "|")
         Layer layer = reader.read(csv)
         assertEquals("csv lon: String, lat: String, name: String, price: String, geom: Point", layer.schema.toString())
+        assertEquals(2, layer.count)
+        layer.eachFeature { f ->
+            assertTrue(f.geom instanceof geoscript.geom.Point)
+        }
+    }
+
+    @Test void readDMSWithTypes() {
+        String csv = """"lon:String"|"lat:String"|"name:String"|"price:Float"
+"-122\u00B0 31' 32.2284\\" W"|"47\u00B0 12' 43.2828\\" N"|"House"|"12.5"
+"-123\u00B0 15' 21.4821\\" W"|"43\u00B0 34' 12.9857\\" N"|"School"|"22.7"
+"""
+        CsvReader reader = new CsvReader("lon","lat", separator: "|")
+        Layer layer = reader.read(csv)
+        assertEquals("csv lon: String, lat: String, name: String, price: Float, geom: Point", layer.schema.toString())
         assertEquals(2, layer.count)
         layer.eachFeature { f ->
             assertTrue(f.geom instanceof geoscript.geom.Point)
@@ -157,6 +257,22 @@ ak,10501917,?,"Thursday, June 28, 2012 02:30:58 UTC",60.0233,-152.9946,2,2.9,?,"
         }
     }
 
+    @Test void readGeoJsonWithTypes() {
+        String csv = """"geom:Point:EPSG:4326","name:String","price:Float"
+"{ ""type"": ""Point"", ""coordinates"": [111.0, -47.0] }","House","12.5"
+"{ ""type"": ""Point"", ""coordinates"": [121.0, -45.0] }","School","22.7"
+"""
+        CsvReader reader = new CsvReader("geom", CsvReader.Type.GEOJSON)
+        Layer layer = reader.read(csv)
+        println layer.features
+        assertEquals("csv geom: Point(EPSG:4326), name: String, price: Float", layer.schema.toString())
+        assertEquals "EPSG:4326", layer.proj.id
+        assertEquals(2, layer.count)
+        layer.eachFeature { f ->
+            assertTrue(f.geom instanceof geoscript.geom.Point)
+        }
+    }
+
     @Test void readWkb() {
         String csv = """"geom","name","price"
 "0000000001405BC00000000000C047800000000000","House","12.5"
@@ -166,6 +282,22 @@ ak,10501917,?,"Thursday, June 28, 2012 02:30:58 UTC",60.0233,-152.9946,2,2.9,?,"
         Layer layer = reader.read(csv)
         println layer.features
         assertEquals("csv geom: Point, name: String, price: String", layer.schema.toString())
+        assertEquals(2, layer.count)
+        layer.eachFeature { f ->
+            assertTrue(f.geom instanceof geoscript.geom.Point)
+        }
+    }
+
+    @Test void readWkbWithTypes() {
+        String csv = """"geom:Point:EPSG:4326","name:String","price:Float"
+"0000000001405BC00000000000C047800000000000","House","12.5"
+"0000000001405E400000000000C046800000000000","School","22.7"
+"""
+        CsvReader reader = new CsvReader("geom", CsvReader.Type.WKB)
+        Layer layer = reader.read(csv)
+        println layer.features
+        assertEquals("csv geom: Point(EPSG:4326), name: String, price: Float", layer.schema.toString())
+        assertEquals "EPSG:4326", layer.proj.id
         assertEquals(2, layer.count)
         layer.eachFeature { f ->
             assertTrue(f.geom instanceof geoscript.geom.Point)
@@ -186,6 +318,21 @@ ak,10501917,?,"Thursday, June 28, 2012 02:30:58 UTC",60.0233,-152.9946,2,2.9,?,"
         }
     }
 
+    @Test void readKmlWithTypes() {
+        String csv = """"geom:Point:EPSG:4326","name:String","price:Float"
+"<Point><coordinates>111.0,-47.0</coordinates></Point>","House","12.5"
+"<Point><coordinates>121.0,-45.0</coordinates></Point>","School","22.7"
+"""
+        CsvReader reader = new CsvReader("geom", CsvReader.Type.KML)
+        Layer layer = reader.read(csv)
+        assertEquals("csv geom: Point(EPSG:4326), name: String, price: Float", layer.schema.toString())
+        assertEquals "EPSG:4326", layer.proj.id
+        assertEquals(2, layer.count)
+        layer.eachFeature { f ->
+            assertTrue(f.geom instanceof geoscript.geom.Point)
+        }
+    }
+
     @Test void readGml2() {
         String csv = """"geom","name","price"
 "<gml:Point><gml:coordinates>111.0,-47.0</gml:coordinates></gml:Point>","House","12.5"
@@ -194,6 +341,21 @@ ak,10501917,?,"Thursday, June 28, 2012 02:30:58 UTC",60.0233,-152.9946,2,2.9,?,"
         CsvReader reader = new CsvReader("geom", CsvReader.Type.GML2)
         Layer layer = reader.read(csv)
         assertEquals("csv geom: Point, name: String, price: String", layer.schema.toString())
+        assertEquals(2, layer.count)
+        layer.eachFeature { f ->
+            assertTrue(f.geom instanceof geoscript.geom.Point)
+        }
+    }
+
+    @Test void readGml2WithTypes() {
+        String csv = """"geom:Point:EPSg:4326","name:String","price:Float"
+"<gml:Point><gml:coordinates>111.0,-47.0</gml:coordinates></gml:Point>","House","12.5"
+"<gml:Point><gml:coordinates>121.0,-45.0</gml:coordinates></gml:Point>","School","22.7"
+"""
+        CsvReader reader = new CsvReader("geom", CsvReader.Type.GML2)
+        Layer layer = reader.read(csv)
+        assertEquals("csv geom: Point(EPSG:4326), name: String, price: Float", layer.schema.toString())
+        assertEquals "EPSG:4326", layer.proj.id
         assertEquals(2, layer.count)
         layer.eachFeature { f ->
             assertTrue(f.geom instanceof geoscript.geom.Point)
@@ -214,6 +376,21 @@ ak,10501917,?,"Thursday, June 28, 2012 02:30:58 UTC",60.0233,-152.9946,2,2.9,?,"
         }
     }
 
+    @Test void readGml3WithTypes() {
+        String csv = """"geom:Point:EPSG:4326","name:String","price:Float"
+"<gml:Point><gml:pos>111.0 -47.0</gml:pos></gml:Point>","House","12.5"
+"<gml:Point><gml:pos>121.0 -45.0</gml:pos></gml:Point>","School","22.7"
+"""
+        CsvReader reader = new CsvReader("geom", CsvReader.Type.GML3)
+        Layer layer = reader.read(csv)
+        assertEquals("csv geom: Point(EPSG:4326), name: String, price: Float", layer.schema.toString())
+        assertEquals "EPSG:4326", layer.proj.id
+        assertEquals(2, layer.count)
+        layer.eachFeature { f ->
+            assertTrue(f.geom instanceof geoscript.geom.Point)
+        }
+    }
+
     @Test void readCsvWithBlankLine() {
         String csv = """"the_geom"
 "POLYGON ((-126.72872789292975 22.964486856824095, -126.72872789292975 51.368178553333294, -64.97359027747028 51.368178553333294, -64.97359027747028 22.964486856824095, -126.72872789292975 22.964486856824095))"
@@ -224,7 +401,7 @@ ak,10501917,?,"Thursday, June 28, 2012 02:30:58 UTC",60.0233,-152.9946,2,2.9,?,"
         assertEquals(1, layer.count)
     }
 
-    @Test void readCsvFromKml() {
+    @Test void readCsvWithBlankValues() {
         String csv = """"name","visibility","open","address","phoneNumber","description","LookAt","Style","Region","Geometry"
 ,"true","true",,,,,,,"POINT (1 1)"
 
@@ -241,5 +418,14 @@ ak,10501917,?,"Thursday, June 28, 2012 02:30:58 UTC",60.0233,-152.9946,2,2.9,?,"
         Layer layer = reader.read(csv)
         assertEquals(0, layer.count)
         assertEquals("csv geom: Point, id: String, name: String", layer.schema.toString())
+    }
+
+    @Test void readNoFeaturesWithType() {
+        String csv = """"geom:Point:EPSG:4326","id:int","name:String"
+"""
+        CsvReader reader = new CsvReader()
+        Layer layer = reader.read(csv)
+        assertEquals(0, layer.count)
+        assertEquals("csv geom: Point(EPSG:4326), id: Integer, name: String", layer.schema.toString())
     }
 }

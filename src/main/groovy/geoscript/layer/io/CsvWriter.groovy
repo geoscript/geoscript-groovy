@@ -1,5 +1,6 @@
 package geoscript.layer.io
 
+import geoscript.feature.Field
 import geoscript.geom.Point
 import geoscript.layer.Layer
 import au.com.bytecode.opencsv.CSVWriter
@@ -68,6 +69,14 @@ class CsvWriter implements Writer {
     private String quote
 
     /**
+     * Whether to encode field types or not.
+     * The default value depends on the encoding type:
+     * true for non XY types
+     * false for XY types
+     */
+    private boolean encodeFieldType
+
+    /**
      * Create a CsvWriter that encodes geometry in a single column as WKT
      * @param options The CSV writer options  (separator and quote)
      */
@@ -85,6 +94,7 @@ class CsvWriter implements Writer {
         this.usingSingleColumn = true
         this.separator = options.get("separator", ",")
         this.quote = options.get("quote", "\"")
+        this.encodeFieldType = options.get("encodeFieldType", !this.isXY(this.type))
         if (this.type == Type.WKB) {
             this.geomWriter = new WkbWriter()
         } else if (this.type == Type.GEOJSON) {
@@ -118,7 +128,7 @@ class CsvWriter implements Writer {
      * @param options The CSV writer options  (separator and quote)
      */
     CsvWriter(Map options = [:], String xColumn, String yColumn, Type type) {
-        this(options)
+        this(options, type)
         this.type = type
         this.usingSingleColumn = false
         this.xColumn = xColumn
@@ -144,12 +154,21 @@ class CsvWriter implements Writer {
         List fields = layer.schema.fields
         String geomFldName = layer.schema.geom.name
         def columns = []
-        fields.each {fld ->
+        def columnNames = []
+        fields.each {Field fld ->
             if (!usingSingleColumn && isXY(type) && fld.isGeometry()) {
-                columns.add(xColumn)
-                columns.add(yColumn)
+                String fieldType = type == Type.XY ? "Double" : "String"
+                columns.add(xColumn + (encodeFieldType ? ":${fieldType}" : ""))
+                columnNames.add(xColumn)
+                columns.add(yColumn + (encodeFieldType ? ":${fieldType}" : ""))
+                columnNames.add(yColumn)
             } else {
-                columns.add(fld.name)
+                String fieldType = fld.typ
+                if (encodeFieldType && fld.isGeometry() && fld.proj != null) {
+                    fieldType = "${fieldType}:${fld.proj.id}"
+                }
+                columns.add(fld.name  + (encodeFieldType ? ":${fieldType}" : ""))
+                columnNames.add(fld.name)
             }
         }
         writer.writeNext(columns as String[])
@@ -157,7 +176,7 @@ class CsvWriter implements Writer {
             Point pt = f.geom.centroid
             DecimalDegrees dd = new DecimalDegrees(pt.x, pt.y)
             def values = []
-            columns.each { fld ->
+            columnNames.each { fld ->
                 if (!usingSingleColumn && isXY(type) && fld.equals(xColumn)) {
                     if (type == Type.XY) {
                         values.add(pt.x)

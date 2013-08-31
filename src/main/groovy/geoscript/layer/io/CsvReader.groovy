@@ -13,6 +13,7 @@ import geoscript.geom.io.GeoJSONReader
 import geoscript.geom.io.KmlReader
 import geoscript.geom.io.Gml2Reader
 import geoscript.geom.io.Gml3Reader
+import geoscript.proj.Projection
 
 /**
  * Read a CSV String, File, or InputStream and create a {@geoscript.layer.Layer Layer}.
@@ -184,7 +185,14 @@ class CsvReader implements Reader {
         // Are we splitting the geometry into two fields?
         if (!usingSingleColumn) {
             List fields = cols.collect{name ->
-                new Field(name, "String")
+                String type = "String"
+                // Try to extract type (name:type)
+                if (name.contains(":")) {
+                    String[] parts = name.split(":")
+                    name = parts[0]
+                    type = parts[1]
+                }
+                new Field(name, type)
             }
             fields.add(new Field("geom", "Point"))
             layer = new Layer("csv", new Schema("csv", fields))
@@ -206,6 +214,16 @@ class CsvReader implements Reader {
                     cols.eachWithIndex { c, i ->
                         def v = values[i]
                         def colType = "String"
+                        def proj = null
+                        if (c.contains(":")) {
+                            String[] parts = c.split(":")
+                            c = parts[0]
+                            colType = parts[1]
+                            if (parts.length > 2) {
+                                String projStr = parts[2..parts.length-1].join(":")
+                                proj = new Projection(projStr)
+                            }
+                        }
                         // The user specified a column but it isn't WKT it's XY
                         if (column && c.equalsIgnoreCase(column) && isTypeXY(type)) {
                             colType = "Point"
@@ -223,7 +241,7 @@ class CsvReader implements Reader {
                             column = c
                             colType = getGeometryTypeFromWKT(v)
                         }
-                        fields.add(new Field(c, colType))
+                        fields.add(new Field(c.trim(), colType.trim(), proj))
                     }
                     Schema schema = new Schema("csv", fields)
                     layer = new Layer("csv", schema)
@@ -233,8 +251,9 @@ class CsvReader implements Reader {
                 try {
                     Map valueMap = [:]
                     cols.eachWithIndex {c,i ->
+                        String colName = getColumnName(c)
                         def v = values[i]
-                        if (usingSingleColumn && c.equalsIgnoreCase(column)) {
+                        if (usingSingleColumn && colName.equalsIgnoreCase(column)) {
                             if (isGeom) {
                                 v = geomReader.read(v.trim())
                             } else {
@@ -242,7 +261,7 @@ class CsvReader implements Reader {
                                 v = new DecimalDegrees(v.trim()).point
                             }
                         }
-                        valueMap.put(c,v)
+                        valueMap.put(colName,v)
                     }
                     if (!usingSingleColumn) {
                         // Parse XY values including longitude/latitude in DMS, DDM formats
@@ -251,6 +270,7 @@ class CsvReader implements Reader {
                     }
                     layer.add(valueMap)
                 } catch(Exception ex) {
+                    ex.printStackTrace()
                     System.err.println("Error parsing CSV: ${values} because ${ex.message}")
                 }
             }
@@ -260,17 +280,40 @@ class CsvReader implements Reader {
             boolean hasGeom = false
             List fields = cols.collect {c ->
                 String fieldType = "String"
+                def proj = null
+                if (c.contains(":")) {
+                    String[] parts = c.split(":")
+                    c = parts[0]
+                    fieldType = parts[1]
+                    if (parts.length > 2) {
+                        String projStr = parts[2..parts.length-1].join(":")
+                        proj = new Projection(projStr)
+                    }
+                }
                 // Try to guess the geometry Field
                 if (!hasGeom && (c.toLowerCase().contains("geom") || c.toLowerCase().contains("shape"))) {
                     fieldType = "Point"
                     hasGeom = true
                 }
-                new Field(c, fieldType)
+                new Field(c, fieldType, proj)
             }
             Schema schema = new Schema("csv", fields)
             layer = new Layer("csv", schema)
         }
         return layer
+    }
+
+    /**
+     * Get the column name from a column name string that may or may not have type and projection information
+     * @param col The column name string
+     * @return The column name only
+     */
+    private String getColumnName(String col) {
+        if (col.contains(":")) {
+            col.substring(0, col.indexOf(":"))
+        } else {
+            col
+        }
     }
 
     /**
