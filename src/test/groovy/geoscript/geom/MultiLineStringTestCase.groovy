@@ -62,5 +62,27 @@ class MultiLineStringTestCase {
         assertTrue polygons instanceof MultiPolygon
         assertEquals 1, polygons.geometries.size()
     }
-    
+
+    @Test void polygonizeFull() {
+        def lines = new MultiLineString(
+                new LineString ([-5.70068359375, 45.1416015625], [2.47314453125, 53.9306640625]),
+                new LineString ([-1.21826171875, 53.9306640625], [8.88916015625, 46.1962890625]),
+                new LineString ([0.71533203125, 42.63671875], [7.13134765625, 50.37109375]),
+                new LineString ([-5.83251953125, 46.943359375], [4.45068359375, 42.98828125])
+        )
+        def results = lines.node(5).polyzonizeFull()
+        // Polygons
+        assertTrue results.polygons instanceof MultiPolygon
+        assertEquals 1, results.polygons.geometries.size()
+        // Cut Edges
+        assertTrue results.cutEdges instanceof MultiLineString
+        assertTrue results.cutEdges.empty
+        // Dangles
+        assertTrue results.dangles instanceof MultiLineString
+        assertEquals 8, results.dangles.geometries.size()
+        // Invalid Ring Lines
+        assertTrue results.invalidRingLines instanceof MultiLineString
+        assertTrue results.invalidRingLines.empty
+    }
+
 }

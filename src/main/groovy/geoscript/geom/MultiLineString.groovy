@@ -127,6 +127,22 @@ class MultiLineString extends GeometryCollection {
     }
 
     /**
+     * Polygonize the LineStrings of this MultiLineString and return a Map
+     * with polygons, cutEdges, dangles, and invalidRingLines.
+     * @return A Map with polygons, cutEdges, dangles, and invalidRingLines
+     */
+    Map polyzonizeFull() {
+        Map results = [:]
+        def polygonizer = new JtsPolygonizer()
+        this.geometries.each{line -> polygonizer.add(line.g)}
+        results.polygons = new MultiPolygon(polygonizer.polygons.collect{p -> new Polygon(p)})
+        results.cutEdges = new MultiLineString(polygonizer.cutEdges.collect{l -> new LineString(l)})
+        results.dangles = new MultiLineString(polygonizer.dangles.collect{l -> new LineString(l)})
+        results.invalidRingLines = new MultiLineString(polygonizer.invalidRingLines.collect{l -> new LineString(l)})
+        results
+    }
+
+    /**
      * Create a MultiLineString from a List of List of Doubles
      */
     private static JtsMultiLineString create(List<List<Double>>... lineStrings) {
