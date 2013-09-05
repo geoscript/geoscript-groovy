@@ -46,7 +46,7 @@ class Cursor implements Iterator {
 
     /**
      * Create a new Cursor with a FeatureCollection
-     * @param options A Map of options (sort, start, max)
+     * @param options A Map of options (sort - a List of Strings, start - is 0 based, max - the max number of features)
      * @param col The GeoTools FeatureCollection
      */
     Cursor(Map options = [:], FeatureCollection<SimpleFeatureType, SimpleFeature> col) {
@@ -57,7 +57,7 @@ class Cursor implements Iterator {
 
     /**
      * Create a new Cursor with a FeatureCollection and a Layer
-     * @param options A Map of options (sort, start, max)
+     * @param options A Map of options (sort - a List of Strings, start - is 0 based, max - the max number of features)
      * @param col The GeoTools FeatureCollection
      * @param layer The Geoscript Layer
      */
@@ -78,8 +78,8 @@ class Cursor implements Iterator {
        }
        if (options.containsKey("start") && options.containsKey("max")) {
            long start = options.start as long
-           long end = start + options.max as long
-           this.iter = new MaxFeaturesIterator<SimpleFeature>(this.iter, start, end)
+           long max = options.max as long
+           this.iter = new MaxFeaturesIterator<SimpleFeature>(this.iter, start, max)
        }
     }
 

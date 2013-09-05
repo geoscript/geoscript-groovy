@@ -461,7 +461,7 @@ class Layer {
      * @param sort A List of Lists [[Field or Field name, "ASC" or "DESC"],...] or a List of Strings ["name DESC", "price ASC"]
      * that define the sort order. Not all Layers support sorting!
      * @param max The maximum number of Features to include in the Cursor
-     * @param start The index of the record to start the cursor at.  Together with maxFeatures this simulates paging.
+     * @param start The zero based index of the record to start the cursor at.  Together with maxFeatures this simulates paging.
      * Not all Layers support the start index and paging!
      * @param fields A List of Fields or Field names to include.  Used to select only a subset of Fields.
      * @return A Cursor

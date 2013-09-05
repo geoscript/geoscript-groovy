@@ -59,5 +59,33 @@ class CursorTestCase {
         assertEquals 49, names.size()
     }
 
+    @Test void sortStartAndMax() {
+        // Property files don't natively support paging
+        File file = new File(getClass().getClassLoader().getResource("points.properties").toURI())
+        assertNotNull(file)
+        Layer layer = new Property(file)
+        assertNotNull(layer)
+        // 3 to 4
+        Cursor c = layer.getCursor(sort: ["name DESC"], start: 2, max: 2)
+        assertEquals "point 2", c.next()['name']
+        assertEquals "point 1", c.next()['name']
+        assertFalse c.hasNext()
+        c.close()
+        // 2 to 4
+        c = layer.getCursor(sort: ["name DESC"], start: 1, max: 3)
+        assertEquals "point 3", c.next()['name']
+        assertEquals "point 2", c.next()['name']
+        assertEquals "point 1", c.next()['name']
+        assertFalse c.hasNext()
+        c.close()
+        // 1 to 3
+        c = layer.getCursor(sort: ["name DESC"], start: 0, max: 3)
+        assertEquals "point 4", c.next()['name']
+        assertEquals "point 3", c.next()['name']
+        assertEquals "point 2", c.next()['name']
+        assertFalse c.hasNext()
+        c.close()
+    }
+
 }
 
