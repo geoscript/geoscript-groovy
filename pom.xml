@@ -4,7 +4,7 @@
     <groupId>org.geoscript</groupId>
     <artifactId>geoscript-groovy</artifactId>
     <packaging>jar</packaging>
-    <version>1.1</version>
+    <version>1.1.1-SNAPSHOT</version>
     <repositories>
         <repository>
             <id>opengeo</id>
