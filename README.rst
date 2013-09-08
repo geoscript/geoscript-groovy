@@ -102,7 +102,7 @@ You can also use GeoScript Groovy as a library. If you use Maven you will need t
         </repository>
     </repositories>
 
- and then include the GeoScript Groovy dependency::
+and then include the GeoScript Groovy dependency::
 
     <dependencies>
         <groupId>org.geoscript</groupId>
