@@ -89,6 +89,27 @@ Reading a Raster::
 
 See the `web site <http://geoscript.org>`_ or the `examples directory <https://github.com/jericks/geoscript-groovy/tree/master/examples>`_ for more examples.
 
+You can also use GeoScript Groovy as a library. If you use Maven you will need to add OpenGeo's repository::
+
+    <repositories>
+        <repository>
+            <id>opengeo</id>
+            <name>OpenGeo Maven Repository</name>
+            <url>http://repo.opengeo.org</url>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+        </repository>
+    </repositories>
+
+ and then include the GeoScript Groovy dependency::
+
+    <dependencies>
+        <groupId>org.geoscript</groupId>
+        <artifactId>geoscript-groovy</artifactId>
+        <version>1.1</version>
+    </dependencies>
+
 License
 -------
 GeoScript Groovy is open source and licensed under the MIT license.
