@@ -6,6 +6,7 @@ import geoscript.geom.Point
 import geoscript.feature.Schema
 import geoscript.feature.Field
 import geoscript.feature.Feature
+import geoscript.AssertUtil
 
 /**
  * The GmlWriter UnitTest
@@ -36,7 +37,7 @@ class GmlWriterTestCase {
 </gsf:houses>
 """
         String actual = writer.write(feature)
-        assertEquals expected, actual
+        AssertUtil.assertStringsEqual expected, actual
     }
 
 }

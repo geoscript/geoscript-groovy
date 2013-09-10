@@ -5,6 +5,7 @@ import static org.junit.Assert.*
 import geoscript.geom.*
 import geoscript.layer.*
 import geoscript.feature.Feature
+import geoscript.AssertUtil
 
 class FilterTestCase {
     
@@ -19,7 +20,6 @@ class FilterTestCase {
         assertEquals f1.toString(), f3.toString()
 
         Filter f4 = new Filter("CARPOOL/PERSON > 0.06")
-        println f4.toString()
         assertEquals "[ (CARPOOL/PERSON) > 0.06 ]", f4.toString()
     }
     
@@ -43,7 +43,7 @@ class FilterTestCase {
 </ogc:PropertyIsEqualTo>
 </ogc:Filter>
 """
-        assertEquals expected, actual
+        AssertUtil.assertStringsEqual expected, actual
     }
 
     @Test void bbox() {
