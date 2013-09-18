@@ -322,7 +322,11 @@ class CsvReader implements Reader {
      * @return The geometry type (point, linestring, polygon, ect...)
      */
     private String getGeometryTypeFromWKT(String wkt) {
-        wkt.substring(0, wkt.indexOf(" (")).toLowerCase()
+        int i = wkt.indexOf(" (")
+        if (i == -1) {
+            i = wkt.indexOf("(")
+        }
+        wkt.substring(0, i).toLowerCase()
     }
 
     /**
@@ -331,9 +335,14 @@ class CsvReader implements Reader {
      * @return Whether the input value looks like WKT
      */
     private boolean isWKT(String str) {
-        if (str.startsWith("POINT (") || str.startsWith("LINESTRING (") || str.startsWith("POLYGON") ||
-                str.startsWith("MULTIPOINT (") || str.startsWith("MULTILINESTRING (") || str.startsWith("MULTIPOLYGON") ||
-                str.startsWith("GEOMETRYCOLLECTION (") || str.startsWith("LINEARRING (")
+        if (str.startsWith("POINT (") || str.startsWith("POINT(") ||
+            str.startsWith("LINESTRING (") || str.startsWith("LINESTRING(") ||
+            str.startsWith("POLYGON") || str.startsWith("POLYGON(") ||
+            str.startsWith("MULTIPOINT (") || str.startsWith("MULTIPOINT(") ||
+            str.startsWith("MULTILINESTRING (") || str.startsWith("MULTILINESTRING(") ||
+            str.startsWith("MULTIPOLYGON") || str.startsWith("MULTIPOLYGON(") ||
+            str.startsWith("GEOMETRYCOLLECTION (") || str.startsWith("GEOMETRYCOLLECTION(") ||
+            str.startsWith("LINEARRING (") || str.startsWith("LINEARRING(")
         ) {
             return true
         }

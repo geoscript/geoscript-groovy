@@ -428,4 +428,19 @@ ak,10501917,?,"Thursday, June 28, 2012 02:30:58 UTC",60.0233,-152.9946,2,2.9,?,"
         assertEquals(0, layer.count)
         assertEquals("csv geom: Point(EPSG:4326), id: Integer, name: String", layer.schema.toString())
     }
+
+    @Test void readFromWktWithNoSpace() {
+        String csv = """the_geom,ADMIN_NAME
+POINT(10.1999998092651 59.7000007629395),Buskerud
+POINT(-2.96670007705688 56.4667015075684),Scotland
+POINT(-4.85678577423096 55.736743927002),Scotland
+POINT(14.7166996002197 55.11669921875),Bornholm
+POINT(69.2166976928711 54.88330078125),North Kazakhstan
+POINT(-1.16670000553131 54.5999984741211),England
+"""
+        CsvReader reader = new CsvReader()
+        Layer layer = reader.read(csv)
+        assertEquals(6, layer.count)
+        assertEquals("csv the_geom: Point, ADMIN_NAME: String", layer.schema.toString())
+    }
 }
