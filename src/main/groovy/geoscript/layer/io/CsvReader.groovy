@@ -14,6 +14,8 @@ import geoscript.geom.io.KmlReader
 import geoscript.geom.io.Gml2Reader
 import geoscript.geom.io.Gml3Reader
 import geoscript.proj.Projection
+import geoscript.workspace.Memory
+import geoscript.workspace.Workspace
 
 /**
  * Read a CSV String, File, or InputStream and create a {@link geoscript.layer.Layer Layer}.
@@ -145,37 +147,66 @@ class CsvReader implements Reader {
 
     /**
      * Read a GeoScript Layer from an InputStream
+     * @param options The optional named parameters:
+     * <ul>
+     *     <li>workspace: The Workspace used to create the Layer (defaults to Memory)</li>
+     *     <li>projection: The Projection assigned to the Layer (defaults to null)</li>
+     *     <li>name: The name of the Layer (defaults to geojson)</li>
+     * </ul>
      * @param input An InputStream
      * @return A GeoScript Layer
      */
-    Layer read(InputStream input) {
-        readFromReader(new InputStreamReader(input))
+    Layer read(Map options = [:], InputStream input) {
+        readFromReader(options, new InputStreamReader(input))
     }
 
     /**
      * Read a GeoScript Layer from a File
+     * @param options The optional named parameters:
+     * <ul>
+     *     <li>workspace: The Workspace used to create the Layer (defaults to Memory)</li>
+     *     <li>projection: The Projection assigned to the Layer (defaults to null)</li>
+     *     <li>name: The name of the Layer (defaults to geojson)</li>
+     * </ul>
      * @param file A File
      * @return A GeoScript Layer
      */
-    Layer read(File file) {
-        readFromReader(new FileReader(file))
+    Layer read(Map options = [:], File file) {
+        readFromReader(options, new FileReader(file))
     }
 
     /**
      * Read a GeoScript Layer from a String
+     * @param options The optional named parameters:
+     * <ul>
+     *     <li>workspace: The Workspace used to create the Layer (defaults to Memory)</li>
+     *     <li>projection: The Projection assigned to the Layer (defaults to null)</li>
+     *     <li>name: The name of the Layer (defaults to geojson)</li>
+     * </ul>
      * @param str A String
      * @return A GeoScript Layer
      */
-    Layer read(String str) {
-        readFromReader(new StringReader(str))
+    Layer read(Map options = [:], String str) {
+        readFromReader(options, new StringReader(str))
     }
 
     /**
      * Read from java.io.Reader, parse the CSV data, and create a Layer
+     * @param options The optional named parameters:
+     * <ul>
+     *     <li>workspace: The Workspace used to create the Layer (defaults to Memory)</li>
+     *     <li>projection: The Projection assigned to the Layer (defaults to null)</li>
+     *     <li>name: The name of the Layer (defaults to geojson)</li>
+     * </ul>
      * @param input The input java.io.Reader
      * @return A Layer
      */
-    private Layer readFromReader(java.io.Reader input) {
+    private Layer readFromReader(Map options = [:], java.io.Reader input) {
+        // Default parameters
+        Workspace workspace = options.get("workspace", new Memory())
+        Projection layerProj = options.get("projection")
+        String layerName = options.get("name", "csv")
+        // Set up for parsing
         CSVReader reader = new CSVReader(input, separator as char, quote as char)
         def cols = reader.readNext() as List
         Layer layer = null
@@ -195,7 +226,11 @@ class CsvReader implements Reader {
                 new Field(name, type)
             }
             fields.add(new Field("geom", "Point"))
-            layer = new Layer("csv", new Schema("csv", fields))
+            Schema schema = new Schema(layerName, fields)
+            if (!schema.proj) {
+                schema = schema.reproject(layerProj, layerName)
+            }
+            layer = workspace.create(schema)
             xCol = cols.indexOf(xColumn)
             yCol = cols.indexOf(yColumn)
         }
@@ -243,8 +278,11 @@ class CsvReader implements Reader {
                         }
                         fields.add(new Field(c.trim(), colType.trim(), proj))
                     }
-                    Schema schema = new Schema("csv", fields)
-                    layer = new Layer("csv", schema)
+                    Schema schema = new Schema(layerName, fields)
+                    if (!schema.proj) {
+                        schema = schema.reproject(layerProj, layerName)
+                    }
+                    layer = workspace.create(schema)
                 }
                 // Try to turn the CSV values into a Feature, but fail
                 // gracefully by logging the error and moving to the next line
@@ -297,8 +335,12 @@ class CsvReader implements Reader {
                 }
                 new Field(c, fieldType, proj)
             }
-            Schema schema = new Schema("csv", fields)
-            layer = new Layer("csv", schema)
+            Schema schema = new Schema(layerName, fields)
+            if (!schema.proj) {
+                schema = schema.reproject(layerProj, layerName)
+            }
+            layer = workspace.create(schema)
+
         }
         return layer
     }
