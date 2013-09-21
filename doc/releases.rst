@@ -34,6 +34,17 @@ GeoScript Groovy Releases
 
         * Fixed CsvReader bug couldn't guess WKT when it was formatted without a space ("POINT(1 1)" instead of "POINT (1 1)")
 
+1.1.1
+-----
+
+    The 1.1.1 release of GeoScript Groovy just fixes a few minor bugs.
+
+    **Bug Fixes**
+
+    * Fixed Cursor paging bug - it's start and max not start and end
+
+    * Fixed CsvReader bug couldn't guess WKT when it was formatted without a space ("POINT(1 1)" instead of "POINT (1 1)")
+
 1.1
 ---
 
