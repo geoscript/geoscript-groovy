@@ -3,6 +3,37 @@
 GeoScript Groovy Releases
 =========================
 
+1.2
+---
+
+    The 1.2 release of GeoScript was built on Groovy 2.1.6, GeoTools 10.0, and Java Topology Suite 1.13.
+
+    The focus was on upgrading to a modern and supported version of Groovy and a few small features and bug fixes.
+
+    **Upgrades**
+
+        * Upgrade to GeoTools 10
+
+        * Upgrade to Groovy 2.1.6
+
+        * Upgrade to GeoCSS 0.8.3
+
+    **Features**
+
+        * The geoscript.layer.io.Readers can now take optional projection, workspace, name parameters
+
+        * The geoscript.layer.io.CsvReader and CsvWriter by default now encode Field type in the header but this can be disabled
+
+        * Added a MultiLineString.polygonizeFull() method that returns a Map with polygons, cut edges, dangles, and invalid ring lines.
+
+        * Added Schema.includeFields to create a new Schema from an existing Schema with a subset of fields
+
+    **Bug Fixes**
+
+        * Fixed Cursor paging bug - it's start and max not start and end
+
+        * Fixed CsvReader bug couldn't guess WKT when it was formatted without a space ("POINT(1 1)" instead of "POINT (1 1)")
+
 1.1
 ---
 

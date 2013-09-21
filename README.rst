@@ -18,7 +18,7 @@ Use maven to build, test, and package::
 
     mvn clean install
 
-The distribution can be found in target/geoscript-groovy-1.1-app/geoscript-groovy-1.1.
+The distribution can be found in target/geoscript-groovy-${version}-app/geoscript-groovy-${version}.
 
 Use
 ---
@@ -107,7 +107,7 @@ and then include the GeoScript Groovy dependency::
     <dependencies>
         <groupId>org.geoscript</groupId>
         <artifactId>geoscript-groovy</artifactId>
-        <version>1.1</version>
+        <version>1.2</version>
     </dependencies>
 
 License
