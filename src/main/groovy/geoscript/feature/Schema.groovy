@@ -1,5 +1,6 @@
 package geoscript.feature
 
+import org.geotools.feature.simple.SimpleFeatureBuilder
 import org.opengis.feature.simple.SimpleFeatureType
 import org.opengis.feature.type.AttributeDescriptor
 import org.opengis.feature.type.GeometryDescriptor
@@ -177,12 +178,29 @@ class Schema {
     }
 
     /**
+     * Create a Feature from this Schema with default values
+     * @return A new Feature
+     */
+    Feature feature() {
+        new Feature(DataUtilities.template(this.featureType))
+    }
+
+    /**
+     * Create a Feature from an existing Feature
+     * @param f The exiting Feature
+     * @return A new Feature
+     */
+    Feature feature(Feature f) {
+        feature(f.attributes, f.id)
+    }
+
+    /**
      * Create a Feature from this Schema with a List of values and the id.
      * @param The List of values
      * @param id The Feature ID (defaults to feature)
      * @return A new Feature
      */
-    Feature feature(List values, String id = "feature") {
+    Feature feature(List values, String id = SimpleFeatureBuilder.createDefaultFeatureId()) {
         new Feature(values, id, this)
     }
 
@@ -192,7 +210,7 @@ class Schema {
      * @param id The Feature ID (defaults to feature)
      * @return A new Feature
      */
-    Feature feature(Map values, String id = "feature") {
+    Feature feature(Map values, String id = SimpleFeatureBuilder.createDefaultFeatureId()) {
         new Feature(values, id, this)
     }
 
