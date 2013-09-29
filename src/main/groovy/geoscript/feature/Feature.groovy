@@ -233,6 +233,16 @@ class Feature {
     }
 
     /**
+     * Set the values of this Feature based on values from another Feature
+     * @param f The other Feature whose values we want
+     */
+    void set(Feature f) {
+        f.attributes.each {k,v ->
+            this.set(k,v)
+        }
+    }
+
+    /**
      * Get a Map of all attributes
      * @return A Map of all attributes
      */
