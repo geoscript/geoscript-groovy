@@ -108,6 +108,12 @@ class FeatureTestCase {
         assertEquals "Work", f1.get(s1.get("name"))
         f1.set(s1.get("name"), "Home")
         assertEquals "Home", f1.get(s1.get("name"))
+
+        Feature f2 = s1.feature([geom: new Point(121,-49), price: 15.6, name: "Test"])
+        f1.set(f2)
+        assertEquals f2['price'], f1['price'], 0.1
+        assertEquals f2['name'], f1['name']
+        assertEquals f2.geom.wkt, f1.geom.wkt
     }
 
     @Test void putAt() {
