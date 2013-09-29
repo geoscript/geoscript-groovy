@@ -22,4 +22,11 @@ class Memory extends Workspace {
         super(new MemoryDataStore())
     }
 
+    /**
+     * Get the format
+     * @return The workspace format name
+     */
+    String getFormat() {
+        return "Memory"
+    }
 }

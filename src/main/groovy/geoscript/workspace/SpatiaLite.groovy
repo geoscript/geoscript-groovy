@@ -31,6 +31,14 @@ class SpatiaLite extends Database {
     }
 
     /**
+     * Get the format
+     * @return The workspace format name
+     */
+    String getFormat() {
+        return "SpatiaLite"
+    }
+
+    /**
      * Create a new SpatiaLite DataStore from a name and directory
      */
     private static DataStore createDataStore(String name, File dir) {

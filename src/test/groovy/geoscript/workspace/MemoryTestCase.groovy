@@ -30,5 +30,9 @@ class MemoryTestCase {
         assertEquals shp.count(), l.count()
     }
 
+    @Test void format() {
+        Memory m = new Memory()
+        assertEquals "Memory", m.format
+    }
 }
 

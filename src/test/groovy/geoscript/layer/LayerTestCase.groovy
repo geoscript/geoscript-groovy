@@ -310,7 +310,7 @@ class LayerTestCase {
         Schema s1 = new Schema("facilities", [new Field("geom","Point", "EPSG:2927"), new Field("name","string"), new Field("price","float")])
         Layer layer1 = new Layer("facilities", s1)
         assertNotNull(layer1)
-        assertEquals "org.geotools.data.memory.MemoryDataStore", layer1.format
+        assertEquals "Memory", layer1.format
         assertEquals "facilities", layer1.name
         assertTrue(layer1.style instanceof geoscript.style.Shape)
 

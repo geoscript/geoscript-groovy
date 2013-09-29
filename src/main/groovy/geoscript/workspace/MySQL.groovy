@@ -25,6 +25,14 @@ class MySQL extends Database {
     }
 
     /**
+     * Get the format
+     * @return The workspace format name
+     */
+    String getFormat() {
+        return "MySQL"
+    }
+
+    /**
      * Create a new MySQL DataStore with a name, host, port, user, and passowrd
      */
     private static DataStore createDataStore(String name, String host, String port, String user, String password) {
