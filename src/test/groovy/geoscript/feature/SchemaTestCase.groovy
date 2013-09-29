@@ -90,6 +90,16 @@ class SchemaTestCase {
         assertTrue s1.has(s1.get("geom"))
     }
 
+    @Test void featureWithDefaultId() {
+        Schema schema = new Schema("parcels", [new Field("geom","Polygon", "EPSG:4326"), new Field("number","string")])
+        Feature feature = schema.feature([new Bounds(0,0,10,10).polygon, "123456"])
+        assertNotNull feature.id
+        assertTrue feature.id.length() > 10
+        feature = schema.feature([geom: new Bounds(0,0,10,10).polygon, number: "123456"])
+        assertNotNull feature.id
+        assertTrue feature.id.length() > 10
+    }
+
     @Test void feature() {
         Schema s1 = new Schema("houses", [new Field("geom","Point"), new Field("name","string"), new Field("price","float")])
         Feature f1 = s1.feature([new Point(111,-47), "House", 12.5],"house1")
@@ -99,6 +109,12 @@ class SchemaTestCase {
         Feature f2 = s1.feature(["geom": new Point(111,-47), "name": "House", "price": 12.5],"house1")
         assertNotNull(f2)
         assertEquals "houses.house1 geom: POINT (111 -47), name: House, price: 12.5", f2.toString()
+
+        Feature f3 = s1.feature()
+        assertNotNull(f3)
+        assertNull f3.geom
+        assertNull f3['name']
+        assertNull f3['price']
     }
 
     @Test void toStringTest() {
