@@ -148,15 +148,19 @@ class Workspace {
             }
         }
         Layer l = create(name, flds)
-        Cursor c = layer.getCursor()
-        while(true) {
-            def features = readFeatures(c, l.schema, chunk)
-            if (features.isEmpty()) {
-                break
-            }
-            l.fs.addFeatures(features)
-            if (features.size() < chunk) {
-                break
+        l.withWriter {geoscript.layer.Writer writer ->
+            Cursor c = layer.getCursor()
+            while(true) {
+                def features = readFeatures(c, l.schema, chunk)
+                if (features.isEmpty()) {
+                    break
+                }
+                new Cursor(features).each{Feature f->
+                    writer.add(f)
+                }
+                if (features.size() < chunk) {
+                    break
+                }
             }
         }
         l
@@ -169,7 +173,7 @@ class Workspace {
      * @param chunk The number of Features to be read
      * @return A GeoTools FeatureCollection
      */
-    private FeatureCollection readFeatures(Cursor cursor, Schema schema, int chunk) {
+    protected FeatureCollection readFeatures(Cursor cursor, Schema schema, int chunk) {
         int i = 0
         def features = new ListFeatureCollection(schema.featureType)
         while(cursor.hasNext() && i < chunk) {

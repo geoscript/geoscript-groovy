@@ -17,6 +17,7 @@ import org.geotools.data.FeatureStore
 import org.geotools.data.DefaultTransaction
 import org.geotools.data.transform.Definition
 import org.geotools.data.transform.TransformFactory
+import org.geotools.feature.DefaultFeatureCollection
 import org.geotools.feature.FeatureCollections
 import org.geotools.feature.FeatureCollection
 import org.geotools.feature.FeatureIterator
@@ -558,6 +559,41 @@ class Layer {
     }
 
     /**
+     * Get a Writer for this Layer
+     * @param options The named parameters
+     * <ul>
+     *   <li>batch: The number of features to write at one time (defaults to 1000)</li>
+     *   <li>transaction: The type of transaction: null, auto or autocommit, or default.  The default value
+     *      depends on the type of Layer.
+     *   </li>
+     * </ul>
+     * @return A Writer
+     */
+    Writer getWriter(Map options = [:]) {
+        new Writer(options, this)
+    }
+
+    /**
+     * Add Features to a Writer within a Closure that takes a Writer ready to adding Features.
+     * @param options The named parameters
+     * <ul>
+     *   <li>batch: The number of features to write at one time (defaults to 1000)</li>
+     *   <li>transaction: The type of transaction: null, auto or autocommit, or default.  The default value
+     *      depends on the type of Layer.
+     *   </li>
+     * </ul>
+     * @param c A Closure which takes one parameter, a Writer
+     */
+    void withWriter(Map options = [:], Closure c) {
+        Writer w = new Writer(options, this)
+        try {
+            c.call(w)
+        } finally {
+            w.close()
+        }
+    }
+
+    /**
      * Delete Features from the Layer
      * @param filer The Filter or Filter String to limit the Features to delete. Defaults to null.
      */
@@ -640,10 +676,7 @@ class Layer {
     void add(def o) {
         // If it is a List of Features, then add it inside of a Transaction
         if (o instanceof List && o.size() > 0 && (o.get(0) instanceof Feature || o.get(0) instanceof java.util.Map)) {
-            Transaction t = new DefaultTransaction("addTransaction")
-            try {
-                FeatureStore<SimpleFeatureType, SimpleFeature> store = (FeatureStore)fs
-                store.transaction = t
+            withWriter {Writer w ->
                 o.each{f->
                     if (f instanceof java.util.Map) {
                         f = this.schema.feature(f as java.util.Map)
@@ -653,44 +686,23 @@ class Layer {
                     } else if (f.schema != this.schema) {
                         f = this.schema.feature(f.attributes)
                     }
-                    FeatureCollection fc = FeatureCollections.newCollection()
-                    fc.add(f.f)
-                    store.addFeatures(fc)
+                    w.add(f)
                 }
-                t.commit()
-            }
-            catch (Exception e) {
-                e.printStackTrace()
-                t.rollback()
-            }
-            finally {
-                t.close()
-                fs.transaction = Transaction.AUTO_COMMIT
             }
         }
         // Else if it is a FeatureCollection
         else if (o instanceof FeatureCollection || o instanceof Cursor) {
-            Transaction t = new DefaultTransaction("addTransaction")
-            try {
-                FeatureStore<SimpleFeatureType, SimpleFeature> store = (FeatureStore)fs
-                store.transaction = t
+            withWriter{Writer w ->
                 int chunk = 1000
                 Cursor c = o instanceof FeatureCollection ? new Cursor(o) : o as Cursor
                 while(true) {
                     def features = readFeatures(c, this.schema, chunk)
                     if (features.isEmpty()) break
-                    store.addFeatures(features)
+                    new Cursor(features).each{Feature f ->
+                        w.add(f)
+                    }
                     if (features.size() < chunk) break
                 }
-                t.commit()
-            }
-            catch (Exception e) {
-                e.printStackTrace()
-                t.rollback()
-            }
-            finally {
-                t.close()
-                fs.transaction = Transaction.AUTO_COMMIT
             }
         }
         // Otherwise its a Feature or a List of values
@@ -707,7 +719,7 @@ class Layer {
             else {
                 f = this.schema.feature(o)
             }
-            FeatureCollection fc = FeatureCollections.newCollection()
+            FeatureCollection fc = new DefaultFeatureCollection()
             fc.add(f.f)
             fs.addFeatures(fc)
         }
@@ -815,11 +827,15 @@ class Layer {
         q.coordinateSystemReproject = projectedLayer.proj.crs
         FeatureCollection fc = fs.getFeatures(q)
         Cursor c = new Cursor(fc)
-        while(true) {
-            def features = readFeatures(c, projectedLayer.schema, chunk)
-            if (features.isEmpty()) break
-            projectedLayer.fs.addFeatures(features)
-            if (features.size() < chunk) break
+        projectedLayer.withWriter{ w ->
+            while(true) {
+                def features = readFeatures(c, projectedLayer.schema, chunk)
+                if (features.isEmpty()) break
+                new Cursor(features).each{f ->
+                    w.add(f)
+                }
+                if (features.size() < chunk) break
+            }
         }
         projectedLayer
     }

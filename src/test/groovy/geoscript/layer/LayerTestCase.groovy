@@ -2,7 +2,10 @@ package geoscript.layer
 
 import geoscript.filter.Expression
 import geoscript.workspace.Directory
+import org.junit.Rule
 import org.junit.Test
+import org.junit.rules.TemporaryFolder
+
 import static org.junit.Assert.*
 import geoscript.feature.Schema
 import geoscript.feature.Field
@@ -19,6 +22,9 @@ import geoscript.workspace.H2
  * The Layer UnitTest
  */
 class LayerTestCase {
+
+    @Rule
+    public TemporaryFolder folder = new TemporaryFolder();
 
     @Test void eachFeature() {
         Layer layer = new Shapefile(new File(getClass().getClassLoader().getResource("states.shp").toURI()))
@@ -742,6 +748,39 @@ class LayerTestCase {
         assertTrue(features2[2].geom instanceof Polygon)
         assertEquals(features1[2].get("name").toString().toUpperCase(),  features2[2].get("name"))
         assertEquals(features1[2].get("price") * 10,  features2[2].get("price"), 0.1)
+    }
+
+    @Test void getWriter() {
+        int numPoints = 100
+        Geometry geom = new Bounds(0,0,50,50).geometry
+        List pts = geom.createRandomPoints(geom, numPoints).points
+        Workspace w = new Directory(folder.newFolder("points"))
+        Schema s = new Schema("points", [new Field("the_geom","Point", "EPSG:4326"), new Field("id","int")])
+        Layer layer = w.create(s)
+        Writer writer = layer.getWriter(autoCommit: false, batch: 75)
+        try {
+            pts.eachWithIndex{Point pt, int i ->
+                writer.add(new Feature([the_geom: pt, id: i], "point${i}"))
+            }
+        } finally {
+            writer.close()
+        }
+        assertEquals numPoints, layer.count
+    }
+
+    @Test void withWriter() {
+        int numPoints = 100
+        Geometry geom = new Bounds(0,0,50,50).geometry
+        List pts = geom.createRandomPoints(geom, numPoints).points
+        Workspace w = new Directory(folder.newFolder("points"))
+        Schema s = new Schema("points", [new Field("the_geom","Point", "EPSG:4326"), new Field("id","int")])
+        Layer layer = w.create(s)
+        layer.withWriter(batch: 45) {Writer writer ->
+            pts.eachWithIndex{Point pt, int i ->
+                writer.add(new Feature([the_geom: pt, id: i], "point${i}"))
+            }
+        }
+        assertEquals numPoints, layer.count
     }
 }
 
