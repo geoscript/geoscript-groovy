@@ -42,6 +42,14 @@ class PostGIS extends Database {
     }
 
     /**
+     * Get the format
+     * @return The workspace format name
+     */
+    String getFormat() {
+        return "PostGIS"
+    }
+
+    /**
      * Create a new PostGIS DataStore with a name, host, port, schema user, pasoword, and whether to estimate the extent or not
      */
     private static DataStore createDataStore(String name, String host, String port, String schema, String user, String password, boolean estimatedExtent) {
