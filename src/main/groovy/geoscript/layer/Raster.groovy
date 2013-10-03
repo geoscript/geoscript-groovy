@@ -519,6 +519,20 @@ class Raster {
     }
 
     /**
+     * Crop this Raster
+     * @param geometry The Geometry
+     * @return A new Raster
+     */
+    Raster crop(Geometry geometry) {
+        def processor = new CoverageProcessor()
+        def params = processor.getOperation("CoverageCrop").parameters
+        params.parameter("Source").value = coverage
+        params.parameter("ROI").value = geometry.g
+        def newCoverage = processor.doOperation(params)
+        new Raster(newCoverage)
+    }
+
+    /**
      * Crop this Raster using pixel coordinates
      * @param x1 The x of the min pixel
      * @param y1 The y of the min pixel
