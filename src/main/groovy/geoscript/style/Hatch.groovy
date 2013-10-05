@@ -33,6 +33,11 @@ class Hatch extends Symbolizer {
     Stroke stroke
 
     /**
+     * The Fill
+     */
+    Fill fill
+
+    /**
      * The size
      */
     Expression size = new Expression(8)
@@ -66,6 +71,40 @@ class Hatch extends Symbolizer {
         super()
         setName(name)
         this.stroke = stroke
+        this.size = new Expression(size)
+    }
+
+    /**
+     * Create a new Hatch with Fill and Stroke.
+     * <p><blockquote><pre>
+     * def hatch = new Hatch("times", new Fill("blue"), new Stroke("wheat", 1.2, [5,2], "square", "bevel"), 12.2)
+     * </pre></blockquote></p>
+     * @param name (vertline, horline, slash, backslash, plus, times)
+     * @param fill A Fill
+     * @param stroke A Stroke
+     * @param size The size
+     */
+    Hatch(def name, Fill fill, Stroke stroke, def size) {
+        super()
+        setName(name)
+        this.fill = fill
+        this.stroke = stroke
+        this.size = new Expression(size)
+    }
+
+    /**
+     * Create a new Hatch with a Fill but no Stroke.
+     * <p><blockquote><pre>
+     * def hatch = new Hatch("times", new Fill("wheat"), 12.2)
+     * </pre></blockquote></p>
+     * @param name (vertline, horline, slash, backslash, plus, times)
+     * @param fill A Fill
+     * @param size The size
+     */
+    Hatch(def name, Fill fill, def size) {
+        super()
+        setName(name)
+        this.fill = fill
         this.size = new Expression(size)
     }
 
@@ -123,7 +162,14 @@ class Hatch extends Symbolizer {
     protected Graphic createHatch() {
         Mark mark = styleFactory.createMark()
         mark.wellKnownName = name.expr
-        mark.stroke = stroke.createStroke()
+        if (stroke) {
+            mark.stroke = stroke.createStroke()
+        } else {
+            mark.stroke = null
+        }
+        if (fill) {
+            mark.fill = fill.createFill()
+        }
 
         Graphic graphic = styleBuilder.createGraphic()
         graphic.graphicalSymbols().clear()
@@ -138,7 +184,7 @@ class Hatch extends Symbolizer {
      * @return The string representation
      */
     String toString() {
-        buildString("Hatch", ['name': name, 'stroke': stroke, 'size': size])
+        buildString("Hatch", ['name': name, 'fill': fill, 'stroke': stroke, 'size': size])
     }
 }
 

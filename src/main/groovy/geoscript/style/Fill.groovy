@@ -105,6 +105,37 @@ class Fill extends Symbolizer {
     }
 
     /**
+     * Compose this Fill with a Hatch pattern that has a Fill and Stroke.
+     * <p><blockquote><pre>
+     * def f = new Fill().hatch('slash', new Fill("white"), new Stroke("blue",0.1), 8)
+     * </pre></blockquote></p>
+     * @param name The name of the hatch pattern
+     * @param fill The Fill
+     * @param stroke The Stroke
+     * @param size The size
+     * @return This Fill
+     */
+    Fill hatch(String name, Fill fill, Stroke stroke, def size = 8) {
+        this.hatch = new Hatch(name, fill, stroke, size)
+        this
+    }
+
+    /**
+     * Compose this Fill with a Hatch pattern that has a Fill but no Stroke
+     * <p><blockquote><pre>
+     * def f = new Fill().hatch('slash', new Fill("wheat"), 8)
+     * </pre></blockquote></p>
+     * @param name The name of the hatch pattern
+     * @param fill The Fill
+     * @param size The size
+     * @return This Fill
+     */
+    Fill hatch(String name, Fill fill, def size = 8) {
+        this.hatch = new Hatch(name, fill, size)
+        this
+    }
+
+    /**
      * Set the color
      * @param color The color (#ffffff, red)
      */

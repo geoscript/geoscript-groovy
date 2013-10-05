@@ -18,7 +18,7 @@ class HatchTestCase {
         assertEquals "#000000", hatch.stroke.color.value
         assertEquals 1.0, hatch.stroke.width.value, 0.1
         assertEquals 8, hatch.size.value, 0.1
-        assertEquals "Hatch(name = shape://horline, stroke = Stroke(color = #000000, width = 1), size = 8)", hatch.toString()
+        assertEquals "Hatch(name = shape://horline, fill = null, stroke = Stroke(color = #000000, width = 1), size = 8)", hatch.toString()
 
         def graphic = hatch.createHatch()
         assertEquals "shape://horline", graphic.graphicalSymbols()[0].wellKnownName.value
@@ -35,7 +35,7 @@ class HatchTestCase {
         assertEquals "square", hatch.stroke.cap.value
         assertEquals "bevel", hatch.stroke.join.value
         assertEquals 12.2, hatch.size.value, 0.1
-        assertEquals "Hatch(name = shape://times, stroke = Stroke(color = #f5deb3, width = 1.2), size = 12.2)", hatch.toString()
+        assertEquals "Hatch(name = shape://times, fill = null, stroke = Stroke(color = #f5deb3, width = 1.2), size = 12.2)", hatch.toString()
 
         graphic = hatch.createHatch()
         assertEquals "shape://times", graphic.graphicalSymbols()[0].wellKnownName.value
@@ -58,7 +58,7 @@ class HatchTestCase {
         assertEquals "square", hatch.stroke.cap.value
         assertEquals "bevel", hatch.stroke.join.value
         assertEquals 12.2, hatch.size.value, 0.1
-        assertEquals "Hatch(name = shape://times, stroke = Stroke(color = #f5deb3, width = 1.2), size = 12.2)", hatch.toString()
+        assertEquals "Hatch(name = shape://times, fill = null, stroke = Stroke(color = #f5deb3, width = 1.2), size = 12.2)", hatch.toString()
 
         graphic = hatch.createHatch()
         assertEquals "shape://times", graphic.graphicalSymbols()[0].wellKnownName.value
@@ -77,6 +77,23 @@ class HatchTestCase {
         assertEquals "#ff0000", hatch.stroke.color.value
         assertEquals 1.2, hatch.stroke.width.value, 0.1
         assertEquals 12, hatch.size.value, 0.1
-        assertEquals "Hatch(name = shape://slash, stroke = Stroke(color = #ff0000, width = 1.2), size = 12)", hatch.toString()
+        assertEquals "Hatch(name = shape://slash, fill = null, stroke = Stroke(color = #ff0000, width = 1.2), size = 12)", hatch.toString()
+
+        // Hatch with Fill but no stroke
+        hatch = new Hatch("circle", new Fill("red"), 8)
+        assertEquals "circle", hatch.name.value
+        assertEquals "#ff0000", hatch.fill.color.value
+        assertNull hatch.stroke
+        assertEquals 8, hatch.size.value, 0.1
+        assertEquals "Hatch(name = circle, fill = Fill(color = #ff0000, opacity = 1.0), stroke = null, size = 8)", hatch.toString()
+
+        // Hatch with Fill and stroke
+        hatch = new Hatch("circle", new Fill("red"), new Stroke("wheat",0.1), 10)
+        assertEquals "circle", hatch.name.value
+        assertEquals "#ff0000", hatch.fill.color.value
+        assertEquals "#f5deb3", hatch.stroke.color.value
+        assertEquals 0.1, hatch.stroke.width.value, 0.1
+        assertEquals 10, hatch.size.value, 0.1
+        assertEquals "Hatch(name = circle, fill = Fill(color = #ff0000, opacity = 1.0), stroke = Stroke(color = #f5deb3, width = 0.1), size = 10)", hatch.toString()
     }
 }
