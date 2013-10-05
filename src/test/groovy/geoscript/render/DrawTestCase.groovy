@@ -30,7 +30,7 @@ class DrawTestCase {
         Geometry geom = new Point(0,0).buffer(0.2)
         File file = File.createTempFile("draw_geometry_",".png")
         println "Drawing Geometry: ${file}"
-        draw(geom, style: sym, bounds: geom.bounds.scale(1.1), size: [250,250], out: file, format: "png")
+        draw(geom, style: sym, bounds: geom.bounds.scale(1.1), size: [250,250], out: file, format: "png", backgroundColor: "white")
     }
 
     @Test void drawGeometries() {

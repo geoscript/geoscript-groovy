@@ -33,6 +33,7 @@ class Draw {
      *  <li>out = The OutputStream, File, or File name.  If null (which is the default) a GUI will be opened.</li>
      *  <li>format = The format ("jpeg", "png", "pdf", "svg")</li>
      *  <li>proj = The Projection</li>
+     *  <li>backgroundColor = The background color (defaults to null)</li>
      * </ul>
      * @param geometry The Geometry
      */
@@ -50,6 +51,7 @@ class Draw {
      *  <li>out = The OutputStream, File, or File name.  If null (which is the default) a GUI will be opened.</li>
      *  <li>format = The format ("jpeg", "png", "pdf", "svg")</li>
      *  <li>proj = The Projection</li>
+     *  <li>backgroundColor = The background color (defaults to null)</li>
      * </ul>
      * @param geometries The List of Geometries
      */
@@ -71,6 +73,7 @@ class Draw {
      *  <li>out = The OutputStream, File, or File name.  If null (which is the default) a GUI will be opened.</li>
      *  <li>format = The format ("jpeg", "png", "pdf", "svg")</li>
      *  <li>proj = The Projection</li>
+     *  <li>backgroundColor = The background color (defaults to null)</li>
      * </ul>
      * @param feature The Feature
      */
@@ -91,6 +94,7 @@ class Draw {
      *  <li>out = The OutputStream, File, or File name.  If null (which is the default) a GUI will be opened.</li>
      *  <li>format = The format ("jpeg", "png", "pdf", "svg")</li>
      *  <li>proj = The Projection</li>
+     *  <li>backgroundColor = The background color (defaults to null)</li>
      * </ul>
      * @param layer The Layer
      */
@@ -102,7 +106,8 @@ class Draw {
             width: size[0],
             height: size[1],
             type: options.get("format","png"),
-            proj: options.get("proj", layer.proj)
+            proj: options.get("proj", layer.proj),
+            backgroundColor: options.get("backgroundColor")
         )
         def out = options.get("out", null)
         // Display in a Window
@@ -231,6 +236,7 @@ class Draw {
      *  <li>out = The OutputStream, File, or File name.  If null (which is the default) a GUI will be opened.</li>
      *  <li>imageType = The format ("jpeg", "png", "gif")</li>
      *  <li>proj = The Projection</li>
+     *  <li>backgroundColor = The background color (defaults to null)</li>
      * </ul>
      * @param layer The Layer
      * @return A BufferedImage
@@ -243,7 +249,8 @@ class Draw {
             width: size[0],
             height: size[1],
             type: options.get("imageType","png"),
-            proj: options.get("proj", layer.proj)
+            proj: options.get("proj", layer.proj),
+            backgroundColor: options.get("backgroundColor")
         )
         map.renderToImage()
     }
@@ -258,6 +265,7 @@ class Draw {
      *  <li>out = The OutputStream, File, or File name.  If null (which is the default) a GUI will be opened.</li>
      *  <li>imageType = The format ("jpeg", "png", "gif")</li>
      *  <li>proj = The Projection</li>
+     *  <li>backgroundColor = The background color (defaults to null)</li>
      * </ul>
      * @param raster The Raster
      * @return A BufferedImage
@@ -270,7 +278,8 @@ class Draw {
             width: size[0],
             height: size[1],
             type: options.get("imageType","png"),
-            proj: options.get("proj", raster.proj)
+            proj: options.get("proj", raster.proj),
+            backgroundColor: options.get("backgroundColor")
         )
         map.renderToImage()
     }
