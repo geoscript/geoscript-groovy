@@ -152,6 +152,32 @@ class Fill extends Symbolizer {
     }
 
     /**
+     * Add randomized fill. See http://osgeo-org.1560.x6.nabble.com/Randomized-fill-landed-on-trunk-td5081889.html
+     * for more details.
+     * @param params Named parameters may include:
+     * <ul>
+     *     <li>random: true | false</li>
+     *     <li>seed: The seed generator value (defaults to 0)</li>
+     *     <li>symbolCount: The number of symbols (defaults to 16)</li>
+     *     <li>tileSize: The size of the square area (defaults to 256)</li>
+     *     <li>spaceAround: The min distance between symbols (defaults to 0)</li>
+     *     <li>rotation: Whether to rotate symbols randomly (defaults to false) </li>
+     *     <li>grid: Whether symbols are randomized around centers of a grid (defaults to true)</li>
+     * </ul>
+     * @return This Fill
+     */
+    Fill random(Map params = [:]) {
+        options["random"] = params.get("random", false) as String
+        options["random-seed"] = params.get("seed", 0)  as String
+        options["random-symbol-count"] = params.get("symbolCount", 16) as String
+        options["random-tile-size"] = params.get("tileSize", 256) as String
+        options["random-space-around"] = params.get("spaceAround", 0) as String
+        options["random-rotation"] = params.get("rotation", false) as String
+        options["random-grid"] = params.get("grid", true) as String
+        this
+    }
+
+    /**
      * Create the GeoTools Fill object
      * @return A GeoTools Fill
      */

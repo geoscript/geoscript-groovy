@@ -1,5 +1,8 @@
 package geoscript.style
 
+import geoscript.layer.Shapefile
+import geoscript.render.Draw
+import geoscript.style.io.SLDReader
 import org.junit.Test
 import static org.junit.Assert.*
 import geoscript.filter.Expression
@@ -59,6 +62,17 @@ class FillTestCase {
         fill = new Fill(color: "red", opacity:0.22)
         assertEquals "#ff0000", fill.color.value
         assertEquals 0.22, fill.opacity.value, 0.1
+
+        // Random fill
+        fill = new Fill(null).hatch("slash", new Stroke("#000088",4,null,"round"), 8).random([
+                random:true, symbolCount: "36", seed: "5", tileSize: "100", rotation:true, grid: true
+        ])
+        assertEquals fill.options["random-seed"], "5"
+        assertEquals fill.options["random-grid"], "true"
+        assertEquals fill.options["random"], "true"
+        assertEquals fill.options["random-tile-size"], "100"
+        assertEquals fill.options["random-space-around"], "0"
+        assertEquals fill.options["random-symbol-count"], "36"
     }
 
     @Test void apply() {
@@ -89,6 +103,20 @@ class FillTestCase {
         Fill fill = new Fill(new Function("Recode(SUB_REGION,'N Eng','#6495ED')"))
         assertNotNull fill
         assertTrue(fill.color instanceof Function)
+    }
+
+    @Test void randomizedFill() {
+        File shpFile = new File(getClass().getClassLoader().getResource("states.shp").toURI())
+        Shapefile shp = new Shapefile(shpFile)
+        File file = File.createTempFile("randomized_fill",".png")
+        println file
+        shp.style = (new Fill(null).hatch("circle", new Fill("#aaaaaa"), 1).random([random:true, symbolCount: "50", tileSize: "100"]).where("PERSONS < 2000000")) +
+                (new Fill(null).hatch("circle", new Fill("#aaaaaa"), 2).random([random:true, symbolCount: "200", tileSize: "100"]).where("PERSONS BETWEEN 2000000 AND 4000000")) +
+                (new Fill(null).hatch("circle", new Fill("#aaaaaa"), 2).random([random:true, symbolCount: "700", tileSize: "100"]).where("PERSONS > 4000000")) +
+                (new Stroke("black",0.1) + new Label(property: "STATE_ABBR", font: new Font(family: "Times New Roman", style: "normal", size: 14)).point([0.5,0.5]).halo(new Fill("#FFFFFF"),2))
+        Draw.draw(shp, out: file, backgroundColor: "white")
+        assertTrue file.exists()
+        assertTrue file.size() > 0
     }
 
 }
