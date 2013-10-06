@@ -1,7 +1,9 @@
 package geoscript.geom
 
+import com.vividsolutions.jts.algorithm.Angle
 import com.vividsolutions.jts.geom.Point as JtsPoint
 import com.vividsolutions.jts.geom.Coordinate
+import geoscript.proj.Geodetic
 
 /**
  * A Point Geometry.
@@ -62,5 +64,33 @@ class Point extends Geometry {
      */
     MultiPoint plus(Point point) {
         new MultiPoint(*[this, point])
+    }
+
+    /**
+     * Get the angle between this Point and another Point
+     * @param other The other Point
+     * @param type The type of units (degrees or radians, the default is degrees)
+     * @return The angle
+     */
+    double getAngle(Point other, String type = "degrees") {
+        double angle = Angle.angle(this.g.coordinate, other.g.coordinate)
+        if (type.equalsIgnoreCase("degrees")) {
+            Angle.toDegrees(angle)
+        } else {
+            angle
+        }
+    }
+
+    /**
+     * Get the azimuth between this Point and the other Point.
+     * See geoscript.proj.Geodetic for more details.
+     * @param other The other Point
+     * @param ellipsoid The ellipsoid (defaults to wgs84)
+     * @return The azimuth
+     */
+    double getAzimuth(Point other, String ellipsoid = "wgs84") {
+        Geodetic geod = new Geodetic(ellipsoid)
+        Map result = geod.inverse(this, other)
+        result.forwardAzimuth
     }
 }
