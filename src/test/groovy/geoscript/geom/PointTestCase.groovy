@@ -24,5 +24,29 @@ class PointTestCase {
         assertEquals(111, p1.x, 0.0)
         assertEquals(-47, p1.y, 0.0)
     }
-    
+
+    @Test void getAngle() {
+        // Default is degrees
+        assertEquals(45, new Point(0,0).getAngle(new Point(10,10)), 0.1)
+        assertEquals(-45, new Point(0,0).getAngle(new Point(10,-10)), 0.1)
+        assertEquals(-135, new Point(0,0).getAngle(new Point(-10,-10)), 0.1)
+        assertEquals(135, new Point(0,0).getAngle(new Point(-10,10)), 0.1)
+        // Degrees
+        assertEquals(45, new Point(0,0).getAngle(new Point(10,10), "degrees"), 0.1)
+        assertEquals(-45, new Point(0,0).getAngle(new Point(10,-10), "degrees"), 0.1)
+        assertEquals(-135, new Point(0,0).getAngle(new Point(-10,-10), "degrees"), 0.1)
+        assertEquals(135, new Point(0,0).getAngle(new Point(-10,10), "degrees"), 0.1)
+        // Radians
+        assertEquals(0.7853, new Point(0,0).getAngle(new Point(10,10), "radians"), 0.001)
+        assertEquals(-0.7853, new Point(0,0).getAngle(new Point(10,-10), "radians"), 0.001)
+        assertEquals(-2.3561, new Point(0,0).getAngle(new Point(-10,-10), "radians"), 0.001)
+        assertEquals(2.3561, new Point(0,0).getAngle(new Point(-10,10), "radians"), 0.001)
+    }
+
+    @Test void getAzimuth() {
+        assertEquals(44.75, new Point(0,0).getAzimuth(new Point(10,10)), 0.01)
+        assertEquals(135.24, new Point(0,0).getAzimuth(new Point(10,-10)), 0.1)
+        assertEquals(-135.24, new Point(0,0).getAzimuth(new Point(-10,-10)), 0.1)
+        assertEquals(-44.75, new Point(0,0).getAzimuth(new Point(-10,10)), 0.1)
+    }
 }
