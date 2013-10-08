@@ -151,7 +151,7 @@ class CsvReader implements Reader {
      * <ul>
      *     <li>workspace: The Workspace used to create the Layer (defaults to Memory)</li>
      *     <li>projection: The Projection assigned to the Layer (defaults to null)</li>
-     *     <li>name: The name of the Layer (defaults to geojson)</li>
+     *     <li>name: The name of the Layer (defaults to csv)</li>
      * </ul>
      * @param input An InputStream
      * @return A GeoScript Layer
@@ -166,7 +166,7 @@ class CsvReader implements Reader {
      * <ul>
      *     <li>workspace: The Workspace used to create the Layer (defaults to Memory)</li>
      *     <li>projection: The Projection assigned to the Layer (defaults to null)</li>
-     *     <li>name: The name of the Layer (defaults to geojson)</li>
+     *     <li>name: The name of the Layer (defaults to csv)</li>
      * </ul>
      * @param file A File
      * @return A GeoScript Layer
@@ -181,7 +181,7 @@ class CsvReader implements Reader {
      * <ul>
      *     <li>workspace: The Workspace used to create the Layer (defaults to Memory)</li>
      *     <li>projection: The Projection assigned to the Layer (defaults to null)</li>
-     *     <li>name: The name of the Layer (defaults to geojson)</li>
+     *     <li>name: The name of the Layer (defaults to csv)</li>
      * </ul>
      * @param str A String
      * @return A GeoScript Layer
