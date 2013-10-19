@@ -10,15 +10,14 @@ import geoscript.filter.Filter
 import geoscript.style.Style
 import geoscript.style.Symbolizer
 import org.geotools.data.FeatureSource
-import org.geotools.data.DefaultQuery
 import org.geotools.data.Query
 import org.geotools.data.Transaction
 import org.geotools.data.FeatureStore
 import org.geotools.data.DefaultTransaction
 import org.geotools.data.transform.Definition
 import org.geotools.data.transform.TransformFactory
+import org.geotools.factory.Hints
 import org.geotools.feature.DefaultFeatureCollection
-import org.geotools.feature.FeatureCollections
 import org.geotools.feature.FeatureCollection
 import org.geotools.feature.FeatureIterator
 import org.geotools.process.vector.VectorToRasterProcess
@@ -330,15 +329,33 @@ class Layer {
      * @return The number of Features in the Layer
      */
     int count(def filter = null) {
+        count([filter: filter])
+    }
+
+    /**
+     * Count the number of Features using named parameters
+     * @param options The named parameters
+     * <ul>
+     *     <li>filter = A Filter or CQL String</li>
+     *     <li>params = A Map of parameters based to the query</li>
+     * </ul>
+     * @return The number of Features in the Layer
+     */
+    int count(Map options) {
+        def filter = options.get("filter")
+        def params = options.get("params")
         Filter f = (filter == null) ? Filter.PASS : new Filter(filter)
-        int count = fs.getCount(new DefaultQuery(getName(), f.filter))
+        Query q = new Query(getName(), f.filter)
+        if (params != null) {
+            q.hints = new Hints(Hints.VIRTUAL_TABLE_PARAMETERS, params)
+        }
+        int count = fs.getCount(q)
         if (count == -1) {
             count = 0
             // count manually
             getFeatures(f).each{count++}
         }
         return count
-
     }
 
     /**
@@ -355,11 +372,29 @@ class Layer {
      * @return The Bounds of the Features in the Layer
      */
     Bounds bounds(def filter = null) {
+        bounds([filter: filter])
+    }
+
+    /**
+     * Get the Bounds of Layer using named parameters
+     * @param options The named parameters
+     * <ul>
+     *     <li>filter = A Filter or a CQL String</li>
+     *     <li>params = A Map of parameters to plugin into a query</li>
+     * </ul>
+     * @return The Bounds
+     */
+    Bounds bounds(Map options) {
+        def filter = options.get("filter")
+        Map params = options.get("params")
         Filter f = (filter == null) ? Filter.PASS : new Filter(filter)
-        def query = new DefaultQuery(getName(), f.filter)
-        Envelope e = fs.getBounds(query)
+        Query q = new Query(getName(), f.filter)
+        if (params != null) {
+            q.hints = new Hints(Hints.VIRTUAL_TABLE_PARAMETERS, params)
+        }
+        Envelope e = fs.getBounds(q)
         if (!e) {
-            e = fs.getFeatures(query).bounds
+            e = fs.getFeatures(q).bounds
         }
         return new Bounds(e)
     }
@@ -378,7 +413,27 @@ class Layer {
      * @param closure A Closure which takes a Feature
      */
     void eachFeature(def filter = null, Closure closure) {
-        Cursor c = getCursor(filter)
+        eachFeature([filter: filter], closure)
+    }
+
+    /**
+     * Call the Closure for each Feature.
+     * @param options The named parameters
+     * * <ul>
+     *  <li>filter = The Filter or Filter String to limit the Features. Defaults to null.</li>
+     *  <li>sort = A List of Lists that define the sort order [[Field or Field name, "ASC" or "DESC"],...]. Not all Layers
+     *  support sorting!</li>
+     *  <li>max= The maximum number of Features to include in the Cursor</li>
+     *  <li>start = The index of the record to start the cursor at.  Together with maxFeatures this simulates paging.
+     *      Not all Layers support the start index and paging!
+     *  </li>
+     *  <li>fields = A List of Fields or Field names to include.  Used to select only a subset of Fields.</li>
+     *  <li>params = A Map of parameters to plug into the query.</li>
+     * </ul>
+     * @param closure The Closure which takes a Feature
+     */
+    void eachFeature(Map options, Closure closure) {
+        Cursor c = getCursor(options)
         try {
             while(c.hasNext()) {
                 Feature f = c.next()
@@ -395,8 +450,28 @@ class Layer {
      * @param closure A Closure which takes a Feature and returns a value
      */
     List collectFromFeature(def filter = null, Closure closure) {
+        collectFromFeature([filter: filter], closure)
+    }
+
+    /**
+     * Collect values from the Features of a Layer
+     * @param options The named parameters
+     * * <ul>
+     *  <li>filter = The Filter or Filter String to limit the Features. Defaults to null.</li>
+     *  <li>sort = A List of Lists that define the sort order [[Field or Field name, "ASC" or "DESC"],...]. Not all Layers
+     *  support sorting!</li>
+     *  <li>max= The maximum number of Features to include in the Cursor</li>
+     *  <li>start = The index of the record to start the cursor at.  Together with maxFeatures this simulates paging.
+     *      Not all Layers support the start index and paging!</li>
+     *  <li>fields = A List of Fields or Field names to include.  Used to select only a subset of Fields.</li>
+     *  <li>params = A Map of parameters to plug into the query.</li>
+     * </ul>
+     * @param closure The Closure which takes a Feature and returns a value
+     * @return
+     */
+    List collectFromFeature(Map options, Closure closure) {
         List results = []
-        Cursor c = getCursor(filter)
+        Cursor c = getCursor(options)
         try {
             while(c.hasNext()) {
                 Feature f = c.next()
@@ -407,18 +482,40 @@ class Layer {
         }
         results
     }
-    
+
     /**
      * Get a List of Features
      * @param filer The Filter or Filter String to limit the Features used to construct the bounds. Defaults to null.
      * @param transform The Closure used to modify the Features.  Defaults to null.
      * @param sort A List of Lists that define the sort order [[Field or Field name, "ASC" or "DESC"],...]. Not all Layers
      * support sorting!
+     * @param params A Map of parameters to plug into the query.
      * @return A List of Features
      */
-    List<Feature> getFeatures(def filter = null, Closure transform = null, List sort = null) {
+    List<Feature> getFeatures(def filter = null, Closure transform = null, List sort = null, Map params = null) {
+        getFeatures([filter:filter, transform: transform, sort:sort, params:params])
+    }
+
+    /**
+     * Get a List of Features
+     * @param options The named parameters
+     * <ul>
+     *  <li>transform = The Closure used to modify the Features takes a Feature and returns a Feature</li>
+     *  <li>filter = The Filter or Filter String to limit the Features. Defaults to null.</li>
+     *  <li>sort = A List of Lists that define the sort order [[Field or Field name, "ASC" or "DESC"],...]. Not all Layers
+     *  support sorting!</li>
+     *  <li>max= The maximum number of Features to include in the Cursor</li>
+     *  <li>start = The index of the record to start the cursor at.  Together with maxFeatures this simulates paging.
+     * Not all Layers support the start index and paging!</li>
+     *  <li>fields = A List of Fields or Field names to include.  Used to select only a subset of Fields.</li>
+     *  <li>params = A Map of parameters to plug into the query.</li>
+     * </ul>
+     * @return A List of Features
+     */
+    List<Feature> getFeatures(Map options) {
+        Closure transform = options.get("transform")
         List<Feature> features = []
-        Cursor c = getCursor(filter, sort)
+        Cursor c = getCursor(options)
         while(c.hasNext()) {
             Feature f = c.next()
             def result = null
@@ -447,13 +544,14 @@ class Layer {
      *  <li>start = The index of the record to start the cursor at.  Together with maxFeatures this simulates paging.
      * Not all Layers support the start index and paging!</li>
      *  <li>fields = A List of Fields or Field names to include.  Used to select only a subset of Fields.</li>
+     *  <li>params = A Map of parameters to plug into the query.</li>
      * </ul>
      * @return A Cursor
      */
     Cursor getCursor(Map options) {
         getCursor(options.get("filter", null), options.get("sort", null),
             options.get("max",-1), options.get("start", -1),options.get("fields", null),
-            options.get("sourceProj", null), options.get("destProj", null))
+            options.get("sourceProj", null), options.get("destProj", null), options.get("params", null))
     }
 
     /**
@@ -465,12 +563,16 @@ class Layer {
      * @param start The zero based index of the record to start the cursor at.  Together with maxFeatures this simulates paging.
      * Not all Layers support the start index and paging!
      * @param fields A List of Fields or Field names to include.  Used to select only a subset of Fields.
+     * @param params A Map of parameters to plug into the query.
      * @return A Cursor
      */
-    Cursor getCursor(def filter = null, List sort = null, int max = -1, int start = -1, List fields = null, def sourceProj = null, def destProj = null) {
+    Cursor getCursor(def filter = null, List sort = null, int max = -1, int start = -1, List fields = null, def sourceProj = null, def destProj = null, def params = null) {
         Map cursorOptions = [:]
         Filter f = (filter == null) ? Filter.PASS : new Filter(filter)
-        DefaultQuery q = new DefaultQuery(getName(), f.filter)
+        Query q = new Query(getName(), f.filter)
+        if (params != null) {
+            q.hints = new Hints(Hints.VIRTUAL_TABLE_PARAMETERS, params)
+        }
         if (fields != null && fields.size() > 0) {
             q.propertyNames = ((fields[0] instanceof Field) ? fields*.name : fields) as String[]
         }
@@ -543,6 +645,7 @@ class Layer {
      * <ul>
      *     <li>filter = A geoscript.filter.Filter or CQL String</li>
      *     <li>sort = A String (FIELD ASC | DESC) or List of Strings</li>
+     *     <li>params = A Map of parameters to plugin into the query</li>
      * </ul>
      * @return
      */
@@ -552,7 +655,8 @@ class Layer {
         if (sort != null && !(sort instanceof List)) {
             sort = [sort]
         }
-        Cursor c = getCursor(filter: filter, sort: sort)
+        Map params = options.get("params")
+        Cursor c = getCursor(filter: filter, sort: sort, params: params)
         Feature f = c.next()
         c.close()
         f
@@ -873,7 +977,7 @@ class Layer {
         Filter f = (filter == null) ? Filter.PASS : new Filter(filter)
         Schema s = new Schema(newName, this.schema.fields, this.schema.uri)
         Layer l = this.workspace.create(s)
-        DefaultQuery q = new DefaultQuery(getName(), f.filter)
+        Query q = new Query(getName(), f.filter)
         FeatureCollection fc = this.fs.getFeatures(q)
         FeatureIterator i = fc.features()
         while(i.hasNext()) {
@@ -901,7 +1005,7 @@ class Layer {
             filters += "${attr} <= ${high}"
         }
         Filter filter = filters.size() > 0 ? new Filter(filters.join(" AND ")) : Filter.PASS
-        def query = new DefaultQuery(this.name)
+        def query = new Query(this.name)
         query.filter = filter.filter
         def min = null
         def max = null

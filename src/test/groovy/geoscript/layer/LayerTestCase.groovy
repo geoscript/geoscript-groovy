@@ -40,6 +40,11 @@ class LayerTestCase {
             name = f.get("STATE_NAME")
         })
         assertEquals "Maryland", name
+
+        layer.eachFeature(filter: "STATE_NAME = 'Oregon'") {f ->
+            name = f.get("STATE_NAME")
+        }
+        assertEquals "Oregon", name
     }
 
     @Test void collectFromFeature() {
@@ -55,6 +60,12 @@ class LayerTestCase {
         })
         assertEquals 1, results.size()
         assertEquals "Utah", results[0]
+
+        results = layer.collectFromFeature(filter: "STATE_NAME = 'Washington'") {f ->
+            f.get("STATE_NAME")
+        }
+        assertEquals 1, results.size()
+        assertEquals "Washington", results[0]
     }
     
     @Test void getProjection() {
@@ -82,6 +93,7 @@ class LayerTestCase {
         assertEquals 1, layer2.count(new Filter("STATE_NAME='Washington'"))
         assertEquals 1, layer2.count("STATE_NAME='Washington'")
         assertEquals 0, layer2.count(new Filter("STATE_NAME='BAD_STATE_NAME'"))
+        assertEquals 1, layer2.count(filter: "STATE_NAME='Oregon'")
     }
 
     @Test void add() {
@@ -176,7 +188,8 @@ class LayerTestCase {
         Layer layer1 = new Layer("facilities", s1)
         layer1.add(new Feature([new Point(111,-47), "House", 12.5], "house1", s1))
         List<Feature> features = layer1.features
-        println(features)
+        assertEquals 1, features.size()
+        features = layer1.getFeatures(filter: "name = 'House'")
         assertEquals 1, features.size()
     }
 
@@ -186,26 +199,44 @@ class LayerTestCase {
         layer1.add(new Feature([new Point(111,-47), "House", 12.5], "house1", s1))
         Bounds bounds = layer1.bounds()
         assertNotNull(bounds);
-        println("Bounds: ${bounds}")
         assertEquals(111.0, bounds.minX, 0.1)
         assertEquals(-47.0, bounds.minY, 0.1)
         assertEquals(111.0, bounds.maxX, 0.1)
         assertEquals(-47.0, bounds.maxY, 0.1)
         layer1.add(new Feature([new Point(108,-44), "House 2", 16.5], "house2", s1))
         bounds = layer1.bounds("name = 'House 2'")
-        assertNotNull(bounds);
-        println("Bounds for House 2: ${bounds}")
+        assertEquals new Bounds(108.0,-44.0,108.0,-44.0,"EPSG:2927"), bounds
+        bounds = layer1.bounds(filter: "name = 'House 2'")
+        assertEquals new Bounds(108.0,-44.0,108.0,-44.0,"EPSG:2927"), bounds
     }
 
     @Test void cursor() {
         Schema s1 = new Schema("facilities", [new Field("geom","Point", "EPSG:2927"), new Field("name","string"), new Field("price","float")])
         Layer layer1 = new Layer("facilities", s1)
-        layer1.add(new Feature([new Point(111,-47), "House", 12.5], "house1", s1))
+        layer1.add(new Feature([new Point(111,-47), "House 1", 12.5], "house1", s1))
+        layer1.add(new Feature([new Point(111,-47), "House 2", 9.7], "house2", s1))
+        layer1.add(new Feature([new Point(111,-47), "House 3", 3.4], "house3", s1))
+        // All Features
+        int i = 0
         Cursor c = layer1.getCursor()
         while(c.hasNext()) {
-            println(c.next())
+            Feature f = c.next()
+            assertNotNull f
+            assertNotNull f.geom
+            i++
         }
         c.close()
+        assertEquals layer1.count, i
+        // Filtered with named parameter
+        i = 0
+        c = layer1.getCursor(filter: "price > 5")
+        while(c.hasNext()) {
+            Feature f = c.next()
+            assertNotNull f
+            assertNotNull f.geom
+            i++
+        }
+        assertEquals layer1.count(filter: "price > 5"), i
     }
 
     @Test void toGML() {
@@ -760,7 +791,7 @@ class LayerTestCase {
         Writer writer = layer.getWriter(autoCommit: false, batch: 75)
         try {
             pts.eachWithIndex{Point pt, int i ->
-                writer.add(new Feature([the_geom: pt, id: i], "point${i}"))
+                writer.add(s.feature([the_geom: pt, id: i], "point${i}"))
             }
         } finally {
             writer.close()
@@ -777,7 +808,7 @@ class LayerTestCase {
         Layer layer = w.create(s)
         layer.withWriter(batch: 45) {Writer writer ->
             pts.eachWithIndex{Point pt, int i ->
-                writer.add(new Feature([the_geom: pt, id: i], "point${i}"))
+                writer.add(s.feature([the_geom: pt, id: i], "point${i}"))
             }
         }
         assertEquals numPoints, layer.count

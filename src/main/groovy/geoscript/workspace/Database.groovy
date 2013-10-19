@@ -1,9 +1,11 @@
 package geoscript.workspace
 
 import org.geotools.data.DataStore
+import org.geotools.jdbc.JDBCDataStore
 import org.geotools.jdbc.VirtualTable
 import geoscript.feature.Field
 import geoscript.layer.Layer
+import org.geotools.jdbc.VirtualTableParameter
 
 /**
  * A Workspace that is a Database.
@@ -12,7 +14,7 @@ import geoscript.layer.Layer
  * Database db = new H2("acme", "target/h2")
  * Layer statesLayer = h2.add(shp, 'states')
  * String sql = """select st_centroid("the_geom") as "the_geom", "STATE_NAME" FROM "states""""
- * Layer statesCentroidLayer = h2.addSqlQuery("states_centroids", sql, new Field("the_geom", "Point", "EPSG:4326"), [])
+ * Layer statesCentroidLayer = h2.createView("states_centroids", sql, new Field("the_geom", "Point", "EPSG:4326"))
  * </pre></blockquote></p>
  * @author Jared Erickson
  */
@@ -27,18 +29,46 @@ class Database extends Workspace {
     }
 
     /**
-     * Add a SQL Query as a Layer
+     * Create a Layer from a SQL View
+     * @param options The named parameters
+     * <ul>
+     *     <li>params = The query parameters</li>
+     *     <li>primaryKeyFields = The list of primary key fields</li>
+     * </ul>
+     * @param layerName The layer name
+     * @param sql The SQL
+     * @param geometryField The geometry Field
+     * @return The new Layer
+     */
+    Layer createView(Map options = [:], String layerName, String sql, Field geometryField) {
+        addVirtualTable(options, layerName, sql, geometryField)
+        get(layerName)
+    }
+
+    /**
+     * Delete a SQL View Layer
+     * @param name The name of the SQL View Layer
+     */
+    void deleteView(String name) {
+        (ds as JDBCDataStore).removeVirtualTable(name)
+    }
+
+    /**
+     * Add a SQL Query as a Layer.  Deprecated, please use createView instead.
      * @param name The new Layer's name
      * @param sql The SQL Query that creates the new Layer
      * @param geometryFld The Geometry Field
      * @param primaryKeyFields A List of primary key Fields or Field names
      */
+    @Deprecated
     Layer addSqlQuery(String layerName, String sql, Field geometryFld, List primaryKeyFields = []) {
-        addSqlQuery(layerName, sql, geometryFld.name, geometryFld.typ, geometryFld.proj.id.replaceAll("EPSG:","") as int, primaryKeyFields)
+        createView([
+            primaryKeyFields: primaryKeyFields
+        ], layerName, sql, geometryFld)
     }
 
     /**
-     * Add a SQL Query as a Layer
+     * Add a SQL Query as a Layer. Deprecated, please use createView instead.
      * @param name The new Layer's name
      * @param sql The SQL Query that creates the new Layer
      * @param geometryFieldName The Geometry Field name
@@ -46,14 +76,49 @@ class Database extends Workspace {
      * @param epsg The EPSG code (minus the EPSG: prefix)
      * @param primaryKeyFields A List of primary key Fields or Field names
      */
+    @Deprecated
     Layer addSqlQuery(String layerName, String sql, String geometryFieldName, String geometryFieldType, int epsg, List primaryKeyFields = []) {
+        createView([
+                primaryKeyFields: primaryKeyFields
+        ], layerName, sql, new Field(geometryFieldName, geometryFieldType, "EPSG:${epsg}"))
+    }
+
+    /**
+     * Create and add a virtual table to the JDBC based DataStore
+     * @param options The named parameters
+     * <ul>
+     *     <li>params = A Map of query parameters</li>
+     *     <li>primaryKeyFields = A List of primary key fields</li>
+     * </ul>
+     * @param layerName The layer name
+     * @param sql The SQL
+     * @param geometryField The geometry Field
+     */
+    private void addVirtualTable(Map options = [:], String layerName, String sql, Field geometryField) {
+        // Named parameters
+        def params = options.get("params")
+        List primaryKeyFields = options.get("primaryKeyFields")
+        // Build the VirtualTable
         VirtualTable vt = new VirtualTable(layerName, sql)
-        vt.addGeometryMetadatata(geometryFieldName, getGeometryClass(geometryFieldType), epsg)
-        if (primaryKeyFields.size() > 0) {
+        if (params) {
+            if (!(params instanceof List)) {
+                params = [params]
+            }
+            params.each {p ->
+                if (p instanceof List) {
+                    vt.addParameter(new VirtualTableParameter(p[0], p[1]))
+                } else {
+                    vt.addParameter(new VirtualTableParameter(p))
+                }
+            }
+        }
+        if (geometryField != null) {
+            vt.addGeometryMetadatata(geometryField.name, getGeometryClass(geometryField.typ), geometryField.proj.id.replaceAll("EPSG:","") as int)
+        }
+        if (primaryKeyFields != null && primaryKeyFields.size() > 0) {
             vt.setPrimaryKeyColumns(primaryKeyFields[0] instanceof Field ? primaryKeyFields.collect{fld->fld.name} : primaryKeyFields)
         }
-        ds.addVirtualTable(vt)
-        super.get(layerName)
+        (ds as JDBCDataStore).addVirtualTable(vt)
     }
 
     /**
