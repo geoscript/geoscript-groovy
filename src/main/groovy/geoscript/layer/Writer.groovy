@@ -155,4 +155,24 @@ class Writer {
         store.transaction = Transaction.AUTO_COMMIT
     }
 
+    /**
+     * Write batches of Features to the Layer
+     * @param options The named parameters
+     * <ul>
+     *   <li>batch: The number of features to write at one time (defaults to 1000)</li>
+     *   <li>transaction: The type of transaction: null, auto or autocommit, or default.  The default value
+     *      depends on the type of Layer.
+     *   </li>
+     * </ul>
+     * @param layer The Layer to write to
+     * @param c The Cursor which takes the Writer
+     */
+    static void write(Map options = [:], Layer layer, Closure c) {
+        Writer writer = new Writer(options, layer)
+        try {
+            c.call(writer)
+        } finally {
+            writer.close()
+        }
+    }
 }

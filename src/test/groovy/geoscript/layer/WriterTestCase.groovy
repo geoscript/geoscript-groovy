@@ -65,4 +65,28 @@ class WriterTestCase {
     @Test void testWriterWithMemory() {
         testWriter(new Memory(), 100, 65)
     }
+
+    @Test void testStaticWriter() {
+        Workspace w = new Directory(folder.newFolder("points"))
+        int numPoints = 100
+        int batch = 65
+        Geometry geom = new Bounds(0,0,50,50).geometry
+        List pts = geom.createRandomPoints(geom, numPoints).points
+        Schema s = new Schema("points", [new Field("the_geom","Point", "EPSG:4326"), new Field("id","int")])
+        Layer layer = w.create(s)
+        long start = System.currentTimeMillis()
+        def writer = Writer.write(layer, batch: batch) { writer ->
+            pts.eachWithIndex{Point pt, int i ->
+                Feature f = writer.newFeature
+                f.geom = pt
+                f['id'] = i
+                writer.add(f)
+            }
+        }
+        long end = System.currentTimeMillis()
+        long time = end - start
+        println "${w.format} with ${numPoints} points (batch size = ${batch}) took ${time} milleseconds"
+        assertEquals numPoints, layer.count
+        w.close()
+    }
 }
