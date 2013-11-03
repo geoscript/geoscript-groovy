@@ -114,6 +114,14 @@ class FeatureTestCase {
         assertEquals f2['price'], f1['price'], 0.1
         assertEquals f2['name'], f1['name']
         assertEquals f2.geom.wkt, f1.geom.wkt
+        // Values from map
+        f1.set([price: 1200.5, name: "Car"])
+        assertEquals 1200.5, f1['price'], 0.1
+        assertEquals "Car", f1['name']
+        // Values from named parameters
+        f1.set(price: 12.2, name: "Book")
+        assertEquals 12.2, f1['price'], 0.1
+        assertEquals "Book", f1['name']
     }
 
     @Test void putAt() {

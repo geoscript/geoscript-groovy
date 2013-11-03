@@ -243,6 +243,16 @@ class Feature {
     }
 
     /**
+     * Set the values of this Feature based on values from a Map
+     * @param attributes A Map of values
+     */
+    void set(Map attributes) {
+        attributes.each {k,v ->
+            this.set(k,v)
+        }
+    }
+
+    /**
      * Get a Map of all attributes
      * @return A Map of all attributes
      */
