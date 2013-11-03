@@ -193,6 +193,11 @@
 			<version>${gt.version}</version>
 		</dependency>
 		<dependency>
+			<groupId>org.geotools</groupId>
+		    <artifactId>gt-ogr-jni</artifactId>
+			<version>${gt.version}</version>
+		</dependency>
+		<dependency>
 			<groupId>org.jaitools</groupId>
 			<artifactId>jt-jiffleop</artifactId>
 			<version>0.2.0</version>
@@ -279,10 +284,15 @@
 				<configuration>
 					<!-- once, never, always, perthread -->
 					<forkMode>once</forkMode>
-					<argLine>-Xms512m -Xmx1024m -XX:PermSize=256m -XX:MaxPermSize=1024m</argLine>
+					<argLine>-Xms512m -Xmx1024m -XX:PermSize=256m -XX:MaxPermSize=1024m -Djava.library.path=${env.GEOSCRIPT_GDAL_HOME}</argLine>
 					<systemPropertyVariables>
 						<org.geotools.referencing.forceXY>true</org.geotools.referencing.forceXY>
 					</systemPropertyVariables>
+					<environmentVariables>
+						<PATH>${env.GEOSCRIPT_GDAL_HOME};${env.PATH}</PATH>
+						<DYLD_LIBRARY_PATH>${env.GEOSCRIPT_GDAL_HOME};${env.DYLD_LIBRARY_PATH}</DYLD_LIBRARY_PATH>
+						<LD_LIBRARY_PATH>${env.GEOSCRIPT_GDAL_HOME};${env.LD_LIBRARY_PATH}</LD_LIBRARY_PATH>
+					</environmentVariables>
 				</configuration>
 			</plugin>
 			<plugin>

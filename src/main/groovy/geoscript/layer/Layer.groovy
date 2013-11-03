@@ -823,9 +823,9 @@ class Layer {
             else {
                 f = this.schema.feature(o)
             }
-            FeatureCollection fc = new DefaultFeatureCollection()
-            fc.add(f.f)
-            fs.addFeatures(fc)
+            withWriter{Writer w ->
+                w.add(f)
+            }
         }
     }
 
@@ -951,7 +951,7 @@ class Layer {
      * @param chunk The number of Features to be read
      * @return A GeoTools FeatureCollection
      */
-    private FeatureCollection readFeatures(Cursor cursor, Schema schema, int chunk) {
+    protected FeatureCollection readFeatures(Cursor cursor, Schema schema, int chunk) {
         int i = 0
         def features = new ListFeatureCollection(schema.featureType)
         while(cursor.hasNext() && i < chunk) {
