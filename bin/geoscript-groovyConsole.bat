@@ -34,7 +34,7 @@ set CLASSPATH=%CD%\..\lib\*
 
 @REM set native library path
 if not "%GEOSCRIPT_GDAL_HOME%" == "" (
-    set PATH=%GEOSCRIPT_GDAL_HOME%;%PATH%
+    set "PATH=%GEOSCRIPT_GDAL_HOME%;%PATH%"
 )
 
 cd %CWD%
