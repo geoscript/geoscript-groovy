@@ -3,7 +3,10 @@ package geoscript.style
 import geoscript.layer.Shapefile
 import geoscript.render.Draw
 import geoscript.style.io.SLDReader
+import org.junit.Rule
 import org.junit.Test
+import org.junit.rules.TemporaryFolder
+
 import static org.junit.Assert.*
 import geoscript.filter.Expression
 import geoscript.filter.Color
@@ -14,6 +17,9 @@ import geoscript.filter.Function
  * @author Jared Erickson
  */
 class FillTestCase {
+
+    @Rule
+    public TemporaryFolder folder = new TemporaryFolder()
 
     @Test void constructors() {
 
@@ -108,7 +114,7 @@ class FillTestCase {
     @Test void randomizedFill() {
         File shpFile = new File(getClass().getClassLoader().getResource("states.shp").toURI())
         Shapefile shp = new Shapefile(shpFile)
-        File file = File.createTempFile("randomized_fill",".png")
+        File file = folder.newFile("randomized_fill.png")
         println file
         shp.style = (new Fill(null).hatch("circle", new Fill("#aaaaaa"), 1).random([random:true, symbolCount: "50", tileSize: "100"]).where("PERSONS < 2000000")) +
                 (new Fill(null).hatch("circle", new Fill("#aaaaaa"), 2).random([random:true, symbolCount: "200", tileSize: "100"]).where("PERSONS BETWEEN 2000000 AND 4000000")) +

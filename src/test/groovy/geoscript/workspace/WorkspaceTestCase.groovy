@@ -2,7 +2,10 @@ package geoscript.workspace
 
 import geoscript.feature.Schema
 import geoscript.geom.Point
+import org.junit.Rule
 import org.junit.Test
+import org.junit.rules.TemporaryFolder
+
 import static org.junit.Assert.*
 import geoscript.layer.Layer
 
@@ -12,9 +15,12 @@ import geoscript.layer.Layer
  */
 class WorkspaceTestCase {
 
+    @Rule
+    public TemporaryFolder folder = new TemporaryFolder()
+
     @Test void constructorWithMapOfParams() {
         // H2
-        Workspace h2 = new Workspace(["dbtype": "h2", "database": File.createTempFile("roads",".db").absolutePath])
+        Workspace h2 = new Workspace(["dbtype": "h2", "database": folder.newFile("roads.db").absolutePath])
         assertNotNull(h2.ds)
         assertEquals("org.geotools.jdbc.JDBCDataStore", h2.format)
 
@@ -27,7 +33,7 @@ class WorkspaceTestCase {
 
     @Test void constructorWithParamString() {
         // H2
-        Workspace h2 = new Workspace("dbtype=h2 database=" + File.createTempFile("roads",".db").absolutePath)
+        Workspace h2 = new Workspace("dbtype=h2 database=" + folder.newFile("roads.db").absolutePath)
         assertNotNull(h2.ds)
         assertEquals("org.geotools.jdbc.JDBCDataStore", h2.format)
 
@@ -98,7 +104,7 @@ class WorkspaceTestCase {
         layer1.add([new Point(2,2),"point2"])
         layer1.add([new Point(3,3),"point3"])
 
-        File file = new File(System.getProperty("java.io.tmpdir"))
+        File file = folder.newFolder("points")
         Directory dir = new Directory(file)
         Layer layer2 = dir.add(layer1)
         assertTrue(new File(file,"points.shp").exists())

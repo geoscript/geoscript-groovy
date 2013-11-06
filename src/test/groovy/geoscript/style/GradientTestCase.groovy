@@ -5,7 +5,10 @@ import geoscript.feature.Field
 import geoscript.feature.Schema
 import geoscript.geom.Point
 import geoscript.layer.Layer
+import org.junit.Rule
 import org.junit.Test
+import org.junit.rules.TemporaryFolder
+
 import static org.junit.Assert.*
 
 import geoscript.filter.Expression
@@ -17,6 +20,9 @@ import geoscript.layer.Shapefile
  * @author Jared Erickson
  */
 class GradientTestCase {
+
+    @Rule
+    public TemporaryFolder folder = new TemporaryFolder()
 
     @Test void gradientBetweenStyles() {
 
@@ -38,7 +44,7 @@ class GradientTestCase {
         Map map = new Map()
         map.addLayer(shp)
 
-        File imgFile = File.createTempFile("states",".png")
+        File imgFile = folder.newFile("states.png")
         println imgFile
         map.render(imgFile)
     }
@@ -56,7 +62,7 @@ class GradientTestCase {
         Map map = new Map()
         map.addLayer(layer)
 
-        File imgFile = File.createTempFile("facilities",".png")
+        File imgFile = folder.newFile("facilities.png")
         println imgFile
         map.render(imgFile)
     }
@@ -74,7 +80,7 @@ class GradientTestCase {
         assertNotNull(sym1)
         assertEquals(5, sym1.parts.size())
 
-        File imgFile1 = File.createTempFile("states",".png")
+        File imgFile1 = folder.newFile("states.png")
         println imgFile1
         shapefile.style = sym1
         map.render(imgFile1)
@@ -83,7 +89,7 @@ class GradientTestCase {
         assertNotNull(sym2)
         assertEquals(7, sym2.parts.size())
 
-        File imgFile2 = File.createTempFile("states",".png")
+        File imgFile2 = folder.newFile("states.png")
         println imgFile2
         shapefile.style = sym2
         map.render(imgFile2)

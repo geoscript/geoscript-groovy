@@ -1,6 +1,9 @@
 package geoscript.style
 
+import org.junit.Rule
 import org.junit.Test
+import org.junit.rules.TemporaryFolder
+
 import static org.junit.Assert.*
 import geoscript.filter.Color
 
@@ -12,6 +15,9 @@ import geoscript.layer.Shapefile
  * @author Jared Erickson
  */
 class UniqueValuesTestCase {
+
+    @Rule
+    public TemporaryFolder folder = new TemporaryFolder()
 
     @Test void create() {
 
@@ -29,7 +35,7 @@ class UniqueValuesTestCase {
         assertEquals(49, sym1.parts.size())
 
         shapefile.style = sym1
-        File imgFile = File.createTempFile("states",".png")
+        File imgFile = folder.newFile("states.png")
         println imgFile
         map.render(imgFile)
 
@@ -39,7 +45,7 @@ class UniqueValuesTestCase {
         assertEquals(49, sym2.parts.size())
 
         shapefile.style = sym2
-        imgFile = File.createTempFile("states",".png")
+        imgFile = folder.newFile("states.png")
         println imgFile
         map.render(imgFile)
 
@@ -49,7 +55,7 @@ class UniqueValuesTestCase {
         assertEquals(49, sym3.parts.size())
 
         shapefile.style = sym3
-        imgFile = File.createTempFile("states",".png")
+        imgFile = folder.newFile("states.png")
         println imgFile
         map.render(imgFile)
 
@@ -59,7 +65,7 @@ class UniqueValuesTestCase {
         assertEquals(49, sym4.parts.size())
 
         shapefile.style = sym4
-        imgFile = File.createTempFile("states",".png")
+        imgFile = folder.newFile("states.png")
         println imgFile
         map.render(imgFile)
     }

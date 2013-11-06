@@ -1,6 +1,9 @@
 package geoscript.layer.io
 
+import org.junit.Rule
 import org.junit.Test
+import org.junit.rules.TemporaryFolder
+
 import static org.junit.Assert.*
 import geoscript.geom.Point
 import geoscript.workspace.Memory
@@ -14,6 +17,9 @@ import geoscript.feature.Feature
  * @author Jared Erickson
  */
 class GmlWriterTestCase {
+
+    @Rule
+    public TemporaryFolder folder = new TemporaryFolder()
 
     @Test void write() {
 
@@ -42,7 +48,7 @@ class GmlWriterTestCase {
         assertTrue gml.contains("<gsf:houses")
 
         // Write Layer as GML to a File
-        File file = File.createTempFile("layer",".gml")
+        File file = folder.newFile("layer.gml")
         writer.write(layer, file)
         gml = file.text
         assertTrue gml.startsWith("<wfs:FeatureCollection")

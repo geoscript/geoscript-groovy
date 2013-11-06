@@ -1,6 +1,9 @@
 package geoscript.viewer
 
+import org.junit.Rule
 import org.junit.Test
+import org.junit.rules.TemporaryFolder
+
 import static org.junit.Assert.*
 import geoscript.geom.Geometry
 import javax.imageio.ImageIO
@@ -11,11 +14,14 @@ import javax.imageio.ImageIO
  */
 class ViewerTestCase {
 
+    @Rule
+    public TemporaryFolder folder = new TemporaryFolder()
+
     @Test void drawToImage() {
         def geom = Geometry.fromWKT("POINT (-111 45.7)").buffer(10)
         def image = Viewer.drawToImage(geom)
         assertNotNull(image)
-        def file = File.createTempFile("viewer_drawtoimage",".png")
+        def file = folder.newFile("viewer_drawtoimage.png")
         println file
         ImageIO.write(image,"png", file)
         assertTrue file.exists()
@@ -28,14 +34,14 @@ class ViewerTestCase {
             opacity: 0.65, strokeWidth: 1.5, drawCoords: true
         )
         assertNotNull(image)
-        def file = File.createTempFile("viewer_drawtoimage_options",".png")
+        def file = folder.newFile("viewer_drawtoimage_options.png")
         println file
         ImageIO.write(image,"png", file)
         assertTrue file.exists()
     }
 
     @Test void drawToFile() {
-        def file = File.createTempFile("viewer_drawtofile",".png")
+        def file = folder.newFile("viewer_drawtofile.png")
         println(file)
         def geom = Geometry.fromWKT("POINT (-111 45.7)").buffer(10)
         Viewer.drawToFile(geom, file, size: [400,400])
@@ -43,7 +49,7 @@ class ViewerTestCase {
     }
 
     @Test void drawToFileWithOptions() {
-        def file = File.createTempFile("viewer_drawtofile_options",".png")
+        def file = folder.newFile("viewer_drawtofile_options.png")
         println file
         def geom = Geometry.fromWKT("POINT (-111 45.7)").buffer(10)
         Viewer.drawToFile([geom.buffer(10), geom], file, size: [400,400], bounds: geom.bounds.scale(2.0),
@@ -57,7 +63,7 @@ class ViewerTestCase {
         def geom = Geometry.fromWKT("POINT (-111 45.7)").buffer(10)
         def image = Viewer.plotToImage(geom)
         assertNotNull(image)
-        def file = File.createTempFile("viewer_plottoimage",".png")
+        def file = folder.newFile("viewer_plottoimage.png")
         println file
         ImageIO.write(image,"png", file)
         assertTrue file.exists()
@@ -67,14 +73,14 @@ class ViewerTestCase {
         def geom = Geometry.fromWKT("POINT (-111 45.7)").buffer(10)
         def image = Viewer.plotToImage(geom, size: [400,400], legend: true, fillCoords: true, fillPolys: true)
         assertNotNull(image)
-        def file = File.createTempFile("viewer_plottoimage_withoptions",".png")
+        def file = folder.newFile("viewer_plottoimage_withoptions.png")
         println file
         ImageIO.write(image,"png", file)
         assertTrue file.exists()
     }
 
     @Test void plotToFile() {
-        def file = File.createTempFile("viewer_plottofile",".png")
+        def file = folder.newFile("viewer_plottofile.png")
         println(file)
         def geom = Geometry.fromWKT("POINT (-111 45.7)").buffer(10)
         Viewer.plotToFile(geom, size: [400,400], file, legend: false)
@@ -82,7 +88,7 @@ class ViewerTestCase {
     }
 
     @Test void plotToFileWithOptions() {
-        def file = File.createTempFile("viewer_plottofile_withoptions",".png")
+        def file = folder.newFile("viewer_plottofile_withoptions.png")
         println(file)
         def geom = Geometry.fromWKT("POINT (-111 45.7)").buffer(10)
         Viewer.plotToFile([geom, geom.buffer(10)], size: [400,400], file, legend: false, drawCoords: false)

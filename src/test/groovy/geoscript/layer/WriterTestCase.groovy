@@ -24,7 +24,7 @@ import static org.junit.Assert.assertEquals
 class WriterTestCase {
 
     @Rule
-    public TemporaryFolder folder = new TemporaryFolder();
+    public TemporaryFolder folder = new TemporaryFolder()
 
     private void testWriter(Workspace w, int numPoints, int batch) {
         Geometry geom = new Bounds(0,0,50,50).geometry

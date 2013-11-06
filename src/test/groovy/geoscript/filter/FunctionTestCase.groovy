@@ -2,7 +2,10 @@ package geoscript.filter
 
 import geoscript.feature.Feature
 import geoscript.geom.Point
+import org.junit.Rule
 import org.junit.Test
+import org.junit.rules.TemporaryFolder
+
 import static org.junit.Assert.*
 import geoscript.layer.Shapefile
 import geoscript.style.Fill
@@ -20,6 +23,9 @@ import geoscript.layer.Layer
  * @author Jared Erickson
  */
 class FunctionTestCase {
+
+    @Rule
+    public TemporaryFolder folder = new TemporaryFolder()
 
     @Test void createFromGeoToolsFunction() {
         def f = new Function(Function.ff.function("centroid", Function.ff.property("the_geom")))
@@ -103,7 +109,7 @@ class FunctionTestCase {
         Function.registerFunction("my_centroid", {g -> g.centroid})
         Function.registerFunction("lcase", {str -> str.toLowerCase()})
 
-        File imgFile = File.createTempFile("states_function", ".png")
+        File imgFile = folder.newFile("states_function.png")
         println "Rendering map with Functions: ${imgFile}"
         File file = new File(getClass().getClassLoader().getResource("states.shp").toURI())
         def statesShp = new Shapefile(file)
@@ -132,7 +138,7 @@ class FunctionTestCase {
         )
         Function f = new Function(p, new Function("parameter", new Expression("features")))
 
-        File imgFile = File.createTempFile("states_function", ".png")
+        File imgFile = folder.newFile("states_function.png")
         println "Rendering map with Rendering Function: ${imgFile}"
         File file = new File(getClass().getClassLoader().getResource("states.shp").toURI())
         def statesShp = new Shapefile(file)

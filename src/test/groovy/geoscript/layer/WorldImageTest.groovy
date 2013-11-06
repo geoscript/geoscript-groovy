@@ -1,6 +1,9 @@
 package geoscript.layer
 
+import org.junit.Rule
 import org.junit.Test
+import org.junit.rules.TemporaryFolder
+
 import static org.junit.Assert.*
 
 /**
@@ -8,6 +11,9 @@ import static org.junit.Assert.*
  * @author Jared Erickson
  */
 class WorldImageTest {
+
+    @Rule
+    public TemporaryFolder folder = new TemporaryFolder()
 
     @Test void readWrite() {
 
@@ -17,19 +23,19 @@ class WorldImageTest {
         WorldImage worldImage = new WorldImage()
 
         // GeoTIFF to TIFF + WorldFile
-        File worldTiffFile = File.createTempFile("raster",".tif")
+        File worldTiffFile = folder.newFile("raster.tif")
         worldImage.write(gtRaster, worldTiffFile)
         Raster tifRaster = worldImage.read(worldTiffFile)
         assertNotNull(tifRaster)
 
         // GeoTIFF to JPEG + WorldFile
-        File worldJpegfFile = File.createTempFile("raster",".jpeg")
+        File worldJpegfFile = folder.newFile("raster.jpeg")
         worldImage.write(gtRaster, worldJpegfFile)
         Raster jpgRaster = worldImage.read(worldJpegfFile)
         assertNotNull(jpgRaster)
 
         // GeoTIFF to PNG + WorldFile
-        File worldPngfFile = File.createTempFile("raster",".png")
+        File worldPngfFile = folder.newFile("raster.png")
         worldImage.write(gtRaster, worldPngfFile)
         Raster pngRaster = worldImage.read(worldPngfFile)
         assertNotNull(pngRaster)

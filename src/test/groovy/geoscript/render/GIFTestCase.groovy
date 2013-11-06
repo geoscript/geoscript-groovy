@@ -4,12 +4,11 @@ import geoscript.layer.Layer
 import geoscript.layer.Shapefile
 import geoscript.style.Fill
 import geoscript.style.Stroke
+import org.junit.Rule
 import org.junit.Test
-
+import org.junit.rules.TemporaryFolder
+import static org.junit.Assert.*
 import javax.imageio.ImageIO
-import java.awt.image.BufferedImage
-
-import static org.junit.Assert.assertNotNull
 
 /**
  * The GIF Unit Test
@@ -17,7 +16,11 @@ import static org.junit.Assert.assertNotNull
  */
 class GIFTestCase {
 
-    @Test void renderToImage() {
+    @Rule
+    public TemporaryFolder folder = new TemporaryFolder()
+
+    @Test
+    void renderToImage() {
         File shpFile = new File(getClass().getClassLoader().getResource("states.shp").toURI())
         Layer layer = new Shapefile(shpFile)
         layer.style = new Stroke('black', 0.1) + new Fill('gray', 0.75)
@@ -25,62 +28,69 @@ class GIFTestCase {
         GIF gif = new GIF()
         def img = gif.render(map)
         assertNotNull(img)
-        File file = File.createTempFile("image_",".gif")
-        println file
+        File file = folder.newFile("image.gif")
         ImageIO.write(img, "gif", file)
+        assertTrue file.exists()
+        assertTrue file.length() > 0
     }
 
-    @Test void renderToOutputStream() {
+    @Test
+    void renderToOutputStream() {
         File shpFile = new File(getClass().getClassLoader().getResource("states.shp").toURI())
         Layer layer = new Shapefile(shpFile)
         layer.style = new Stroke('black', 0.1) + new Fill('gray', 0.75)
         Map map = new Map(layers: [layer], backgroundColor: "white")
         GIF gif = new GIF()
-        File file = File.createTempFile("image_",".gif")
-        println file
+        File file = folder.newFile("image.gif")
         OutputStream out = new FileOutputStream(file)
         gif.render(map, out)
         out.close()
+        assertTrue file.exists()
+        assertTrue file.length() > 0
     }
 
-    @Test void renderAnimatedToFile() {
+    @Test
+    void renderAnimatedToFile() {
         File shpFile = new File(getClass().getClassLoader().getResource("states.shp").toURI())
         Layer layer = new Shapefile(shpFile)
         layer.style = new Stroke('black', 0.1) + new Fill('gray', 0.75)
 
-        List states = ["WA","OR","CA"]
+        List states = ["WA", "OR", "CA"]
 
         Map map = new Map(layers: [layer], backgroundColor: "white")
         GIF gif = new GIF()
-        List images = states.collect {state ->
+        List images = states.collect { state ->
             map.bounds = layer.getFeatures("STATE_ABBR = '${state}'")[0].bounds
             def image = gif.render(map)
             image
         }
-        File file = File.createTempFile("image_",".gif")
-        println file
+        File file = folder.newFile("image.gif")
         gif.renderAnimated(images, file, 500, true)
+        assertTrue file.exists()
+        assertTrue file.length() > 0
     }
 
-    @Test void renderAnimatedToBytes() {
+    @Test
+    void renderAnimatedToBytes() {
         File shpFile = new File(getClass().getClassLoader().getResource("states.shp").toURI())
         Layer layer = new Shapefile(shpFile)
         layer.style = new Stroke('black', 0.1) + new Fill('gray', 0.75)
 
-        List states = ["MT","ND","SD","MN"]
+        List states = ["MT", "ND", "SD", "MN"]
 
         Map map = new Map(layers: [layer], backgroundColor: "white")
         GIF gif = new GIF()
-        List images = states.collect {state ->
+        List images = states.collect { state ->
             map.bounds = layer.getFeatures("STATE_ABBR = '${state}'")[0].bounds
             def image = gif.render(map)
             image
         }
-        File file = File.createTempFile("image_",".gif")
-        println file
+        File file = folder.newFile("image.gif")
         def bytes = gif.renderAnimated(images, 500, false)
-        file.withOutputStream {out ->
+        file.withOutputStream { out ->
             out.write(bytes)
         }
+        assertTrue file.exists()
+        assertTrue file.length() > 0
     }
 }

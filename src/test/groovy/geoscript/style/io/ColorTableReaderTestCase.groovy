@@ -2,7 +2,10 @@ package geoscript.style.io
 
 import geoscript.style.ColorMap
 import geoscript.style.Symbolizer
+import org.junit.Rule
 import org.junit.Test
+import org.junit.rules.TemporaryFolder
+
 import static org.junit.Assert.*
 
 /**
@@ -10,6 +13,9 @@ import static org.junit.Assert.*
  * @author Jared Erickson
  */
 class ColorTableReaderTestCase {
+
+    @Rule
+    public TemporaryFolder folder = new TemporaryFolder()
 
     @Test void readColorTableFromString() {
 
@@ -102,7 +108,7 @@ class ColorTableReaderTestCase {
 
         Reader reader = new ColorTableReader()
 
-        File file = File.createTempFile("colortable",".txt")
+        File file = folder.newFile("colortable.txt")
         file.write("""1 black
 2 white
 3 red""")
@@ -124,7 +130,7 @@ class ColorTableReaderTestCase {
 
         Reader reader = new ColorTableReader()
 
-        File file = File.createTempFile("colortable",".txt")
+        File file = folder.newFile("colortable.txt")
         file.write("""1 black
 2 white
 3 red""")

@@ -5,7 +5,10 @@ import geoscript.geom.Point
 import geoscript.layer.GeoTIFF
 import geoscript.layer.MapAlgebra
 import geoscript.layer.Raster
+import org.junit.Rule
 import org.junit.Test
+import org.junit.rules.TemporaryFolder
+
 import static org.junit.Assert.*
 
 /**
@@ -14,6 +17,9 @@ import static org.junit.Assert.*
  */
 class MapAlgebraTestCase {
 
+    @Rule
+    public TemporaryFolder folder = new TemporaryFolder()
+
     @Test void greatThan() {
         File rasterFile = new File(getClass().getClassLoader().getResource("raster.tif").toURI())
         GeoTIFF geotiff = new GeoTIFF()
@@ -21,7 +27,7 @@ class MapAlgebraTestCase {
         MapAlgebra algebra = new MapAlgebra()
         Raster output = algebra.calculate("dest = src > 200;", [src: raster], size: [600, 400])
         assertNotNull output
-        File file = File.createTempFile("greaterthan_",".tif")
+        File file = folder.newFile("greaterthan.tif")
         println file
         geotiff.write(output, file)
         assertTrue file.size() > 0
@@ -44,7 +50,7 @@ class MapAlgebraTestCase {
 
             destImg = sin(C * d);""", null, outputName: "destImg")
         assertNotNull output
-        File file = File.createTempFile("waves_",".tif")
+        File file = folder.newFile("waves.tif")
         println file
         GeoTIFF geotiff = new GeoTIFF()
         geotiff.write(output, file)

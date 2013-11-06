@@ -158,7 +158,7 @@ class LayerTestCase {
         ])
         assertEquals 3, layer1.count
 
-        File file = File.createTempFile("points",".shp")
+        File file = folder.newFile("points.shp")
         String name = file.name.substring(0, file.name.lastIndexOf(".shp"))
         Schema schema2 = new Schema(name, [
             new Field("the_geom","Point","EPSG:4326"),
@@ -299,7 +299,7 @@ class LayerTestCase {
         layer1.add(new Feature([new Point(-122.494165, 47.198096), "House", 12.5], "house1", s1))
 
         // Reproject to a Property Workspace
-        File file = File.createTempFile("reproject",".properties")
+        File file = folder.newFile("reproject.properties")
         Property property = new Property(file.parentFile)
         Layer layer2 = layer1.reproject(new Projection("EPSG:2927"), property, "facilities_reprojected")
         assertEquals 1, layer2.count()
@@ -314,7 +314,7 @@ class LayerTestCase {
         layer1.add(new Feature([new Point(-122.494165, 47.198096), "House", 12.5], "house1", s1))
 
         // Reproject to a Property Workspace Layer
-        File file = File.createTempFile("reproject",".properties")
+        File file = folder.newFile("reproject.properties")
         Property property = new Property(file.parentFile)
         Layer propertyLayer = property.create(layer1.schema.reproject("EPSG:2927","facilities_epsg_2927"))
         Layer layer2 = layer1.reproject(propertyLayer)
@@ -719,7 +719,7 @@ class LayerTestCase {
         Shapefile shp = new Shapefile(file)
         Raster raster = shp.getRaster("SAMP_POP", [800,600], shp.bounds, "SAMP_POP")
         assertNotNull raster
-        File rasterFile = File.createTempFile("states_pop_",".tif")
+        File rasterFile = folder.newFile("states_pop.tif")
         println rasterFile
         GeoTIFF geotiff = new GeoTIFF()
         geotiff.write(raster, rasterFile)

@@ -5,7 +5,9 @@ import geoscript.proj.Projection
 import org.apache.commons.io.input.ReaderInputStream
 import org.geotools.factory.GeoTools
 import org.geotools.factory.Hints
+import org.junit.Rule
 import org.junit.Test
+import org.junit.rules.TemporaryFolder
 
 import static org.junit.Assert.assertNotNull
 
@@ -14,6 +16,9 @@ import static org.junit.Assert.assertNotNull
  * @author Jared Erickson
  */
 class ArcGridTestCase {
+
+    @Rule
+    public TemporaryFolder folder = new TemporaryFolder()
 
     @Test
     void readFromFile() {
@@ -69,7 +74,7 @@ class ArcGridTestCase {
         ArcGrid arcGrid = new ArcGrid()
         Raster raster = arcGrid.read(file)
         assertNotNull(raster)
-        File destFile = File.createTempFile("raster", ".asc")
+        File destFile = folder.newFile("raster.asc")
         arcGrid.write(raster, destFile)
         String str = destFile.text
         AssertUtil.assertStringsEqual("""NCOLS 4

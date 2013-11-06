@@ -1,6 +1,9 @@
 package geoscript.style
 
+import org.junit.Rule
 import org.junit.Test
+import org.junit.rules.TemporaryFolder
+
 import static org.junit.Assert.*
 import geoscript.filter.Filter
 
@@ -16,6 +19,9 @@ import org.geotools.styling.TextSymbolizer
  * The Symbolizer Unit Test
  */
 class SymbolizerTestCase {
+
+    @Rule
+    public TemporaryFolder folder = new TemporaryFolder()
 
     @Test void construct() {
 
@@ -331,7 +337,7 @@ class SymbolizerTestCase {
         assertTrue sld.length() > 0
         assertEquals expectedSld, sld
 
-        File file = File.createTempFile("simple",".sld")
+        File file = folder.newFile("simple.sld")
         sym.asSLD(file)
         sld = file.text.trim().replaceAll(NEW_LINE,"")
         assertNotNull sld

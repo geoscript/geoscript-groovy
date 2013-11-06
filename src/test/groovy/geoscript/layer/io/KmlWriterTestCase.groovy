@@ -1,6 +1,9 @@
 package geoscript.layer.io
 
+import org.junit.Rule
 import org.junit.Test
+import org.junit.rules.TemporaryFolder
+
 import static org.junit.Assert.*
 import geoscript.geom.Point
 import geoscript.workspace.Memory
@@ -14,6 +17,9 @@ import geoscript.feature.Feature
  * @author Jared Erickson
  */
 class KmlWriterTestCase {
+
+    @Rule
+    public TemporaryFolder folder = new TemporaryFolder()
 
     @Test void write() {
 
@@ -40,7 +46,7 @@ class KmlWriterTestCase {
         assertTrue kml.startsWith("<kml:kml xmlns:kml=\"http://earth.google.com/kml/2.1\">")
 
         // Write Layer as KML to a File
-        File file = File.createTempFile("layer",".kml")
+        File file = folder.newFile("layer.kml")
         writer.write(layer, file)
         kml = file.text
         assertTrue kml.startsWith("<kml:kml xmlns:kml=\"http://earth.google.com/kml/2.1\">")

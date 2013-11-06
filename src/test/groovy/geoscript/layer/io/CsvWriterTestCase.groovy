@@ -1,6 +1,7 @@
 package geoscript.layer.io
 
 import geoscript.proj.Projection
+import org.junit.Rule
 import org.junit.Test
 import geoscript.feature.Schema
 import geoscript.feature.Field
@@ -8,6 +9,7 @@ import geoscript.workspace.Memory
 import geoscript.layer.Layer
 import geoscript.feature.Feature
 import geoscript.geom.Point
+import org.junit.rules.TemporaryFolder
 
 import static org.junit.Assert.assertEquals
 
@@ -16,6 +18,9 @@ import static org.junit.Assert.assertEquals
  * @author Jared Erickson
  */
 class CsvWriterTestCase {
+
+    @Rule
+    public TemporaryFolder folder = new TemporaryFolder()
 
     private Layer createLayer(Projection proj = null) {
         // Create a simple Schema
@@ -50,7 +55,7 @@ class CsvWriterTestCase {
         assertEquals(expected, csv)
 
         // Write Layer as CSV to a File
-        File file = File.createTempFile("layer",".csv")
+        File file = folder.newFile("layer.csv")
         writer.write(layer, file)
         csv = file.text
         assertEquals(expected, csv)
@@ -77,7 +82,7 @@ class CsvWriterTestCase {
         assertEquals(expected, csv)
 
         // Write Layer as CSV to a File
-        File file = File.createTempFile("layer",".csv")
+        File file = folder.newFile("layer.csv")
         writer.write(layer, file)
         csv = file.text
         assertEquals(expected, csv)
@@ -104,7 +109,7 @@ class CsvWriterTestCase {
         assertEquals(expected, csv)
 
         // Write Layer as CSV to a File
-        File file = File.createTempFile("layer",".csv")
+        File file = folder.newFile("layer.csv")
         writer.write(layer, file)
         csv = file.text
         assertEquals(expected, csv)
@@ -131,7 +136,7 @@ class CsvWriterTestCase {
         assertEquals(expected, csv)
 
         // Write Layer as CSV to a File
-        File file = File.createTempFile("layer",".csv")
+        File file = folder.newFile("layer.csv")
         writer.write(layer, file)
         csv = file.text
         assertEquals(expected, csv)
@@ -158,7 +163,7 @@ class CsvWriterTestCase {
         assertEquals(expected, csv)
 
         // Write Layer as CSV to a File
-        File file = File.createTempFile("layer",".csv")
+        File file = folder.newFile("layer.csv")
         writer.write(layer, file)
         csv = file.text
         assertEquals(expected, csv)

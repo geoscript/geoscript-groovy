@@ -1,6 +1,9 @@
 package geoscript.filter
 
+import org.junit.Rule
 import org.junit.Test
+import org.junit.rules.TemporaryFolder
+
 import static org.junit.Assert.*
 
 /**
@@ -8,6 +11,9 @@ import static org.junit.Assert.*
  * @author Jared Erickson
  */
 class ColorTestCase {
+
+    @Rule
+    public TemporaryFolder folder = new TemporaryFolder()
 
     private void assertColorsEqual(java.awt.Color c1, java.awt.Color c2) {
         assertEquals c1.red, c2.red
@@ -265,7 +271,7 @@ class ColorTestCase {
     @Test void drawToImage() {
         def colors = Color.interpolate(new Color("white"), new Color("red"))
         def image = Color.drawToImage(colors)
-        File file = File.createTempFile("colors",".png")
+        File file = folder.newFile("colors.png")
         println file
         javax.imageio.ImageIO.write(image, "png", file)
     }

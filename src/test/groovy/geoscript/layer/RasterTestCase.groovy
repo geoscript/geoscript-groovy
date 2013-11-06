@@ -8,7 +8,10 @@ import geoscript.layer.Raster
 import geoscript.proj.Projection
 import geoscript.style.ColorMap
 import geoscript.style.Symbolizer
+import org.junit.Rule
 import org.junit.Test
+import org.junit.rules.TemporaryFolder
+
 import javax.imageio.ImageIO
 import static org.junit.Assert.*
 import geoscript.layer.Layer
@@ -21,7 +24,10 @@ import static org.junit.Assert.assertEquals
  * The Raster unit test
  */
 class RasterTestCase {
-	
+
+    @Rule
+    public TemporaryFolder folder = new TemporaryFolder()
+
     @Test void raster() {
         File file = new File(getClass().getClassLoader().getResource("alki.tif").toURI())
         assertNotNull(file)
@@ -203,7 +209,7 @@ class RasterTestCase {
         assertEquals("EPSG:4326", reprojected.proj.id)
 
         // Write the reprojected GeoTIFF to a file
-        File file1 = File.createTempFile("reprojected_raster",".tif")
+        File file1 = folder.newFile("reprojected_raster.tif")
         println(file1)
         geoTIFF.write(reprojected, file1)
 

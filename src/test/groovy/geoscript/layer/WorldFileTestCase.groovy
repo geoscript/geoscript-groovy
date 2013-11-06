@@ -2,7 +2,10 @@ package geoscript.layer
 
 import geoscript.geom.Bounds
 import geoscript.layer.WorldFile
+import org.junit.Rule
 import org.junit.Test
+import org.junit.rules.TemporaryFolder
+
 import static org.junit.Assert.*
 
 /**
@@ -11,10 +14,13 @@ import static org.junit.Assert.*
  */
 class WorldFileTestCase {
 
+    @Rule
+    public TemporaryFolder folder = new TemporaryFolder()
+
     @Test void create() {
 
         // Create a WorldFile from bounds and size
-        File file = File.createTempFile("worldfile_",".txt")
+        File file = folder.newFile("worldfile.txt")
         WorldFile worldFile = new WorldFile(new Bounds(-123.06, 46.66, -121.15, 47.48), [500,500], file)
         assertEquals(0.003819, worldFile.pixelSize[0], 0.00001)
         assertEquals(-0.00164, worldFile.pixelSize[1], 0.00001)

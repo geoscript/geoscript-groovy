@@ -1,6 +1,8 @@
 package geoscript.workspace
 
+import org.junit.Rule
 import org.junit.Test
+import org.junit.rules.TemporaryFolder
 import static org.junit.Assert.*
 import geoscript.layer.*
 import geoscript.feature.*
@@ -11,16 +13,11 @@ import geoscript.geom.*
  */
 class H2TestCase {
 
-    private H2 createH2() {
-        File f = new File("target/h2").absoluteFile
-        if (f.exists()) {
-            boolean deleted = f.deleteDir()
-        }
-        new H2("acme", "target/h2")
-    }
+    @Rule
+    public TemporaryFolder folder = new TemporaryFolder()
 
     @Test void create() {
-        H2 h2 = createH2()
+        H2 h2 = new H2(folder.newFile("h2.db"))
         assertEquals "H2", h2.format
         Layer l = h2.create('widgets',[new Field("geom", "Point"), new Field("name", "String")])
         assertNotNull(l)
@@ -30,7 +27,7 @@ class H2TestCase {
         assertEquals 3, l.count()
         h2.close()
 
-        h2 = new H2(new File("target/h2/acme"))
+        h2 = new H2(folder.newFile("h2.db"))
         assertEquals "H2", h2.format
         assertTrue h2.names.contains("widgets")
         l = h2.get("widgets")
@@ -41,7 +38,7 @@ class H2TestCase {
     @Test void add() {
         File file = new File(getClass().getClassLoader().getResource("states.shp").toURI())
         Shapefile shp = new Shapefile(file)
-        H2 h2 = createH2()
+        H2 h2 = new H2(folder.newFile("h2.db"))
         Layer l = h2.add(shp, 'counties')
         assertEquals shp.count(), l.count()
         h2.close()
@@ -50,7 +47,7 @@ class H2TestCase {
     @Test void addSqlQuery() {
         File file = new File(getClass().getClassLoader().getResource("states.shp").toURI())
         Shapefile shp = new Shapefile(file)
-        H2 h2 = createH2()
+        H2 h2 = new H2(folder.newFile("h2.db"))
         Layer statesLayer = h2.add(shp, 'states')
         assertEquals shp.count(), statesLayer.count()
 
@@ -74,7 +71,7 @@ class H2TestCase {
     @Test void createView() {
         File file = new File(getClass().getClassLoader().getResource("states.shp").toURI())
         Shapefile shp = new Shapefile(file)
-        H2 h2 = createH2()
+        H2 h2 = new H2(folder.newFile("h2.db"))
         Layer statesLayer = h2.add(shp, 'states')
         assertEquals shp.count(), statesLayer.count()
 

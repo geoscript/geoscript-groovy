@@ -6,7 +6,10 @@ import geoscript.feature.Schema
 import geoscript.geom.Point
 import geoscript.workspace.Directory
 import geoscript.workspace.Workspace
+import org.junit.Rule
 import org.junit.Test
+import org.junit.rules.TemporaryFolder
+
 import static org.junit.Assert.*
 
 /**
@@ -14,8 +17,10 @@ import static org.junit.Assert.*
  */
 class ShapefileTestCase {
 
-    @Test void constructors() {
+    @Rule
+    public TemporaryFolder folder = new TemporaryFolder()
 
+    @Test void constructors() {
         File file = new File(getClass().getClassLoader().getResource("states.shp").toURI())
         assertNotNull(file)
 
@@ -37,7 +42,7 @@ class ShapefileTestCase {
     }
 
     @Test void longFieldNames() {
-        File file = File.createTempFile("points",".shp")
+        File file = folder.newFile("points.shp")
         String name = file.name.replaceAll(".shp","")
         Schema schema = new Schema(name, [
             new Field("the_geom","Point","EPSG:4326"),

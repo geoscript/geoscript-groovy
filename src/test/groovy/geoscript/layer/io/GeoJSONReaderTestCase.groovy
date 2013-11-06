@@ -2,7 +2,10 @@ package geoscript.layer.io
 
 import geoscript.proj.Projection
 import geoscript.workspace.Memory
+import org.junit.Rule
 import org.junit.Test
+import org.junit.rules.TemporaryFolder
+
 import static org.junit.Assert.*
 import geoscript.layer.Layer
 
@@ -11,6 +14,9 @@ import geoscript.layer.Layer
  * @author Jared Erickson
  */
 class GeoJSONReaderTestCase {
+
+    @Rule
+    public TemporaryFolder folder = new TemporaryFolder()
 
     @Test void read() {
 
@@ -41,7 +47,7 @@ class GeoJSONReaderTestCase {
         assertEquals 2, layer.count
 
         // Read from a File
-        File file = File.createTempFile("layer",".json")
+        File file = folder.newFile("layer.json")
         file.write(json)
         layer = reader.read(file)
         assertNotNull layer

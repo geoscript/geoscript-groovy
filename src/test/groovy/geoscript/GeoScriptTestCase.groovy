@@ -11,7 +11,10 @@ import geoscript.layer.Format
 import geoscript.layer.GeoTIFF
 import geoscript.layer.Raster
 import geoscript.workspace.Memory
+import org.junit.Rule
 import org.junit.Test
+import org.junit.rules.TemporaryFolder
+
 import static org.junit.Assert.*
 
 import geoscript.geom.*
@@ -26,6 +29,9 @@ import geoscript.workspace.Workspace
  * @author Jared Erickson
  */
 class GeoScriptTestCase {
+
+    @Rule
+    public TemporaryFolder folder = new TemporaryFolder()
 
     @Test void wrap() {
         assertTrue GeoScript.wrap(new Feature([the_geom: "POINT (1 1)"],"pt").f) instanceof Feature
@@ -147,7 +153,7 @@ class GeoScriptTestCase {
 "POINT (111 -47)","House","12.5"
 "POINT (121 -45)","School","22.7"
 """
-        File csvFile = File.createTempFile("layer",".csv")
+        File csvFile = folder.newFile("layer.csv")
         csvFile.write(csv)
         use(GeoScript) {
             Layer layer = csvFile as Layer
@@ -161,7 +167,7 @@ class GeoScriptTestCase {
 
     @Test void geoJsonFileAsLayer() {
         String json = """{"type":"FeatureCollection","features":[{"type":"Feature","geometry":{"type":"Point","coordinates":[111,-47]},"properties":{"name":"House","price":12.5},"id":"fid-3eff7fce_131b538ad4c_-8000"},{"type":"Feature","geometry":{"type":"Point","coordinates":[121,-45]},"properties":{"name":"School","price":22.7},"id":"fid-3eff7fce_131b538ad4c_-7fff"}]}"""
-        File jsonFile = File.createTempFile("layer",".json")
+        File jsonFile = folder.newFile("layer.json")
         jsonFile.write(json)
         use(GeoScript) {
             Layer layer = jsonFile as Layer

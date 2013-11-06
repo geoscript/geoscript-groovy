@@ -1,6 +1,9 @@
 package geoscript.workspace
 
+import org.junit.Rule
 import org.junit.Test
+import org.junit.rules.TemporaryFolder
+
 import static org.junit.Assert.*
 import geoscript.layer.Layer
 import geoscript.feature.Field
@@ -10,6 +13,9 @@ import geoscript.feature.Schema
  * The Directory UnitTest
  */
 class DirectoryTestCase {
+
+    @Rule
+    public TemporaryFolder folder = new TemporaryFolder()
 
     @Test void constructors() {
 
@@ -77,7 +83,7 @@ class DirectoryTestCase {
     }
 
     @Test void create() {
-        File file = new File(System.getProperty("java.io.tmpdir"))
+        File file = folder.newFolder("points")
         Directory dir = new Directory(file)
         Layer layer = dir.create("points", [new Field("geom","Point","EPSG:4326")])
         assertNotNull(layer)
@@ -94,7 +100,7 @@ class DirectoryTestCase {
         Directory dir1 = new Directory(file1)
         Layer layer1 = dir1.get("states")
 
-        File file2 = new File(System.getProperty("java.io.tmpdir"))
+        File file2 = folder.newFolder("countries")
         Directory dir2 = new Directory(file2)
         Layer layer2 = dir2.add(layer1, "countries")
         println("${layer2.name} ${layer2.format}")

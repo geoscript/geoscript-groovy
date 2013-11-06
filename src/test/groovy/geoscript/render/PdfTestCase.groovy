@@ -4,7 +4,10 @@ import geoscript.layer.Layer
 import geoscript.layer.Shapefile
 import geoscript.style.Fill
 import geoscript.style.Stroke
+import org.junit.Rule
 import org.junit.Test
+import org.junit.rules.TemporaryFolder
+
 import static org.junit.Assert.assertNotNull
 
 /**
@@ -12,6 +15,9 @@ import static org.junit.Assert.assertNotNull
  * @author Jared Erickson
  */
 class PdfTestCase {
+
+    @Rule
+    public TemporaryFolder folder = new TemporaryFolder()
 
     @Test void renderToDocument() {
         File shpFile = new File(getClass().getClassLoader().getResource("states.shp").toURI())
@@ -29,8 +35,7 @@ class PdfTestCase {
         layer.style = new Stroke('black', 0.1) + new Fill('gray', 0.75)
         Map map = new Map(layers: [layer])
         Pdf pdf = new Pdf()
-        File file = File.createTempFile("pdf_",".pdf")
-        println file
+        File file = folder.newFile("pdf.pdf")
         OutputStream out = new FileOutputStream(file)
         pdf.render(map, out)
         out.close()
