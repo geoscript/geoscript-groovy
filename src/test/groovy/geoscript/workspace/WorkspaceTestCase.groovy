@@ -23,6 +23,7 @@ class WorkspaceTestCase {
         Workspace h2 = new Workspace(["dbtype": "h2", "database": folder.newFile("roads.db").absolutePath])
         assertNotNull(h2.ds)
         assertEquals("org.geotools.jdbc.JDBCDataStore", h2.format)
+        h2.close()
 
         // Shapefile
         URL url = getClass().getClassLoader().getResource("states.shp")
@@ -36,6 +37,7 @@ class WorkspaceTestCase {
         Workspace h2 = new Workspace("dbtype=h2 database=" + folder.newFile("roads.db").absolutePath)
         assertNotNull(h2.ds)
         assertEquals("org.geotools.jdbc.JDBCDataStore", h2.format)
+        h2.close()
 
         // Shapefile
         URL url = getClass().getClassLoader().getResource("states.shp")
