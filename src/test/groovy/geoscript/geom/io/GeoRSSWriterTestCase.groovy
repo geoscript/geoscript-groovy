@@ -25,7 +25,7 @@
 package geoscript.geom.io
 
 import org.junit.Test
-import static org.junit.Assert.assertEquals
+import static org.junit.Assert.*
 import geoscript.geom.*
 
 /**
@@ -38,18 +38,36 @@ class GeoRSSWriterTestCase {
         GeoRSSWriter writer = new GeoRSSWriter()
         Point p = new Point(-71.92, 45.256)
         assertEquals "<georss:point>45.256 -71.92</georss:point>", writer.write(p)
+        writer = new GeoRSSWriter(type: "simple")
+        assertEquals "<georss:point>45.256 -71.92</georss:point>", writer.write(p)
+        writer = new GeoRSSWriter(type: "gml")
+        assertEquals "<georss:where><gml:Point><gml:pos>45.256 -71.92</gml:pos></gml:Point></georss:where>", writer.write(p)
+        writer = new GeoRSSWriter(type: "w3c")
+        assertEquals "<geo:Point><geo:lat>45.256</geo:lat><geo:long>-71.92</geo:long></geo:Point>", writer.write(p)
     }
 
     @Test void writeLineString() {
         GeoRSSWriter writer = new GeoRSSWriter()
         LineString l = new LineString([-110.45,45.256], [-109.48,46.46], [-109.86,43.84])
         assertEquals "<georss:line>45.256 -110.45 46.46 -109.48 43.84 -109.86</georss:line>", writer.write(l)
+        writer = new GeoRSSWriter(type: "simple")
+        assertEquals "<georss:line>45.256 -110.45 46.46 -109.48 43.84 -109.86</georss:line>", writer.write(l)
+        writer = new GeoRSSWriter(type: "gml")
+        assertEquals "<georss:where><gml:LineString><gml:posList>45.256 -110.45 46.46 -109.48 43.84 -109.86</gml:posList></gml:LineString></georss:where>", writer.write(l)
+        writer = new GeoRSSWriter(type: "w3c")
+        assertNull writer.write(l)
     }
 
     @Test void writePolygon() {
         GeoRSSWriter writer = new GeoRSSWriter()
         Polygon p = new Polygon([-110.45,45.256], [-109.48,46.46], [-109.86,43.84], [-110.45,45.256])
         assertEquals "<georss:polygon>45.256 -110.45 46.46 -109.48 43.84 -109.86 45.256 -110.45</georss:polygon>", writer.write(p)
+        writer = new GeoRSSWriter(type: "simple")
+        assertEquals "<georss:polygon>45.256 -110.45 46.46 -109.48 43.84 -109.86 45.256 -110.45</georss:polygon>", writer.write(p)
+        writer = new GeoRSSWriter(type: "gml")
+        assertEquals "<georss:where><gml:Polygon><gml:exterior><gml:LinearRing><gml:posList>45.256 -110.45 46.46 -109.48 43.84 -109.86 45.256 -110.45</gml:posList></gml:LinearRing></gml:exterior></gml:Polygon></georss:where>", writer.write(p)
+        writer = new GeoRSSWriter(type: "w3c")
+        assertNull writer.write(p)
     }
 }
 
