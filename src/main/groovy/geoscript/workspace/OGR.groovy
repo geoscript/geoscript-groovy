@@ -129,7 +129,7 @@ class OGR extends Workspace {
      * @return The new Layer
      */
     Layer create(Map options = [:], Cursor c) {
-        boolean approximateFields = options.get("approximateFields", false)
+        boolean approximateFields = options.get("approximateFields", true)
         List layerOptions = options.get("options", [])
         ((OGRDataStore)ds).createSchema(c.col as SimpleFeatureCollection, approximateFields, layerOptions as String[])
         // Because GeoJSON returns OGRGeoJSON
