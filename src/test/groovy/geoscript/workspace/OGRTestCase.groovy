@@ -179,8 +179,6 @@ class OGRTestCase {
         }
     }
 
-    // http://svn.osgeo.org/gdal/trunk/autotest/ogr/ogr_georss.py
-    // http://en.wikipedia.org/wiki/Atom_(standard)
     @Test void writeReadGeoRSS() {
         if(shouldRunTest()) {
             File file = new File(folder.newFolder("states_georss1"), "states.georss")
@@ -202,7 +200,7 @@ class OGRTestCase {
                 }
             }
             Layer layer = ogr.create(tmpLayer.cursor, options: [
-                    "FORMAT=RSS"
+                    "FORMAT=RSS","USE_EXTENSIONS=YES"
             ])
             assertNotNull layer
             assertEquals "OGR", ogr.format
