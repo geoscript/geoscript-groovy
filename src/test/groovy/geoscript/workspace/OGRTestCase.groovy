@@ -58,7 +58,6 @@ class OGRTestCase {
             File shpFile = new File(getClass().getClassLoader().getResource("states.shp").toURI())
             Layer shpLayer = new Shapefile(shpFile)
             Layer layer = ogr.create(shpLayer.cursor)
-            IOUtils.copy(new FileInputStream(file), new FileOutputStream(new File("/Users/jericks/states_sqlite.sqlite")))
             assertNotNull layer
             assertEquals "OGR", ogr.format
             assertTrue ogr.toString().startsWith("OGR (Driver = SQLite, Dataset = ")
@@ -85,7 +84,6 @@ class OGRTestCase {
             Layer layer = ogr.create(shpLayer.cursor, options: [
                     "SPATIALITE=YES"
             ])
-            IOUtils.copy(new FileInputStream(file), new FileOutputStream(new File("/Users/jericks/states_spatialite.sqlite")))
             assertNotNull layer
             assertEquals "OGR", ogr.format
             assertTrue ogr.toString().startsWith("OGR (Driver = SQLite, Dataset = ")
