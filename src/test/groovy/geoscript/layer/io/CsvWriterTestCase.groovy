@@ -454,8 +454,8 @@ class CsvWriterTestCase {
         Layer layer = createLayer()
 
         String expected = """"geom","name","price"
-"{ ""type"": ""Point"", ""coordinates"": [111.0, -47.0] }","House","12.5"
-"{ ""type"": ""Point"", ""coordinates"": [121.0, -45.0] }","School","22.7"
+"{""type"":""Point"",""coordinates"":[111,-47]}","House","12.5"
+"{""type"":""Point"",""coordinates"":[121,-45]}","School","22.7"
 """
         // Write the Layer to a CSV String
         CsvWriter writer = new CsvWriter(CsvWriter.Type.GEOJSON, encodeFieldType: false)
@@ -468,8 +468,8 @@ class CsvWriterTestCase {
         Layer layer = createLayer()
 
         String expected = """"geom:Point","name:String","price:Float"
-"{ ""type"": ""Point"", ""coordinates"": [111.0, -47.0] }","House","12.5"
-"{ ""type"": ""Point"", ""coordinates"": [121.0, -45.0] }","School","22.7"
+"{""type"":""Point"",""coordinates"":[111,-47]}","House","12.5"
+"{""type"":""Point"",""coordinates"":[121,-45]}","School","22.7"
 """
         // Write the Layer to a CSV String
         CsvWriter writer = new CsvWriter(CsvWriter.Type.GEOJSON)

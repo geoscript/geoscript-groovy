@@ -116,7 +116,7 @@ class GeometryTestCase {
 
     @Test void getGeoJSON() {
         Geometry g = Geometry.fromWKT("POINT (111 -47)")
-        assertEquals """{ "type": "Point", "coordinates": [111.0, -47.0] }""", g.geoJSON
+        assertEquals """{"type":"Point","coordinates":[111,-47]}""", g.geoJSON
     }
 
     @Test void fromGeoJSON() {
