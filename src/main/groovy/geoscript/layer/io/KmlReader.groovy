@@ -40,7 +40,7 @@ class KmlReader implements Reader {
         String name = options.get("name", "kml")
         List subFields = options.get("subFields",["Geometry","name","description"])
         // Parse the KML
-        Parser parser = new Parser(new KMLConfiguration());
+        Parser parser = new Parser(new KMLConfiguration())
         SimpleFeature f = parser.parse(input);
         // Collect placemarks
         List<SimpleFeature> placemarks = []
