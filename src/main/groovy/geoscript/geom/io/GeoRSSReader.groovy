@@ -25,12 +25,6 @@
 package geoscript.geom.io
 
 import geoscript.geom.*
-import org.jdom.input.SAXBuilder
-import org.jdom.Document
-import org.jdom.Element
-import org.jdom.Namespace
-import java.util.regex.Pattern
-import java.util.regex.Matcher
 
 /**
  * A GeoRSS Simple Reader. See the <a href="http://www.georss.org/simple">GeoRSS spec</a> for more details.
@@ -45,30 +39,19 @@ import java.util.regex.Matcher
 class GeoRSSReader implements Reader {
 
     /**
-     * The GeoRSS XML Namespace
-     */
-    final Namespace ns = Namespace.getNamespace("georss","http://www.georss.org/georss")
-
-    /**
-     * The GML XML Namespace
-     */
-    final Namespace gmlNs = Namespace.getNamespace("gml","http://www.opengis.net/gml")
-
-    /**
      * Read a Geometry from a String
      * @param str The String
      * @return A Geometry
      */
     Geometry read(String str) {
-        if (str) {
-            str = str.trim()
-            if(str.startsWith("<geo:")) {
-                readW3C(str)
-            } else if (str.startsWith("<georss:where")) {
-                readGml(str)
-            } else {
-                readSimple(str)
-            }
+        if (str == null || str.trim().length() == 0 || !str.trim().startsWith("<")) return null
+        str = str.trim()
+        if(str.startsWith("<geo:")) {
+            readW3C(str)
+        } else if (str.startsWith("<georss:where")) {
+            readGml(str)
+        } else {
+            readSimple(str)
         }
     }
 
@@ -78,37 +61,28 @@ class GeoRSSReader implements Reader {
      * @return A Geometry or null
      */
     private Geometry readSimple(String str) {
-        SAXBuilder builder = new SAXBuilder()
-        Document document = builder.build(new StringReader(prepareXmlString(str)))
-        Element root = document.rootElement
-        String name = root.name
-        if (name.equalsIgnoreCase("point")) {
-            return getPoints(root.text)[0]
-        }
-        else if (name.equalsIgnoreCase("line")) {
-            return new LineString(getPoints(root.text))
-        }
-        else if (name.equalsIgnoreCase("polygon")) {
-            return new Polygon(new LinearRing(getPoints(root.text)))
-        }
-        else if (name.equalsIgnoreCase("box")) {
-            List points = getPoints(root.text)
-            return new Polygon(new LinearRing(
+        def xml = new XmlParser(false, false).parseText(str)
+        String name = xml.name().toString().toLowerCase()
+        if(name.equals('georss:point')) {
+            String[] coords = xml.text().split(" ")
+            new Point(coords[1] as double, coords[0] as double)
+        } else if (name.equals('georss:line')) {
+            new LineString(getPoints(xml.text()))
+        } else if (name.equals('georss:polygon')) {
+            new Polygon(new LinearRing(getPoints(xml.text())))
+        } else if (name.equals("georss:box")) {
+            List points = getPoints(xml.text())
+            new Polygon(new LinearRing(
                     points[0],
                     new Point(points[1].x, points[0].y),
                     points[1],
                     new Point(points[0].x, points[1].y),
                     points[0]
             ))
-        }
-        else if (name.equalsIgnoreCase("circle")) {
-            String[] values = root.text.split(" ")
-            return new Point(Double.parseDouble(values[1]),
-                    Double.parseDouble(values[0]))
-                    .buffer(Double.parseDouble(values[2]))
-        }
-        else {
-            return null
+        } else if (name.equals("georss:circle")) {
+            String[] values = xml.text().split(" ")
+            Point pt = new Point(Double.parseDouble(values[1]),Double.parseDouble(values[0]))
+            pt.buffer(Double.parseDouble(values[2]))
         }
     }
 
@@ -159,30 +133,6 @@ class GeoRSSReader implements Reader {
             points.add(new Point(x,y))
         }
         points
-    }
-
-    /**
-     * Insert an XML namespace if the user left it out
-     * @param str The XML String
-     * @return An XML String with an XML namespace to make JDOM happy
-     */
-    private String prepareXmlString(String str) {
-        int s = str.indexOf('<') + 1
-        int e = str.indexOf(':', s)
-        String prefix = str.substring(s,e)
-
-        String rx = "xmlns:${prefix}=\".*\""
-        Pattern p = Pattern.compile(rx)
-        Matcher m = p.matcher(str)
-        boolean present = m.find()
-
-        if (!present) {
-            int i = str.indexOf('>')
-            String ns = "xmlns:${prefix}=\"http://www.georss.org/georss\""
-            str = "${str.substring(0,i)} ${ns}${str.substring(i,str.length())}"
-        }
-
-        return str
     }
 }
 

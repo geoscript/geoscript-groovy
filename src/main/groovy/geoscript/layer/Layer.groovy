@@ -9,6 +9,8 @@ import geoscript.workspace.*
 import geoscript.filter.Filter
 import geoscript.style.Style
 import geoscript.style.Symbolizer
+import groovy.xml.StreamingMarkupBuilder
+import groovy.xml.XmlUtil
 import org.geotools.data.FeatureSource
 import org.geotools.data.Query
 import org.geotools.data.Transaction
@@ -28,10 +30,6 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem
 import org.opengis.feature.type.AttributeDescriptor
 import com.vividsolutions.jts.geom.Envelope
 import org.opengis.filter.FilterFactory2
-import geoscript.geom.io.KmlWriter
-import org.jdom.*
-import org.jdom.output.*
-import org.jdom.input.*
 import geoscript.layer.io.GmlWriter
 import geoscript.layer.io.GeoJSONWriter
 import org.geotools.data.collection.ListFeatureCollection
@@ -1205,66 +1203,113 @@ class Layer {
      * is created
      */
     void toKML(OutputStream out = System.out, Closure nameClosure = {f -> f.id}, Closure descriptionClosure = null) {
-
+        def xml
+        def markupBuilder = new StreamingMarkupBuilder()
         String geometryType = schema.geom.typ.toLowerCase()
-        KmlWriter kmlWriter = new KmlWriter()
-
-        SAXBuilder builder = new SAXBuilder()
-        Namespace ns = Namespace.getNamespace("kml","http://www.opengis.net/kml/2.2")
-        Document doc = new Document()
-        Element kmlElem = new Element("kml",ns)
-        doc.setRootElement(kmlElem)
-        Element docElem = new Element("Document",ns)
-        kmlElem.addContent(docElem)
-        Element folderElem = new Element("Folder",ns)
-        docElem.addContent(folderElem)
-        folderElem.addContent(new Element("name",ns).setText(name))
-        Element schemaElem = new Element("Schema",ns)
-        schemaElem.setAttribute("name", name, ns)
-        schemaElem.setAttribute("id", name, ns)
-        folderElem.addContent(schemaElem)
-        schema.fields.each {fld ->
-            if (!fld.isGeometry()) {
-                schemaElem.addContent(new Element("SimpleField", ns).setAttribute("name",fld.name, ns).setAttribute("type", fld.typ, ns))
-            }
-        }
-        features.each {f ->
-            Element placeMarkElem = new Element("Placemark", ns)
-            placeMarkElem.addContent(new Element("name", ns).setText(nameClosure.call(f))) //f.get("STATE_NAME")
-            if (descriptionClosure != null) {
-                placeMarkElem.addContent(new Element("description", ns).setText(descriptionClosure.call(f)))
-            }
-            folderElem.addContent(placeMarkElem)
-            Element styleElem = new Element("Style", ns)
-            if (geometryType.endsWith("point") ) {
-                styleElem.addContent(new Element("IconStyle",ns).addContent(new Element("color",ns).setText("ff0000ff")))
-            }
-            else {
-                styleElem.addContent(new Element("LineStyle",ns).addContent(new Element("color",ns).setText("ff0000ff")))
-                if (geometryType.endsWith("polygon")) {
-                    styleElem.addContent(new Element("PolyStyle",ns).addContent(new Element("fill",ns).setText("0")))
+        xml = markupBuilder.bind { builder ->
+            mkp.xmlDeclaration()
+            mkp.declareNamespace([kml: "http://www.opengis.net/kml/2.2"])
+            kml.kml {
+                kml.Document {
+                    kml.Folder {
+                        kml.name name
+                        kml.Schema ("kml:name": name, "kml:id": name) {
+                            schema.fields.each {fld ->
+                                if (!fld.isGeometry()) {
+                                    kml.SimpleField("kml:name": fld.name, "kml:type": fld.typ)
+                                }
+                            }
+                        }
+                        eachFeature {f ->
+                            kml.Placemark {
+                                kml.name { mkp.yield(nameClosure.call(f)) }
+                                if (descriptionClosure != null) {
+                                    kml.description { mkp.yield(descriptionClosure.call(f)) }
+                                }
+                                kml.Style {
+                                    if (geometryType.endsWith("point")) {
+                                        kml.IconStyle {
+                                            kml.color("ff0000ff")
+                                        }
+                                    } else {
+                                        kml.LineStyle {
+                                            kml.color("ff0000ff")
+                                        }
+                                        if (geometryType.endswith("Polygon")) {
+                                            kml.PolygonStyle {
+                                                kml.Fill("0")
+                                            }
+                                        }
+                                    }
+                                }
+                                kml.ExtendedData {
+                                    kml.SchemaData ("kml:schemaUrl": "#${name}") {
+                                        schema.fields.each {fld ->
+                                            if (!fld.isGeometry()) {
+                                                kml.SimpleData ("kml:name": fld.name) { mkp.yield(f.get(fld.name)) }
+                                            }
+                                        }
+                                    }
+                                }
+                                buildGeometry builder, f.geom, "kml"
+                            }
+                        }
+                    }
                 }
             }
-            placeMarkElem.addContent(styleElem)
-            Element extendedDataElem = new Element("ExtendedData",ns)
-            placeMarkElem.addContent(extendedDataElem)
-            Element schemaDataElem = new Element("SchemaData",ns).setAttribute("schemaUrl","#" + name,ns)
-            extendedDataElem.addContent(schemaDataElem)
-            schema.fields.each{fld ->
-                if (!fld.isGeometry()) {
-                    schemaDataElem.addContent(new Element("SimpleData",ns).setAttribute("name",fld.name,ns).setText(f.get(fld.name) as String))
-                }
-            }
-            // add geometry
-            String kml = kmlWriter.write(f.geom)
-            Element geomElem = builder.build(new StringReader(kml)).rootElement.detach()
-            addNamespace(geomElem,ns)
-            placeMarkElem.addContent(geomElem)
-
         }
 
-        XMLOutputter outputter = new XMLOutputter(org.jdom.output.Format.getPrettyFormat())
-        outputter.output(doc, out)
+        XmlUtil.serialize(xml, out)
+    }
+
+    /**
+     * Build a KML Geometry using Groovy's StreamingMarkupBuilder
+     * @param builder The StreamingMarkupBuilder
+     * @param geom A Geoemtry
+     * @param namespace The kml namespace prefix
+     */
+    private void buildGeometry(def builder, Geometry geom, String namespace) {
+        String ns = namespace.isEmpty() ? "" : "${namespace}:"
+        if (geom instanceof Point) {
+            builder."${ns}Point" {
+                builder."${ns}coordinates" "${geom.x},${geom.y}"
+            }
+        } else if (geom instanceof LinearRing) {
+            builder."${ns}LinearRing" {
+                builder."${ns}coordinates" {mkp.yield(buildCoordinateString(geom.coordinates))}
+            }
+        } else if (geom instanceof LineString) {
+            builder."${ns}LineString" {
+                builder."${ns}coordinates" {mkp.yield(buildCoordinateString(geom.coordinates))}
+            }
+        } else if (geom instanceof Polygon) {
+            Polygon poly = geom as Polygon
+            builder."${ns}Polygon" {
+                builder."${ns}outerBoundaryIs" {
+                    buildGeometry builder, new LinearRing(poly.exteriorRing.points), namespace
+                }
+                poly.interiorRings.each { ring ->
+                    builder."${ns}innerBoundaryIs" {
+                        buildGeometry builder, new LinearRing(ring.points), namespace
+                    }
+                }
+            }
+        } else if (geom instanceof GeometryCollection) {
+            builder."${ns}MultiGeoemtry" {
+                geom.geometries.each {
+                    buildGeometry builder, it, namespace
+                }
+            }
+        }
+    }
+
+    /**
+     * Build a Coordinate string for KML geometries
+     * @param coords An Array of Coordinates
+     * @return A Coordinate string
+     */
+    private String buildCoordinateString(def coords) {
+        coords.collect{c -> "${c.x},${c.y}"}.join(" ")
     }
 
     /**
@@ -1294,17 +1339,6 @@ class Layer {
         FileOutputStream out = new FileOutputStream(file)
         toKML(out, nameClosure, descriptionClosure)
         out.close()
-    }
-
-    /**
-     * Add a Namespace to the JDOM Element recursively.  This
-     * is needed by the toKML method.
-     * @param element The JDOM Element
-     * @param ns The JDOM Namespace
-     */
-    protected void addNamespace(Element element, Namespace ns) {
-        element.setNamespace(ns)
-        element.children.each{e -> addNamespace(e, ns)}
     }
 
     /**
