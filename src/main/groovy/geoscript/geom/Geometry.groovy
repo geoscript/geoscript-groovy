@@ -936,11 +936,11 @@ class Geometry {
         } else if (jts instanceof com.vividsolutions.jts.geom.Point) {
             return new Point(jts)
         }
-        else if (jts instanceof com.vividsolutions.jts.geom.LineString) {
-            return new LineString(jts)
-        }
         else if (jts instanceof com.vividsolutions.jts.geom.LinearRing) {
             return new LinearRing(jts)
+        }
+        else if (jts instanceof com.vividsolutions.jts.geom.LineString) {
+            return new LineString(jts)
         }
         else if (jts instanceof com.vividsolutions.jts.geom.Polygon) {
             return new Polygon(jts)
@@ -1035,6 +1035,7 @@ class Geometry {
         if (str == null || str.trim().length() == 0) {
             return null
         }
+        str = str.trim()
         List readers = [
             new WktReader(),
             new GeoJSONReader(),
