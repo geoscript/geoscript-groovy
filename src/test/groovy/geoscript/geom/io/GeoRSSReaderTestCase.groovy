@@ -25,7 +25,7 @@
 package geoscript.geom.io
 
 import org.junit.Test
-import static org.junit.Assert.assertEquals
+import static org.junit.Assert.*
 import geoscript.geom.*
 
 import static org.junit.Assert.assertNull
@@ -94,6 +94,65 @@ class GeoRSSReaderTestCase {
         String str = "<georss:circle>42.943 -71.032 500</georss:circle>"
         Polygon p = reader.read(str)
         assertEquals new Point(-71.032, 42.943).buffer(500).wkt, p.wkt
+    }
+
+    @Test void readNode() {
+        GeoRSSReader reader = new GeoRSSReader()
+        XmlParser parser = new XmlParser(false, false)
+
+        // georss circle
+        String str = "<georss:circle>42.943 -71.032 500</georss:circle>"
+        Geometry geom = reader.read(parser.parse(new StringReader(str)))
+        assertNotNull(geom)
+        assertTrue(geom instanceof Polygon)
+
+        // georss box
+        str = "<georss:box>42.943 -71.032 43.039 -69.856</georss:box>"
+        geom = reader.read(parser.parse(new StringReader(str)))
+        assertNotNull(geom)
+        assertEquals("POLYGON ((-71.032 42.943, -69.856 42.943, -69.856 43.039, -71.032 43.039, -71.032 42.943))", geom.wkt)
+
+        // georss polygon
+        str = "<georss:polygon>45.256 -110.45 46.46 -109.48 43.84 -109.86 45.256 -110.45</georss:polygon>"
+        geom = reader.read(parser.parse(new StringReader(str)))
+        assertNotNull(geom)
+        assertEquals("POLYGON ((-110.45 45.256, -109.48 46.46, -109.86 43.84, -110.45 45.256))", geom.wkt)
+
+        // georss linestring
+        str = "<georss:line>45.256 -110.45 46.46 -109.48 43.84 -109.86</georss:line>"
+        geom = reader.read(parser.parse(new StringReader(str)))
+        assertNotNull(geom)
+        assertEquals("LINESTRING (-110.45 45.256, -109.48 46.46, -109.86 43.84)", geom.wkt)
+
+        // georss point
+        str = "<georss:point>45.256 -71.92</georss:point>"
+        geom = reader.read(parser.parse(new StringReader(str)))
+        assertNotNull(geom)
+        assertEquals("POINT (-71.92 45.256)", geom.wkt)
+
+        // gml point
+        str = "<georss:where><gml:Point><gml:pos>45.256 -71.92</gml:pos></gml:Point></georss:where>"
+        geom = reader.read(parser.parse(new StringReader(str)))
+        assertNotNull(geom)
+        assertEquals("POINT (-71.92 45.256)", geom.wkt)
+
+        // gml linestring
+        str = "<georss:where><gml:LineString><gml:posList>45.256 -110.45 46.46 -109.48 43.84 -109.86</gml:posList></gml:LineString></georss:where>"
+        geom = reader.read(parser.parse(new StringReader(str)))
+        assertNotNull(geom)
+        assertEquals("LINESTRING (-110.45 45.256, -109.48 46.46, -109.86 43.84)", geom.wkt)
+
+        // gml polygon
+        str = "<georss:where><gml:Polygon><gml:exterior><gml:LinearRing><gml:posList>45.256 -110.45 46.46 -109.48 43.84 -109.86 45.256 -110.45</gml:posList></gml:LinearRing></gml:exterior></gml:Polygon></georss:where>"
+        geom = reader.read(parser.parse(new StringReader(str)))
+        assertNotNull(geom)
+        assertEquals("POLYGON ((-110.45 45.256, -109.48 46.46, -109.86 43.84, -110.45 45.256))", geom.wkt)
+
+        // w3c point
+        str = "<geo:Point><geo:lat>45.256</geo:lat><geo:long>-71.92</geo:long></geo:Point>"
+        geom = reader.read(parser.parse(new StringReader(str)))
+        assertNotNull(geom)
+        assertEquals("POINT (-71.92 45.256)", geom.wkt)
     }
 }
 

@@ -46,7 +46,7 @@ class GeoRSSReader implements Reader {
     Geometry read(String str) {
         if (str == null || str.trim().length() == 0 || !str.trim().startsWith("<")) return null
         str = str.trim()
-        if(str.startsWith("<geo:")) {
+        if (str.startsWith("<geo:")) {
             readW3C(str)
         } else if (str.startsWith("<georss:where")) {
             readGml(str)
@@ -63,7 +63,7 @@ class GeoRSSReader implements Reader {
     private Geometry readSimple(String str) {
         def xml = new XmlParser(false, false).parseText(str)
         String name = xml.name().toString().toLowerCase()
-        if(name.equals('georss:point')) {
+        if (name.equals('georss:point')) {
             String[] coords = xml.text().split(" ")
             new Point(coords[1] as double, coords[0] as double)
         } else if (name.equals('georss:line')) {
@@ -81,7 +81,7 @@ class GeoRSSReader implements Reader {
             ))
         } else if (name.equals("georss:circle")) {
             String[] values = xml.text().split(" ")
-            Point pt = new Point(Double.parseDouble(values[1]),Double.parseDouble(values[0]))
+            Point pt = new Point(Double.parseDouble(values[1]), Double.parseDouble(values[0]))
             pt.buffer(Double.parseDouble(values[2]))
         }
     }
@@ -93,7 +93,7 @@ class GeoRSSReader implements Reader {
      */
     private Geometry readGml(String str) {
         def xml = new XmlParser(false, false).parseText(str)
-        if(xml['gml:Point']) {
+        if (xml['gml:Point']) {
             String[] coords = xml['gml:Point']['gml:pos'].text().split(" ")
             new Point(coords[1] as double, coords[0] as double)
         } else if (xml['gml:LineString']) {
@@ -118,6 +118,59 @@ class GeoRSSReader implements Reader {
     }
 
     /**
+     * Read a Geometry from an XML Node
+     * @param node The XML Node
+     * @return A Geometry or null
+     */
+    public Geometry read(Node node) {
+        Geometry geom = null
+        String name = node.name()
+        if (name.equalsIgnoreCase("georss:where")) {
+            String subName = node.children()[0].name()
+            if (subName.equalsIgnoreCase("gml:Point")) {
+                String[] xy = node["gml:Point"]["gml:pos"].text().replaceAll("\\s+", " ").split(" ")
+                double x = xy[1] as double
+                double y = xy[0] as double
+                geom = new Point(x, y)
+            } else if (subName.equalsIgnoreCase("gml:LineString")) {
+                String text = node["gml:LineString"]["gml:posList"].text().replaceAll("\\s+", " ")
+                geom = new LineString(getPoints(text))
+            } else if (subName.equalsIgnoreCase("gml:Polygon")) {
+                String text = node["gml:Polygon"]["gml:exterior"]["gml:LinearRing"]["gml:posList"].text().replaceAll("\\s+", " ")
+                geom = new Polygon(new LinearRing(getPoints(text)))
+            }
+        } else if (name.equalsIgnoreCase("georss:point")) {
+            String text = node.text().replaceAll("\\s+", " ")
+            geom = getPoints(text)[0]
+        } else if (name.equalsIgnoreCase("georss:line")) {
+            String text = node.text().replaceAll("\\s+", " ")
+            geom = new LineString(getPoints(text))
+        } else if (name.equalsIgnoreCase("georss:polygon")) {
+            String text = node.text().replaceAll("\\s+", " ")
+            geom = new Polygon(new LinearRing(getPoints(text)))
+        } else if (name.equalsIgnoreCase("georss:box")) {
+            String text = node.text().replaceAll("\\s+", " ")
+            List points = getPoints(text)
+            geom = new Polygon(new LinearRing(
+                    points[0],
+                    new Point(points[1].x, points[0].y),
+                    points[1],
+                    new Point(points[0].x, points[1].y),
+                    points[0]
+            ))
+        } else if (name.equalsIgnoreCase("georss:circle")) {
+            String text = node.text().replaceAll("\\s+", " ")
+            String[] parts = text.split(" ")
+            geom = new Point(parts[0] as double, parts[1] as double).buffer(parts[2] as double)
+        } else if (name.equalsIgnoreCase("geo:Point")) {
+            double x = node["geo:long"].text() as double
+            double y = node["geo:lat"].text() as double
+            geom = new Point(x, y)
+        }
+        return geom
+    }
+
+    /**
      * Get a List of Point from the String
      * @param str The space delimited GeoRSS List of coordinates
      * @return A List of Points
@@ -129,8 +182,8 @@ class GeoRSSReader implements Reader {
         for (i in (0..<num)) {
             int k = i * 2
             double y = Double.parseDouble(values[k])
-            double x = Double.parseDouble(values[k+1])
-            points.add(new Point(x,y))
+            double x = Double.parseDouble(values[k + 1])
+            points.add(new Point(x, y))
         }
         points
     }

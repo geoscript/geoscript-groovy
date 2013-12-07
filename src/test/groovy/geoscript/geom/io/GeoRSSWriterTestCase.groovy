@@ -24,6 +24,7 @@
 
 package geoscript.geom.io
 
+import groovy.xml.StreamingMarkupBuilder
 import org.junit.Test
 import static org.junit.Assert.*
 import geoscript.geom.*
@@ -68,6 +69,67 @@ class GeoRSSWriterTestCase {
         assertEquals "<georss:where><gml:Polygon><gml:exterior><gml:LinearRing><gml:posList>45.256 -110.45 46.46 -109.48 43.84 -109.86 45.256 -110.45</gml:posList></gml:LinearRing></gml:exterior></gml:Polygon></georss:where>", writer.write(p)
         writer = new GeoRSSWriter(type: "w3c")
         assertNull writer.write(p)
+    }
+
+    @Test void writeUsingMarkupBuilder() {
+        StreamingMarkupBuilder builder = new StreamingMarkupBuilder()
+        // Simple
+        GeoRSSWriter writer = new GeoRSSWriter(type: "simple")
+        // Point
+        def actual = builder.bind { b ->
+            mkp.declareNamespace([georss: "http://www.georss.org/georss"])
+            writer.write b, new Point(-71.92, 45.256), null
+        } as String
+        String expected = "<georss:point xmlns:georss='http://www.georss.org/georss'>45.256 -71.92</georss:point>"
+        assertEquals expected, actual
+        // LineString
+        actual = builder.bind { b ->
+            mkp.declareNamespace([georss: "http://www.georss.org/georss"])
+            writer.write b, new LineString([-110.45,45.256], [-109.48,46.46], [-109.86,43.84]), null
+        } as String
+        expected = "<georss:line xmlns:georss='http://www.georss.org/georss'>45.256 -110.45 46.46 -109.48 43.84 -109.86</georss:line>"
+        assertEquals expected, actual
+        // Polygon
+        actual = builder.bind { b ->
+            mkp.declareNamespace([georss: "http://www.georss.org/georss"])
+            writer.write b, new Polygon([-110.45,45.256], [-109.48,46.46], [-109.86,43.84], [-110.45,45.256]), null
+        } as String
+        expected = "<georss:polygon xmlns:georss='http://www.georss.org/georss'>45.256 -110.45 46.46 -109.48 43.84 -109.86 45.256 -110.45</georss:polygon>"
+        assertEquals expected, actual
+
+        // GML
+        writer = new GeoRSSWriter(type: "gml")
+        // Point
+        actual = builder.bind { b ->
+            mkp.declareNamespace([georss: "http://www.georss.org/georss", gml: "http://www.opengis.net/gml"])
+            writer.write b, new Point(-71.92, 45.256), null
+        } as String
+        expected = "<georss:where xmlns:georss='http://www.georss.org/georss' xmlns:gml='http://www.opengis.net/gml'><gml:Point><gml:pos>45.256 -71.92</gml:pos></gml:Point></georss:where>"
+        assertEquals expected, actual
+        // LineString
+        actual = builder.bind { b ->
+            mkp.declareNamespace([georss: "http://www.georss.org/georss", gml: "http://www.opengis.net/gml"])
+            writer.write b, new LineString([-110.45,45.256], [-109.48,46.46], [-109.86,43.84]), null
+        } as String
+        expected = "<georss:where xmlns:georss='http://www.georss.org/georss' xmlns:gml='http://www.opengis.net/gml'><gml:LineString><gml:posList>45.256 -110.45 46.46 -109.48 43.84 -109.86</gml:posList></gml:LineString></georss:where>"
+        assertEquals expected, actual
+        // Polygon
+        actual = builder.bind { b ->
+            mkp.declareNamespace([georss: "http://www.georss.org/georss", gml: "http://www.opengis.net/gml"])
+            writer.write b, new Polygon([-110.45,45.256], [-109.48,46.46], [-109.86,43.84], [-110.45,45.256]), null
+        } as String
+        expected = "<georss:where xmlns:georss='http://www.georss.org/georss' xmlns:gml='http://www.opengis.net/gml'><gml:Polygon><gml:LinearRing><gml:posList>45.256 -110.45 46.46 -109.48 43.84 -109.86 45.256 -110.45</gml:posList></gml:LinearRing></gml:Polygon></georss:where>"
+        assertEquals expected, actual
+
+        // W3C
+        writer = new GeoRSSWriter(type: "w3c")
+        // Point
+        actual = builder.bind { b ->
+            mkp.declareNamespace(geo: "http://www.w3.org/2003/01/geo/wgs84_pos#")
+            writer.write b, new Point(-71.92, 45.256), null
+        } as String
+        expected = "<geo:Point xmlns:geo='http://www.w3.org/2003/01/geo/wgs84_pos#'><geo:lat>45.256</geo:lat><geo:long>-71.92</geo:long></geo:Point>"
+        assertEquals expected, actual
     }
 }
 
