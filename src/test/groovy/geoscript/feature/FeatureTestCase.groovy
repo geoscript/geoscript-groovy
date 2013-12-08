@@ -162,5 +162,51 @@ class FeatureTestCase {
         assertEquals "houses.house1 geom: POINT (111 -47), name: House, price: 12.5", f1.toString()
     }
 
+    @Test void getGeoJSON() {
+        Schema s1 = new Schema("houses", [new Field("geom","Point"), new Field("name","string"), new Field("price","float")])
+        Feature f1 = new Feature([new Point(111,-47), "House", 12.5], "house1", s1)
+        assertEquals """{"type":"Feature","geometry":{"type":"Point","coordinates":[111,-47]},"properties":{"name":"House","price":12.5},"id":"house1"}""", f1.geoJSON
+    }
+
+    @Test void getGeoRSS() {
+        Schema s1 = new Schema("houses", [new Field("geom","Point"), new Field("name","string"), new Field("price","float")])
+        Feature f1 = new Feature([new Point(111,-47), "House", 12.5], "house1", s1)
+        assertEquals "<entry xmlns:georss='http://www.georss.org/georss' xmlns='http://www.w3.org/2005/Atom'>" +
+                "<title>house1</title>" +
+                "<summary>[geom:POINT (111 -47), name:House, price:12.5]</summary>" +
+                "<updated>12/7/2013</updated>" +
+                "<georss:point>-47.0 111.0</georss:point>" +
+                "</entry>", f1.getGeoRSS(feedType: "atom", geometryType: "simple", itemDate: "12/7/2013")
+    }
+
+    @Test void getGml() {
+        Schema s1 = new Schema("houses", [new Field("geom","Point"), new Field("name","string"), new Field("price","float")])
+        Feature f1 = new Feature([new Point(111,-47), "House", 12.5], "house1", s1)
+        assertEquals """<gsf:houses xmlns:gsf="http://geoscript.org/feature" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:gml="http://www.opengis.net/gml" fid="house1">
+<gml:name>House</gml:name>
+<gsf:geom>
+<gml:Point>
+<gml:coord>
+<gml:X>111.0</gml:X>
+<gml:Y>-47.0</gml:Y>
+</gml:coord>
+</gml:Point>
+</gsf:geom>
+<gsf:price>12.5</gsf:price>
+</gsf:houses>
+""", f1.gml
+    }
+
+    @Test void getKml() {
+        Schema s1 = new Schema("houses", [new Field("geom","Point"), new Field("name","string"), new Field("price","float")])
+        Feature f1 = new Feature([new Point(111,-47), "House", 12.5], "house1", s1)
+        assertEquals """<kml:Placemark xmlns:kml="http://earth.google.com/kml/2.1" id="house1">
+<kml:name>House</kml:name>
+<kml:Point>
+<kml:coordinates>111.0,-47.0</kml:coordinates>
+</kml:Point>
+</kml:Placemark>
+""", f1.kml
+    }
 }
 
