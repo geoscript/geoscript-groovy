@@ -1009,7 +1009,7 @@ class Geometry {
 
     /**
      * Get a Geometry from a GML2 String
-     * @param geoJSON A GML2 String
+     * @param gml2 A GML2 String
      * @return A Geometry
      */
     static Geometry fromGML2(String gml2) {
@@ -1018,7 +1018,7 @@ class Geometry {
 
     /**
      * Get a Geometry from a GML3 String
-     * @param geoJSON A GML3 String
+     * @param gml3 A GML3 String
      * @return A Geometry
      */
     static Geometry fromGML3(String gml3) {
