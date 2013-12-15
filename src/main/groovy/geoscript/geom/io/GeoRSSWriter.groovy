@@ -124,11 +124,15 @@ class GeoRSSWriter implements Writer {
 
     /**
      * Build a GeoRSS Geometry using a Groovy MarkupBuilder
+     * @param options The named parameters
+     * <ul>
+     *      <li>projId = The Projection ID (defaults to null)</li>
+     * </ul>
      * @param builder The MarkupBuilder Node
      * @param geom The Geometry
-     * @param projId The Projection ID (optional)
      */
-    void write(def builder, Geometry geom, String projId = null) {
+    void write(Map options = [:], def builder, Geometry geom) {
+        String projId = options.get("projId")
         if (type.equalsIgnoreCase("simple")) {
             if (geom instanceof Point) {
                 Point pt = geom as Point

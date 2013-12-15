@@ -101,7 +101,7 @@ class GeoRSSWriter implements Writer {
                 buildItemDate builder, f
                 title { mkp.yield(getValue(itemTitle, f)) }
                 description { mkp.yield(getValue(itemDescription, f)) }
-                geometryWriter.write builder, itemGeometry.call(f), f.schema.proj?.id
+                geometryWriter.write builder, itemGeometry.call(f), projId: f.schema.proj?.id
                 buildAttributes builder, f
             }
         } else {
@@ -110,7 +110,7 @@ class GeoRSSWriter implements Writer {
                 title { mkp.yield(getValue(itemTitle, f)) }
                 summary { mkp.yield(getValue(itemDescription, f)) }
                 buildItemDate builder, f
-                geometryWriter.write builder, itemGeometry.call(f), f.schema.proj?.id
+                geometryWriter.write builder, itemGeometry.call(f), projId: f.schema.proj?.id
                 buildAttributes builder, f
             }
         }
