@@ -1205,6 +1205,7 @@ class Layer {
     void toKML(OutputStream out = System.out, Closure nameClosure = {f -> f.id}, Closure descriptionClosure = null) {
         def xml
         def markupBuilder = new StreamingMarkupBuilder()
+        def geometryWriter = new geoscript.geom.io.KmlWriter()
         String geometryType = schema.geom.typ.toLowerCase()
         xml = markupBuilder.bind { builder ->
             mkp.xmlDeclaration()
@@ -1251,7 +1252,7 @@ class Layer {
                                         }
                                     }
                                 }
-                                buildGeometry builder, f.geom, "kml"
+                                geometryWriter.write builder, f.geom, namespace: "kml"
                             }
                         }
                     }
@@ -1260,56 +1261,6 @@ class Layer {
         }
 
         XmlUtil.serialize(xml, out)
-    }
-
-    /**
-     * Build a KML Geometry using Groovy's StreamingMarkupBuilder
-     * @param builder The StreamingMarkupBuilder
-     * @param geom A Geoemtry
-     * @param namespace The kml namespace prefix
-     */
-    private void buildGeometry(def builder, Geometry geom, String namespace) {
-        String ns = namespace.isEmpty() ? "" : "${namespace}:"
-        if (geom instanceof Point) {
-            builder."${ns}Point" {
-                builder."${ns}coordinates" "${geom.x},${geom.y}"
-            }
-        } else if (geom instanceof LinearRing) {
-            builder."${ns}LinearRing" {
-                builder."${ns}coordinates" {mkp.yield(buildCoordinateString(geom.coordinates))}
-            }
-        } else if (geom instanceof LineString) {
-            builder."${ns}LineString" {
-                builder."${ns}coordinates" {mkp.yield(buildCoordinateString(geom.coordinates))}
-            }
-        } else if (geom instanceof Polygon) {
-            Polygon poly = geom as Polygon
-            builder."${ns}Polygon" {
-                builder."${ns}outerBoundaryIs" {
-                    buildGeometry builder, new LinearRing(poly.exteriorRing.points), namespace
-                }
-                poly.interiorRings.each { ring ->
-                    builder."${ns}innerBoundaryIs" {
-                        buildGeometry builder, new LinearRing(ring.points), namespace
-                    }
-                }
-            }
-        } else if (geom instanceof GeometryCollection) {
-            builder."${ns}MultiGeoemtry" {
-                geom.geometries.each {
-                    buildGeometry builder, it, namespace
-                }
-            }
-        }
-    }
-
-    /**
-     * Build a Coordinate string for KML geometries
-     * @param coords An Array of Coordinates
-     * @return A Coordinate string
-     */
-    private String buildCoordinateString(def coords) {
-        coords.collect{c -> "${c.x},${c.y}"}.join(" ")
     }
 
     /**

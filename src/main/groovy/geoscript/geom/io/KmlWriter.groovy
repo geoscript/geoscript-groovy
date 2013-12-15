@@ -57,5 +57,49 @@ class KmlWriter implements Writer {
         coords.collect{c -> "${c.x},${c.y}"}.join(" ")
     }
 
+    /**
+     * Build a KML Geometry using a Groovy MarkupBuilder
+     * @param options The named parameters
+     * <ul>
+     *      <li>namespace = The KML namespace prefix (defaults to blank)</li>
+     * </ul>
+     * @param builder The MarkupBuilder Node
+     * @param geom The Geometry
+     */
+    void write(Map options = [:], def builder, Geometry geom) {
+        String namespace = options.get("namespace","")
+        String ns = namespace.isEmpty() ? "" : "${namespace}:"
+        if (geom instanceof Point) {
+            builder."${ns}Point" {
+                builder."${ns}coordinates" "${geom.x},${geom.y}"
+            }
+        } else if (geom instanceof LinearRing) {
+            builder."${ns}LinearRing" {
+                builder."${ns}coordinates" {mkp.yield(getCoordinatesAsString(geom.coordinates))}
+            }
+        } else if (geom instanceof LineString) {
+            builder."${ns}LineString" {
+                builder."${ns}coordinates" {mkp.yield(getCoordinatesAsString(geom.coordinates))}
+            }
+        } else if (geom instanceof Polygon) {
+            Polygon poly = geom as Polygon
+            builder."${ns}Polygon" {
+                builder."${ns}outerBoundaryIs" {
+                    write builder, new LinearRing(poly.exteriorRing.points), namespace: namespace
+                }
+                poly.interiorRings.each { ring ->
+                    builder."${ns}innerBoundaryIs" {
+                        write builder, new LinearRing(ring.points), namespace: namespace
+                    }
+                }
+            }
+        } else if (geom instanceof GeometryCollection) {
+            builder."${ns}MultiGeoemtry" {
+                geom.geometries.each {
+                    write builder, it, namespace: namespace
+                }
+            }
+        }
+    }
 }
 
