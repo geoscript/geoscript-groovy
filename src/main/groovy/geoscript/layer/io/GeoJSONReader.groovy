@@ -27,11 +27,6 @@ import org.opengis.feature.simple.SimpleFeatureType
 class GeoJSONReader implements Reader {
 
     /**
-     * The GeoTools FeatureJSON reader/writer
-     */
-    private static final FeatureJSON featureJSON = new FeatureJSON()
-
-    /**
      * Read a GeoScript Layer from an InputStream
      * @param options The optional named parameters:
      * <ul>
