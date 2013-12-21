@@ -171,7 +171,10 @@ class GeoScriptTestCase {
         jsonFile.write(json)
         use(GeoScript) {
             Layer layer = jsonFile as Layer
-            assertEquals("geojson name: String, price: Double, geometry: Point", layer.schema.toString())
+            assertEquals("geojson", layer.name)
+            assertTrue(layer.schema.has("name"))
+            assertTrue(layer.schema.has("price"))
+            assertTrue(layer.schema.has("geometry"))
             assertEquals(2, layer.count)
             layer.eachFeature { f ->
                 assertTrue(f.geom instanceof geoscript.geom.Point)
