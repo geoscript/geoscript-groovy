@@ -1173,13 +1173,16 @@ class Layer {
         }
 
         String geomFieldName = outLayer.schema.geom.name
-        values.eachWithIndex { value, i ->
-            Map v = [:]
-            v[idFieldName] = i
-            v[field.name] = value.key
-            v[countFieldName] = value.value.count
-            v[geomFieldName] = value.value.geom
-            outLayer.add(v)
+        outLayer.withWriter{w ->
+            values.eachWithIndex { value, i ->
+                Map v = [:]
+                v[idFieldName] = i
+                v[field.name] = value.key
+                v[countFieldName] = value.value.count
+                v[geomFieldName] = value.value.geom
+                Feature f = outLayer.schema.feature(v)
+                w.add(f)
+            }
         }
 
         outLayer
@@ -1228,13 +1231,16 @@ class Layer {
 
         String geomFieldName = outLayer.schema.geom.name
         int i = 0
-        index.queryAll().each { Map v ->
-            Map values = [:]
-            values[idFieldName] = i
-            values[countFieldName] = v.count
-            values[geomFieldName] = v.geom
-            outLayer.add(values)
-            i++
+        outLayer.withWriter{w ->
+            index.queryAll().each { Map v ->
+                Map values = [:]
+                values[idFieldName] = i
+                values[countFieldName] = v.count
+                values[geomFieldName] = v.geom
+                Feature f = outLayer.schema.feature(v)
+                w.add(f)
+                i++
+            }
         }
 
         outLayer
@@ -1274,24 +1280,26 @@ class Layer {
             outLayer.add(attributes)
         }
 
-        otherLayer.eachFeature{ f->
-            Map attributes = [:]
-            Map fieldMap = schemaAndFields.fields[1]
-            f.attributes.each {String k, Object v ->
-                // Always set the Geometry
-                if (v instanceof Geometry) {
-                    attributes[outLayer.schema.geom.name] = v
+        outLayer.withWriter{w ->
+            otherLayer.eachFeature{ f->
+                Map attributes = [:]
+                Map fieldMap = schemaAndFields.fields[1]
+                f.attributes.each {String k, Object v ->
+                    // Always set the Geometry
+                    if (v instanceof Geometry) {
+                        attributes[outLayer.schema.geom.name] = v
+                    }
+                    // Set value if present in the field map
+                    else if (fieldMap.containsKey(k)) {
+                        attributes[fieldMap[k]] = v
+                    }
+                    // Set the value if field is present in output Layer
+                    else if (outLayer.schema.has(k)) {
+                        attributes[k] = v
+                    }
                 }
-                // Set value if present in the field map
-                else if (fieldMap.containsKey(k)) {
-                    attributes[fieldMap[k]] = v
-                }
-                // Set the value if field is present in output Layer
-                else if (outLayer.schema.has(k)) {
-                    attributes[k] = v
-                }
+                w.add(outLayer.schema.feature(attributes))
             }
-            outLayer.add(attributes)
         }
 
         outLayer
@@ -1342,16 +1350,18 @@ class Layer {
         splitLayer.eachFeature { f ->
             // Create the new output Layer
             Layer outLayer = workspace.create("${this.name}_${f.get(field).toString().replaceAll(' ','_')}", this.schema.fields)
-            // See if the Feature intersects with the Bounds of any Feature in the spatial index
-            index.query(f.bounds).each { layerFeature ->
-                // Make sure it actually intersects the Geometry of a Feature in the spatial index
-                if (f.geom.intersects(layerFeature.geom)) {
-                    // Clip the geometry from the input Layer
-                    Geometry intersection = layerFeature.geom.intersection(f.geom)
-                    // Create a new Feature and add if to the clipped Layer
-                    Map values = layerFeature.attributes
-                    values[outLayer.schema.geom.name] = intersection
-                    outLayer.add(outLayer.schema.feature(values))
+            outLayer.withWriter{w ->
+                // See if the Feature intersects with the Bounds of any Feature in the spatial index
+                index.query(f.bounds).each { layerFeature ->
+                    // Make sure it actually intersects the Geometry of a Feature in the spatial index
+                    if (f.geom.intersects(layerFeature.geom)) {
+                        // Clip the geometry from the input Layer
+                        Geometry intersection = layerFeature.geom.intersection(f.geom)
+                        // Create a new Feature and add if to the clipped Layer
+                        Map values = layerFeature.attributes
+                        values[outLayer.schema.geom.name] = intersection
+                        w.add(outLayer.schema.feature(values))
+                    }
                 }
             }
         }
@@ -1398,20 +1408,22 @@ class Layer {
         int capStyle = options.get("capStyle", Geometry.CAP_ROUND)
         boolean singleSided = options.get("singleSided", false)
 
-        this.eachFeature {Feature f ->
-            Map values = [:]
-            f.attributes.each{k,v ->
-                if (v instanceof geoscript.geom.Geometry) {
-                    double d = distance.evaluate(f) as double
-                    Geometry b = singleSided ?
-                        v.buffer(d, quadrantSegments, capStyle) :
-                        v.singleSidedBuffer(d, quadrantSegments, capStyle)
-                    values[k] = b
-                } else {
-                    values[k] = v
+        outLayer.withWriter{w ->
+            this.eachFeature {Feature f ->
+                Map values = [:]
+                f.attributes.each{k,v ->
+                    if (v instanceof geoscript.geom.Geometry) {
+                        double d = distance.evaluate(f) as double
+                        Geometry b = singleSided ?
+                            v.buffer(d, quadrantSegments, capStyle) :
+                            v.singleSidedBuffer(d, quadrantSegments, capStyle)
+                        values[k] = b
+                    } else {
+                        values[k] = v
+                    }
                 }
+                w.add(outLayer.schema.feature(values))
             }
-            outLayer.add(values)
         }
 
         outLayer
