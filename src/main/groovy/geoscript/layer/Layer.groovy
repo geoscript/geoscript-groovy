@@ -1336,20 +1336,22 @@ class Layer {
         }
 
         // Iterate through all of the Features in the input Layer
-        this.eachFeature(Filter.intersects(clipLayer.bounds.geometry), { f ->
-            // See if the Feature intersects with the Bounds of any Feature in the spatial index
-            index.query(f.bounds).each { clipFeature ->
-                // Make sure it actually intersects the Geometry of a Feature in the spatial index
-                if (f.geom.intersects(clipFeature.geom)) {
-                    // Clip the geometry from the input Layer
-                    Geometry intersection = f.geom.intersection(clipFeature.geom)
-                    // Create a new Feature and add it to the clipped Layer
-                    Map values = f.attributes
-                    values[f.schema.geom.name] = intersection
-                    clippedLayer.add(clippedLayer.schema.feature(values))
+        clippedLayer.withWriter { w ->
+            this.eachFeature(Filter.intersects(clipLayer.bounds.geometry), { f ->
+                // See if the Feature intersects with the Bounds of any Feature in the spatial index
+                index.query(f.bounds).each { clipFeature ->
+                    // Make sure it actually intersects the Geometry of a Feature in the spatial index
+                    if (f.geom.intersects(clipFeature.geom)) {
+                        // Clip the geometry from the input Layer
+                        Geometry intersection = f.geom.intersection(clipFeature.geom)
+                        // Create a new Feature and add it to the clipped Layer
+                        Map values = f.attributes
+                        values[f.schema.geom.name] = intersection
+                        w.add(clippedLayer.schema.feature(values))
+                    }
                 }
-            }
-        })
+            })
+        }
         clippedLayer
     }
 
@@ -1412,30 +1414,32 @@ class Layer {
 
         // Put all Features in the spatial index into the output Layer
         Schema schema = outLayer.schema
-        index.queryAll().each { features ->
-            Geometry geom = features.geom
-            Feature f1 = features.feature1
-            Feature f2 = features.feature2
-            Map attributes = [:]
-            attributes[schema.geom.name] = geom
-            if (f1) {
-                Map fieldMap = schemaAndFields.fields[0]
-                f1.attributes.each {String k, Object v ->
-                    if (!k.equalsIgnoreCase(this.schema.geom.name) && fieldMap.containsKey(k)) {
-                        attributes[fieldMap[k]] = v
+        outLayer.withWriter{w ->
+            index.queryAll().each { features ->
+                Geometry geom = features.geom
+                Feature f1 = features.feature1
+                Feature f2 = features.feature2
+                Map attributes = [:]
+                attributes[schema.geom.name] = geom
+                if (f1) {
+                    Map fieldMap = schemaAndFields.fields[0]
+                    f1.attributes.each {String k, Object v ->
+                        if (!k.equalsIgnoreCase(this.schema.geom.name) && fieldMap.containsKey(k)) {
+                            attributes[fieldMap[k]] = v
+                        }
                     }
                 }
-            }
-            if (f2) {
-                Map fieldMap = schemaAndFields.fields[1]
-                f2.attributes.each {String k, Object v ->
-                    if (!k.equalsIgnoreCase(layer2.schema.geom.name) && fieldMap.containsKey(k)) {
-                        attributes[fieldMap[k]] = v
+                if (f2) {
+                    Map fieldMap = schemaAndFields.fields[1]
+                    f2.attributes.each {String k, Object v ->
+                        if (!k.equalsIgnoreCase(layer2.schema.geom.name) && fieldMap.containsKey(k)) {
+                            attributes[fieldMap[k]] = v
+                        }
                     }
                 }
+                Feature f = schema.feature(attributes)
+                w.add(f)
             }
-            Feature f = schema.feature(attributes)
-            outLayer.add(f)
         }
 
         outLayer
@@ -1488,26 +1492,28 @@ class Layer {
 
         // Only add features from the spatial index that have features from Layer 1 and Layer2
         Schema schema = outLayer.schema
-        index.queryAll().each { features ->
-            Geometry geom = features.geom
-            Feature f1 = features.feature1
-            Feature f2 = features.feature2
-            if (f1 != null && f2 != null) {
-                Map attributes = [(schema.geom.name): geom]
-                Map fieldMap1 = schemaAndFields.fields[0]
-                f1.attributes.each {String k, Object v ->
-                    if (!k.equalsIgnoreCase(this.schema.geom.name) && fieldMap1.containsKey(k)) {
-                        attributes[fieldMap1[k]] = v
+        outLayer.withWriter{w ->
+            index.queryAll().each { features ->
+                Geometry geom = features.geom
+                Feature f1 = features.feature1
+                Feature f2 = features.feature2
+                if (f1 != null && f2 != null) {
+                    Map attributes = [(schema.geom.name): geom]
+                    Map fieldMap1 = schemaAndFields.fields[0]
+                    f1.attributes.each {String k, Object v ->
+                        if (!k.equalsIgnoreCase(this.schema.geom.name) && fieldMap1.containsKey(k)) {
+                            attributes[fieldMap1[k]] = v
+                        }
                     }
-                }
-                Map fieldMap2 = schemaAndFields.fields[1]
-                f2.attributes.each {String k, Object v ->
-                    if (!k.equalsIgnoreCase(layer2.schema.geom.name) && fieldMap2.containsKey(k)) {
-                        attributes[fieldMap2[k]] = v
+                    Map fieldMap2 = schemaAndFields.fields[1]
+                    f2.attributes.each {String k, Object v ->
+                        if (!k.equalsIgnoreCase(layer2.schema.geom.name) && fieldMap2.containsKey(k)) {
+                            attributes[fieldMap2[k]] = v
+                        }
                     }
+                    Feature f = schema.feature(attributes)
+                    w.add(f)
                 }
-                Feature f = schema.feature(attributes)
-                outLayer.add(f)
             }
         }
 
@@ -1557,8 +1563,10 @@ class Layer {
         }
 
         // Add all Features in the spatial index to the output Layer
-        index.queryAll().each{f ->
-            outLayer.add(f)
+        outLayer.withWriter{w ->
+            index.queryAll().each{f ->
+                w.add(f)
+            }
         }
 
         outLayer
@@ -1618,29 +1626,31 @@ class Layer {
 
         // Put all Features in the spatial index into the output Layer
         Schema schema = outLayer.schema
-        index.queryAll().each { features ->
-            Geometry geom = features.geom
-            Feature f1 = features.feature1
-            Feature f2 = features.feature2
-            Map attributes = [(schema.geom.name): geom]
-            if (f1) {
-                Map fieldMap = schemaAndFields.fields[0]
-                f1.attributes.each {String k, Object v ->
-                    if (!k.equalsIgnoreCase(this.schema.geom.name) && fieldMap.containsKey(k)) {
-                        attributes[fieldMap[k]] = v
+        outLayer.withWriter{w ->
+            index.queryAll().each { features ->
+                Geometry geom = features.geom
+                Feature f1 = features.feature1
+                Feature f2 = features.feature2
+                Map attributes = [(schema.geom.name): geom]
+                if (f1) {
+                    Map fieldMap = schemaAndFields.fields[0]
+                    f1.attributes.each {String k, Object v ->
+                        if (!k.equalsIgnoreCase(this.schema.geom.name) && fieldMap.containsKey(k)) {
+                            attributes[fieldMap[k]] = v
+                        }
                     }
                 }
-            }
-            if (f2) {
-                Map fieldMap = schemaAndFields.fields[1]
-                f2.attributes.each {String k, Object v ->
-                    if (!k.equalsIgnoreCase(layer2.schema.geom.name) && fieldMap.containsKey(k)) {
-                        attributes[fieldMap[k]] = v
+                if (f2) {
+                    Map fieldMap = schemaAndFields.fields[1]
+                    f2.attributes.each {String k, Object v ->
+                        if (!k.equalsIgnoreCase(layer2.schema.geom.name) && fieldMap.containsKey(k)) {
+                            attributes[fieldMap[k]] = v
+                        }
                     }
                 }
+                Feature f = schema.feature(attributes)
+                w.add(f)
             }
-            Feature f = schema.feature(attributes)
-            outLayer.add(f)
         }
 
         outLayer
@@ -1689,19 +1699,21 @@ class Layer {
         }
 
         // Add all Features in the spatial index to the output Layer
-        index.queryAll().each { features ->
-            Geometry geom = features.geom
-            Feature f1 = features.feature1
-            Map attributes = [(outLayer.schema.geom.name): geom]
-            if (f1) {
-                f1.attributes.each {String k, Object v ->
-                    if (!k.equalsIgnoreCase(this.schema.geom.name)) {
-                        attributes[k] = v
+        outLayer.withWriter{w ->
+            index.queryAll().each { features ->
+                Geometry geom = features.geom
+                Feature f1 = features.feature1
+                Map attributes = [(outLayer.schema.geom.name): geom]
+                if (f1) {
+                    f1.attributes.each {String k, Object v ->
+                        if (!k.equalsIgnoreCase(this.schema.geom.name)) {
+                            attributes[k] = v
+                        }
                     }
                 }
+                Feature f = schema.feature(attributes)
+                w.add(f)
             }
-            Feature f = schema.feature(attributes)
-            outLayer.add(f)
         }
 
         outLayer
@@ -1763,29 +1775,31 @@ class Layer {
 
         // Write each Feature in the spatial index into the output Layer
         Schema schema = outLayer.schema
-        index.queryAll().each { features ->
-            Geometry geom = features.geom
-            Feature f1 = features.feature1
-            Feature f2 = features.feature2
-            Map attributes = [(schema.geom.name): geom]
-            if (f1) {
-                Map fieldMap = schemaAndFields.fields[0]
-                f1.attributes.each {String k, Object v ->
-                    if (!k.equalsIgnoreCase(this.schema.geom.name) && fieldMap.containsKey(k)) {
-                        attributes[fieldMap[k]] = v
+        outLayer.withWriter{w ->
+            index.queryAll().each { features ->
+                Geometry geom = features.geom
+                Feature f1 = features.feature1
+                Feature f2 = features.feature2
+                Map attributes = [(schema.geom.name): geom]
+                if (f1) {
+                    Map fieldMap = schemaAndFields.fields[0]
+                    f1.attributes.each {String k, Object v ->
+                        if (!k.equalsIgnoreCase(this.schema.geom.name) && fieldMap.containsKey(k)) {
+                            attributes[fieldMap[k]] = v
+                        }
                     }
                 }
-            }
-            if (f2) {
-                Map fieldMap = schemaAndFields.fields[1]
-                f2.attributes.each {String k, Object v ->
-                    if (!k.equalsIgnoreCase(layer2.schema.geom.name) && fieldMap.containsKey(k)) {
-                        attributes[fieldMap[k]] = v
+                if (f2) {
+                    Map fieldMap = schemaAndFields.fields[1]
+                    f2.attributes.each {String k, Object v ->
+                        if (!k.equalsIgnoreCase(layer2.schema.geom.name) && fieldMap.containsKey(k)) {
+                            attributes[fieldMap[k]] = v
+                        }
                     }
                 }
+                Feature f = schema.feature(attributes)
+                w.add(f)
             }
-            Feature f = schema.feature(attributes)
-            outLayer.add(f)
         }
 
         outLayer
