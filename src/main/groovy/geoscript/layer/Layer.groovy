@@ -1205,8 +1205,7 @@ class Layer {
     void toKML(OutputStream out = System.out, Closure nameClosure = {f -> f.id}, Closure descriptionClosure = null) {
         def xml
         def markupBuilder = new StreamingMarkupBuilder()
-        def geometryWriter = new geoscript.geom.io.KmlWriter()
-        String geometryType = schema.geom.typ.toLowerCase()
+        def featureWriter = new geoscript.feature.io.KmlWriter()
         xml = markupBuilder.bind { builder ->
             mkp.xmlDeclaration()
             mkp.declareNamespace([kml: "http://www.opengis.net/kml/2.2"])
@@ -1222,38 +1221,7 @@ class Layer {
                             }
                         }
                         eachFeature {f ->
-                            kml.Placemark {
-                                kml.name { mkp.yield(nameClosure.call(f)) }
-                                if (descriptionClosure != null) {
-                                    kml.description { mkp.yield(descriptionClosure.call(f)) }
-                                }
-                                kml.Style {
-                                    if (geometryType.endsWith("point")) {
-                                        kml.IconStyle {
-                                            kml.color("ff0000ff")
-                                        }
-                                    } else {
-                                        kml.LineStyle {
-                                            kml.color("ff0000ff")
-                                        }
-                                        if (geometryType.endswith("Polygon")) {
-                                            kml.PolygonStyle {
-                                                kml.Fill("0")
-                                            }
-                                        }
-                                    }
-                                }
-                                kml.ExtendedData {
-                                    kml.SchemaData ("kml:schemaUrl": "#${name}") {
-                                        schema.fields.each {fld ->
-                                            if (!fld.isGeometry()) {
-                                                kml.SimpleData ("kml:name": fld.name) { mkp.yield(f.get(fld.name)) }
-                                            }
-                                        }
-                                    }
-                                }
-                                geometryWriter.write builder, f.geom, namespace: "kml"
-                            }
+                            featureWriter.write builder, f, namespace: "kml", name: nameClosure, description: descriptionClosure
                         }
                     }
                 }
