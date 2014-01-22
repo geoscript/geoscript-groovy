@@ -100,7 +100,7 @@ class Field {
      * @return Is the Field spatial?
      */
     boolean isGeometry() {
-        List geometryNames = ["point","linestring","polygon","linearring"]
+        List geometryNames = ["point","linestring","polygon","linearring","geometry","geometrycollection"]
         geometryNames.any{geomName -> typ.toLowerCase().endsWith(geomName)}
     }
 

@@ -74,6 +74,9 @@ class FieldTestCase {
 
         Field f3 = new Field("geom","Point", new Projection("EPSG:2927"))
         assertTrue f3.isGeometry()
+
+        Field f4 = new Field("geom","Geometry", new Projection("EPSG:2927"))
+        assertTrue f4.isGeometry()
     }
 
     @Test void equalsAndHashCode() {
