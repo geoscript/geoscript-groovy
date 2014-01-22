@@ -844,6 +844,14 @@ class Geometry {
     }
 
     /**
+     * Get a GPX String for this Geometry
+     * @return The GPX String
+     */
+    String getGpx() {
+        new GpxWriter().write(this)
+    }
+
+    /**
      * The string representation
      * @return The string representation
      */
@@ -1026,6 +1034,15 @@ class Geometry {
     }
 
     /**
+     * Get a Geometry from a GPX String
+     * @param gpx A GPX String
+     * @return A Geometry
+     */
+    static Geometry fromGpx(String gpx) {
+        new GpxReader().read(gpx)
+    }
+
+    /**
      * Get a Geometry from a String with an unknown format.
      * @param str The String
      * @return A Geometry or null if the String can't be parsed
@@ -1043,7 +1060,8 @@ class Geometry {
             new Gml2Reader(),
             new Gml3Reader(),
             new KmlReader(),
-            new WkbReader()
+            new WkbReader(),
+            new GpxReader()
         ]
         Geometry geom = null
         for(def reader in readers ) {

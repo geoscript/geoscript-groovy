@@ -1,5 +1,6 @@
 package geoscript.feature
 
+import geoscript.filter.Property
 import org.junit.Test
 import static org.junit.Assert.*
 import geoscript.geom.*
@@ -208,6 +209,14 @@ class FeatureTestCase {
 </kml:Point>
 </kml:Placemark>
 """, f1.kml
+    }
+
+    @Test void getGpx() {
+        Schema s1 = new Schema("houses", [new Field("geom","Point"), new Field("name","string"), new Field("price","float")])
+        Feature f1 = new Feature([new Point(111,-47), "House", 12.5], "house1", s1)
+        AssertUtil.assertStringsEqual "<wpt lat='-47.0' lon='111.0' xmlns='http://www.topografix.com/GPX/1/1'>" +
+                "<name>House</name><desc>House costs \$12.5</desc></wpt>",
+                f1.getGpx(name: new Property("name"), description: {Feature f -> "${f['name']} costs \$${f['price']}"})
     }
 }
 

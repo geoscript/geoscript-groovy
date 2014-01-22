@@ -144,6 +144,16 @@ class GeometryTestCase {
         assertEquals "POINT (111 -47)", g.toString()
     }
 
+    @Test void fromGpx() {
+        Geometry g = Geometry.fromGpx("<wpt lat='2.0' lon='1.0'/>")
+        assertEquals "POINT (1 2)", g.toString()
+    }
+
+    @Test void getGpx() {
+        Geometry g = Geometry.fromWKT("POINT (111 -47)")
+        assertEquals "<wpt lat='-47.0' lon='111.0'/>", g.gpx
+    }
+
     @Test void getCoordinates() {
         Geometry g = Geometry.fromWKT("POINT (111 -47)")
         def coordinates = g.coordinates
@@ -469,6 +479,10 @@ class GeometryTestCase {
         g = Geometry.fromString("00000000013FF00000000000003FF0000000000000")
         assertNotNull g
         assertEquals "POINT (1 1)", g.wkt
+        // GPX
+        g = Geometry.fromString("<wpt lat='2.0' lon='1.0'/>")
+        assertNotNull g
+        assertEquals "POINT (1 2)", g.wkt
         // Bounds
         g = Geometry.fromString("1,1,10,10")
         assertNotNull g
