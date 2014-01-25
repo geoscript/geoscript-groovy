@@ -3,6 +3,9 @@ package geoscript.layer
 import geoscript.feature.Schema
 import geoscript.filter.Expression
 import geoscript.geom.*
+import geoscript.index.Quadtree
+import geoscript.index.STRtree
+import geoscript.index.SpatialIndex
 import geoscript.proj.Projection
 import geoscript.feature.*
 import geoscript.workspace.*
@@ -1275,5 +1278,498 @@ class Layer {
      */
     String toString() {
         name
+    }
+
+    /**
+     * Clip this Layer by another Layer.
+     * @param options Named parameters
+     * <ul>
+     *     <li>outLayer = The name of the output Layer (defaults to this.layer.name_clipLayer.name_clipped)</li>
+     *     <li>outWorkspace = The output Workspace (defaults to the Memory Workspace)</li>
+     * </ul>
+     * @param clipLayer The clip Layer
+     * @return The clipped Layer
+     */
+    Layer clip(Map options = [:], Layer clipLayer) {
+
+        // Get or create the output/clipped Layer
+        def clippedLayerName = options.get("outLayer", "${this.name}_${clipLayer.name}_clipped")
+        Workspace workspace = options.get("outWorkspace", new Memory())
+        Layer clippedLayer = workspace.create(clippedLayerName as String, this.schema.fields)
+
+        // Put all of the Features in the Clip Layer in a spatial index
+        SpatialIndex index = new STRtree()
+        clipLayer.eachFeature { f ->
+            index.insert(f.bounds, f)
+        }
+
+        // Iterate through all of the Features in the input Layer
+        clippedLayer.withWriter { w ->
+            this.eachFeature(Filter.intersects(clipLayer.bounds.geometry), { f ->
+                // See if the Feature intersects with the Bounds of any Feature in the spatial index
+                index.query(f.bounds).each { clipFeature ->
+                    // Make sure it actually intersects the Geometry of a Feature in the spatial index
+                    if (f.geom.intersects(clipFeature.geom)) {
+                        // Clip the geometry from the input Layer
+                        Geometry intersection = f.geom.intersection(clipFeature.geom)
+                        // Create a new Feature and add it to the clipped Layer
+                        Map values = f.attributes
+                        values[f.schema.geom.name] = intersection
+                        w.add(clippedLayer.schema.feature(values))
+                    }
+                }
+            })
+        }
+        clippedLayer
+    }
+
+    /**
+     * Union this Layer with another Layer.
+     * @param options Named parameters
+     * <ul>
+     *     <li>outLayer = The name of the output Layer (defaults to this.layer.name_layer2.name_union)</li>
+     *     <li>outWorkspace = The output Workspace (defaults to the Memory Workspace)</li>
+     *     <li>postfixAll = Whether to postfix all field names when combinging schemas (defaults to false)</li>
+     *     <li>includeDuplicates = Whether to include duplicate field names (defaults to true)</li>
+     *     <li>maxFieldNameLength = The maximum field name length (defaults to 10 if output Workspace is Directory, otherwise there is no limit)</li>
+     * </ul>
+     * @param layer2 The second Layer
+     * @return The unioned Layer
+     */
+    Layer union(Map options = [:], Layer layer2) {
+
+        // Get the output Layer
+        String outLayerName = options.get("outLayer", "${this.name}_${layer2.name}_union")
+        Workspace workspace = options.get("outWorkspace", new Memory())
+        Map schemaAndFields = this.schema.addSchema(layer2.schema, outLayerName as String,
+                postfixAll: options.get("postfixAll",false),
+                includeDuplicates: options.get("includeDuplicates",true),
+                maxFieldNameLength: workspace instanceof Directory ? 10 : -1)
+        Layer outLayer = workspace.create(schemaAndFields.schema)
+
+        // Add all Features from the first Layer into spatial index
+        // Entries in the spatial index are Maps with geom, feature1, and feature2 values
+        Quadtree index = new Quadtree()
+        this.eachFeature { f ->
+            Map features = [geom: f.geom, feature1: f, feature2: null]
+            index.insert(features.geom.bounds, features)
+        }
+
+        // Go through each Feature in the second Layer
+        layer2.eachFeature { f ->
+            Geometry geom = f.geom
+            // Check the spatial index to see if this Feature intersects anything
+            index.query(f.geom.bounds).each { features ->
+                // Make sure the Geometries actually intersect
+                if(geom.intersects(features.geom)) {
+                    // Remove the original Feaure
+                    index.remove(features.geom.bounds, features)
+                    // Calculate the intersection and difference from both sides
+                    Geometry intersection = features.geom.intersection(geom)
+                    Geometry difference1 = features.geom.difference(geom)
+                    Geometry difference2 = geom.difference(features.geom)
+                    // Store the second difference because more Features may intersect it
+                    geom = difference2
+
+                    // Insert the first difference and the intersection into the spatial index
+                    index.insert(intersection.bounds, [geom: intersection, feature1: features.feature1, feature2: f])
+                    index.insert(difference1.bounds, [geom: difference1, feature1: features.feature1, feature2: null])
+                }
+            }
+            // Finally, insert geometry from the second Layer
+            index.insert(geom.bounds, [geom: geom, feature1: null, feature2: f])
+        }
+
+        // Put all Features in the spatial index into the output Layer
+        Schema schema = outLayer.schema
+        outLayer.withWriter{w ->
+            index.queryAll().each { features ->
+                Geometry geom = features.geom
+                Feature f1 = features.feature1
+                Feature f2 = features.feature2
+                Map attributes = [:]
+                attributes[schema.geom.name] = geom
+                if (f1) {
+                    Map fieldMap = schemaAndFields.fields[0]
+                    f1.attributes.each {String k, Object v ->
+                        if (!k.equalsIgnoreCase(this.schema.geom.name) && fieldMap.containsKey(k)) {
+                            attributes[fieldMap[k]] = v
+                        }
+                    }
+                }
+                if (f2) {
+                    Map fieldMap = schemaAndFields.fields[1]
+                    f2.attributes.each {String k, Object v ->
+                        if (!k.equalsIgnoreCase(layer2.schema.geom.name) && fieldMap.containsKey(k)) {
+                            attributes[fieldMap[k]] = v
+                        }
+                    }
+                }
+                Feature f = schema.feature(attributes)
+                w.add(f)
+            }
+        }
+
+        outLayer
+    }
+
+    /**
+     * Intersect this Layer with another Layer.
+     * @param options Named parameters
+     * <ul>
+     *     <li>outLayer = The name of the output Layer (defaults to this.layer.name_layer2.name_intersection)</li>
+     *     <li>outWorkspace = The output Workspace (defaults to the Memory Workspace)</li>
+     *     <li>postfixAll = Whether to postfix all field names when combinging schemas (defaults to false)</li>
+     *     <li>includeDuplicates = Whether to include duplicate field names (defaults to true)</li>
+     *     <li>maxFieldNameLength = The maximum field name length (defaults to 10 if output Workspace is Directory, otherwise there is no limit)</li>
+     * </ul>
+     * @param layer2 The second Layer
+     * @return The output Layer
+     */
+    Layer intersection(Map options = [:], Layer layer2) {
+
+        // Get the output Layer
+        String outLayerName = options.get("outLayer", "${this.name}_${layer2.name}_intersection")
+        Workspace workspace = options.get("outWorkspace", new Memory())
+        Map schemaAndFields = this.schema.addSchema(layer2.schema, outLayerName as String,
+                postfixAll: options.get("postfixAll",false),
+                includeDuplicates: options.get("includeDuplicates",true),
+                maxFieldNameLength: workspace instanceof Directory ? 10 : -1)
+        Layer outLayer = workspace.create(schemaAndFields.schema)
+
+        // Add all Features from the first Layer into spatial index
+        // Entries in the spatial index are Maps with geom, feature1, and feature2 values
+        Quadtree index = new Quadtree()
+        this.eachFeature { f ->
+            Map features = [geom: f.geom, feature1: f, feature2: null]
+            index.insert(features.geom.bounds, features)
+        }
+
+        // Go through each Feature in the second Layer and check for intersections
+        layer2.eachFeature { f ->
+            // First, check the spatial index
+            index.query(f.geom.bounds).each { features ->
+                // Make sure the geometries actually intersect
+                if(f.geom.intersects(features.geom)) {
+                    // Calculate and insert the intersection
+                    Geometry intersection = features.geom.intersection(f.geom)
+                    index.insert(intersection.bounds, [geom: intersection, feature1: features.feature1, feature2: f])
+                }
+            }
+        }
+
+        // Only add features from the spatial index that have features from Layer 1 and Layer2
+        Schema schema = outLayer.schema
+        outLayer.withWriter{w ->
+            index.queryAll().each { features ->
+                Geometry geom = features.geom
+                Feature f1 = features.feature1
+                Feature f2 = features.feature2
+                if (f1 != null && f2 != null) {
+                    Map attributes = [(schema.geom.name): geom]
+                    Map fieldMap1 = schemaAndFields.fields[0]
+                    f1.attributes.each {String k, Object v ->
+                        if (!k.equalsIgnoreCase(this.schema.geom.name) && fieldMap1.containsKey(k)) {
+                            attributes[fieldMap1[k]] = v
+                        }
+                    }
+                    Map fieldMap2 = schemaAndFields.fields[1]
+                    f2.attributes.each {String k, Object v ->
+                        if (!k.equalsIgnoreCase(layer2.schema.geom.name) && fieldMap2.containsKey(k)) {
+                            attributes[fieldMap2[k]] = v
+                        }
+                    }
+                    Feature f = schema.feature(attributes)
+                    w.add(f)
+                }
+            }
+        }
+
+        outLayer
+    }
+
+    /**
+     * Erase this Layer with another Layer.
+     * @param options Named parameters
+     * <ul>
+     *     <li>outLayer = The name of the output Layer (defaults to this.layer.name_layer2.name_erase)</li>
+     *     <li>outWorkspace = The output Workspace (defaults to the Memory Workspace)</li>
+     * </ul>
+     * @param layer2 The second Layer
+     * @return The output Layer
+     */
+    Layer erase(Map options = [:], Layer layer2) {
+
+        // Get the output Layer
+        String outLayerName = options.get("outLayer", "${this.name}_${layer2.name}_erase")
+        Workspace workspace = options.get("outWorkspace", new Memory())
+        Schema schema = new Schema(outLayerName as String, this.schema.fields)
+        Layer outLayer = workspace.create(schema)
+
+        // Add each Feature from the first Layer to a spatial index
+        Quadtree index = new Quadtree()
+        this.eachFeature { f ->
+            index.insert(f.geom.bounds, f)
+        }
+
+        // Go through each Feature from the second Layer see if
+        // it intersects with any Feature from the first layer
+        layer2.eachFeature { f2 ->
+            // First check the spatial index
+            index.query(f2.geom.bounds).each { f1 ->
+                // Then make sure the geometries actually intersect
+                if(f1.geom.intersects(f2.geom)) {
+                    // Remove the original Feature
+                    index.remove(f1.geom.bounds, f1)
+                    // Calculate the difference
+                    Geometry difference = f1.geom.difference(f2.geom)
+                    f1.geom = difference
+                    // Insert the Feature with the new Geometry
+                    index.insert(difference.bounds, f1)
+                }
+            }
+        }
+
+        // Add all Features in the spatial index to the output Layer
+        outLayer.withWriter{w ->
+            index.queryAll().each{f ->
+                w.add(f)
+            }
+        }
+
+        outLayer
+    }
+
+
+    /**
+     * Calculate the identity between this Layer and another Layer.
+     * @param options Named parameters
+     * <ul>
+     *     <li>outLayer = The name of the output Layer (defaults to this.layer.name_layer2.name_identity)</li>
+     *     <li>outWorkspace = The output Workspace (defaults to the Memory Workspace)</li>
+     *     <li>postfixAll = Whether to postfix all field names when combinging schemas (defaults to false)</li>
+     *     <li>includeDuplicates = Whether to include duplicate field names (defaults to true)</li>
+     *     <li>maxFieldNameLength = The maximum field name length (defaults to 10 if output Workspace is Directory, otherwise there is no limit)</li>
+     * </ul>
+     * @param layer2 The second Layer
+     * @return The output Layer
+     */
+    Layer identity(Map options = [:], Layer layer2) {
+
+        // Get the output Layer
+        String outLayerName = options.get("outLayer", "${this.name}_${layer2.name}_identity")
+        Workspace workspace = options.get("outWorkspace", new Memory())
+        Map schemaAndFields = this.schema.addSchema(layer2.schema, outLayerName as String,
+                postfixAll: options.get("postfixAll",false),
+                includeDuplicates: options.get("includeDuplicates",true),
+                maxFieldNameLength: workspace instanceof Directory ? 10 : -1)
+        Layer outLayer = workspace.create(schemaAndFields.schema)
+
+        // Add all Features from the first Layer into spatial index
+        // Entries in the spatial index are Maps with geom, feature1, and feature2 values
+        Quadtree index = new Quadtree()
+        this.eachFeature { f ->
+            Map features = [geom: f.geom, feature1: f, feature2: null]
+            index.insert(features.geom.bounds, features)
+        }
+
+        // Go through each Feature in the second Layer and check for intersections
+        layer2.eachFeature { f ->
+            // First, check the spatial index
+            index.query(f.geom.bounds).each { features ->
+                // Then make sure the geometries actually intersect
+                if(f.geom.intersects(features.geom)) {
+                    // Remove the original Feature
+                    index.remove(features.geom.bounds, features)
+                    // Calculate the intersection the difference
+                    Geometry intersection = features.geom.intersection(f.geom)
+                    Geometry difference = features.geom.difference(f.geom)
+
+                    // Insert the intersection and difference back into the spatial index
+                    index.insert(intersection.bounds, [geom: intersection, feature1: features.feature1, feature2: f])
+                    index.insert(difference.bounds, [geom: difference, feature1: features.feature1, feature2: null])
+                }
+            }
+        }
+
+        // Put all Features in the spatial index into the output Layer
+        Schema schema = outLayer.schema
+        outLayer.withWriter{w ->
+            index.queryAll().each { features ->
+                Geometry geom = features.geom
+                Feature f1 = features.feature1
+                Feature f2 = features.feature2
+                Map attributes = [(schema.geom.name): geom]
+                if (f1) {
+                    Map fieldMap = schemaAndFields.fields[0]
+                    f1.attributes.each {String k, Object v ->
+                        if (!k.equalsIgnoreCase(this.schema.geom.name) && fieldMap.containsKey(k)) {
+                            attributes[fieldMap[k]] = v
+                        }
+                    }
+                }
+                if (f2) {
+                    Map fieldMap = schemaAndFields.fields[1]
+                    f2.attributes.each {String k, Object v ->
+                        if (!k.equalsIgnoreCase(layer2.schema.geom.name) && fieldMap.containsKey(k)) {
+                            attributes[fieldMap[k]] = v
+                        }
+                    }
+                }
+                Feature f = schema.feature(attributes)
+                w.add(f)
+            }
+        }
+
+        outLayer
+    }
+
+    /**
+     * Calculate the update between this Layer and another Layer.
+     * @param options Named parameters
+     * <ul>
+     *     <li>outLayer = The name of the output Layer (defaults to this.layer.name_layer2.name_update)</li>
+     *     <li>outWorkspace = The output Workspace (defaults to the Memory Workspace)</li>
+     * </ul>
+     * @param layer2 The second Layer
+     * @return The output Layer
+     */
+    Layer update(Map options = [:], Layer layer2) {
+
+        // Get the output Layer
+        String outLayerName = options.get("outLayer", "${this.name}_${layer2.name}_update")
+        Workspace workspace = options.get("outWorkspace", new Memory())
+        Schema schema = new Schema(outLayerName as String, this.schema.fields)
+        Layer outLayer = workspace.create(schema)
+
+        // Add each Feature from the second layer to a spatial index
+        Quadtree index = new Quadtree()
+        layer2.eachFeature { f ->
+            Map features = [geom: f.geom, feature1: null, feature2: f]
+            index.insert(features.geom.bounds, features)
+        }
+
+        // Then go through each Feature from the first Layer and check
+        // for intersections
+        this.eachFeature { f ->
+            // Remember the Geometry, since there can be multiple intersecting features
+            Geometry geom = f.geom
+            // First check the spatial index
+            index.query(geom.bounds).each { features ->
+                // Then make sure the geometries actually intersect
+                if(geom.intersects(features.geom)) {
+                    // Calculate the difference
+                    geom = geom.difference(features.geom)
+                }
+            }
+            // Finally, insert the geometry into the spatial index
+            index.insert(geom.bounds, [geom: geom, feature1: f, feature2: null])
+        }
+
+        // Add all Features in the spatial index to the output Layer
+        outLayer.withWriter{w ->
+            index.queryAll().each { features ->
+                Geometry geom = features.geom
+                Feature f1 = features.feature1
+                Map attributes = [(outLayer.schema.geom.name): geom]
+                if (f1) {
+                    f1.attributes.each {String k, Object v ->
+                        if (!k.equalsIgnoreCase(this.schema.geom.name)) {
+                            attributes[k] = v
+                        }
+                    }
+                }
+                Feature f = schema.feature(attributes)
+                w.add(f)
+            }
+        }
+
+        outLayer
+    }
+
+    /**
+     * Calculate the symmetric difference between this Layer and another Layer.
+     * @param options Named parameters
+     * <ul>
+     *     <li>outLayer = The name of the output Layer (defaults to this.layer.name_layer2.name_symdifference)</li>
+     *     <li>outWorkspace = The output Workspace (defaults to the Memory Workspace)</li>
+     *     <li>postfixAll = Whether to postfix all field names when combinging schemas (defaults to false)</li>
+     *     <li>includeDuplicates = Whether to include duplicate field names (defaults to true)</li>
+     *     <li>maxFieldNameLength = The maximum field name length (defaults to 10 if output Workspace is Directory, otherwise there is no limit)</li>
+     * </ul>
+     * @param layer2 The second Layer
+     * @return The output Layer
+     */
+    Layer symDifference(Map options = [:], Layer layer2) {
+
+        // Get the output Layer
+        def outLayerName = options.get("outLayer", "${this.name}_${layer2.name}_symdifference")
+        Workspace workspace = options.get("outWorkspace", new Memory())
+        Map schemaAndFields = this.schema.addSchema(layer2.schema, outLayerName as String,
+                postfixAll: options.get("postfixAll",false),
+                includeDuplicates: options.get("includeDuplicates",true),
+                maxFieldNameLength: workspace instanceof Directory ? 10 : -1)
+        Layer outLayer = workspace.create(schemaAndFields.schema)
+
+        // Add each Feature from the first Layer to a spatial index
+        Quadtree index = new Quadtree()
+        this.eachFeature { f ->
+            Map features = [geom: f.geom, feature1: f, feature2: null]
+            index.insert(features.geom.bounds, features)
+        }
+
+        // Check each feature in the second Layer for intersections
+        layer2.eachFeature { f ->
+            Geometry geom = f.geom
+            // First check the spatial index
+            index.query(f.geom.bounds).each { features ->
+                // Then check to make sure the geometries actually intersect
+                if(geom.intersects(features.geom)) {
+                    // Remove the previous entry in the spatial index
+                    index.remove(features.geom.bounds, features)
+                    // Calculate the differences
+                    Geometry difference1 = features.geom.difference(geom)
+                    Geometry difference2 = geom.difference(features.geom)
+                    // Keep the second difference around in case other Geometries
+                    // intersect with it
+                    geom = difference2
+                    // Insert first difference back into the spatial index
+                    index.insert(difference1.bounds, [geom: difference1, feature1: features.feature1, feature2: null])
+                }
+            }
+            // Finally, insert the geometry from the second Layer into the spatial index
+            index.insert(geom.bounds, [geom: geom, feature1: null, feature2: f])
+        }
+
+        // Write each Feature in the spatial index into the output Layer
+        Schema schema = outLayer.schema
+        outLayer.withWriter{w ->
+            index.queryAll().each { features ->
+                Geometry geom = features.geom
+                Feature f1 = features.feature1
+                Feature f2 = features.feature2
+                Map attributes = [(schema.geom.name): geom]
+                if (f1) {
+                    Map fieldMap = schemaAndFields.fields[0]
+                    f1.attributes.each {String k, Object v ->
+                        if (!k.equalsIgnoreCase(this.schema.geom.name) && fieldMap.containsKey(k)) {
+                            attributes[fieldMap[k]] = v
+                        }
+                    }
+                }
+                if (f2) {
+                    Map fieldMap = schemaAndFields.fields[1]
+                    f2.attributes.each {String k, Object v ->
+                        if (!k.equalsIgnoreCase(layer2.schema.geom.name) && fieldMap.containsKey(k)) {
+                            attributes[fieldMap[k]] = v
+                        }
+                    }
+                }
+                Feature f = schema.feature(attributes)
+                w.add(f)
+            }
+        }
+
+        outLayer
     }
 }
