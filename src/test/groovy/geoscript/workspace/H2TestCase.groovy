@@ -119,5 +119,32 @@ class H2TestCase {
         assertEquals "South Dakota", layer.collectFromFeature(params: ['abbr': 'SD']) {ft -> ft['STATE_NAME']}[0]
     }
 
+    @Test void indexes() {
+        // Create a layer
+        H2 h2 = new H2(folder.newFile("h2.db"))
+        Layer l = h2.create('widgets',[new Field("geom", "Point"), new Field("name", "String")])
+        assertNotNull(l)
+        l.add([new Point(1,1), "one"])
+        l.add([new Point(2,2), "two"])
+        l.add([new Point(3,3), "three"])
+        assertEquals 3, l.count()
+        // Add two indexes
+        h2.createIndex("widgets","geom_idx","geom",false)
+        h2.createIndex("widgets","name_idx","name",true)
+        // Get the indexes
+        List indexes = h2.getIndexes("widgets")
+        // Check the geom index
+        Map index = indexes.find{ it.name.equals("geom_idx") }
+        assertNotNull(index)
+        assertEquals("geom", index.attributes[0])
+        assertFalse(index.unique)        
+        // Check the name index
+        index = indexes.find{ it.name.equals("name_idx") }
+        assertNotNull(index)
+        assertEquals("name", index.attributes[0])
+        assertTrue(index.unique)        
+        // Delete the geom index
+        h2.deleteIndex("widgets","geom_idx")
+        assertNull(h2.getIndexes("widgets").find{it.name.equals("geom_idx")})
+    }
 }
-

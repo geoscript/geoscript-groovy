@@ -62,6 +62,50 @@ class Database extends Workspace {
     }
 
     /**
+     * Create an index
+     * @param layerName The layer or table name
+     * @param indexName The index name
+     * @param fieldName The field name
+     * @param unique Whether the index is unique or not
+     */
+    void createIndex(String layerName, String indexName, String fieldName, boolean unique) {
+        createIndex(layerName, indexName, [fieldName], unique)
+    }
+
+    /**
+     * Create an index
+     * @param layerName The layer or table name
+     * @param indexName The index name
+     * @param fieldNames A List of field names
+     * @param unique Whether the index is unique or not
+     */
+    void createIndex(String layerName, String indexName, List<String> fieldNames, boolean unique) {
+        (ds as JDBCDataStore).createIndex(new org.geotools.jdbc.Index(layerName, indexName, unique, fieldNames as String[]))
+    }
+
+    /**
+     * Delete an index
+     * @param layerName The layer or table name
+     * @param indexName The index name
+     */
+    void deleteIndex(String layerName, String indexName) {
+        (ds as JDBCDataStore).dropIndex(layerName, indexName)
+    }
+
+    /**
+     * Get a List of indexes for a layer or table by name
+     * @param layerName The layer or table name
+     * @return A List of indexes
+     */
+    List getIndexes(String layerName) {
+        (ds as JDBCDataStore).getIndexes(layerName).collect{ [
+            name: it.indexName,
+            unique: it.unique,
+            attributes: it.attributes
+        ]}
+    }
+
+    /**
      * Add a SQL Query as a Layer.  Deprecated, please use createView instead.
      * @param name The new Layer's name
      * @param sql The SQL Query that creates the new Layer
