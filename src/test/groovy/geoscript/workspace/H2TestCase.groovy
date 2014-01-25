@@ -16,6 +16,30 @@ class H2TestCase {
     @Rule
     public TemporaryFolder folder = new TemporaryFolder()
 
+    @Test void remove() {
+        H2 h2 = new H2(folder.newFile("h2.db"))
+        assertEquals "H2", h2.format
+        // Add
+        Layer l = h2.create('widgets',[new Field("geom", "Point"), new Field("name", "String")])
+        assertNotNull(l)
+        l.add([new Point(1,1), "one"])
+        l.add([new Point(2,2), "two"])
+        l.add([new Point(3,3), "three"])
+        assertEquals 3, l.count()
+        // Get
+        assertNotNull(h2.get("widgets"))
+        // Remove
+        h2.remove("widgets")
+        boolean exceptionThrown = false
+        try {
+            h2.get("widgets")
+        } catch (IOException ex) {
+            exceptionThrown = true
+        }
+        assertTrue(exceptionThrown)
+        h2.close()
+    }
+
     @Test void create() {
         H2 h2 = new H2(folder.newFile("h2.db"))
         assertEquals "H2", h2.format

@@ -29,6 +29,14 @@ class Database extends Workspace {
     }
 
     /**
+     * Remove the layer from the database
+     * @param layerName The layer name
+     */
+    void remove(String layerName) {
+        (ds as JDBCDataStore).removeSchema(layerName)
+    }
+
+    /**
      * Create a Layer from a SQL View
      * @param options The named parameters
      * <ul>
