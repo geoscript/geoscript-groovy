@@ -106,7 +106,6 @@ class WorkspaceTestCase {
         assertTrue(params.containsKey("directory"))
         assertTrue(params['directory'].toString().endsWith("my/states.properties"))
 
-
         params = Workspace.getParametersFromString("directory=/my/propertyfiles")
         assertTrue(params.containsKey("directory"))
         assertTrue(params['directory'].toString().endsWith("my/propertyfiles"))
@@ -114,6 +113,15 @@ class WorkspaceTestCase {
         params = Workspace.getParametersFromString("/my/states.properties")
         assertTrue(params.containsKey("directory"))
         assertTrue(params['directory'].toString().endsWith("my"))
+
+        // GeoPackage
+        params = Workspace.getParametersFromString("dbtype=geopkg database=layers.gpkg")
+        assertEquals(params['dbtype'], "geopkg")
+        assertEquals(params['database'], "layers.gpkg")
+
+        params = Workspace.getParametersFromString("layers.gpkg")
+        assertEquals(params['dbtype'], "geopkg")
+        assertTrue(params['database'].toString().endsWith("layers.gpkg"))
     }
 
     @Test void getWorkspaceNames() {
