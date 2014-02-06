@@ -53,7 +53,7 @@ class GeoScriptTestCase {
         ]
         Bounds bounds = new Bounds(0, 0, 7, 5, "EPSG:4326")
         assertTrue GeoScript.wrap(new Raster(data, bounds).coverage) instanceof Raster
-        assertTrue GeoScript.wrap(new GeoTIFF().gridFormat) instanceof Format
+        assertTrue GeoScript.wrap(new GeoTIFF(null).gridFormat) instanceof Format
         assertTrue GeoScript.wrap(1) instanceof Integer
         assertTrue GeoScript.wrap("ABC") instanceof String
     }

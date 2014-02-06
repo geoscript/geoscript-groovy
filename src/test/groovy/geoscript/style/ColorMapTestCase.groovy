@@ -31,9 +31,9 @@ class ColorMapTestCase {
         assertTrue colorMap.extended
 
         // Load a Raster
-        GeoTIFF geoTIFF = new GeoTIFF()
         File file = new File(getClass().getClassLoader().getResource("raster.tif").toURI())
-        Raster raster = geoTIFF.read(file)
+        GeoTIFF geoTIFF = new GeoTIFF(file)
+        Raster raster = geoTIFF.read()
         Map extrema = raster.extrema
         double min = extrema.min[0]
         double max = extrema.max[0]

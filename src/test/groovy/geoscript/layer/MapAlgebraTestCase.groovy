@@ -22,14 +22,15 @@ class MapAlgebraTestCase {
 
     @Test void greatThan() {
         File rasterFile = new File(getClass().getClassLoader().getResource("raster.tif").toURI())
-        GeoTIFF geotiff = new GeoTIFF()
-        Raster raster = geotiff.read(rasterFile)
+        GeoTIFF geotiff = new GeoTIFF(rasterFile)
+        Raster raster = geotiff.read()
         MapAlgebra algebra = new MapAlgebra()
         Raster output = algebra.calculate("dest = src > 200;", [src: raster], size: [600, 400])
         assertNotNull output
         File file = folder.newFile("greaterthan.tif")
         println file
-        geotiff.write(output, file)
+        GeoTIFF outTiff = new GeoTIFF(file)
+        outTiff.write(output)
         assertTrue file.size() > 0
     }
 
@@ -52,8 +53,8 @@ class MapAlgebraTestCase {
         assertNotNull output
         File file = folder.newFile("waves.tif")
         println file
-        GeoTIFF geotiff = new GeoTIFF()
-        geotiff.write(output, file)
+        GeoTIFF geotiff = new GeoTIFF(file)
+        geotiff.write(output)
         assertTrue file.size() > 0
     }
 

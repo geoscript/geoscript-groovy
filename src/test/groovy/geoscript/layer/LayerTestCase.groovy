@@ -753,8 +753,8 @@ class LayerTestCase {
         assertNotNull raster
         File rasterFile = folder.newFile("states_pop.tif")
         println rasterFile
-        GeoTIFF geotiff = new GeoTIFF()
-        geotiff.write(raster, rasterFile)
+        GeoTIFF geotiff = new GeoTIFF(rasterFile)
+        geotiff.write(raster)
     }
 
     @Test void cursorSubFields() {

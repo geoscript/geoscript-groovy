@@ -1,8 +1,8 @@
 import geoscript.layer.*
 
 // Read a GeoTIFF
-def format = new GeoTIFF()
-def raster = format.read(new File("raster.tif"))
+def format = new GeoTIFF(new File("raster.tif"))
+def raster = format.read()
 
 // Print some information
 println "Format = ${raster.format}"

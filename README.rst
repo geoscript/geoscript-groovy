@@ -72,8 +72,8 @@ Reading a Raster::
 
     import geoscript.layer.GeoTIFF
 
-    def format = new GeoTIFF()
-    def raster = format.read(new File("raster.tif"))
+    def format = new GeoTIFF(new File("raster.tif"))
+    def raster = format.read()
 
     println "Format = ${raster.format}"
     println "Proj EPSG = ${raster.proj.id}"

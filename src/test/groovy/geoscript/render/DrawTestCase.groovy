@@ -73,8 +73,8 @@ class DrawTestCase {
 
     @Test void drawRaster() {
         File tifFile = new File(getClass().getClassLoader().getResource("alki.tif").toURI())
-        GeoTIFF geoTIFF = new GeoTIFF()
-        Raster raster = geoTIFF.read(tifFile)
+        GeoTIFF geoTIFF = new GeoTIFF(tifFile)
+        Raster raster = geoTIFF.read()
         File file = folder.newFile("draw_raster.png")
         draw(raster, bounds: raster.bounds.scale(1.1), size: [250,250], out: file, format: "png")
         assertTrue file.exists()
@@ -142,8 +142,8 @@ class DrawTestCase {
 
     @Test void drawRasterToImage() {
         File tifFile = new File(getClass().getClassLoader().getResource("alki.tif").toURI())
-        GeoTIFF geoTIFF = new GeoTIFF()
-        Raster raster = geoTIFF.read(tifFile)
+        GeoTIFF geoTIFF = new GeoTIFF(tifFile)
+        Raster raster = geoTIFF.read()
         File file = folder.newFile("draw_raster.png")
         def image = drawToImage(raster, bounds: raster.bounds.scale(1.1), size: [250,250])
         assertNotNull(image)

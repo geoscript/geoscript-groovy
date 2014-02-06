@@ -14,12 +14,14 @@ class FormatTestCase {
         File file = new File(getClass().getClassLoader().getResource("alki.tif").toURI())
         Format format = Format.getFormat(file)
         assertNotNull(format)
+        assertNotNull(format.stream)
         assertTrue(format instanceof GeoTIFF)
 
         // New file
         file = new File("doesnotexist.png")
         format = Format.getFormat(file)
         assertNotNull(format)
+        assertNotNull(format.stream)
         assertTrue(format instanceof WorldImage)
 
         // Not a Raster form a new file
