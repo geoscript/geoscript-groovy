@@ -17,6 +17,13 @@ class FormatTestCase {
         assertNotNull(format.stream)
         assertTrue(format instanceof GeoTIFF)
 
+        // Existing NetCDF
+        file = new File(getClass().getClassLoader().getResource("O3-NO2.nc").toURI())
+        format = Format.getFormat(file)
+        assertNotNull(format)
+        assertNotNull(format.stream)
+        assertTrue(format instanceof NetCDF)
+
         // New file
         file = new File("doesnotexist.png")
         format = Format.getFormat(file)

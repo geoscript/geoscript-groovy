@@ -4,6 +4,7 @@ import geoscript.proj.Projection
 import org.geotools.coverage.grid.io.AbstractGridFormat
 import org.geotools.coverage.grid.io.GridFormatFinder
 import org.geotools.coverage.grid.io.UnknownFormat
+import org.geotools.coverage.io.netcdf.NetCDFFormat
 import org.geotools.coverageio.gdal.mrsid.MrSIDFormat
 import org.geotools.factory.GeoTools
 import org.geotools.factory.Hints
@@ -315,6 +316,8 @@ class Format {
                 return new MrSID(file)
             } else if (format instanceof WorldImageFormat) {
                 return new WorldImage(file)
+            } else if (format instanceof NetCDFFormat) {
+                return new NetCDF(file)
             } else {
                 return new Format(format, file)
             }
@@ -330,6 +333,8 @@ class Format {
                 return new MrSID(file)
             } else if (ext in ["asc"]) {
                 return new ArcGrid(file)
+            } else if (ext in ["nc"]) {
+                return new NetCDF(file)
             } else {
                 return null
             }
