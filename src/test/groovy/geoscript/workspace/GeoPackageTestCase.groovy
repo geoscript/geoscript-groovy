@@ -78,18 +78,19 @@ class GeoPackageTestCase {
     @Test
     void tiles() {
         GeoPackage geopkg = new GeoPackage(folder.newFile("geopkg.gpkg"))
-        geopkg.tiles.addEntry("world", new Bounds(-180,-90,180,90, "EPSG:4326"))
-                .addMatrix(0,1,1,256,256,0.1,0.1)
-                .addMatrix(1,2,2,256,256,0.1,0.1)
-                .create()
-                .addTile(0,0,0, [0] as byte[])
-                .addTile(1,0,0, [1] as byte[])
-                .addTile(1,0,1, [2] as byte[])
-                .addTile(1,1,0, [3] as byte[])
-                .addTile(1,1,1, [4] as byte[])
 
+        GeoPackage.Entry entry = geopkg.tiles.addEntry("world", new Bounds(-180,-90,180,90, "EPSG:4326"))
+            .matrix(0,1,1,256,256,0.1,0.1)
+            .matrix(1,2,2,256,256,0.1,0.1)
+            .build()
 
-        // Iterate other entries and matrices
+        entry.addTile(0,0,0, [0] as byte[])
+            .addTile(1,0,0, [1] as byte[])
+            .addTile(1,0,1, [2] as byte[])
+            .addTile(1,1,0, [3] as byte[])
+            .addTile(1,1,1, [4] as byte[])
+
+        // Iterate other entries and matrices using lists
         geopkg.tiles.entries.each{ e ->
             assertNotNull e
             e.matricies.each{ matrix ->
@@ -97,16 +98,24 @@ class GeoPackageTestCase {
             }
         }
 
+        // Iterate other entries and matrices using closures
+        geopkg.tiles.eachEntry { e ->
+            assertNotNull e
+            e.eachMatrix { m ->
+                assertNotNull m
+            }
+        }
+
         // Tiles
         assertEquals(1, geopkg.tiles.entries.size())
-        geopkg.tiles.eachEntry {entry ->
-            assertNotNull(entry)
+        geopkg.tiles.eachEntry {e ->
+            assertNotNull(e)
         }
 
         // Entry
-        GeoPackage.Tiles.Entry entry = geopkg.tiles.getEntry("world")
-        assertEquals(new Bounds(-180,-90,180,90, "EPSG:4326"), entry.bounds)
-        assertEquals("world", entry.name)
+        GeoPackage.Entry e = geopkg.tiles.getEntry("world")
+        assertEquals(new Bounds(-180,-90,180,90, "EPSG:4326"), e.bounds)
+        assertEquals("world", e.name)
 
         // Matrix
         assertEquals(2, entry.matricies.size())
