@@ -461,12 +461,11 @@ class GeoPackage {
          * @return A new Entry
          */
         Entry build() {
-            println "Builder building Entry: ${this.tiles.class.name}"
             Entry entry = new Entry(this.tiles, new TileEntry(tableName: this.name, bounds: this.bounds.env))
-            tiles.geopackage.create(entry.tileEntry)
             this.matrices.each { Matrix m ->
                 entry.tileEntry.tileMatricies.add(m.tilesMatrix)
             }
+            tiles.geopackage.create(entry.tileEntry)
             entry
         }
 
