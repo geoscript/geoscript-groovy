@@ -6,16 +6,16 @@ import geoscript.layer.Layer
 import geoscript.layer.WMS
 import geoscript.proj.Projection
 import geoscript.layer.Raster
+import org.geotools.map.FeatureLayer
+import org.geotools.map.GridCoverageLayer
 import org.geotools.map.WMSLayer
 
 import java.awt.Graphics2D
 import java.awt.Rectangle
 import java.awt.RenderingHints
 import java.awt.image.BufferedImage
-import org.geotools.map.DefaultMapContext
-import org.geotools.map.DefaultMapLayer
 import org.geotools.map.MapContent
-import org.geotools.map.MapLayer
+import org.geotools.map.Layer as GtLayer
 import org.geotools.renderer.GTRenderer
 import org.geotools.renderer.label.LabelCacheImpl
 import org.geotools.renderer.lite.LabelCache
@@ -69,9 +69,9 @@ class Map {
     protected GTRenderer renderer
 
     /**
-     * The GeoTools MapContext
+     * The GeoTools MapContent
      */
-    protected MapContent context
+    protected MapContent content
 
     /**
      * The LabelCache
@@ -104,18 +104,17 @@ class Map {
      * Create a new Map
      */
     Map() {
-        context = new DefaultMapContext()
+        content = new MapContent()
         renderer = new StreamingRenderer()
         RenderingHints hints = new RenderingHints(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON)
         hints.add(new RenderingHints(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON))
         renderer.setJava2DHints(hints)
         renderer.setRendererHints([
-            //(StreamingRenderer.OPTIMIZED_DATA_LOADING_KEY): Boolean.TRUE,
             (StreamingRenderer.LABEL_CACHE_KEY): labelCache,
             (StreamingRenderer.SCALE_COMPUTATION_METHOD_KEY): StreamingRenderer.SCALE_ACCURATE,
             (StreamingRenderer.LINE_WIDTH_OPTIMIZATION_KEY): Boolean.FALSE,
         ])
-        renderer.setContext(context)
+        renderer.setMapContent(content)
     }
 
     /**
@@ -124,7 +123,7 @@ class Map {
      */
     void setProj(def projection) {
         this.projection = new Projection(projection)
-        context.setCoordinateReferenceSystem(new Projection(projection).crs)
+        content.viewport.setCoordinateReferenceSystem(this.projection.crs)
     }
 
     /**
@@ -172,7 +171,7 @@ class Map {
      * @return The Bounds
      */
     Bounds getBounds() {
-        new Bounds(context.areaOfInterest)
+        new Bounds(content.viewport.bounds)
     }
 
     /**
@@ -185,7 +184,8 @@ class Map {
         if (bounds.proj == null) {
             bounds = new Bounds(bounds.minX, bounds.minY, bounds.maxX, bounds.maxY, getProj())
         }
-        context.setAreaOfInterest(bounds.env, bounds.proj?.crs)
+        content.viewport.bounds = bounds.env
+        content.viewport.coordinateReferenceSystem = bounds.proj?.crs
     }
 
     /**
@@ -260,7 +260,7 @@ class Map {
         renderer.paint(g, new Rectangle(0, 0, width, height), getBounds().env)
         g.dispose()
         labelCache.clear()
-        context.clearLayerList()
+        content.layers().clear()
     }
 
     /**
@@ -276,20 +276,22 @@ class Map {
     protected void setUpRendering() {
         // Add Layers
         layers.each{layer ->
-            MapLayer mapLayer
+            GtLayer mapLayer
             if (layer instanceof Layer) {
-                mapLayer = new DefaultMapLayer(layer.fs, layer.style.gtStyle)
+                mapLayer = new FeatureLayer(layer.fs, layer.style.gtStyle)
             } else if (layer instanceof Raster) {
-                mapLayer = new DefaultMapLayer(layer.coverage, layer.style.gtStyle)
+                mapLayer = new GridCoverageLayer(layer.coverage, layer.style.gtStyle)
             } else if (layer instanceof geoscript.layer.WMSLayer) {
                 def wmsLayer = layer as geoscript.layer.WMSLayer
                 def gtWmsLayer = new WMSLayer(wmsLayer.wms.wms, wmsLayer.layers[0].layer)
                 (1..<wmsLayer.layers.size()).each{i ->
                     gtWmsLayer.addLayer(wmsLayer.layers[i].layer)
                 }
-                mapLayer = new DefaultMapLayer(gtWmsLayer)
+                mapLayer = gtWmsLayer
+            } else if (layer instanceof GtLayer) {
+                mapLayer = layer
             }
-            context.addLayer(mapLayer)
+            content.addLayer(mapLayer)
         }
         // Set Bounds and Projections
         def b = getBounds()
@@ -365,7 +367,7 @@ class Map {
      * Closes the Map by disposing of any resources.
      */
     void close() {
-        context.dispose()
+        content.dispose()
     }
 }
 
