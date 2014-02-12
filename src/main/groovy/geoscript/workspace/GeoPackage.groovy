@@ -179,7 +179,7 @@ class GeoPackage {
     /**
      * The Tiles class is wrapper around GeoPackages Tile Support
      */
-    static class Tiles {
+    static class Tiles implements Closeable {
 
         /**
          * The GeoTools GeoPackage
@@ -193,6 +193,11 @@ class GeoPackage {
         Tiles(File file) {
             this.geopackage = new GtGeoPackage(file)
             this.geopackage.init()
+        }
+
+        @Override
+        void close() throws IOException {
+            this.geopackage.close()
         }
 
         /**
