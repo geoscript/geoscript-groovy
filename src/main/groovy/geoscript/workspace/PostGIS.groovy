@@ -24,9 +24,12 @@ class PostGIS extends Database {
      * @param user The user name
      * @param password The password
      * @param estimatedExtent Whether to estimate the extent or not
+     * @param createDatabase Whether to create the database or not 
+     * @param createDatabaseParams The database creation parameter string
      */
-    PostGIS (String name, String host, String port, String schema, String user, String password, boolean estimatedExtent = false) {
-        super(createDataStore(name, host, port, schema, user, password, estimatedExtent, false, ""))
+    PostGIS (String name, String host, String port, String schema, String user, String password, 
+        boolean estimatedExtent = false, boolean createDatabase = false, String createDatabaseParams = "") {
+        super(createDataStore(name, host, port, schema, user, password, estimatedExtent, createDatabase, createDatabaseParams))
     }
     
     /**
