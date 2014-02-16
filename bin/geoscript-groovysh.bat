@@ -33,7 +33,7 @@ cd %~dp0
 set CLASSPATH=%CD%\..\lib\*
 
 cd %CWD%
-%GROOVY% %*
+%GROOVY% -Dorg.geotools.referencing.forceXY=true %*
 goto end
 
 :error

@@ -33,6 +33,7 @@ cd %~dp0
 set CLASSPATH=%CD%\..\lib\*
 
 cd %CWD%
+set JAVA_OPTS=-Dorg.geotools.referencing.forceXY=true
 %GROOVY% %*
 goto end
 

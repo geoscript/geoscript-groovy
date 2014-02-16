@@ -29,4 +29,5 @@ for jar in `ls $LIBDIR`; do
   fi
 done
 
+export JAVA_OPTS=-Dorg.geotools.referencing.forceXY=true
 "$GROOVY" -cp $CLASSPATH "$@"
