@@ -335,6 +335,8 @@ class Map {
             b = new Bounds(b.minX, b.minY, b.maxX, b.maxY, p)
         }
         setBounds(b)
+        // Set width and height
+        content.viewport.setScreenArea(new Rectangle(width, height))
     }
 
     /**
