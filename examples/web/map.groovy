@@ -25,7 +25,7 @@ println """<html>
                     ),
                     new OpenLayers.Layer.WMS(
                         "GeoScript WMS",
-                        "http://localhost:8080/geoscript/wms.groovy",
+                        "http://localhost:8080/geoscript/tile.groovy",
                         {layers: "states"},
                         {isBaseLayer: false, buffer: 0, opacity: 0.7}
                     )
