@@ -110,6 +110,16 @@ and then include the GeoScript Groovy dependency::
         <version>1.2</version>
     </dependency>
 
+Presentations
+-------------
+`GeoScript: Spatial Capabilities for Scripting Languages <http://www.slideshare.net/jdeolive/geoscript-spatial-capabilities-for-scripting-languages>`_
+
+`Using GeoScript Groovy <http://www.slideshare.net/JaredErickson/using-geoscript-groovy>`_
+
+`Rendering Maps in GeoScript <http://www.slideshare.net/JaredErickson/geo-scriptstylerendering>`_
+
+`Scripting GeoServer <http://www.slideshare.net/JaredErickson/scripting-geoserver>`_
+
 License
 -------
 GeoScript Groovy is open source and licensed under the MIT license.
