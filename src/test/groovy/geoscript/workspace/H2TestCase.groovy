@@ -117,6 +117,7 @@ class H2TestCase {
         assertEquals "Washington", layer.getFeatures(params: ['abbr': 'WA'])[0]['STATE_NAME']
         assertEquals "Oregon", layer.getCursor(params: ['abbr': 'OR']).next()['STATE_NAME']
         assertEquals "South Dakota", layer.collectFromFeature(params: ['abbr': 'SD']) {ft -> ft['STATE_NAME']}[0]
+        h2.close()
     }
 
     @Test void indexes() {
@@ -146,5 +147,39 @@ class H2TestCase {
         // Delete the geom index
         h2.deleteIndex("widgets","geom_idx")
         assertNull(h2.getIndexes("widgets").find{it.name.equals("geom_idx")})
+        h2.close()
     }
+
+    @Test void getSql() {
+        // Create a layer
+        H2 h2 = new H2(folder.newFile("h2.db"))
+        Layer l = h2.create('widgets',[new Field("geom", "Point"), new Field("name", "String")])
+        assertNotNull(l)
+        l.add([new Point(1,1), "one"])
+        l.add([new Point(2,2), "two"])
+        l.add([new Point(3,3), "three"])
+        assertEquals 3, l.count()
+        // Get groovy.sql.Sql
+        def sql = h2.sql
+        // Count rows
+        assertEquals 3, sql.firstRow("SELECT COUNT(*) as count FROM \"widgets\"").get("count") as int
+        // Query
+        List names = []
+        sql.eachRow "SELECT \"name\" FROM \"widgets\" ORDER BY \"name\" DESC", {
+            names.add(it["name"])
+        }
+        assertEquals "two,three,one", names.join(",")
+        // Insert
+        sql.execute("INSERT INTO \"widgets\" (\"geom\", \"name\") VALUES (ST_GeomFromText('POINT (6 6)',4326), 'four')")
+        assertEquals 4, sql.firstRow("SELECT COUNT(*) as count FROM \"widgets\"").get("count") as int
+        // Query
+        sql.eachRow "SELECT ST_Buffer(\"geom\", 10) as buffer, \"name\" FROM \"widgets\"", {row ->
+            Geometry poly = Geometry.fromWKB(row.buffer as byte[])
+            assertNotNull poly
+            assertTrue poly instanceof Polygon
+            assertNotNull row.name
+        }
+        h2.close()
+    }
+
 }

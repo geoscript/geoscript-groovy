@@ -1,5 +1,6 @@
 package geoscript.workspace
 
+import groovy.sql.Sql
 import org.geotools.data.DataStore
 import org.geotools.jdbc.JDBCDataStore
 import org.geotools.jdbc.VirtualTable
@@ -26,6 +27,15 @@ class Database extends Workspace {
      */
     Database(DataStore ds) {
         super(ds)
+    }
+
+    /**
+     * Get a groovy.sql.Sql object that provides direct access
+     * to the underlying database
+     * @return A groovy.sql.Sql object
+     */
+    Sql getSql() {
+        new Sql((ds as JDBCDataStore).dataSource)
     }
 
     /**
