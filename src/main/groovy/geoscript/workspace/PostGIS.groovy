@@ -2,6 +2,7 @@ package geoscript.workspace
 
 import org.geotools.data.DataStore
 import org.geotools.data.postgis.PostgisNGDataStoreFactory
+import org.geotools.data.postgis.PostgisNGJNDIDataStoreFactory
 
 /**
  * A PostGIS Workspace connects to a PostGIS database.
@@ -63,18 +64,24 @@ class PostGIS extends Database {
      */
     private static DataStore createDataStore(String name, String host, String port, String schema,
         String user, String password, boolean estimatedExtent, boolean createDatabase, String createDatabaseParams) {
+        def f
         Map params = [:]
-        params.put("database", name)
-        params.put("host", host)
-        params.put("port", port)
+        if (name.startsWith("java:comp/env/")) {
+            f = new PostgisNGJNDIDataStoreFactory()
+            params.put("jndiReferenceName", name)
+        } else {
+            f = new PostgisNGDataStoreFactory()
+            params.put("database", name)
+            params.put("host", host)
+            params.put("port", port)
+            params.put("user", user)
+            params.put("passwd", password)
+        }
         params.put("schema", schema)
-        params.put("user", user)
-        params.put("passwd", password)
         params.put("Estimated extends", String.valueOf(estimatedExtent))
         params.put("dbtype", "postgis")
         params.put("create database", createDatabase)
         params.put("create database params", createDatabaseParams)
-        PostgisNGDataStoreFactory f = new PostgisNGDataStoreFactory()
         f.createDataStore(params)
     }
 
