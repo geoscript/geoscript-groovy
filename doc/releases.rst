@@ -3,6 +3,115 @@
 GeoScript Groovy Releases
 =========================
 
+1.3 (In development)
+--------------------
+
+    The 1.3 release of GeoScript is buit on Groovy 2.1.9, GeoTools 11.0, and the Java Topology Suite 1.13.
+
+    **Layer Geoprocessing and Layer Algebra**
+
+        * **Layer Geoprocessing**
+
+            * splitByField
+
+            * splitByLayer
+
+            * buffer
+
+            * merge
+
+            * dissolve
+
+        * **Layer Algebra**
+
+            * clip
+
+            * union
+
+            * intersection
+
+            * erase
+
+            * identify
+
+            * update
+
+            * symDifference
+
+    **Writing Features to Layer in Bulk**
+
+        * Writer.write
+
+        * geoscript.layer.Writer for bulk loading
+
+    **Database Workspace**
+
+        * Improve SQL view layers
+
+        * Database.getSql() -> groovy.sql.Sql
+
+        * H2 server mode
+
+        * PostGIS, MySQL, H2 JNDI
+
+        * PostGIS create or drop database
+
+        * Database Workspace, create, delete, list indexes
+
+        * Database Workspace can remove layers
+
+    **Raster**
+
+        * NetCDF
+
+        * API Change to Raster/Format API
+
+        * Raster.crop(Geometry)
+
+    **IO Readers/Writers**
+
+        * GPX support, geometry, feature, layer
+
+        * KmlWriter uses groovy markup builder
+
+        * GeoJSON featurecollections where feature have different schemas
+
+        * Feature.getGeoJSON(), getGeoRSS(), getKml, getGml
+
+        * GeRSS layer, geometry, feature
+
+        * Remove JDOM with Groovy's native XML support
+
+        * Remove org.json depdencny with GeoTools GeoJSON support
+
+    **Rendering**
+
+        * Randomized Fill
+
+        * Hatch can take fill and stroke
+
+        * geoscript.render.Draw backgroundColor optional parameter
+
+    **API Updates**
+
+        * GeometryCollection.slice(start, end)
+
+        * Point.getAngle, Point.getAzimuth
+
+        * Field.isGeoemtry()
+
+        * Feature.set(Map attributes)
+
+        * Feature.set(Feature)
+
+        * Schema.feature(Feature f), Schema.feature(), default ID = SimpleFeatureBuilder.createDefaultFeatureId()
+
+    **Features**
+
+        * Add flag to force XY to all command line programs
+
+        * Map - stop using deprecated class (scott)
+
 1.2
 ---
 
