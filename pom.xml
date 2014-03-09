@@ -65,12 +65,6 @@
 			<groupId>org.geotools.jdbc</groupId>
 			<artifactId>gt-jdbc-spatialite</artifactId>
 			<version>${gt.version}</version>
-			<exclusions>
-				<exclusion>
-					<groupId>org.xerial</groupId>
-					<artifactId>sqlite-jdbc-spatialite</artifactId>
-				</exclusion>
-			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>org.geotools.xsd</groupId>
