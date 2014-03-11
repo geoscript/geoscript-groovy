@@ -38,11 +38,43 @@ GeoScript Groovy Releases
 
             * symDifference
 
-    **Writing Features to Layer in Bulk**
+    **Add batches of Features to a Layer**
 
-        * Writer.write
+        * The geoscript.layer.Writer class adds batches of Features to a Layer with a Transaction::
 
-        * geoscript.layer.Writer for bulk loading
+            Writer writer = new Writer(layer, batch: 1000, transaction: 'default')
+            try {
+                Feature f = writer.newFeature
+                writer.add(f)
+            } finally {
+                writer.close()
+            }
+
+            Writer writer = Writer.write(layer, batch: batch) { writer ->
+                pts.eachWithIndex{Point pt, int i ->
+                    Feature f = writer.newFeature
+                    f.geom = pt
+                    f['id'] = i
+                    writer.add(f)
+                }
+            }
+
+        * GeoScript Layers have a getWriter() and withWriter() methods::
+
+            Writer writer = layer.getWriter(autoCommit: false, batch: 75)
+            try {
+                pts.eachWithIndex{Point pt, int i ->
+                    writer.add(s.feature([the_geom: pt, id: i], "point${i}"))
+                }
+            } finally {
+                writer.close()
+            }
+
+            layer.withWriter(batch: 45) {Writer writer ->
+                pts.eachWithIndex{Point pt, int i ->
+                    writer.add(s.feature([the_geom: pt, id: i], "point${i}"))
+                }
+            }
 
     **Database Workspace**
 
@@ -86,31 +118,92 @@ GeoScript Groovy Releases
 
     **Rendering**
 
-        * Randomized Fill
+        * Randomized Fill::
 
-        * Hatch can take fill and stroke
+            import geoscript.layer.Shapefile
+            import geoscript.render.Draw
+            import geoscript.style.*
 
-        * geoscript.render.Draw backgroundColor optional parameter
+            shp = new Shapefile("states.shp")
+            shp.style = (new Fill(null).hatch("circle", new Fill("#aaaaaa"), 1).random([random: "free", symbolCount: "50", tileSize: "100"]).where("PERSONS < 2000000")) +
+                    (new Fill(null).hatch("circle", new Fill("#aaaaaa"), 2).random([random: "free", symbolCount: "200", tileSize: "100"]).where("PERSONS BETWEEN 2000000 AND 4000000")) +
+                    (new Fill(null).hatch("circle", new Fill("#aaaaaa"), 2).random([random: "free", symbolCount: "700", tileSize: "100"]).where("PERSONS > 4000000")) +
+                    (new Stroke("black", 0.1) + new Label(property: "STATE_ABBR", font: new Font(family: "Times New Roman", style: "normal", size: 14)).point([0.5, 0.5]).halo(new Fill("#FFFFFF"), 2))
+
+            println shp.style.sld
+            Draw.draw(shp)
+
+          .. image:: images/randomized_fill.png
+
+        * Hatch can take fill and stroke::
+
+            Hatch hatch = new Hatch("circle", new Fill("red"), new Stroke("wheat",0.1), 10)
+
+        * geoscript.render.Draw now accepts an optional backgroundColor parameter::
+
+            Symbolizer sym = new Stroke('black', 2) + new Fill('gray',0.75)
+            Geometry geom = new Point(0,0).buffer(0.2)
+            draw(geom, style: sym, bounds: geom.bounds.scale(1.1), size: [250,250], format: "png", backgroundColor: "white")
+
+        * geoscript.render.Map is updated and deprecated class have been removed. This was contributed by Scott Bortman.  Thanks Scott!
 
     **API Updates**
 
-        * GeometryCollection.slice(start, end)
+        * GeometryCollections now have a slice method that takes a start index and an optional end index::
 
-        * Point.getAngle, Point.getAzimuth
+            import geoscript.geom.*
+            GeometryCollection g = Geometry.fromWKT("MULTIPOINT ((1 1), (2 2), (3 3), (4 4), (5 5))")
+            assert "MULTIPOINT ((2 2), (3 3))" == g.slice(1,3).wkt
 
-        * Field.isGeoemtry()
+          When the end index is absent it defaults to the end of the collection::
 
-        * Feature.set(Map attributes)
+            assert "MULTIPOINT ((3 3), (4 4), (5 5))" == g.slice(2).wkt
 
-        * Feature.set(Feature)
+          Both the start and end index may be negative::
 
-        * Schema.feature(Feature f), Schema.feature(), default ID = SimpleFeatureBuilder.createDefaultFeatureId()
+            assert "MULTIPOINT ((3 3), (4 4), (5 5))" == g.slice(-3).wkt
+            assert "MULTIPOINT ((2 2), (3 3))" == g.slice(-4, -2).wkt
 
-    **Features**
+        * Get the angle between this Point and another Point::
 
-        * Add flag to force XY to all command line programs
+            assert 45 == new Point(0,0).getAngle(new Point(10,10))
 
-        * Map - stop using deprecated class (scott)
+            assert -135, new Point(0,0).getAngle(new Point(-10,-10), "degrees")
+
+            assert 2.3561 == new Point(0,0).getAngle(new Point(-10,10), "radians")
+
+        * Get the azimuth between this Point and the other Point::
+
+            assert 44.75 == new Point(0,0).getAzimuth(new Point(10,10))
+
+            assert 135.24 == new Point(0,0).getAzimuth(new Point(10,-10))
+
+        * Fields now have a isGeometry() method.
+
+        * You can set the values of a Feature by passing in a Map::
+
+            feature.set([price: 1200.5, name: "Car"])
+
+            feature.set(price: 12.2, name: "Book")
+
+        * Or by passing in an existing Feature::
+
+            Feature feature = schema.feature([geom: new Point(121,-49), price: 15.6, name: "Test"])
+            newFeature.set(feature)
+
+        * Schema now has a way to create new Features with default values::
+
+            Feature f = schema.feature()
+
+        * Schema can also create new Features from an existing Feature::
+
+            Feature f = schema.feature(existingFeature)
+
+        * When a Schema creates a Feature, the default ID is now created by the GeoTools SimpleFeatureBuilder's createDefaultFeatureId() method.
+
+    **Command line programs**
+
+        * Add -Dorg.geotools.referencing.forceXY=true to all command line programs
 
 1.2
 ---
