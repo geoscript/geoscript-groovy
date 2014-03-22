@@ -88,13 +88,13 @@ GeoScript Groovy Releases
 
                 layerA.update(layerB)
 
-              .. image:: images/la_update.png
+              .. image:: images/la_update_a_b.png
 
             * symDifference::
 
                 layerA.symDifference(layerB)
 
-              .. image:: images/la_symdifference_a_b.png
+              .. image:: images/la_symdifference.png
 
     **Add batches of Features to a Layer**
 
