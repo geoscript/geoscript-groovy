@@ -12,31 +12,89 @@ GeoScript Groovy Releases
 
         * **Layer Geoprocessing**
 
-            * splitByField
+            * Split by Field
 
-            * splitByLayer
+              Split a Layer into multiple Layers using the value of a Field::
 
-            * buffer
+                Memory workspace = new Memory()
+                layer.split(layer.schema.get("col"), workspace)
 
-            * merge
+            * Split by Layer
 
-            * dissolve
+              Split a Layer into multiple Layers based on the Features from the split Layer::
+
+                Memory workspace = new Memory()
+                layer.split(splitLayer,splitLayer.schema.get("row_col"),workspace)
+
+            * Buffer
+
+              Buffer all of the Features in the Layer.  The buffer distance can be a geoscript.filter.Expression or a double.
+              This allows variable distance buffers that depend on the value of a Field, a Function, or an Expression::
+
+                layer.buffer(2)
+
+                layer.buffer(new geoscript.filter.Property("col"))
+
+                layer.buffer(geoscript.filter.Expression.fromCQL("col * 2"))
+
+                layer.buffer(new geoscript.filter.Function("calc_buffer(row,col)", {row, col -> row + col}))
+
+            * Merge
+
+              Merge a Layer with another Layer to create an output Layer.
+
+            * Dissolve
+
+              Dissolve the Features of a Layer by a Field or dissolve intersecting Features of a Layer.
 
         * **Layer Algebra**
 
-            * clip
+          The layer algebra methods were inspired by similar work done by the GDAL developers. The following
+          examples use the GDAL dataset.
 
-            * union
+            .. image:: images/la_layers.png
 
-            * intersection
+            * clip::
 
-            * erase
+                layerA.clip(layerB)
 
-            * identify
+              .. image:: images/la_clip_a_b.png
 
-            * update
+            * union::
 
-            * symDifference
+                layerA.union(layerB)
+
+              .. image:: images/la_union.png
+
+            * intersection::
+
+                layerA.intersection(layerB)
+
+              .. image:: images/la_intersection.png
+
+            * erase::
+
+                layerA.erase(layerB)
+
+              .. image:: images/la_erase_a_b.png
+
+            * identify::
+
+                layerA.identity(layerB)
+
+              .. image:: images/la_identity_a_b.png
+
+            * update::
+
+                layerA.update(layerB)
+
+              .. image:: images/la_update.png
+
+            * symDifference::
+
+                layerA.symDifference(layerB)
+
+              .. image:: images/la_symdifference_a_b.png
 
     **Add batches of Features to a Layer**
 
@@ -78,43 +136,319 @@ GeoScript Groovy Releases
 
     **Database Workspace**
 
-        * Improve SQL view layers
+        * Improve SQL view layers by introducing **createView** and deprecating **addSqlQuery**::
 
-        * Database.getSql() -> groovy.sql.Sql
+            Layer layer = h2.createView("state","SELECT * FROM \"states\" WHERE \"STATE_ABBR\" = '%abbr%'",
+                new Field("the_geom","Polygon","EPSG:4326"),
+                params: [['abbr', 'TX']])
 
-        * H2 server mode
+        * Add groovy.sql.Sql access for all Database based Workspace with the **getSql()** method.
+          This allows you to do arbitray SQL queries::
 
-        * PostGIS, MySQL, H2 JNDI
+            H2 h2 = new H2(folder.newFile("h2.db"))
+            Layer l = h2.create('widgets',[new Field("geom", "Point"), new Field("name", "String")])
+            l.add([new Point(1,1), "one"])
+            l.add([new Point(2,2), "two"])
+            l.add([new Point(3,3), "three"])
 
-        * PostGIS create or drop database
+            // Get groovy.sql.Sql
+            def sql = h2.sql
 
-        * Database Workspace, create, delete, list indexes
+            // Count rows
+            assertEquals 3, sql.firstRow("SELECT COUNT(*) as count FROM \"widgets\"").get("count") as int
 
-        * Database Workspace can remove layers
+            // Query
+            List names = []
+            sql.eachRow "SELECT \"name\" FROM \"widgets\" ORDER BY \"name\" DESC", {
+                names.add(it["name"])
+            }
+            println names
+
+            // Insert
+            sql.execute("INSERT INTO \"widgets\" (\"geom\", \"name\") VALUES (ST_GeomFromText('POINT (6 6)',4326), 'four')")
+
+            // Query
+            sql.eachRow "SELECT ST_Buffer(\"geom\", 10) as buffer, \"name\" FROM \"widgets\"", {row ->
+                Geometry poly = Geometry.fromWKB(row.buffer as byte[])
+                assertNotNull poly
+                assertTrue poly instanceof Polygon
+                assertNotNull row.name
+            }
+
+            h2.close()
+
+        * The H2 Workspace can connect to H2 databases using server mode::
+
+            H2 h2 = new H2("database", "localhost", "5432", "public", "sa", "supersecret")
+
+        * JNDI support for PostGIS, MySQL, H2::
+
+            PostGIS postgis = new PostGIS("java:comp/env/jdbc/geoscript", schema: "public")
+
+        * PostGIS can create or drop database::
+
+            PostGIS postgis = new PostGIS("database", createDatabase: true, createDatabaseParams: "")
+
+        * Database Workspaces can create, delete, list indexes::
+
+            // Add two indexes
+            h2.createIndex("widgets","geom_idx","geom",false)
+            h2.createIndex("widgets","name_idx","name",true)
+
+            // Get the indexes
+            List indexes = h2.getIndexes("widgets")
+
+            // Delete the geom index
+            h2.deleteIndex("widgets","geom_idx")
+
+        * Database Workspace can remove layers::
+
+            h2.remove("points")
 
     **Raster**
 
-        * NetCDF
+        * NetCDF Raster support::
+
+            NetCDF netcdf = new NetCDF(file)
+            netcdf.names.each{ String name ->
+                Raster raster = netcdf.read(name)
+                println raster.bounds
+                raster.dispose()
+            }
 
         * API Change to Raster/Format API
 
-        * Raster.crop(Geometry)
+          In order to support NetCDF Rasters, the Raster Format API was changed.  Contructors with a File or other way to connect to Rasters,
+          write methods that contain the destination, or read methods that contain the source have all been deprecated and will be removed in
+          the next release.  Instead, use contructors that contain a source or destination File, and read and write methods that take an optional
+          Raster name (in order to support Formats that can contain more than one Raster such as NetCDF).
+
+          Instead of::
+
+            GeoTIFF geotiff = new GeoTIFF()
+            Raster raster = geotiff.read(new File("world.tiff"))
+            geotiff.write(raster.crop(new Bounds(10,10,50,50)), new File("cropped_world.tiff"))
+
+          Please use the new API::
+
+            GeoTIFF geotiff = new GeoTIFF(new File("world.tiff"))
+            Raster raster = geotiff.read()
+            new GeoTIFF(new File("cropped_world.tiff")).write(raster.crop(new Bounds(10,10,50,50)))
+
+        * Raster.crop(Geometry)::
+
+            GeoTIFF geoTIFF = new GeoTIFF(new File("alki.tiff"))
+            Raster raster = geoTIFF.read()
+
+            Geometry geometry = new Point(1166761.4391797914, 823593.195575958).buffer(400)
+            Raster cropped = raster.crop(geometry)
 
     **IO Readers/Writers**
 
-        * GPX support, geometry, feature, layer
+        * GPX Geometry::
 
-        * KmlWriter uses groovy markup builder
+            GpxReader reader = new GpxReader()
+            Geometry g = reader.read("<wpt lat='2.0' lon='1.0'/>")
+            assert "POINT (1 2)" == g.wkt
 
-        * GeoJSON featurecollections where feature have different schemas
+            GpxWriter writer = new GpxWriter()
+            assert "<wpt lat='2.0' lon='1.0'/>" == writer.write(new Point(1, 2))
 
-        * Feature.getGeoJSON(), getGeoRSS(), getKml, getGml
+          GPX Feature::
 
-        * GeRSS layer, geometry, feature
+            String gpx = """<wpt lat="0.0" lon="0.0">
+            <name>1</name>
+            <desc>This is feature # 1</desc>
+            <type>Trail</type>
+            <ele>45.2</ele>
+            <time>1/20/14 1:47 PM</time>
+            </wpt>"""
+            GpxReader reader = new GpxReader()
+            Feature feature = reader.read(gpx)
 
-        * Remove JDOM with Groovy's native XML support
+            GpxWriter writer = new GpxWriter(
+                    name: new Property("id"),
+                    time: "1/20/14 1:47 PM",
+                    description: { Feature f -> "This is feature #${f['id']}" },
+                    type: "Trail"
+            )
+            String gpx = writer.write(feature)
+            assert gpx == "<wpt lat='0.0' lon='0.0' xmlns='http://www.topografix.com/GPX/1/1'>" +
+                "<name>1</name><desc>This is feature #1</desc>" +
+                "<type>Trail</type><time>1/20/14 1:47 PM</time></wpt>"
 
-        * Remove org.json depdencny with GeoTools GeoJSON support
+          GPX Layer::
+
+            String gpx = """<?xml version="1.0" encoding="UTF-8"?>
+                <gpx xmlns="http://www.topografix.com/GPX/1/1" version="1.1" creator="geoscript">
+                <wpt lat="0.0" lon="0.0">
+                <name>1</name>
+                <desc>This is feature # 1</desc>
+                <type>Trail</type>
+                <ele>45.2</ele>
+                <time>1/20/14 1:47 PM</time>
+                </wpt>
+                </gpx>"""
+            GpxReader reader = new GpxReader(type: GpxReader.Type.WayPoints)
+            Layer layer = reader.read(gpx)
+
+            GpxWriter writer = new GpxWriter(
+                name: new Property("id"),
+                time: "1/20/14 1:47 PM",
+                description: {Feature f -> "This is feature # ${f['id']}"},
+                type: "Trail"
+            )
+            String gpx = writer.write(layer)
+
+        * Kml IO rewritten to use Groovy's markup builder
+
+          Geometry::
+
+            KmlWriter writer = new KmlWriter()
+            Point p = new Point(111,-47)
+            assert "<Point><coordinates>111.0,-47.0</coordinates></Point>" == writer.write(p)
+
+            KmlReader reader = new KmlReader()
+            Point pt = reader.read("<Point><coordinates>111.0,-47.0</coordinates></Point>")
+            assert "POINT (111 -47)" == pt.wkt
+
+          Feature::
+
+            String kml = """<kml:Placemark xmlns:kml="http://earth.google.com/kml/2.1" id="house1">
+            <kml:name>House</kml:name>
+            <kml:Point>
+            <kml:coordinates>111.0,-47.0</kml:coordinates>
+            </kml:Point>
+            </kml:Placemark>"""
+            KmlReader reader = new KmlReader()
+            Feature f = reader.read(kml)
+
+            Schema schema = new Schema("houses", [new Field("geom","Point"), new Field("name","string"), new Field("price","float")])
+            Feature feature = new Feature([new Point(111,-47), "House", 12.5], "house1", schema)
+            KmlWriter writer = new KmlWriter()
+            assert """<kml:Placemark xmlns:kml="http://earth.google.com/kml/2.1" id="house1">
+            <kml:name>House</kml:name>
+            <kml:Point>
+            <kml:coordinates>111.0,-47.0</kml:coordinates>
+            </kml:Point>
+            </kml:Placemark>""" == writer.write(feature)
+
+          Layer::
+
+            String kml = """<kml:kml xmlns:kml="http://earth.google.com/kml/2.1">
+                <kml:Document id="featureCollection">
+                    <kml:Placemark id="fid--259df7e1_131b6de0b8f_-8000">
+                        <kml:name>House</kml:name>
+                        <kml:Point>
+                            <kml:coordinates>111.0,-47.0</kml:coordinates>
+                        </kml:Point>
+                    </kml:Placemark>
+                    <kml:Placemark id="fid--259df7e1_131b6de0b8f_-7fff">
+                        <kml:name>School</kml:name>
+                        <kml:Point>
+                            <kml:coordinates>121.0,-45.0</kml:coordinates>
+                        </kml:Point>
+                    </kml:Placemark>
+                </kml:Document>
+            </kml:kml>"""
+            KmlReader reader = new KmlReader()
+            Layer layer = reader.read(kml)
+
+            Schema schema = new Schema("houses", [new Field("geom", "Point"), new Field("name", "string"), new Field("price", "float")])
+            Memory memory = new Memory()
+            Layer layer = memory.create(schema)
+            layer.add(new Feature([new Point(111, -47), "House", 12.5], "house1", schema))
+            layer.add(new Feature([new Point(121, -45), "School", 22.7], "house2", schema))
+            KmlWriter writer = new KmlWriter()
+
+        * GeoRSS IO using Groovy's markup builder and xml parser
+
+          Geometry::
+
+            GeoRSSReader reader = new GeoRSSReader()
+            Point p = reader.read("<georss:point>45.256 -71.92</georss:point>")
+            assert "POINT (-71.92, 45.256)" == p.wkt
+
+            GeoRSSWriter writer = new GeoRSSWriter()
+            Point p = new Point(-71.92, 45.256)
+            assert "<georss:point>45.256 -71.92</georss:point>" == writer.write(p)
+
+          Feature::
+
+            GeoRSSReader reader = new GeoRSSReader()
+            String str = "<entry xmlns:georss='http://www.georss.org/georss' xmlns='http://www.w3.org/2005/Atom'>" +
+                "<title>house1</title>" +
+                "<summary>[geom:POINT (111 -47), name:House, price:12.5]</summary>" +
+                "<updated>12/7/2013</updated>" +
+                "<georss:point>-47.0 111.0</georss:point>" +
+                "</entry>"
+            Feature feature = reader.read(str)
+
+            GeoRSSWriter writer = new GeoRSSWriter(feedType: "atom", geometryType: "gml", itemDate: "12/7/2013")
+            assert "<entry xmlns:georss='http://www.georss.org/georss' xmlns='http://www.w3.org/2005/Atom' " +
+                "xmlns:gml='http://www.opengis.net/gml'>" +
+                "<title>house1</title>" +
+                "<summary>[geom:POINT (111 -47), name:House, price:12.5]</summary>" +
+                "<updated>12/7/2013</updated>" +
+                "<georss:where><gml:Point><gml:pos>-47.0 111.0</gml:pos></gml:Point></georss:where>" +
+                "</entry>" == writer.write(feature)
+
+          Layer::
+
+            GeoRSSReader reader = new GeoRSSReader()
+            Layer layer = reader.read("""<?xml version="1.0" encoding="utf-8"?>
+             <feed xmlns="http://www.w3.org/2005/Atom"
+                   xmlns:georss="http://www.georss.org/georss">
+               <title>Earthquakes</title>
+               <subtitle>International earthquake observation labs</subtitle>
+               <link href="http://example.org/"/>
+               <updated>2005-12-13T18:30:02Z</updated>
+               <author>
+                  <name>Dr. Thaddeus Remor</name>
+                  <email>tremor@quakelab.edu</email>
+               </author>
+               <id>urn:uuid:60a76c80-d399-11d9-b93C-0003939e0af6</id>
+               <entry>
+                  <title>M 3.2, Mona Passage</title>
+                  <link href="http://example.org/2005/09/09/atom01"/>
+                  <id>urn:uuid:1225c695-cfb8-4ebb-aaaa-80da344efa6a</id>
+                  <updated>2005-08-17T07:02:32Z</updated>
+                  <summary>We just had a big one.</summary>
+                  <georss:box>42.943 -71.032 43.039 -69.856</georss:box>
+               </entry>
+             </feed>""")
+
+             GeoRSSWriter writer = new GeoRSSWriter(
+                feedType: "atom",
+                geometryType: "simple",
+                itemDate: "1/22/1975",
+                itemTitle: new Property("name"),
+                itemDescription: { Feature f ->
+                    f['description']
+                }
+            )
+            Schema schema = new Schema("points", [
+                ["geom", "Point"],
+                ["name", "string"],
+                ["description", "string"],
+                ["id", "int"]
+            ])
+            Workspace workspace = new Memory()
+            Layer layer = workspace.create(schema)
+            layer.withWriter { writer ->
+                writer.add(schema.feature([geom: "POINT (1 1)", name: "Washington", description: "The state of Washington", id: 1], "state.1"))
+                writer.add(schema.feature([geom: "POINT (2 2)", name: "Oregon", description: "The state of Oregon", id: 2], "state.2"))
+                writer.add(schema.feature([geom: "POINT (3 3)", name: "California", description: "The state of California", id: 3], "state.3"))
+            }
+            println writer.write(createLayer())
+
+        * geoscript.layer.io.GeoJSONReader supports reading features that have different schemas
+
+        * geoscript.feature.Feature now has getGeoJSON(), getGeoRSS(), getKml(), getGml() methods
+
+        * Removed JDOM dependency with Groovy's native XML support
+
+        * Removed org.json dependency with GeoTools GeoJSON support
 
     **Rendering**
 
