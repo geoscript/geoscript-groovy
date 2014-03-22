@@ -36,7 +36,7 @@ class PostGIS extends Database {
     /**
      * Create a new PostGIS with just a database name using defaults for other values.
      * <p><blockquote><pre>
-     * PostGIS postgis = new PostGIS("database", user: 'me', password: 'supersecret'
+     * PostGIS postgis = new PostGIS("database", user: 'me', password: 'supersecret')
      * </pre></blockquote></p>
      * @param options The options for connecting to a PostGIS database (host, port, schema, user, password,
      * estimatedExtent, createDatabase, and createDatabaseParams)
