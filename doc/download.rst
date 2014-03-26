@@ -6,7 +6,7 @@ Downloads
 Stable
 ------
 
-    `GeoScript Groovy 1.2 <https://github.com/jericks/geoscript-groovy/releases>`_ is the current stable version.
+    `GeoScript Groovy 1.3 <https://github.com/jericks/geoscript-groovy/releases>`_ is the current stable version.
 
 Experimental
 ------------

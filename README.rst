@@ -107,7 +107,7 @@ and then include the GeoScript Groovy dependency::
     <dependency>
         <groupId>org.geoscript</groupId>
         <artifactId>geoscript-groovy</artifactId>
-        <version>1.2</version>
+        <version>1.3</version>
     </dependency>
 
 Presentations
