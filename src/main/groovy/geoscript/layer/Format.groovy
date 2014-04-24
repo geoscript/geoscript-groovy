@@ -1,6 +1,9 @@
 package geoscript.layer
 
+import geoscript.geom.Bounds
 import geoscript.proj.Projection
+import org.geotools.coverage.grid.GridEnvelope2D
+import org.geotools.coverage.grid.GridGeometry2D
 import org.geotools.coverage.grid.io.AbstractGridFormat
 import org.geotools.coverage.grid.io.GridFormatFinder
 import org.geotools.coverage.grid.io.UnknownFormat
@@ -18,6 +21,8 @@ import org.geotools.gce.imagepyramid.ImagePyramidFormat
 import org.opengis.coverage.grid.GridCoverageReader
 import org.opengis.parameter.GeneralParameterValue
 import org.opengis.parameter.ParameterValueGroup
+
+import java.awt.Rectangle
 
 /**
  * A Raster Format can read and write Rasters
@@ -227,6 +232,17 @@ class Format {
         // Create Reader
         def reader = gridFormat.getReader(stream, hints)
         try {
+            // Check for ReadGridGeometry2D parameters
+            if (options.containsKey("bounds")) {
+                Bounds bounds = options.bounds
+                List size = options.containsKey("size") ? options.size : [500,500]
+                options.put("ReadGridGeometry2D", new GridGeometry2D(
+                    new GridEnvelope2D(new Rectangle(size[0], size[1])),
+                    bounds.env
+                ))
+                options.remove("bounds")
+                options.remove("size")
+            }
             // Create GeneralParameterValues
             ParameterValueGroup params = reader.format.readParameters
             options.each{k,v ->
