@@ -56,6 +56,11 @@ class GeoRSSWriter implements Writer {
     def itemGeometry = { Feature feature -> feature.geom }
 
     /**
+     * The Projection ID
+     */
+    String projId = null
+
+    /**
      * Write a Feature to a String
      * @param feature The Feature
      * @return A String
@@ -101,7 +106,7 @@ class GeoRSSWriter implements Writer {
                 buildItemDate builder, f
                 title { mkp.yield(getValue(itemTitle, f)) }
                 description { mkp.yield(getValue(itemDescription, f)) }
-                geometryWriter.write builder, itemGeometry.call(f), projId: f.schema.proj?.id
+                geometryWriter.write builder, itemGeometry.call(f), projId: projId
                 buildAttributes builder, f
             }
         } else {
@@ -110,7 +115,7 @@ class GeoRSSWriter implements Writer {
                 title { mkp.yield(getValue(itemTitle, f)) }
                 summary { mkp.yield(getValue(itemDescription, f)) }
                 buildItemDate builder, f
-                geometryWriter.write builder, itemGeometry.call(f), projId: f.schema.proj?.id
+                geometryWriter.write builder, itemGeometry.call(f), projId: projId
                 buildAttributes builder, f
             }
         }

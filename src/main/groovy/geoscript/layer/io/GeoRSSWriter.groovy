@@ -109,7 +109,8 @@ class GeoRSSWriter implements Writer {
                 itemGeometry: itemGeometry,
                 itemId: itemId,
                 includeAttributes: includeAttributes,
-                attributeNamespace: attributeNamespace
+                attributeNamespace: attributeNamespace,
+                projId: geometryType.equalsIgnoreCase("gml") ? layer.proj?.id : null
         )
 
         // RSS
