@@ -144,7 +144,7 @@ class FunctionTestCase {
         def statesShp = new Shapefile(file)
 
         def sym = (new Stroke("red",0.4) + new Transform(f, Transform.RENDERING)).zindex(1) + (new Fill("#E6E6E6") + new Stroke("#4C4C4C",0.5)).zindex(2)
-        assertTrue sym.sld.contains("<ogc:Function name=\"convexhull\">")
+        assertTrue sym.sld.contains("<ogc:Function name=\"geoscript:convexhull\">")
         statesShp.style = sym
 
         def map = new geoscript.render.Map(width: 600, height: 400, fixAspectRatio: true)
