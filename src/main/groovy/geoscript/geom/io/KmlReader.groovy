@@ -1,10 +1,16 @@
 package geoscript.geom.io
 
-
-import geoscript.geom.*
-import org.jdom.input.SAXBuilder
-import org.jdom.Document
-import org.jdom.Element
+import geoscript.geom.Geometry
+import geoscript.geom.GeometryCollection
+import geoscript.geom.LineString
+import geoscript.geom.LinearRing
+import geoscript.geom.MultiLineString
+import geoscript.geom.MultiPoint
+import geoscript.geom.MultiPolygon
+import geoscript.geom.Point
+import geoscript.geom.Polygon
+import org.geotools.kml.KMLConfiguration
+import org.geotools.xml.Parser
 
 /**
  * Read a {@link geoscript.geom.Geometry Geometry} from a KML String.
@@ -17,73 +23,75 @@ import org.jdom.Element
  * @author Jared Erickson
  */
 class KmlReader implements Reader {
-	
+
     /**
      * Read a Geometry from a KML String
      * @param str The KML String
      * @return A Geometry
      */
     Geometry read(String str) {
-        SAXBuilder builder = new SAXBuilder()
-        Document document = builder.build(new StringReader(str))
-        Element root = document.rootElement
-        readElement(root)
+        Parser parser = new Parser(new KMLConfiguration())
+        Geometry.wrap(parser.parse(new StringReader(str)))
     }
 
     /**
-     * Get a Geometry from a JDOM Element
-     * @param The JDOM Element
-     * @return A Geometry
+     * Read a Geometry from an XML Node
+     * @param node The XML Node
+     * @return A Geometry or null
      */
-    private Geometry readElement(Element element) {
-        
-        String name = element.name
-        def ns = element.namespace
-
+    Geometry read(Node node) {
+        Geometry geom = null
+        String name = node.name()
+        String ns = ""
+        if (name.contains(":")) {
+            String[] parts = name.split(":")
+            ns = "${parts[0]}:"
+            name = parts[1]
+        }
         if (name.equalsIgnoreCase("Point")) {
-            return getPoints(element.getChild("coordinates",ns).text)[0]
-        }
-        else if (name.equalsIgnoreCase("LineString")) {
-            return new LineString(getPoints(element.getChild("coordinates",ns).text))
-        }
-        else if (name.equalsIgnoreCase("LinearRing")) {
-            return new LinearRing(getPoints(element.getChild("coordinates",ns).text))
-        }
-        else if (name.equalsIgnoreCase("Polygon")) {
-            LinearRing shell = new LinearRing(getPoints(element.getChild("outerBoundaryIs",ns).getChild("LinearRing",ns).getChild("coordinates",ns).text))
-            List<LinearRing> holes = element.getChildren("innerBoundaryIs",ns).collect{e ->
-                new LinearRing(getPoints(e.getChild("LinearRing",ns).getChild("coordinates",ns).text))
+            String text = node["${ns}coordinates"].text().replaceAll("\\s+", " ")
+            geom = getPoints(text)[0]
+        } else if (name.equalsIgnoreCase("LineString")) {
+            String text = node["${ns}coordinates"].text().replaceAll("\\s+", " ")
+            geom = new LineString(getPoints(text))
+        } else if (name.equalsIgnoreCase("LinearRing")) {
+            String text = node["${ns}coordinates"].text().replaceAll("\\s+", " ")
+            geom = new LinearRing(getPoints(text))
+        } else if (name.equalsIgnoreCase("Polygon")) {
+            geom = new Polygon(read(node["${ns}outerBoundaryIs"]["${ns}LinearRing"][0]) as LinearRing,
+                node["${ns}innerBoundaryIs"].collect{innerNode ->
+                    read(innerNode["${ns}LinearRing"][0] as Node) as LinearRing
+                }
+            )
+        } else if (name.equalsIgnoreCase("MultiGeometry")) {
+            List<Geometry> geoms = node.children().collect{Node childNode ->
+                read(childNode)
             }
-            return new Polygon(shell, holes)
-        }
-        else if (name.equalsIgnoreCase("MultiGeometry")) {
-            List<Geometry> geoms = element.getChildren().collect{e->readElement(e)}
             if (!(false in geoms.collect{g -> g instanceof Point})) {
-                return new MultiPoint(geoms)
+                geom = new MultiPoint(geoms)
             }
             else if (!(false in geoms.collect{g -> g instanceof LineString})) {
-                return new MultiLineString(geoms)
+                geom = new MultiLineString(geoms)
             }
             else if (!(false in geoms.collect{g -> g instanceof Polygon})) {
-                return new MultiPolygon(geoms)
+                geom = new MultiPolygon(geoms)
             }
             else {
-                return new GeometryCollection(geoms)
+                geom = new GeometryCollection(geoms)
             }
-        } else {
-            return null
         }
+        geom
     }
 
     /**
-     * Get a List of Points from a space delimited list of comma delimited coordinates
-     * @param str Our space delimited list of comma delimited coordinates
+     * Get a List of Point from the String
+     * @param str The space delimited KML List of coordinates
      * @return A List of Points
      */
     private List<Point> getPoints(String str) {
-        str.split(" ").collect{s ->
-            def parts = s.split(",")
-            new Point(Double.parseDouble(parts[0]), Double.parseDouble(parts[1]))
+        str.split(" ").collect{
+            String[] coords = it.split(",")
+            new Point(coords[0] as double, coords[1] as double)
         }
     }
 

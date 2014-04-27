@@ -2,6 +2,7 @@ package geoscript.workspace
 
 import org.geotools.data.DataStore
 import org.geotools.data.mysql.MySQLDataStoreFactory
+import org.geotools.data.mysql.MySQLJNDIDataStoreFactory
 
 /**
  * A MySQL Workspace connects to a MySQL database.
@@ -13,7 +14,7 @@ import org.geotools.data.mysql.MySQLDataStoreFactory
 class MySQL extends Database {
 
     /**
-     * Create a new MySQL Workspace with a name, host, port, user, and passowrd
+     * Create a new MySQL Workspace with a name, host, port, user, and password
      * @param name The name of the database
      * @param host The host name
      * @param port The port
@@ -25,6 +26,22 @@ class MySQL extends Database {
     }
 
     /**
+     * Create a new MySQL Workspace
+     * @param options The options
+     * <ul>
+     *     <li>host = The host name (defaults to localhost)</li>
+     *     <li>port = The port (defaults to 3306)</li>
+     *     <li>user = The user name (defaults to the system user name)</li>
+     *     <li>password = The password (defaults to blank)</li>
+     * </ul>
+     * @param name The database or JNDI name
+     */
+    MySQL(Map options = [:], String name) {
+        super(createDataStore(name, options.get("host", "localhost"), options.get("port", 3306),
+                options.get("user", System.getProperty("user.name")), options.get("password")))
+    }
+
+    /**
      * Get the format
      * @return The workspace format name
      */
@@ -33,17 +50,23 @@ class MySQL extends Database {
     }
 
     /**
-     * Create a new MySQL DataStore with a name, host, port, user, and passowrd
+     * Create a new MySQL DataStore with a name, host, port, user, and password
      */
     private static DataStore createDataStore(String name, String host, String port, String user, String password) {
+        def f
         Map params = [:]
-        params.put("database", name)
-        params.put("host", host)
-        params.put("port", port)
-        params.put("user", user)
-        params.put("passwd", password)
+        if (name.startsWith("java:comp/env/")) {
+            f = new MySQLJNDIDataStoreFactory()
+            params.put("jndiReferenceName", name)
+        } else {
+            f = new MySQLDataStoreFactory()
+            params.put("database", name)
+            params.put("host", host)
+            params.put("port", port)
+            params.put("user", user)
+            params.put("passwd", password)
+        }
         params.put("dbtype", "mysql")
-        MySQLDataStoreFactory f = new MySQLDataStoreFactory()
         f.createDataStore(params)
     }
 }

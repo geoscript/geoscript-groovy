@@ -156,24 +156,20 @@ class Fill extends Symbolizer {
      * for more details.
      * @param params Named parameters may include:
      * <ul>
-     *     <li>random: true | false</li>
+     *     <li>random: none, free, grid</li>
      *     <li>seed: The seed generator value (defaults to 0)</li>
      *     <li>symbolCount: The number of symbols (defaults to 16)</li>
      *     <li>tileSize: The size of the square area (defaults to 256)</li>
-     *     <li>spaceAround: The min distance between symbols (defaults to 0)</li>
-     *     <li>rotation: Whether to rotate symbols randomly (defaults to false) </li>
-     *     <li>grid: Whether symbols are randomized around centers of a grid (defaults to true)</li>
+     *     <li>rotation: Whether to rotate symbols (none or free) </li>
      * </ul>
      * @return This Fill
      */
     Fill random(Map params = [:]) {
-        options["random"] = params.get("random", false) as String
+        options["random"] = params.get("random", "free") as String
         options["random-seed"] = params.get("seed", 0)  as String
         options["random-symbol-count"] = params.get("symbolCount", 16) as String
         options["random-tile-size"] = params.get("tileSize", 256) as String
-        options["random-space-around"] = params.get("spaceAround", 0) as String
-        options["random-rotation"] = params.get("rotation", false) as String
-        options["random-grid"] = params.get("grid", true) as String
+        options["random-rotation"] = params.get("rotation", "none") as String
         this
     }
 

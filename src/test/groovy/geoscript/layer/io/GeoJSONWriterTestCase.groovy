@@ -1,6 +1,9 @@
 package geoscript.layer.io
 
+import org.junit.Rule
 import org.junit.Test
+import org.junit.rules.TemporaryFolder
+
 import static org.junit.Assert.*
 import geoscript.geom.Point
 import geoscript.workspace.Memory
@@ -14,6 +17,9 @@ import geoscript.feature.Feature
  * @author Jared Erickson
  */
 class GeoJSONWriterTestCase {
+
+    @Rule
+    public TemporaryFolder folder = new TemporaryFolder()
 
     @Test void write() {
 
@@ -41,7 +47,7 @@ class GeoJSONWriterTestCase {
         assertTrue geojson.startsWith("{\"type\":\"FeatureCollection\",\"features\":[")
 
         // Write Layer as GeoJSON to a File
-        File file = File.createTempFile("layer",".json")
+        File file = folder.newFile("layer.json")
         writer.write(layer, file)
         geojson = file.text
         assertTrue geojson.startsWith("{\"type\":\"FeatureCollection\",\"features\":[")

@@ -2,7 +2,10 @@ package geoscript.workspace
 
 import geoscript.feature.Schema
 import geoscript.geom.Point
+import org.junit.Rule
 import org.junit.Test
+import org.junit.rules.TemporaryFolder
+
 import static org.junit.Assert.*
 import geoscript.layer.Layer
 
@@ -12,11 +15,15 @@ import geoscript.layer.Layer
  */
 class WorkspaceTestCase {
 
+    @Rule
+    public TemporaryFolder folder = new TemporaryFolder()
+
     @Test void constructorWithMapOfParams() {
         // H2
-        Workspace h2 = new Workspace(["dbtype": "h2", "database": File.createTempFile("roads",".db").absolutePath])
+        Workspace h2 = new Workspace(["dbtype": "h2", "database": folder.newFile("roads.db").absolutePath])
         assertNotNull(h2.ds)
         assertEquals("org.geotools.jdbc.JDBCDataStore", h2.format)
+        h2.close()
 
         // Shapefile
         URL url = getClass().getClassLoader().getResource("states.shp")
@@ -27,9 +34,10 @@ class WorkspaceTestCase {
 
     @Test void constructorWithParamString() {
         // H2
-        Workspace h2 = new Workspace("dbtype=h2 database=" + File.createTempFile("roads",".db").absolutePath)
+        Workspace h2 = new Workspace("dbtype=h2 database=" + folder.newFile("roads.db").absolutePath)
         assertNotNull(h2.ds)
         assertEquals("org.geotools.jdbc.JDBCDataStore", h2.format)
+        h2.close()
 
         // Shapefile
         URL url = getClass().getClassLoader().getResource("states.shp")
@@ -62,6 +70,59 @@ class WorkspaceTestCase {
         Workspace prop3 = new Workspace(new File(propFile.parentFile, "asdfasdfas.properties").absolutePath)
         assertNotNull(prop3.ds)
         assertEquals("org.geotools.data.property.PropertyDataStore", prop3.format)
+    }
+
+    @Test void getParametersFromString() {
+        // PostGIS
+        Map params = Workspace.getParametersFromString("dbtype=postgis database=postgres host=localhost port=5432");
+        assertEquals(params['dbtype'], "postgis")
+        assertEquals(params['database'], "postgres")
+        assertEquals(params['host'], "localhost")
+        assertEquals(params['port'], "5432")
+
+        // Neo4j
+        params = Workspace.getParametersFromString("'The directory path of the neo4j database'=/opt/neo4j/data/graph.db")
+        assertEquals(params['The directory path of the neo4j database'], "/opt/neo4j/data/graph.db")
+
+        // H2
+        params = Workspace.getParametersFromString("dbtype=h2 database='C:\\My Data\\my.db'");
+        assertEquals(params['dbtype'], "h2")
+        assertEquals(params['database'], "C:\\My Data\\my.db")
+
+        // Shapefile
+        params = Workspace.getParametersFromString("/my/states.shp")
+        assertTrue(params.containsKey("url"))
+        assertTrue(params["url"] instanceof URL)
+        assertTrue(params["url"].toString().endsWith("my"))
+
+        params = Workspace.getParametersFromString("url='/my/states.shp' 'create spatial index'=true")
+        assertTrue(params.containsKey("url"))
+        assertTrue(params["url"] instanceof URL)
+        assertTrue(params["url"].toString().endsWith("my/states.shp"))
+        assertEquals(params['create spatial index'], "true")
+
+        // Property
+        params = Workspace.getParametersFromString("directory=/my/states.properties")
+        assertTrue(params.containsKey("directory"))
+        assertTrue(params['directory'].toString().endsWith("my/states.properties"))
+
+
+        params = Workspace.getParametersFromString("directory=/my/propertyfiles")
+        assertTrue(params.containsKey("directory"))
+        assertTrue(params['directory'].toString().endsWith("my/propertyfiles"))
+
+        params = Workspace.getParametersFromString("/my/states.properties")
+        assertTrue(params.containsKey("directory"))
+        assertTrue(params['directory'].toString().endsWith("my"))
+
+        // GeoPackage
+        params = Workspace.getParametersFromString("dbtype=geopkg database=layers.gpkg")
+        assertEquals(params['dbtype'], "geopkg")
+        assertEquals(params['database'], "layers.gpkg")
+
+        params = Workspace.getParametersFromString("layers.gpkg")
+        assertEquals(params['dbtype'], "geopkg")
+        assertTrue(params['database'].toString().endsWith("layers.gpkg"))
     }
 
     @Test void getWorkspaceNames() {
@@ -98,7 +159,7 @@ class WorkspaceTestCase {
         layer1.add([new Point(2,2),"point2"])
         layer1.add([new Point(3,3),"point3"])
 
-        File file = new File(System.getProperty("java.io.tmpdir"))
+        File file = folder.newFolder("points")
         Directory dir = new Directory(file)
         Layer layer2 = dir.add(layer1)
         assertTrue(new File(file,"points.shp").exists())

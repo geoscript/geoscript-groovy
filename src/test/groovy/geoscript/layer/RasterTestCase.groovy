@@ -8,7 +8,10 @@ import geoscript.layer.Raster
 import geoscript.proj.Projection
 import geoscript.style.ColorMap
 import geoscript.style.Symbolizer
+import org.junit.Rule
 import org.junit.Test
+import org.junit.rules.TemporaryFolder
+
 import javax.imageio.ImageIO
 import static org.junit.Assert.*
 import geoscript.layer.Layer
@@ -21,13 +24,16 @@ import static org.junit.Assert.assertEquals
  * The Raster unit test
  */
 class RasterTestCase {
-	
+
+    @Rule
+    public TemporaryFolder folder = new TemporaryFolder()
+
     @Test void raster() {
         File file = new File(getClass().getClassLoader().getResource("alki.tif").toURI())
         assertNotNull(file)
 
-        GeoTIFF geoTIFF = new GeoTIFF()
-        Raster raster = geoTIFF.read(file)
+        GeoTIFF geoTIFF = new GeoTIFF(file)
+        Raster raster = geoTIFF.read()
         assertNotNull(raster)
 
         assertEquals("GeoTIFF", geoTIFF.name)
@@ -74,8 +80,8 @@ class RasterTestCase {
 
     @Test void getSetProj() {
         File file = new File(getClass().getClassLoader().getResource("alki.tif").toURI())
-        GeoTIFF geoTIFF = new GeoTIFF()
-        Raster raster = geoTIFF.read(file)
+        GeoTIFF geoTIFF = new GeoTIFF(file)
+        Raster raster = geoTIFF.read()
         // Get Proj
         assertEquals("EPSG:2927", raster.proj.id)
         // Set Proj (projection unecessary)
@@ -106,8 +112,8 @@ class RasterTestCase {
         File file = new File(getClass().getClassLoader().getResource("alki.tif").toURI())
         assertNotNull(file)
 
-        GeoTIFF geoTIFF = new GeoTIFF()
-        Raster raster = geoTIFF.read(file)
+        GeoTIFF geoTIFF = new GeoTIFF(file)
+        Raster raster = geoTIFF.read()
         assertNotNull(raster)
 
         Bounds bounds = new Bounds(1166191.0260847565, 822960.0090852415, 1166761.4391797914, 823593.1955759579)
@@ -123,8 +129,8 @@ class RasterTestCase {
         File file = new File(getClass().getClassLoader().getResource("alki.tif").toURI())
         assertNotNull(file)
 
-        GeoTIFF geoTIFF = new GeoTIFF()
-        Raster raster = geoTIFF.read(file)
+        GeoTIFF geoTIFF = new GeoTIFF(file)
+        Raster raster = geoTIFF.read()
         assertNotNull(raster)
 
         Geometry geometry = new Point(1166761.4391797914, 823593.195575958).buffer(400)
@@ -140,8 +146,8 @@ class RasterTestCase {
         File file = new File(getClass().getClassLoader().getResource("alki.tif").toURI())
         assertNotNull(file)
 
-        GeoTIFF geoTIFF = new GeoTIFF()
-        Raster raster = geoTIFF.read(file)
+        GeoTIFF geoTIFF = new GeoTIFF(file)
+        Raster raster = geoTIFF.read()
         assertNotNull(raster)
 
         Raster cropped = raster.crop(0,0,10,10)
@@ -157,8 +163,8 @@ class RasterTestCase {
         File file = new File(getClass().getClassLoader().getResource("alki.tif").toURI())
         assertNotNull(file)
 
-        GeoTIFF geoTIFF = new GeoTIFF()
-        Raster raster = geoTIFF.read(file)
+        GeoTIFF geoTIFF = new GeoTIFF(file)
+        Raster raster = geoTIFF.read()
         assertNotNull(raster)
         assertEquals("EPSG:2927", raster.proj.id)
 
@@ -192,8 +198,8 @@ class RasterTestCase {
         // Read a GeoTIFF
         File file = new File(getClass().getClassLoader().getResource("alki.tif").toURI())
         assertNotNull(file)
-        GeoTIFF geoTIFF = new GeoTIFF()
-        Raster raster = geoTIFF.read(file)
+        GeoTIFF geoTIFF = new GeoTIFF(file)
+        Raster raster = geoTIFF.read()
         assertNotNull(raster)
         assertEquals("EPSG:2927", raster.proj.id)
 
@@ -203,12 +209,13 @@ class RasterTestCase {
         assertEquals("EPSG:4326", reprojected.proj.id)
 
         // Write the reprojected GeoTIFF to a file
-        File file1 = File.createTempFile("reprojected_raster",".tif")
+        File file1 = folder.newFile("reprojected_raster.tif")
         println(file1)
-        geoTIFF.write(reprojected, file1)
+        GeoTIFF outTiff = new GeoTIFF(file1)
+        outTiff.write(reprojected)
 
         // Read the written reprojected GeoTIFF
-        Raster raster2 = geoTIFF.read(file1)
+        Raster raster2 = outTiff.read()
         assertNotNull(raster2)
         assertEquals("EPSG:4326", raster2.proj.id)
     }
@@ -216,8 +223,8 @@ class RasterTestCase {
     @Test void eval() {
         File file = new File(getClass().getClassLoader().getResource("alki.tif").toURI())
         assertNotNull(file)
-        GeoTIFF geoTIFF = new GeoTIFF()
-        Raster raster = geoTIFF.read(file)
+        GeoTIFF geoTIFF = new GeoTIFF(file)
+        Raster raster = geoTIFF.read()
         assertNotNull(raster)
 
         // eval with Point
@@ -258,8 +265,8 @@ class RasterTestCase {
     @Test void getValueFromRaster() {
         File file = new File(getClass().getClassLoader().getResource("raster.tif").toURI())
         assertNotNull(file)
-        GeoTIFF geoTIFF = new GeoTIFF()
-        Raster raster = geoTIFF.read(file)
+        GeoTIFF geoTIFF = new GeoTIFF(file)
+        Raster raster = geoTIFF.read()
         assertNotNull(raster)
 
         // By default values are returned as doubles
@@ -558,8 +565,8 @@ class RasterTestCase {
 
     @Test void scale() {
         File file = new File(getClass().getClassLoader().getResource("raster.tif").toURI())
-        GeoTIFF geoTIFF = new GeoTIFF()
-        Raster raster = geoTIFF.read(file)
+        GeoTIFF geoTIFF = new GeoTIFF(file)
+        Raster raster = geoTIFF.read()
         Raster scaled = raster.scale(10, 10)
         assertNotNull scaled
     }
@@ -828,8 +835,8 @@ class RasterTestCase {
 
     @Test void getData() {
         File file = new File(getClass().getClassLoader().getResource("alki.tif").toURI())
-        GeoTIFF geoTIFF = new GeoTIFF()
-        Raster raster = geoTIFF.read(file)
+        GeoTIFF geoTIFF = new GeoTIFF(file)
+        Raster raster = geoTIFF.read()
         def data = raster.data
         assertNotNull data
         assertTrue data instanceof java.awt.image.Raster
@@ -837,8 +844,8 @@ class RasterTestCase {
 
     @Test void getExtrema() {
         File file = new File(getClass().getClassLoader().getResource("alki.tif").toURI())
-        GeoTIFF geoTIFF = new GeoTIFF()
-        Raster raster = geoTIFF.read(file)
+        GeoTIFF geoTIFF = new GeoTIFF(file)
+        Raster raster = geoTIFF.read()
         Map result = raster.extrema
         assertTrue result.containsKey("min")
         assertTrue result.containsKey("max")
@@ -852,8 +859,8 @@ class RasterTestCase {
 
     @Test void resample() {
         File file = new File(getClass().getClassLoader().getResource("alki.tif").toURI())
-        GeoTIFF geoTIFF = new GeoTIFF()
-        Raster raster = geoTIFF.read(file)
+        GeoTIFF geoTIFF = new GeoTIFF(file)
+        Raster raster = geoTIFF.read()
 
         // Size
         Raster raster1 = raster.resample(size: [200,400])
@@ -877,8 +884,8 @@ class RasterTestCase {
 
     @Test void getHistogram() {
         File file = new File(getClass().getClassLoader().getResource("alki.tif").toURI())
-        GeoTIFF geoTIFF = new GeoTIFF()
-        Raster raster = geoTIFF.read(file)
+        GeoTIFF geoTIFF = new GeoTIFF(file)
+        Raster raster = geoTIFF.read()
         Histogram histogram = raster.histogram
         assertNotNull histogram
         assertEquals 3, histogram.numberOfBands
@@ -915,8 +922,8 @@ class RasterTestCase {
 
     @Test void stylize() {
         File file = new File(getClass().getClassLoader().getResource("raster.tif").toURI())
-        GeoTIFF geoTIFF = new GeoTIFF()
-        Raster raster = geoTIFF.read(file)
+        GeoTIFF geoTIFF = new GeoTIFF(file)
+        Raster raster = geoTIFF.read()
         raster.style = new ColorMap([[color: "#008000", quantity: 70], [color: "#663333", quantity: 256]])
         Raster raster2 = raster.stylize()
         assertTrue raster.eval(10,10) != raster2.eval(10,10)

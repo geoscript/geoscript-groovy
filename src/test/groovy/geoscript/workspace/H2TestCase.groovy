@@ -1,6 +1,8 @@
 package geoscript.workspace
 
+import org.junit.Rule
 import org.junit.Test
+import org.junit.rules.TemporaryFolder
 import static org.junit.Assert.*
 import geoscript.layer.*
 import geoscript.feature.*
@@ -11,16 +13,35 @@ import geoscript.geom.*
  */
 class H2TestCase {
 
-    private H2 createH2() {
-        File f = new File("target/h2").absoluteFile
-        if (f.exists()) {
-            boolean deleted = f.deleteDir()
+    @Rule
+    public TemporaryFolder folder = new TemporaryFolder()
+
+    @Test void remove() {
+        H2 h2 = new H2(folder.newFile("h2.db"))
+        assertEquals "H2", h2.format
+        // Add
+        Layer l = h2.create('widgets',[new Field("geom", "Point"), new Field("name", "String")])
+        assertNotNull(l)
+        l.add([new Point(1,1), "one"])
+        l.add([new Point(2,2), "two"])
+        l.add([new Point(3,3), "three"])
+        assertEquals 3, l.count()
+        // Get
+        assertNotNull(h2.get("widgets"))
+        // Remove
+        h2.remove("widgets")
+        boolean exceptionThrown = false
+        try {
+            h2.get("widgets")
+        } catch (IOException ex) {
+            exceptionThrown = true
         }
-        new H2("acme", "target/h2")
+        assertTrue(exceptionThrown)
+        h2.close()
     }
 
     @Test void create() {
-        H2 h2 = createH2()
+        H2 h2 = new H2(folder.newFile("h2.db"))
         assertEquals "H2", h2.format
         Layer l = h2.create('widgets',[new Field("geom", "Point"), new Field("name", "String")])
         assertNotNull(l)
@@ -30,7 +51,7 @@ class H2TestCase {
         assertEquals 3, l.count()
         h2.close()
 
-        h2 = new H2(new File("target/h2/acme"))
+        h2 = new H2(folder.newFile("h2.db"))
         assertEquals "H2", h2.format
         assertTrue h2.names.contains("widgets")
         l = h2.get("widgets")
@@ -41,7 +62,7 @@ class H2TestCase {
     @Test void add() {
         File file = new File(getClass().getClassLoader().getResource("states.shp").toURI())
         Shapefile shp = new Shapefile(file)
-        H2 h2 = createH2()
+        H2 h2 = new H2(folder.newFile("h2.db"))
         Layer l = h2.add(shp, 'counties')
         assertEquals shp.count(), l.count()
         h2.close()
@@ -50,7 +71,7 @@ class H2TestCase {
     @Test void addSqlQuery() {
         File file = new File(getClass().getClassLoader().getResource("states.shp").toURI())
         Shapefile shp = new Shapefile(file)
-        H2 h2 = createH2()
+        H2 h2 = new H2(folder.newFile("h2.db"))
         Layer statesLayer = h2.add(shp, 'states')
         assertEquals shp.count(), statesLayer.count()
 
@@ -74,7 +95,7 @@ class H2TestCase {
     @Test void createView() {
         File file = new File(getClass().getClassLoader().getResource("states.shp").toURI())
         Shapefile shp = new Shapefile(file)
-        H2 h2 = createH2()
+        H2 h2 = new H2(folder.newFile("h2.db"))
         Layer statesLayer = h2.add(shp, 'states')
         assertEquals shp.count(), statesLayer.count()
 
@@ -96,7 +117,69 @@ class H2TestCase {
         assertEquals "Washington", layer.getFeatures(params: ['abbr': 'WA'])[0]['STATE_NAME']
         assertEquals "Oregon", layer.getCursor(params: ['abbr': 'OR']).next()['STATE_NAME']
         assertEquals "South Dakota", layer.collectFromFeature(params: ['abbr': 'SD']) {ft -> ft['STATE_NAME']}[0]
+        h2.close()
+    }
+
+    @Test void indexes() {
+        // Create a layer
+        H2 h2 = new H2(folder.newFile("h2.db"))
+        Layer l = h2.create('widgets',[new Field("geom", "Point"), new Field("name", "String")])
+        assertNotNull(l)
+        l.add([new Point(1,1), "one"])
+        l.add([new Point(2,2), "two"])
+        l.add([new Point(3,3), "three"])
+        assertEquals 3, l.count()
+        // Add two indexes
+        h2.createIndex("widgets","geom_idx","geom",false)
+        h2.createIndex("widgets","name_idx","name",true)
+        // Get the indexes
+        List indexes = h2.getIndexes("widgets")
+        // Check the geom index
+        Map index = indexes.find{ it.name.equals("geom_idx") }
+        assertNotNull(index)
+        assertEquals("geom", index.attributes[0])
+        assertFalse(index.unique)        
+        // Check the name index
+        index = indexes.find{ it.name.equals("name_idx") }
+        assertNotNull(index)
+        assertEquals("name", index.attributes[0])
+        assertTrue(index.unique)        
+        // Delete the geom index
+        h2.deleteIndex("widgets","geom_idx")
+        assertNull(h2.getIndexes("widgets").find{it.name.equals("geom_idx")})
+        h2.close()
+    }
+
+    @Test void getSql() {
+        // Create a layer
+        H2 h2 = new H2(folder.newFile("h2.db"))
+        Layer l = h2.create('widgets',[new Field("geom", "Point"), new Field("name", "String")])
+        assertNotNull(l)
+        l.add([new Point(1,1), "one"])
+        l.add([new Point(2,2), "two"])
+        l.add([new Point(3,3), "three"])
+        assertEquals 3, l.count()
+        // Get groovy.sql.Sql
+        def sql = h2.sql
+        // Count rows
+        assertEquals 3, sql.firstRow("SELECT COUNT(*) as count FROM \"widgets\"").get("count") as int
+        // Query
+        List names = []
+        sql.eachRow "SELECT \"name\" FROM \"widgets\" ORDER BY \"name\" DESC", {
+            names.add(it["name"])
+        }
+        assertEquals "two,three,one", names.join(",")
+        // Insert
+        sql.execute("INSERT INTO \"widgets\" (\"geom\", \"name\") VALUES (ST_GeomFromText('POINT (6 6)',4326), 'four')")
+        assertEquals 4, sql.firstRow("SELECT COUNT(*) as count FROM \"widgets\"").get("count") as int
+        // Query
+        sql.eachRow "SELECT ST_Buffer(\"geom\", 10) as buffer, \"name\" FROM \"widgets\"", {row ->
+            Geometry poly = Geometry.fromWKB(row.buffer as byte[])
+            assertNotNull poly
+            assertTrue poly instanceof Polygon
+            assertNotNull row.name
+        }
+        h2.close()
     }
 
 }
-

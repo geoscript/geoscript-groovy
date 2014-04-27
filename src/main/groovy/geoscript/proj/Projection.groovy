@@ -61,7 +61,8 @@ class Projection {
     }
 
     /**
-     * Get the Identifier
+     * Get the Identifier.
+     * This can be a very slow operation.
      * @return The CRS Lookup Identifier
      */
     String getId() {

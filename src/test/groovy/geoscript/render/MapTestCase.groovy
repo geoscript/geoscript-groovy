@@ -7,7 +7,10 @@ import geoscript.layer.GeoTIFF
 import geoscript.layer.Raster
 import geoscript.style.Fill
 import geoscript.style.Stroke
+import org.junit.Rule
 import org.junit.Test
+import org.junit.rules.TemporaryFolder
+
 import static org.junit.Assert.*
 
 /**
@@ -16,6 +19,9 @@ import static org.junit.Assert.*
  */
 class MapTestCase {
 
+    @Rule
+    public TemporaryFolder folder = new TemporaryFolder()
+    
     @Test void proj() {
         Map map = new Map();
         map.proj = new Projection("EPSG:2927")
@@ -52,8 +58,7 @@ class MapTestCase {
         def image = map.renderToImage()
         assertNotNull(image)
 
-        File out = File.createTempFile("map",".png")
-        println("renderToImage: ${out}")
+        File out = folder.newFile("map.png")
         javax.imageio.ImageIO.write(image, "png", out);
         assertTrue(out.exists())
         map.close()
@@ -63,8 +68,8 @@ class MapTestCase {
         File file = new File(getClass().getClassLoader().getResource("alki.tif").toURI())
         assertNotNull(file)
 
-        GeoTIFF geoTIFF = new GeoTIFF()
-        Raster raster = geoTIFF.read(file)
+        GeoTIFF geoTIFF = new GeoTIFF(file)
+        Raster raster = geoTIFF.read()
 
         Map map = new Map()
         map.proj = new Projection("EPSG:2927")
@@ -73,8 +78,7 @@ class MapTestCase {
         def image = map.renderToImage()
         assertNotNull(image)
 
-        File out = File.createTempFile("raster",".png")
-        println("renderRasterToImage: ${out}")
+        File out = folder.newFile("raster.png")
         javax.imageio.ImageIO.write(image, "png", out);
         assertTrue(out.exists())
         map.close()
@@ -84,8 +88,8 @@ class MapTestCase {
         File file = new File(getClass().getClassLoader().getResource("raster.tif").toURI())
         assertNotNull(file)
 
-        GeoTIFF geoTIFF = new GeoTIFF()
-        Raster raster = geoTIFF.read(file)
+        GeoTIFF geoTIFF = new GeoTIFF(file)
+        Raster raster = geoTIFF.read()
         raster.style = new  geoscript.style.ColorMap([[color: "#008000", quantity:70], [color:"#663333", quantity:256]])
 
         Map map = new Map()
@@ -93,8 +97,7 @@ class MapTestCase {
         def image = map.renderToImage()
         assertNotNull(image)
 
-        File out = File.createTempFile("raster",".png")
-        println("renderDemRaster: ${out}")
+        File out = folder.newFile("raster.png")
         javax.imageio.ImageIO.write(image, "png", out);
         assertTrue(out.exists())
         map.close()
@@ -113,8 +116,7 @@ class MapTestCase {
         def image = map.renderToImage()
         assertNotNull(image)
 
-        File out = File.createTempFile("map",".png")
-        println("renderToImageWithMapNoProjection: ${out}")
+        File out = folder.newFile("map.png")
         javax.imageio.ImageIO.write(image, "png", out);
         assertTrue(out.exists())
         map.close()
@@ -133,18 +135,14 @@ class MapTestCase {
         def image = map.renderToImage()
         assertNotNull(image)
 
-        File out = File.createTempFile("map",".png")
-        println("renderToImageWithMapBoundsNoProjection: ${out}")
+        File out = folder.newFile("map.png")
         javax.imageio.ImageIO.write(image, "png", out);
         assertTrue(out.exists())
         map.close()
     }
 
     @Test void renderToFile() {
-
-        File out = File.createTempFile("map",".png")
-        println("renderToFile: ${out}")
-
+        File out = folder.newFile("map.png")
         File file = new File(getClass().getClassLoader().getResource("states.shp").toURI())
         assertNotNull(file)
         Shapefile shp = new Shapefile(file)
@@ -160,8 +158,7 @@ class MapTestCase {
     }
 
     @Test void renderToOutputStream() {
-        File f = File.createTempFile("map",".png")
-        println("renderToOutputStream: ${f}")
+        File f = folder.newFile("map.png")
         FileOutputStream out = new FileOutputStream(f)
 
         File file = new File(getClass().getClassLoader().getResource("states.shp").toURI())
@@ -180,8 +177,7 @@ class MapTestCase {
     }
 
     @Test void renderToPdf() {
-        File f = File.createTempFile("map",".pdf")
-        println("renderToPdf: ${f}")
+        File f = folder.newFile("map.pdf")
 
         File file = new File(getClass().getClassLoader().getResource("states.shp").toURI())
         assertNotNull(file)
@@ -197,8 +193,7 @@ class MapTestCase {
     }
 
     @Test void renderToSvg() {
-        File f = File.createTempFile("map",".svg")
-        println("renderToSvg: ${f}")
+        File f = folder.newFile("map.svg")
 
         File file = new File(getClass().getClassLoader().getResource("states.shp").toURI())
         assertNotNull(file)
@@ -213,8 +208,7 @@ class MapTestCase {
     }
 
     @Test void renderToJpeg() {
-        File f = File.createTempFile("map",".jpeg")
-        println("renderToJpeg: ${f}")
+        File f = folder.newFile("map.jpeg")
 
         File file = new File(getClass().getClassLoader().getResource("states.shp").toURI())
         assertNotNull(file)
@@ -229,8 +223,7 @@ class MapTestCase {
     }
 
     @Test void renderToGif() {
-        File f = File.createTempFile("map",".gif")
-        println("renderToGif: ${f}")
+        File f = folder.newFile("map.gif")
 
         File file = new File(getClass().getClassLoader().getResource("states.shp").toURI())
         assertNotNull(file)

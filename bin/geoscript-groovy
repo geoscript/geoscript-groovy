@@ -57,4 +57,4 @@ if [ -e "$GEOSCRIPT_GDAL_HOME" ]; then
     fi
 fi
 
-"$GROOVY" -cp $CLASSPATH "$@"
+"$GROOVY" -cp $CLASSPATH -Dorg.geotools.referencing.forceXY=true "$@"

@@ -67,6 +67,34 @@ class GeometryCollection extends Geometry {
     }
 
     /**
+     * Get a subset of Geometries in the GeometryCollection.
+     * @param start The start index (can be positive or negative)
+     * @param end The end index (can be positive or negative)
+     * @return The new Geometry
+     */
+    Geometry slice(Integer start = 0, Integer end = null) {
+        int len = getNumGeometries()
+        if (start < 0) {
+            start = len + start
+        }
+        if (Math.abs(start) > len) {
+            throw new IllegalArgumentException("Start index can not be more than the number of items!")
+        }
+        end = end == null ? len : end
+        if (end < 0) {
+            end = len + end
+        }
+        if (Math.abs(end) > len) {
+            throw new IllegalArgumentException("End index can not be more than the number of items!")
+        }
+        List geoms = []
+        (start..<end).each {int i ->
+           geoms.add(getGeometryN(i).g);
+        }
+        Geometry.wrap(factory.buildGeometry(geoms))
+    }
+
+    /**
      * Create a GeometryCollection from a List of Geometries
      */
     private static create(List geometries) {

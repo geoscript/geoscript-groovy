@@ -1,6 +1,9 @@
 package geoscript.style.io
 
+import org.junit.Rule
 import org.junit.Test
+import org.junit.rules.TemporaryFolder
+
 import static org.junit.Assert.*
 import geoscript.style.*
 
@@ -10,6 +13,9 @@ import geoscript.style.*
  */
 class SLDWriterTestCase {
 
+    @Rule
+    public TemporaryFolder folder = new TemporaryFolder()
+    
     private String NEW_LINE = System.getProperty("line.separator")
 
     private String expectedSld = """<?xml version="1.0" encoding="UTF-8"?>
@@ -53,7 +59,7 @@ class SLDWriterTestCase {
     @Test void writeToFile() {
         Symbolizer sym = new Fill("wheat") + new Stroke("brown")
         SLDWriter writer = new SLDWriter();
-        File file = File.createTempFile("simple",".sld")
+        File file = folder.newFile("simple.sld")
         writer.write(sym, file)
         String sld = file.text.trim().replaceAll(NEW_LINE,"")
         assertNotNull sld

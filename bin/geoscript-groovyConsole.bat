@@ -38,6 +38,7 @@ if not "%GEOSCRIPT_GDAL_HOME%" == "" (
 )
 
 cd %CWD%
+set JAVA_OPTS=-Dorg.geotools.referencing.forceXY=true
 %GROOVY% %*
 goto end
 

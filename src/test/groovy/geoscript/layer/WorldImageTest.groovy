@@ -1,6 +1,9 @@
 package geoscript.layer
 
+import org.junit.Rule
 import org.junit.Test
+import org.junit.rules.TemporaryFolder
+
 import static org.junit.Assert.*
 
 /**
@@ -9,29 +12,33 @@ import static org.junit.Assert.*
  */
 class WorldImageTest {
 
+    @Rule
+    public TemporaryFolder folder = new TemporaryFolder()
+
     @Test void readWrite() {
 
-        GeoTIFF geotiff = new GeoTIFF()
-        Raster gtRaster = geotiff.read(new File(getClass().getClassLoader().getResource("alki.tif").toURI()))
-
-        WorldImage worldImage = new WorldImage()
+        GeoTIFF geotiff = new GeoTIFF(new File(getClass().getClassLoader().getResource("alki.tif").toURI()))
+        Raster gtRaster = geotiff.read()
 
         // GeoTIFF to TIFF + WorldFile
-        File worldTiffFile = File.createTempFile("raster",".tif")
-        worldImage.write(gtRaster, worldTiffFile)
-        Raster tifRaster = worldImage.read(worldTiffFile)
+        File worldTiffFile = folder.newFile("raster.tif")
+        WorldImage worldImage = new WorldImage(worldTiffFile)
+        worldImage.write(gtRaster)
+        Raster tifRaster = worldImage.read()
         assertNotNull(tifRaster)
 
         // GeoTIFF to JPEG + WorldFile
-        File worldJpegfFile = File.createTempFile("raster",".jpeg")
-        worldImage.write(gtRaster, worldJpegfFile)
-        Raster jpgRaster = worldImage.read(worldJpegfFile)
+        File worldJpegfFile = folder.newFile("raster.jpeg")
+        worldImage = new WorldImage(worldJpegfFile)
+        worldImage.write(gtRaster)
+        Raster jpgRaster = worldImage.read()
         assertNotNull(jpgRaster)
 
         // GeoTIFF to PNG + WorldFile
-        File worldPngfFile = File.createTempFile("raster",".png")
-        worldImage.write(gtRaster, worldPngfFile)
-        Raster pngRaster = worldImage.read(worldPngfFile)
+        File worldPngfFile = folder.newFile("raster.png")
+        worldImage = new WorldImage(worldPngfFile)
+        worldImage.write(gtRaster)
+        Raster pngRaster = worldImage.read()
         assertNotNull(pngRaster)
     }
 

@@ -2,7 +2,10 @@ package geoscript.plot
 
 import geoscript.geom.Bounds
 import geoscript.geom.Geometry
+import org.junit.Rule
 import org.junit.Test
+import org.junit.rules.TemporaryFolder
+import static org.junit.Assert.*
 
 /**
  * The Regression Unit Test
@@ -10,15 +13,18 @@ import org.junit.Test
  */
 class RegressionTestCase {
 
+    @Rule
+    public TemporaryFolder folder = new TemporaryFolder()
+
     @Test void linear() {
         def points = Geometry.createRandomPoints(new Bounds(0,0,100,100).geometry, 10)
         List data = points.geometries.collect{pt ->
             [pt.x,pt.y]
         }
         Chart chart = Regression.linear(data)
-        File file = File.createTempFile("regression_linear_",".png")
-        println file
+        File file = folder.newFile("regression_linear.png")
         chart.save(file)
+        assertTrue(file.exists())
     }
 
     @Test void power() {
@@ -27,9 +33,9 @@ class RegressionTestCase {
             [pt.x,pt.y]
         }
         Chart chart = Regression.power(data)
-        File file = File.createTempFile("regression_power_",".png")
-        println file
+        File file = folder.newFile("regression_power.png")
         chart.save(file)
+        assertTrue(file.exists())
     }
 
 }

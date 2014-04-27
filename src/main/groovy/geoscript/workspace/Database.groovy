@@ -1,5 +1,6 @@
 package geoscript.workspace
 
+import groovy.sql.Sql
 import org.geotools.data.DataStore
 import org.geotools.jdbc.JDBCDataStore
 import org.geotools.jdbc.VirtualTable
@@ -29,6 +30,23 @@ class Database extends Workspace {
     }
 
     /**
+     * Get a groovy.sql.Sql object that provides direct access
+     * to the underlying database
+     * @return A groovy.sql.Sql object
+     */
+    Sql getSql() {
+        new Sql((ds as JDBCDataStore).dataSource)
+    }
+
+    /**
+     * Remove the layer from the database
+     * @param layerName The layer name
+     */
+    void remove(String layerName) {
+        (ds as JDBCDataStore).removeSchema(layerName)
+    }
+
+    /**
      * Create a Layer from a SQL View
      * @param options The named parameters
      * <ul>
@@ -51,6 +69,50 @@ class Database extends Workspace {
      */
     void deleteView(String name) {
         (ds as JDBCDataStore).removeVirtualTable(name)
+    }
+
+    /**
+     * Create an index
+     * @param layerName The layer or table name
+     * @param indexName The index name
+     * @param fieldName The field name
+     * @param unique Whether the index is unique or not
+     */
+    void createIndex(String layerName, String indexName, String fieldName, boolean unique) {
+        createIndex(layerName, indexName, [fieldName], unique)
+    }
+
+    /**
+     * Create an index
+     * @param layerName The layer or table name
+     * @param indexName The index name
+     * @param fieldNames A List of field names
+     * @param unique Whether the index is unique or not
+     */
+    void createIndex(String layerName, String indexName, List<String> fieldNames, boolean unique) {
+        (ds as JDBCDataStore).createIndex(new org.geotools.jdbc.Index(layerName, indexName, unique, fieldNames as String[]))
+    }
+
+    /**
+     * Delete an index
+     * @param layerName The layer or table name
+     * @param indexName The index name
+     */
+    void deleteIndex(String layerName, String indexName) {
+        (ds as JDBCDataStore).dropIndex(layerName, indexName)
+    }
+
+    /**
+     * Get a List of indexes for a layer or table by name
+     * @param layerName The layer or table name
+     * @return A List of indexes
+     */
+    List getIndexes(String layerName) {
+        (ds as JDBCDataStore).getIndexes(layerName).collect{ [
+            name: it.indexName,
+            unique: it.unique,
+            attributes: it.attributes
+        ]}
     }
 
     /**

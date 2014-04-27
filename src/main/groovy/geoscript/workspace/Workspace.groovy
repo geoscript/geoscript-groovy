@@ -220,8 +220,10 @@ class Workspace {
                     dir = f.absolutePath.substring(0,f.absolutePath.lastIndexOf(File.separator))
                 }
                 params.put("directory", dir)
-            }
-            else if (new File(str).isDirectory()) {
+            } else if (str.endsWith(".gpkg")) {
+                params.put("dbtype", "geopkg")
+                params.put("database", new File(str).absolutePath)
+            } else if (new File(str).isDirectory()) {
                 params.put("url", new File(str).toURL())
             } else {
                 throw new IllegalArgumentException("Unknown Workspace parameter string: ${str}")

@@ -5,7 +5,9 @@ import geoscript.proj.Projection
 import org.apache.commons.io.input.ReaderInputStream
 import org.geotools.factory.GeoTools
 import org.geotools.factory.Hints
+import org.junit.Rule
 import org.junit.Test
+import org.junit.rules.TemporaryFolder
 
 import static org.junit.Assert.assertNotNull
 
@@ -15,12 +17,15 @@ import static org.junit.Assert.assertNotNull
  */
 class ArcGridTestCase {
 
+    @Rule
+    public TemporaryFolder folder = new TemporaryFolder()
+
     @Test
     void readFromFile() {
         File file = new File(getClass().getClassLoader().getResource("raster.asc").toURI())
         assertNotNull(file)
-        ArcGrid arcGrid = new ArcGrid()
-        Raster raster = arcGrid.read(file)
+        ArcGrid arcGrid = new ArcGrid(file)
+        Raster raster = arcGrid.read()
         assertNotNull(raster)
     }
 
@@ -28,8 +33,8 @@ class ArcGridTestCase {
     void readFromGrassFile() {
         File file = new File(getClass().getClassLoader().getResource("grass.arx").toURI())
         assertNotNull(file)
-        ArcGrid arcGrid = new ArcGrid()
-        Raster raster = arcGrid.read(file)
+        ArcGrid arcGrid = new ArcGrid(file)
+        Raster raster = arcGrid.read()
         assertNotNull(raster)
     }
 
@@ -37,8 +42,8 @@ class ArcGridTestCase {
     void readFromString() {
         File file = new File(getClass().getClassLoader().getResource("raster.asc").toURI())
         assertNotNull(file)
-        ArcGrid arcGrid = new ArcGrid()
-        Raster raster = arcGrid.read(file.text)
+        ArcGrid arcGrid = new ArcGrid(file.text)
+        Raster raster = arcGrid.read()
         assertNotNull(raster)
     }
 
@@ -46,8 +51,8 @@ class ArcGridTestCase {
     void readFromInputStream() {
         File file = new File(getClass().getClassLoader().getResource("raster.asc").toURI())
         assertNotNull(file)
-        ArcGrid arcGrid = new ArcGrid()
-        Raster raster = arcGrid.read(new ReaderInputStream(new StringReader(file.text)), new Projection("EPSG:4326"))
+        ArcGrid arcGrid = new ArcGrid(new ReaderInputStream(new StringReader(file.text)))
+        Raster raster = arcGrid.read(new Projection("EPSG:4326"))
         assertNotNull(raster)
     }
 
@@ -55,10 +60,10 @@ class ArcGridTestCase {
     void readFromInputStreamWithHints() {
         File file = new File(getClass().getClassLoader().getResource("raster.asc").toURI())
         assertNotNull(file)
-        ArcGrid arcGrid = new ArcGrid()
+        ArcGrid arcGrid = new ArcGrid(new ReaderInputStream(new StringReader(file.text)))
         Hints hints = GeoTools.getDefaultHints()
         hints.put(Hints.DEFAULT_COORDINATE_REFERENCE_SYSTEM, new Projection("EPSG:4326").crs)
-        Raster raster = arcGrid.read(new ReaderInputStream(new StringReader(file.text)), hints)
+        Raster raster = arcGrid.read(hints)
         assertNotNull(raster)
     }
 
@@ -66,11 +71,12 @@ class ArcGridTestCase {
     void writeToFile() {
         File file = new File(getClass().getClassLoader().getResource("raster.asc").toURI())
         assertNotNull(file)
-        ArcGrid arcGrid = new ArcGrid()
-        Raster raster = arcGrid.read(file)
+        ArcGrid arcGrid = new ArcGrid(file)
+        Raster raster = arcGrid.read()
         assertNotNull(raster)
-        File destFile = File.createTempFile("raster", ".asc")
-        arcGrid.write(raster, destFile)
+        File destFile = folder.newFile("raster.asc")
+        ArcGrid destArcGrid = new ArcGrid(destFile)
+        destArcGrid.write(raster)
         String str = destFile.text
         AssertUtil.assertStringsEqual("""NCOLS 4
 NROWS 6
@@ -92,8 +98,8 @@ NODATA_VALUE -9999.0
     void writeToString() {
         File file = new File(getClass().getClassLoader().getResource("raster.asc").toURI())
         assertNotNull(file)
-        ArcGrid arcGrid = new ArcGrid()
-        Raster raster = arcGrid.read(file)
+        ArcGrid arcGrid = new ArcGrid(file)
+        Raster raster = arcGrid.read()
         assertNotNull(raster)
         String str = arcGrid.writeToString(raster)
         assertNotNull(str)
@@ -116,8 +122,8 @@ NODATA_VALUE -9999.0
     void writeToGrassString() {
         File file = new File(getClass().getClassLoader().getResource("raster.asc").toURI())
         assertNotNull(file)
-        ArcGrid arcGrid = new ArcGrid()
-        Raster raster = arcGrid.read(file)
+        ArcGrid arcGrid = new ArcGrid(file)
+        Raster raster = arcGrid.read()
         assertNotNull(raster)
         String str = arcGrid.writeToString(raster, "grass")
         assertNotNull(str)

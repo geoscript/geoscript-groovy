@@ -243,6 +243,16 @@ class Feature {
     }
 
     /**
+     * Set the values of this Feature based on values from a Map
+     * @param attributes A Map of values
+     */
+    void set(Map attributes) {
+        attributes.each {k,v ->
+            this.set(k,v)
+        }
+    }
+
+    /**
      * Get a Map of all attributes
      * @return A Map of all attributes
      */
@@ -265,6 +275,93 @@ class Feature {
         String id = (id.startsWith(schema.name)) ? id : "${schema.name}.${id}"
         "${id} ${atts}"
     }
+
+    /**
+     * Get this Feature as a GeoJSON String
+     * @return The GeoJSON String
+     */
+    String getGeoJSON() {
+        def writer = new geoscript.feature.io.GeoJSONWriter()
+        writer.write(this)
+    }
+
+    /**
+     * Get this Feature as a GeoRSS String
+     * @param options The named parameters
+     * <ul>
+     *      <li>feedType = The feed type (atom or rss)</li>
+     *      <li>geometryType = The geometry type (simple, gml, w3c)</li>
+     *      <li>includeAttributes = Whether to include all attributes</li>
+     *      <li>attributeNamespace = The namespace for attributes (ogr=http://www.gdal/ogr/)</li>
+     *      <li>itemTitle = The item title (Closure, Expression, or String)</li>
+     *      <li>itemId = The item id (Closure, Expression, or String)</li>
+     *      <li>itemDescription = The item description (Closure, Expression, or String)</li>
+     *      <li>itemDate = The item date (Closure, Expression, or String)</li>
+     *      <li>itemGeometry = The item geometry (Closure, Expression, or String)</li>
+     * </ul>
+     * @return A GeoRSS String
+     */
+    String getGeoRSS(Map options = [:]) {
+        def writer = new geoscript.feature.io.GeoRSSWriter(options)
+        writer.write(this)
+    }
+
+    /**
+     * Get this Feature as a GML String
+     * @param options The named parameters
+     * <ul>
+     *     <li>version = The version 2, 3, or 3.2</li>
+     *     <li>format = Whether to pretty print or not</li>
+     *     <li>bounds = Whether to include Feature Bounds or not</li>
+     *     <li>xmldecl = Whether to include XML declaration or not</li>
+     *     <li>nsprefix = The XML namespace prefix</li>
+     * </ul>
+     * @return A GML String
+     */
+    String getGml(Map options = [:]) {
+        double version = options.get("version", 2)
+        boolean format = options.get("format", true)
+        boolean bounds = options.get("bounds", false)
+        boolean xmldecl = options.get("xmldecl", false)
+        String nsprefix = options.get("nsprefix", "gsf")
+        def writer = new geoscript.feature.io.GmlWriter()
+        writer.write(this, version, format, bounds, xmldecl, nsprefix)
+    }
+
+    /**
+     * Get this Feature as a KML Placemark
+     * @param options The named parameters
+     * <ul>
+     *     <li>format = Whether to format the KML or not (default = false)</li>
+     *     <li>xmldecl = Whether to include the XML declaration (default = false)</li>
+     * </ul>
+     * @return A KML Placemark String
+     */
+    String getKml(Map options = [:]) {
+        def writer = new geoscript.feature.io.KmlWriter()
+        writer.write(options, this)
+    }
+
+    /**
+     * Get this Feature as a GPX String
+     * @param options The named parameters
+     * <ul>
+     *     <li>version = The GPX version (defaults to 1.1)</li>
+     *     <li>includeAttributes = Whether to include attributes (defaults to false)</li>
+     *     <li>attributeNamespace = The attribute namespace (prefix=url)</li>
+     *     <li>elevation = The elevation filter, closure, or value</li>
+     *     <li>time = The time elevation filter, closure, or value</li>
+     *     <li>name = The name elevation filter, closure, or value</li>
+     *     <li>description = The description elevation filter, closure, or value</li>
+     *     <li>type = The type elevation filter, closure, or value</li>
+     * </ul>
+     * @return A KML Placemark String
+     */
+    String getGpx(Map options = [:]) {
+        def writer = new geoscript.feature.io.GpxWriter(options)
+        writer.write(this)
+    }
+
 
     /**
      * Build a SimpleFeature using the Map of data, the ID, and the Schema

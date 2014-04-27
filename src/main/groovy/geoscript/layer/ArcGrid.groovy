@@ -14,10 +14,19 @@ import java.nio.charset.Charset
 class ArcGrid extends Format {
 
     /**
-     * Create a new ArcGrid
+     * Create a new ArcGrid.
      */
+    @Deprecated
     ArcGrid() {
         super(new org.geotools.gce.arcgrid.ArcGridFormat())
+    }
+
+    /**
+     * Create a new ArcGrid
+     * @param stream The file
+     */
+    ArcGrid(def stream) {
+        super(new org.geotools.gce.arcgrid.ArcGridFormat(), stream)
     }
 
     /**
@@ -27,6 +36,7 @@ class ArcGrid extends Format {
      * @param source The source (usually a File)
      * @return A Raster
      */
+    @Deprecated
     Raster read(Map options = [:], def source) {
         if (source instanceof String) {
             String charset = "UTF-8"
@@ -40,6 +50,26 @@ class ArcGrid extends Format {
     }
 
     /**
+     * Read a Raster from the stream (usually a File)
+     * @param options Optional named parameters that are turned into an array
+     * of GeoTools GeneralParameterValues
+     * @param stream The stream (usually a File)
+     * @return A Raster
+     */
+    @Override
+    Raster read(Map options = [:]) {
+        if (stream instanceof String) {
+            String charset = "UTF-8"
+            if (options.containsKey("charset")) {
+                charset = options.get("charset")
+                options.remove(charset)
+            }
+            stream = new ReaderInputStream(new StringReader(stream), Charset.forName(charset))
+        }
+        super.read(options, GeoTools.getDefaultHints())
+    }
+
+    /**
      * Read a Raster from the source (usually a File)
      * @param options Optional named parameters that are turned into an array
      * of GeoTools GeneralParameterValues
@@ -47,6 +77,7 @@ class ArcGrid extends Format {
      * @param proj The Projection
      * @return A Raster
      */
+    @Deprecated
     Raster read(Map options = [:], def source, Projection proj) {
         if (source instanceof String) {
             String charset = "UTF-8"
@@ -60,6 +91,26 @@ class ArcGrid extends Format {
     }
 
     /**
+     * Read a Raster from the stream (usually a File)
+     * @param options Optional named parameters that are turned into an array
+     * of GeoTools GeneralParameterValues
+     * @param proj The Projection
+     * @return A Raster
+     */
+    @Override
+    Raster read(Map options = [:], Projection proj) {
+        if (stream instanceof String) {
+            String charset = "UTF-8"
+            if (options.containsKey("charset")) {
+                charset = options.get("charset")
+                options.remove(charset)
+            }
+            stream = new ReaderInputStream(new StringReader(stream), Charset.forName(charset))
+        }
+        super.read(options, proj)
+    }
+
+    /**
      * Read a Raster from the source (usually a File)
      * @param options Optional named parameters that are turned into an array
      * of GeoTools GeneralParameterValues
@@ -67,6 +118,7 @@ class ArcGrid extends Format {
      * @param hints GeoTools Hints
      * @return A Raster
      */
+    @Deprecated
     Raster read(Map options = [:], def source, Hints hints) {
         if (source instanceof String) {
             String charset = "UTF-8"
@@ -80,6 +132,26 @@ class ArcGrid extends Format {
     }
 
     /**
+     * Read a Raster from the stream (usually a File)
+     * @param options Optional named parameters that are turned into an array
+     * of GeoTools GeneralParameterValues
+     * @param hints GeoTools Hints
+     * @return A Raster
+     */
+    @Override
+    Raster read(Map options = [:], Hints hints) {
+        if (stream instanceof String) {
+            String charset = "UTF-8"
+            if (options.containsKey("charset")) {
+                charset = options.get("charset")
+                options.remove(charset)
+            }
+            stream = new ReaderInputStream(new StringReader(stream), Charset.forName(charset))
+        }
+        super.read(options, hints)
+    }
+
+    /**
      * Write an ArcGrid Raster to a String
      * @param raster The Raster
      * @param format The string format can either be "arc" which is the default, or grass
@@ -87,7 +159,8 @@ class ArcGrid extends Format {
      */
     String writeToString(Raster raster, String format = "arc") {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
-        write(raster, out, GRASS: format.equalsIgnoreCase("grass") ? true : false)
+        ArcGrid arcGrid = new ArcGrid(out)
+        arcGrid.write(raster, GRASS: format.equalsIgnoreCase("grass") ? true : false)
         out.close()
         out.toString()
     }

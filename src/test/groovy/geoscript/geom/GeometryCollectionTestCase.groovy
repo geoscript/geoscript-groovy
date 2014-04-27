@@ -29,5 +29,15 @@ class GeometryCollectionTestCase {
         def gc5 = gc4 + new Point(8,9)
         assertEquals "GEOMETRYCOLLECTION (POINT (8 9))", gc5.wkt
     }
-	
+
+    @Test void slice() {
+        GeometryCollection g = Geometry.fromWKT("MULTIPOINT ((1 1), (2 2), (3 3), (4 4), (5 5))")
+        assertEquals "MULTIPOINT ((2 2), (3 3))", g.slice(1,3).wkt
+        assertEquals "POINT (2 2)", g.slice(1,2).wkt
+        assertEquals "MULTIPOINT ((3 3), (4 4), (5 5))", g.slice(2).wkt
+        assertEquals "MULTIPOINT ((3 3), (4 4), (5 5))", g.slice(-3).wkt
+        assertEquals "MULTIPOINT ((2 2), (3 3))", g.slice(-4, -2).wkt
+        assertEquals "MULTIPOINT ((1 1), (2 2), (3 3))", g.slice(0, -2).wkt
+    }
+
 }

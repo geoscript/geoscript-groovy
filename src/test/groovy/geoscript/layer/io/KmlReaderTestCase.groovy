@@ -2,7 +2,10 @@ package geoscript.layer.io
 
 import geoscript.proj.Projection
 import geoscript.workspace.Memory
+import org.junit.Rule
 import org.junit.Test
+import org.junit.rules.TemporaryFolder
+
 import static org.junit.Assert.*
 import geoscript.layer.Layer
 
@@ -11,6 +14,9 @@ import geoscript.layer.Layer
  * @author Jared Erickson
  */
 class KmlReaderTestCase {
+
+    @Rule
+    public TemporaryFolder folder = new TemporaryFolder()
 
     @Test void read() {
         String kml = """<kml:kml xmlns:kml="http://earth.google.com/kml/2.1">
@@ -79,7 +85,7 @@ class KmlReaderTestCase {
         }
 
         // Read from a File
-        File file = File.createTempFile("layer",".kml")
+        File file = folder.newFile("layer.kml")
         file.write(kml)
         layer = reader.read(file)
         assertNotNull layer

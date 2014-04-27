@@ -20,8 +20,8 @@ void createImage(Raster raster, Symbolizer symbolizer, File file) {
     map.close()
 }
 
-GeoTIFF geotiff = new GeoTIFF()
-Raster raster = geotiff.read(new File("sld_cookbook_raster/raster.tif"))
+GeoTIFF geotiff = new GeoTIFF(new File("sld_cookbook_raster/raster.tif"))
+Raster raster = geotiff.read()
 
 // Two-color gradient
 createImage(raster, new ColorMap([[color: "#008000", quantity: 70], [color: "#663333", quantity: 256]]), new File("raster_twocolorgradient.png"))

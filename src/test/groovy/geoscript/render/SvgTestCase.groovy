@@ -4,8 +4,11 @@ import geoscript.layer.Layer
 import geoscript.layer.Shapefile
 import geoscript.style.Fill
 import geoscript.style.Stroke
+import org.junit.Rule
 import org.junit.Test
-import static org.junit.Assert.assertNotNull
+import org.junit.rules.TemporaryFolder
+
+import static org.junit.Assert.*
 
 /**
  * The Svg UnitTest
@@ -13,7 +16,11 @@ import static org.junit.Assert.assertNotNull
  */
 class SvgTestCase {
 
-    @Test void renderToDocument() {
+    @Rule
+    public TemporaryFolder folder = new TemporaryFolder()
+
+    @Test
+    void renderToDocument() {
         File shpFile = new File(getClass().getClassLoader().getResource("states.shp").toURI())
         Layer layer = new Shapefile(shpFile)
         layer.style = new Stroke('black', 0.1) + new Fill('gray', 0.75)
@@ -23,16 +30,18 @@ class SvgTestCase {
         assertNotNull(doc)
     }
 
-    @Test void renderToOutputStream() {
+    @Test
+    void renderToOutputStream() {
         File shpFile = new File(getClass().getClassLoader().getResource("states.shp").toURI())
         Layer layer = new Shapefile(shpFile)
         layer.style = new Stroke('black', 0.1) + new Fill('gray', 0.75)
         Map map = new Map(layers: [layer])
         Svg svg = new Svg()
-        File file = File.createTempFile("map_",".svg")
-        println file
+        File file = folder.newFile("map.svg")
         OutputStream out = new FileOutputStream(file)
         svg.render(map, out)
         out.close()
+        assertTrue file.exists()
+        assertTrue file.length() > 0
     }
 }

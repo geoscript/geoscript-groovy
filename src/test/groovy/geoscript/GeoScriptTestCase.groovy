@@ -11,7 +11,10 @@ import geoscript.layer.Format
 import geoscript.layer.GeoTIFF
 import geoscript.layer.Raster
 import geoscript.workspace.Memory
+import org.junit.Rule
 import org.junit.Test
+import org.junit.rules.TemporaryFolder
+
 import static org.junit.Assert.*
 
 import geoscript.geom.*
@@ -26,6 +29,9 @@ import geoscript.workspace.Workspace
  * @author Jared Erickson
  */
 class GeoScriptTestCase {
+
+    @Rule
+    public TemporaryFolder folder = new TemporaryFolder()
 
     @Test void wrap() {
         assertTrue GeoScript.wrap(new Feature([the_geom: "POINT (1 1)"],"pt").f) instanceof Feature
@@ -47,7 +53,7 @@ class GeoScriptTestCase {
         ]
         Bounds bounds = new Bounds(0, 0, 7, 5, "EPSG:4326")
         assertTrue GeoScript.wrap(new Raster(data, bounds).coverage) instanceof Raster
-        assertTrue GeoScript.wrap(new GeoTIFF().gridFormat) instanceof Format
+        assertTrue GeoScript.wrap(new GeoTIFF(null).gridFormat) instanceof Format
         assertTrue GeoScript.wrap(1) instanceof Integer
         assertTrue GeoScript.wrap("ABC") instanceof String
     }
@@ -147,7 +153,7 @@ class GeoScriptTestCase {
 "POINT (111 -47)","House","12.5"
 "POINT (121 -45)","School","22.7"
 """
-        File csvFile = File.createTempFile("layer",".csv")
+        File csvFile = folder.newFile("layer.csv")
         csvFile.write(csv)
         use(GeoScript) {
             Layer layer = csvFile as Layer
@@ -161,11 +167,14 @@ class GeoScriptTestCase {
 
     @Test void geoJsonFileAsLayer() {
         String json = """{"type":"FeatureCollection","features":[{"type":"Feature","geometry":{"type":"Point","coordinates":[111,-47]},"properties":{"name":"House","price":12.5},"id":"fid-3eff7fce_131b538ad4c_-8000"},{"type":"Feature","geometry":{"type":"Point","coordinates":[121,-45]},"properties":{"name":"School","price":22.7},"id":"fid-3eff7fce_131b538ad4c_-7fff"}]}"""
-        File jsonFile = File.createTempFile("layer",".json")
+        File jsonFile = folder.newFile("layer.json")
         jsonFile.write(json)
         use(GeoScript) {
             Layer layer = jsonFile as Layer
-            assertEquals("geojson name: String, price: Double, geometry: Point", layer.schema.toString())
+            assertEquals("geojson", layer.name)
+            assertTrue(layer.schema.has("name"))
+            assertTrue(layer.schema.has("price"))
+            assertTrue(layer.schema.has("geometry"))
             assertEquals(2, layer.count)
             layer.eachFeature { f ->
                 assertTrue(f.geom instanceof geoscript.geom.Point)

@@ -159,7 +159,7 @@ class GeoScript {
         // GridFormat -> Format
         else if (obj instanceof org.geotools.coverage.grid.io.AbstractGridFormat) {
             def gridFormat = obj as org.geotools.coverage.grid.io.AbstractGridFormat
-            return new Format(gridFormat)
+            return new Format(gridFormat, null)
         }
         // Not a wrapped GeoTools object just just return
         else {

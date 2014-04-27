@@ -38,7 +38,7 @@ if not "%GEOSCRIPT_GDAL_HOME%" == "" (
 )
 
 cd %CWD%
-%GROOVY% %*
+%GROOVY% -Dorg.geotools.referencing.forceXY=true %*
 goto end
 
 :error

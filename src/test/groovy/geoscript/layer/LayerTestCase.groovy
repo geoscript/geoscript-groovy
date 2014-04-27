@@ -1,5 +1,6 @@
 package geoscript.layer
 
+import geoscript.AssertUtil
 import geoscript.filter.Expression
 import geoscript.workspace.Directory
 import org.junit.Rule
@@ -158,7 +159,7 @@ class LayerTestCase {
         ])
         assertEquals 3, layer1.count
 
-        File file = File.createTempFile("points",".shp")
+        File file = folder.newFile("points.shp")
         String name = file.name.substring(0, file.name.lastIndexOf(".shp"))
         Schema schema2 = new Schema(name, [
             new Field("the_geom","Point","EPSG:4326"),
@@ -257,9 +258,9 @@ class LayerTestCase {
         layer1.toJSON(out)
         String json = out.toString()
         assertNotNull json
-        assertTrue json.startsWith("{\"type\":\"FeatureCollection\",\"features\":[")
+        assertTrue json.startsWith("{\"type\":\"FeatureCollection\"")
         json = layer1.toJSONString()
-        assertTrue json.startsWith("{\"type\":\"FeatureCollection\",\"features\":[")
+        assertTrue json.startsWith("{\"type\":\"FeatureCollection\"")
     }
 
     @Test void toKML() {
@@ -269,7 +270,38 @@ class LayerTestCase {
         def out = new java.io.ByteArrayOutputStream()
         layer1.toKML(out, {f->f.get("name")}, {f-> "${f.get('name')} ${f.get('price')}"})
         String kml = out.toString()
-        assertNotNull kml
+        String expected = """<?xml version="1.0" encoding="UTF-8"?>
+<kml:kml xmlns:kml="http://www.opengis.net/kml/2.2">
+  <kml:Document>
+    <kml:Folder>
+      <kml:name>facilities</kml:name>
+      <kml:Schema kml:name="facilities" kml:id="facilities">
+        <kml:SimpleField kml:name="name" kml:type="String"/>
+        <kml:SimpleField kml:name="price" kml:type="Float"/>
+      </kml:Schema>
+      <kml:Placemark>
+        <kml:name>House</kml:name>
+        <kml:description>House 12.5</kml:description>
+        <kml:Style>
+          <kml:IconStyle>
+            <kml:color>ff0000ff</kml:color>
+          </kml:IconStyle>
+        </kml:Style>
+        <kml:ExtendedData>
+          <kml:SchemaData kml:schemaUrl="#facilities">
+            <kml:SimpleData kml:name="name">House</kml:SimpleData>
+            <kml:SimpleData kml:name="price">12.5</kml:SimpleData>
+          </kml:SchemaData>
+        </kml:ExtendedData>
+        <kml:Point>
+          <kml:coordinates>-122.444,47.2528</kml:coordinates>
+        </kml:Point>
+      </kml:Placemark>
+    </kml:Folder>
+  </kml:Document>
+</kml:kml>
+"""
+        AssertUtil.assertStringsEqual(expected.trim(), kml.trim(), trim: true)
     }
 
     @Test void reproject() {
@@ -299,7 +331,7 @@ class LayerTestCase {
         layer1.add(new Feature([new Point(-122.494165, 47.198096), "House", 12.5], "house1", s1))
 
         // Reproject to a Property Workspace
-        File file = File.createTempFile("reproject",".properties")
+        File file = folder.newFile("reproject.properties")
         Property property = new Property(file.parentFile)
         Layer layer2 = layer1.reproject(new Projection("EPSG:2927"), property, "facilities_reprojected")
         assertEquals 1, layer2.count()
@@ -314,7 +346,7 @@ class LayerTestCase {
         layer1.add(new Feature([new Point(-122.494165, 47.198096), "House", 12.5], "house1", s1))
 
         // Reproject to a Property Workspace Layer
-        File file = File.createTempFile("reproject",".properties")
+        File file = folder.newFile("reproject.properties")
         Property property = new Property(file.parentFile)
         Layer propertyLayer = property.create(layer1.schema.reproject("EPSG:2927","facilities_epsg_2927"))
         Layer layer2 = layer1.reproject(propertyLayer)
@@ -719,10 +751,10 @@ class LayerTestCase {
         Shapefile shp = new Shapefile(file)
         Raster raster = shp.getRaster("SAMP_POP", [800,600], shp.bounds, "SAMP_POP")
         assertNotNull raster
-        File rasterFile = File.createTempFile("states_pop_",".tif")
+        File rasterFile = folder.newFile("states_pop.tif")
         println rasterFile
-        GeoTIFF geotiff = new GeoTIFF()
-        geotiff.write(raster, rasterFile)
+        GeoTIFF geotiff = new GeoTIFF(rasterFile)
+        geotiff.write(raster)
     }
 
     @Test void cursorSubFields() {
@@ -812,6 +844,695 @@ class LayerTestCase {
             }
         }
         assertEquals numPoints, layer.count
+    }
+
+    /**
+     * Create two Layers for Layer Algebra testing based on the GDAL spec:
+     * http://trac.osgeo.org/gdal/wiki/LayerAlgebra
+     * @return A List of two Layers
+     */
+    private List createGdalLayerAlgebraTestLayers() {
+        def dir = new Memory()
+        Layer layer1 = dir.create(new Schema("a",[new Field("the_geom", "Polygon"), new Field("A","int")]))
+        Bounds b1 = new Bounds(90, 100, 100, 110)
+        Bounds b2 = new Bounds(120, 100, 130, 110)
+        layer1.add([the_geom: b1.geometry, A: 1])
+        layer1.add([the_geom: b2.geometry, A: 2])
+
+        Layer layer2 = dir.create(new Schema("b",[new Field("the_geom", "Polygon"), new Field("B","int")]))
+        Bounds b3 = new Bounds(85, 95, 95, 105)
+        Bounds b4 = new Bounds(97, 95, 125, 105)
+        layer2.add([the_geom: b3.geometry, B: 3])
+        layer2.add([the_geom: b4.geometry, B: 4])
+
+        [layer1,layer2]
+    }
+
+    @Test void intersectionGdal() {
+        List layers = createGdalLayerAlgebraTestLayers()
+        Layer layer = layers[0].intersection(layers[1])
+        // Check schema
+        assertEquals "a_b_intersection", layer.name
+        assertTrue layer.schema.has("A")
+        assertTrue layer.schema.has("B")
+        assertEquals "Polygon", layer.schema.geom.typ
+        // Check features
+        assertEquals 3, layer.count
+        assertEquals 1, layer.count("A = 1 AND B = 3")
+        assertEquals 1, layer.count("A = 1 AND B = 4")
+        assertEquals 1, layer.count("A = 2 AND B = 4")
+        assertEquals "POLYGON ((90 100, 90 105, 95 105, 95 100, 90 100))", layer.getFeatures("A = 1 AND B = 3")[0].geom.wkt
+        assertEquals "POLYGON ((100 105, 100 100, 97 100, 97 105, 100 105))", layer.getFeatures("A = 1 AND B = 4")[0].geom.wkt
+        assertEquals "POLYGON ((120 100, 120 105, 125 105, 125 100, 120 100))", layer.getFeatures("A = 2 AND B = 4")[0].geom.wkt
+    }
+
+    @Test void unionGdal() {
+        List layers = createGdalLayerAlgebraTestLayers()
+        Layer layer = layers[0].union(layers[1])
+        // Check schema
+        assertEquals "a_b_union", layer.name
+        assertTrue layer.schema.has("A")
+        assertTrue layer.schema.has("B")
+        assertEquals "Polygon", layer.schema.geom.typ
+        // Check features
+        assertEquals 7, layer.count
+        assertEquals 1, layer.count("A = 1 AND B = 3")
+        assertEquals 1, layer.count("A = 1 AND B = 4")
+        assertEquals 1, layer.count("A = 1 AND B IS NULL")
+        assertEquals 1, layer.count("A = 2 AND B = 4")
+        assertEquals 1, layer.count("A = 2 AND B IS NULL")
+        assertEquals 1, layer.count("A IS NULL AND B = 3")
+        assertEquals 1, layer.count("A IS NULL AND B = 4")
+        assertEquals "POLYGON ((90 100, 90 105, 95 105, 95 100, 90 100))", layer.getFeatures("A = 1 AND B = 3")[0].geom.wkt
+        assertEquals "POLYGON ((100 105, 100 100, 97 100, 97 105, 100 105))", layer.getFeatures("A = 1 AND B = 4")[0].geom.wkt
+        assertEquals "POLYGON ((90 105, 90 110, 100 110, 100 105, 97 105, 97 100, 95 100, 95 105, 90 105))", layer.getFeatures("A = 1 AND B IS NULL")[0].geom.wkt
+        assertEquals "POLYGON ((120 100, 120 105, 125 105, 125 100, 120 100))", layer.getFeatures("A = 2 AND B = 4")[0].geom.wkt
+        assertEquals "POLYGON ((120 105, 120 110, 130 110, 130 100, 125 100, 125 105, 120 105))", layer.getFeatures("A = 2 AND B IS NULL")[0].geom.wkt
+        assertEquals "POLYGON ((85 95, 85 105, 90 105, 90 100, 95 100, 95 95, 85 95))", layer.getFeatures("A IS NULL AND B = 3")[0].geom.wkt
+        assertEquals "POLYGON ((97 95, 97 100, 100 100, 100 105, 120 105, 120 100, 125 100, 125 95, 97 95))", layer.getFeatures("A IS NULL AND B = 4")[0].geom.wkt
+    }
+
+    @Test void symDifferenceGdal() {
+        List layers = createGdalLayerAlgebraTestLayers()
+        Layer layer = layers[0].symDifference(layers[1])
+        // Check schema
+        assertEquals "a_b_symdifference", layer.name
+        assertTrue layer.schema.has("A")
+        assertTrue layer.schema.has("B")
+        assertEquals "Polygon", layer.schema.geom.typ
+        // Check features
+        assertEquals 4, layer.count
+        assertEquals 1, layer.count("A = 1 AND B IS NULL")
+        assertEquals 1, layer.count("A = 2 AND B IS NULL")
+        assertEquals 1, layer.count("A IS NULL AND B = 3")
+        assertEquals 1, layer.count("A IS NULL AND B = 4")
+        assertEquals "POLYGON ((90 105, 90 110, 100 110, 100 105, 97 105, 97 100, 95 100, 95 105, 90 105))",layer.getFeatures("A = 1 AND B IS NULL")[0].geom.wkt
+        assertEquals "POLYGON ((120 105, 120 110, 130 110, 130 100, 125 100, 125 105, 120 105))", layer.getFeatures("A = 2 AND B IS NULL")[0].geom.wkt
+        assertEquals "POLYGON ((85 95, 85 105, 90 105, 90 100, 95 100, 95 95, 85 95))", layer.getFeatures("A IS NULL AND B = 3")[0].geom.wkt
+        assertEquals "POLYGON ((97 95, 97 100, 100 100, 100 105, 120 105, 120 100, 125 100, 125 95, 97 95))", layer.getFeatures("A IS NULL AND B = 4")[0].geom.wkt
+    }
+
+    @Test void identityGdal() {
+        List layers = createGdalLayerAlgebraTestLayers()
+        Layer layer = layers[0].identity(layers[1])
+        // Check schema
+        assertEquals "a_b_identity", layer.name
+        assertTrue layer.schema.has("A")
+        assertTrue layer.schema.has("B")
+        assertEquals "Polygon", layer.schema.geom.typ
+        // Check features
+        assertEquals 5, layer.count
+        assertEquals 1, layer.count("A = 1 AND B = 3")
+        assertEquals 1, layer.count("A = 1 AND B = 4")
+        assertEquals 1, layer.count("A = 1 AND B IS NULL")
+        assertEquals 1, layer.count("A = 2 AND B = 4")
+        assertEquals 1, layer.count("A = 2 AND B IS NULL")
+        assertEquals "POLYGON ((90 100, 90 105, 95 105, 95 100, 90 100))", layer.getFeatures("A = 1 AND B = 3")[0].geom.wkt
+        assertEquals "POLYGON ((100 105, 100 100, 97 100, 97 105, 100 105))", layer.getFeatures("A = 1 AND B = 4")[0].geom.wkt
+        assertEquals "POLYGON ((90 105, 90 110, 100 110, 100 105, 97 105, 97 100, 95 100, 95 105, 90 105))", layer.getFeatures("A = 1 AND B IS NULL")[0].geom.wkt
+        assertEquals "POLYGON ((120 100, 120 105, 125 105, 125 100, 120 100))", layer.getFeatures("A = 2 AND B = 4")[0].geom.wkt
+        assertEquals "POLYGON ((120 105, 120 110, 130 110, 130 100, 125 100, 125 105, 120 105))", layer.getFeatures("A = 2 AND B IS NULL")[0].geom.wkt
+    }
+
+    @Test void identityInverseGdal() {
+        List layers = createGdalLayerAlgebraTestLayers()
+        Layer layer = layers[1].identity(layers[0])
+        // Check schema
+        assertEquals "b_a_identity", layer.name
+        assertTrue layer.schema.has("A")
+        assertTrue layer.schema.has("B")
+        assertEquals "Polygon", layer.schema.geom.typ
+        // Check features
+        assertEquals 5, layer.count
+        assertEquals 1, layer.count("B = 3 AND A IS NULL")
+        assertEquals 1, layer.count("B = 4 AND A IS NULL")
+        assertEquals 1, layer.count("B = 3 AND A = 1")
+        assertEquals 1, layer.count("B = 4 AND A = 1")
+        assertEquals 1, layer.count("B = 4 AND A = 2")
+        assertEquals "POLYGON ((85 95, 85 105, 90 105, 90 100, 95 100, 95 95, 85 95))", layer.getFeatures("B = 3 AND A IS NULL")[0].geom.wkt
+        assertEquals "POLYGON ((97 95, 97 100, 100 100, 100 105, 120 105, 120 100, 125 100, 125 95, 97 95))", layer.getFeatures("B = 4 AND A IS NULL")[0].geom.wkt
+        assertEquals "POLYGON ((90 105, 95 105, 95 100, 90 100, 90 105))", layer.getFeatures("B = 3 AND A = 1")[0].geom.wkt
+        assertEquals "POLYGON ((97 100, 97 105, 100 105, 100 100, 97 100))", layer.getFeatures("B = 4 AND A = 1")[0].geom.wkt
+        assertEquals "POLYGON ((120 105, 125 105, 125 100, 120 100, 120 105))", layer.getFeatures("B = 4 AND A = 2")[0].geom.wkt
+    }
+
+    @Test void updateGdal() {
+        List layers = createGdalLayerAlgebraTestLayers()
+        Layer layer = layers[0].update(layers[1])
+        // Check schema
+        assertEquals "a_b_update", layer.name
+        assertTrue layer.schema.has("A")
+        assertFalse layer.schema.has("B")
+        assertEquals "Polygon", layer.schema.geom.typ
+        // Check features
+        assertEquals 4, layer.count
+        assertEquals 1, layer.count("A = 1")
+        assertEquals 1, layer.count("A = 2")
+        assertEquals 2, layer.count("A IS NULL")
+        assertEquals "POLYGON ((90 105, 90 110, 100 110, 100 105, 97 105, 97 100, 95 100, 95 105, 90 105))", layer.getFeatures("A = 1")[0].geom.wkt
+        assertEquals "POLYGON ((120 105, 120 110, 130 110, 130 100, 125 100, 125 105, 120 105))", layer.getFeatures("A = 2")[0].geom.wkt
+        assertEquals "POLYGON ((85 95, 85 105, 95 105, 95 95, 85 95))", layer.getFeatures("A IS NULL")[0].geom.wkt
+        assertEquals "POLYGON ((97 95, 97 105, 125 105, 125 95, 97 95))", layer.getFeatures("A IS NULL")[1].geom.wkt
+    }
+
+    @Test void updateInverseGdal() {
+        List layers = createGdalLayerAlgebraTestLayers()
+        Layer layer = layers[1].update(layers[0])
+        // Check schema
+        assertEquals "b_a_update", layer.name
+        assertTrue layer.schema.has("B")
+        assertFalse layer.schema.has("A")
+        assertEquals "Polygon", layer.schema.geom.typ
+        // Check features
+        assertEquals 4, layer.count
+        assertEquals 1, layer.count("B = 3")
+        assertEquals 1, layer.count("B = 4")
+        assertEquals 2, layer.count("B IS NULL")
+        assertEquals "POLYGON ((85 95, 85 105, 90 105, 90 100, 95 100, 95 95, 85 95))", layer.getFeatures("B = 3")[0].geom.wkt
+        assertEquals "POLYGON ((97 95, 97 100, 100 100, 100 105, 120 105, 120 100, 125 100, 125 95, 97 95))", layer.getFeatures("B = 4")[0].geom.wkt
+        assertEquals "POLYGON ((120 100, 120 110, 130 110, 130 100, 120 100))", layer.getFeatures("B IS NULL")[0].geom.wkt
+        assertEquals "POLYGON ((90 100, 90 110, 100 110, 100 100, 90 100))", layer.getFeatures("B IS NULL")[1].geom.wkt
+    }
+
+    @Test void clipGdal() {
+        List layers = createGdalLayerAlgebraTestLayers()
+        Layer layer = layers[0].clip(layers[1])
+        // Check schema
+        assertEquals "a_b_clipped", layer.name
+        assertTrue layer.schema.has("A")
+        assertFalse layer.schema.has("B")
+        assertEquals "Polygon", layer.schema.geom.typ
+        // Check features
+        assertEquals 3, layer.count
+        assertEquals 2, layer.count("A = 1")
+        assertEquals 1, layer.count("A = 2")
+        assertEquals "POLYGON ((90 100, 90 105, 95 105, 95 100, 90 100))", layer.getFeatures("A = 1")[0].geom.wkt
+        assertEquals "POLYGON ((100 105, 100 100, 97 100, 97 105, 100 105))", layer.getFeatures("A = 1")[1].geom.wkt
+        assertEquals "POLYGON ((120 100, 120 105, 125 105, 125 100, 120 100))", layer.getFeatures("A = 2")[0].geom.wkt
+    }
+
+    @Test void clipInverseGdal() {
+        List layers = createGdalLayerAlgebraTestLayers()
+        Layer layer = layers[1].clip(layers[0])
+        // Check schema
+        assertEquals "b_a_clipped", layer.name
+        assertTrue layer.schema.has("B")
+        assertFalse layer.schema.has("A")
+        assertEquals "Polygon", layer.schema.geom.typ
+        // Check features
+        assertEquals 3, layer.count
+        assertEquals 2, layer.count("B = 4")
+        assertEquals 1, layer.count("B = 3")
+        assertEquals "POLYGON ((97 100, 97 105, 100 105, 100 100, 97 100))", layer.getFeatures("B = 4")[0].geom.wkt
+        assertEquals "POLYGON ((120 105, 125 105, 125 100, 120 100, 120 105))", layer.getFeatures("B = 4")[1].geom.wkt
+        assertEquals "POLYGON ((90 105, 95 105, 95 100, 90 100, 90 105))", layer.getFeatures("B = 3")[0].geom.wkt
+    }
+
+    @Test void eraseGdal() {
+        List layers = createGdalLayerAlgebraTestLayers()
+        Layer layer = layers[0].erase(layers[1])
+        // Check schema
+        assertEquals "a_b_erase", layer.name
+        assertTrue layer.schema.has("A")
+        assertFalse layer.schema.has("B")
+        assertEquals "Polygon", layer.schema.geom.typ
+        // Check features
+        assertEquals 2, layer.count
+        assertEquals 1, layer.count("A = 1")
+        assertEquals 1, layer.count("A = 2")
+        assertEquals "POLYGON ((90 105, 90 110, 100 110, 100 105, 97 105, 97 100, 95 100, 95 105, 90 105))", layer.getFeatures("A = 1")[0].geom.wkt
+        assertEquals "POLYGON ((120 105, 120 110, 130 110, 130 100, 125 100, 125 105, 120 105))", layer.getFeatures("A = 2")[0].geom.wkt
+    }
+
+    @Test void eraseInverseGdal() {
+        List layers = createGdalLayerAlgebraTestLayers()
+        Layer layer = layers[1].erase(layers[0])
+        // Check schema
+        assertEquals "b_a_erase", layer.name
+        assertTrue layer.schema.has("B")
+        assertFalse layer.schema.has("A")
+        assertEquals "Polygon", layer.schema.geom.typ
+        // Check features
+        assertEquals 2, layer.count
+        assertEquals 1, layer.count("B = 3")
+        assertEquals 1, layer.count("B = 4")
+        assertEquals "POLYGON ((85 95, 85 105, 90 105, 90 100, 95 100, 95 95, 85 95))", layer.getFeatures("B = 3")[0].geom.wkt
+        assertEquals "POLYGON ((97 95, 97 100, 100 100, 100 105, 120 105, 120 100, 125 100, 125 95, 97 95))", layer.getFeatures("B = 4")[0].geom.wkt
+    }
+
+    /**
+     * Create two Layers for Layer Algebra testing based on the UW examples:
+     * http://courses.washington.edu/gis250/lessons/Model_Builder/
+     * @return A List of two Layers
+     */
+    private List createUWLayerAlgebraTestLayers() {
+        def dir = new Memory()
+        Layer rings = dir.create(new Schema("rings",[new Field("the_geom", "Polygon"), new Field("name","int")]))
+        Point pt = new Point(100,100)
+        Polygon poly1 = pt.buffer(12)
+        Polygon poly2 = pt.buffer(15).difference(poly1)
+        rings.add([the_geom: poly1, name: 1])
+        rings.add([the_geom: poly2, name: 2])
+
+        Layer boxes = dir.create(new Schema("boxes",[new Field("the_geom", "Polygon"), new Field("name","String")]))
+        Bounds bounds = new Bounds(80.0, 90.0, 120.0, 110.0)
+        Geometry grid = bounds.getGrid(2,2)
+        boxes.add([the_geom: grid[1], name: "A"])
+        boxes.add([the_geom: grid[3], name: "B"])
+        boxes.add([the_geom: grid[0], name: "C"])
+        boxes.add([the_geom: grid[2], name: "D"])
+
+        [rings,boxes]
+    }
+
+    @Test void intersectionUW() {
+        List layers = createUWLayerAlgebraTestLayers()
+        Layer layer = layers[0].intersection(layers[1], postfixAll: true)
+        // Check schema
+        assertEquals "rings_boxes_intersection", layer.name
+        assertTrue layer.schema.has("name1")
+        assertTrue layer.schema.has("name2")
+        assertEquals "Polygon", layer.schema.geom.typ
+        // Check features
+        assertEquals 21, layer.count
+        assertEquals 1, layer.count("name1 = 1 AND name2 = 'A'")
+        assertEquals 4, layer.count("name1 = 1 AND name2 = 'C'")
+        assertEquals 2, layer.count("name1 = 2 AND name2 = 'C'")
+        assertEquals 8, layer.count("name1 = 1 AND name2 = 'D'")
+        assertEquals 2, layer.count("name1 = 2 AND name2 = 'D'")
+        assertEquals 1, layer.count("name1 = 2 AND name2 = 'A'")
+        assertEquals 1, layer.count("name1 = 2 AND name2 = 'B'")
+        assertEquals 2, layer.count("name1 = 1 AND name2 = 'B'")
+    }
+
+    @Test void unionUW() {
+        List layers = createUWLayerAlgebraTestLayers()
+        Layer layer = layers[0].union(layers[1], postfixAll: true)
+        // Check schema
+        assertEquals "rings_boxes_union", layer.name
+        assertTrue layer.schema.has("name1")
+        assertTrue layer.schema.has("name2")
+        assertEquals "Polygon", layer.schema.geom.typ
+        // Check Features
+        assertEquals 23, layer.count
+        assertEquals 2, layer.count("name1 = 2 AND name2 = 'C'")
+        assertEquals 2, layer.count("name1 IS NULL AND name2 = 'C'")
+        assertEquals 4, layer.count("name1 = 1 AND name2 IS NULL")
+        assertEquals 4, layer.count("name1 = 1 AND name2 = 'D'")
+        assertEquals 2, layer.count("name1 = 2 AND name2 = 'D'")
+        assertEquals 3, layer.count("name1 = 2 AND name2 IS NULL")
+        assertEquals 2, layer.count("name1 IS NULL AND name2 = 'D'")
+        assertEquals 2, layer.count("name1 IS NULL AND name2 IS NULL")
+        assertEquals 2, layer.count("name1 = 1 AND name2 = 'B'")
+    }
+
+    @Test void symDifferenceUW() {
+        List layers = createUWLayerAlgebraTestLayers()
+        Layer layer = layers[0].symDifference(layers[1], postfixAll: true)
+        // Check schema
+        assertEquals "rings_boxes_symdifference", layer.name
+        assertTrue layer.schema.has("name1")
+        assertTrue layer.schema.has("name2")
+        assertEquals "Polygon", layer.schema.geom.typ
+        // Check Features
+        assertEquals 6, layer.count
+        assertEquals 1, layer.count("name1 IS NULL AND name2 = 'C'")
+        assertEquals 1, layer.count("name1 = 1 AND name2 IS NULL")
+        assertEquals 1, layer.count("name1 = 2 AND name2 IS NULL")
+        assertEquals 1, layer.count("name1 IS NULL AND name2 = 'D'")
+        assertEquals 2, layer.count("name1 IS NULL AND name2 IS NULL")
+    }
+
+    @Test void identityUW() {
+        List layers = createUWLayerAlgebraTestLayers()
+        Layer layer = layers[0].identity(layers[1], postfixAll: true)
+        // Check schema
+        assertEquals "rings_boxes_identity", layer.name
+        assertTrue layer.schema.has("name1")
+        assertTrue layer.schema.has("name2")
+        assertEquals "Polygon", layer.schema.geom.typ
+        // Check Features
+        assertEquals 23, layer.count
+        assertEquals 8, layer.count("name1 = 1 AND name2 IS NULL")
+        assertEquals 2, layer.count("name1 = 2 AND name2 = 'C'")
+        assertEquals 8, layer.count("name1 = 1 AND name2 = 'D'")
+        assertEquals 2, layer.count("name1 = 2 AND name2 = 'D'")
+        assertEquals 3, layer.count("name1 = 2 AND name2 IS NULL")
+    }
+
+    @Test void identityInverseUW() {
+        List layers = createUWLayerAlgebraTestLayers()
+        Layer layer = layers[1].identity(layers[0], postfixAll: true)
+        // Check schema
+        assertEquals "boxes_rings_identity", layer.name
+        assertTrue layer.schema.has("name1")
+        assertTrue layer.schema.has("name2")
+        assertEquals "Polygon", layer.schema.geom.typ
+        // Check Features
+        assertEquals 16, layer.count
+        assertEquals 2, layer.count("name1 = 'A' AND name2 IS NULL")
+        assertEquals 2, layer.count("name1 = 'C' AND name2 = 2")
+        assertEquals 2, layer.count("name1 = 'C' AND name2 IS NULL")
+        assertEquals 2, layer.count("name1 = 'D' AND name2 = 2")
+        assertEquals 2, layer.count("name1 = 'D' AND name2 IS NULL")
+        assertEquals 2, layer.count("name1 = 'A' AND name2 = 2")
+        assertEquals 2, layer.count("name1 = 'B' AND name2 = 2")
+        assertEquals 2, layer.count("name1 = 'B' AND name2 IS NULL")
+    }
+
+    @Test void updateUW() {
+        List layers = createUWLayerAlgebraTestLayers()
+        Layer layer = layers[0].update(layers[1], postfixAll: true)
+        // Check schema
+        assertEquals "rings_boxes_update", layer.name
+        assertTrue layer.schema.has("name")
+        assertFalse layer.schema.has("name1")
+        assertFalse layer.schema.has("name2")
+        assertEquals "Polygon", layer.schema.geom.typ
+        // Check Features
+        assertEquals 6, layer.count
+        assertEquals 4, layer.count("name IS NULL")
+        assertEquals 1, layer.count("name = 1")
+        assertEquals 1, layer.count("name = 2")
+    }
+
+    @Test void updateInverseUW() {
+        List layers = createUWLayerAlgebraTestLayers()
+        Layer layer = layers[1].update(layers[0], postfixAll: true)
+        // Check schema
+        assertEquals "boxes_rings_update", layer.name
+        assertTrue layer.schema.has("name")
+        assertFalse layer.schema.has("name1")
+        assertFalse layer.schema.has("name2")
+        assertEquals "Polygon", layer.schema.geom.typ
+        // Check Features
+        assertEquals 6, layer.count
+        assertEquals 2, layer.count("name IS NULL")
+        assertEquals 1, layer.count("name = 'A'")
+        assertEquals 1, layer.count("name = 'B'")
+        assertEquals 1, layer.count("name = 'C'")
+        assertEquals 1, layer.count("name = 'D'")
+    }
+
+    @Test void clipUW() {
+        List layers = createUWLayerAlgebraTestLayers()
+        Layer layer = layers[0].clip(layers[1], postfixAll: true)
+        // Check schema
+        assertEquals "rings_boxes_clipped", layer.name
+        assertTrue layer.schema.has("name")
+        assertFalse layer.schema.has("name1")
+        assertFalse layer.schema.has("name2")
+        assertEquals "Polygon", layer.schema.geom.typ
+        // Check Features
+        assertEquals 8, layer.count
+        assertEquals 4, layer.count("name = 1")
+        assertEquals 4, layer.count("name = 2")
+    }
+
+    @Test void clipInverseUW() {
+        List layers = createUWLayerAlgebraTestLayers()
+        Layer layer = layers[1].clip(layers[0], postfixAll: true)
+        // Check schema
+        assertEquals "boxes_rings_clipped", layer.name
+        assertTrue layer.schema.has("name")
+        assertFalse layer.schema.has("name1")
+        assertFalse layer.schema.has("name2")
+        assertEquals "Polygon", layer.schema.geom.typ
+        // Check Features
+        assertEquals 8, layer.count
+        assertEquals 2, layer.count("name = 'A'")
+        assertEquals 2, layer.count("name = 'B'")
+        assertEquals 2, layer.count("name = 'C'")
+        assertEquals 2, layer.count("name = 'D'")
+    }
+
+    @Test void eraseUW() {
+        List layers = createUWLayerAlgebraTestLayers()
+        Layer layer = layers[0].erase(layers[1], postfixAll: true)
+        // Check schema
+        assertEquals "rings_boxes_erase", layer.name
+        assertTrue layer.schema.has("name")
+        assertFalse layer.schema.has("name1")
+        assertFalse layer.schema.has("name2")
+        assertEquals "Polygon", layer.schema.geom.typ
+        // Check Features
+        assertEquals 2, layer.count
+        assertEquals 1, layer.count("name = 1")
+        assertEquals 1, layer.count("name = 2")
+    }
+
+    @Test void eraseInverseUW() {
+        List layers = createUWLayerAlgebraTestLayers()
+        Layer layer = layers[1].erase(layers[0], postfixAll: true)
+        // Check schema
+        assertEquals "boxes_rings_erase", layer.name
+        assertTrue layer.schema.has("name")
+        assertFalse layer.schema.has("name1")
+        assertFalse layer.schema.has("name2")
+        assertEquals "Polygon", layer.schema.geom.typ
+        // Check Features
+        assertEquals 4, layer.count
+        assertEquals 1, layer.count("name = 'A'")
+        assertEquals 1, layer.count("name = 'B'")
+        assertEquals 1, layer.count("name = 'C'")
+        assertEquals 1, layer.count("name = 'D'")
+    }
+
+    @Test void dissolveByField() {
+        Schema schema = new Schema("grid",[
+            new Field("geom","Polygon","EPSG:4326"),
+            new Field("col","int"),
+            new Field("row","int")
+        ])
+        Layer layer = new Memory().create(schema)
+        Bounds bounds = new Bounds(0,0,10,10)
+        bounds.generateGrid(2, 2, "polygon", {cell, col, row ->
+            layer.add([
+                "geom": cell,
+                "col": col,
+                "row": row
+            ])
+        })
+
+        Layer rowLayer = layer.dissolve(layer.schema.get("row"))
+        assertEquals 2, rowLayer.count
+        assertEquals "POLYGON ((0 0, 0 5, 5 5, 10 5, 10 0, 5 0, 0 0))", rowLayer.first(filter: "row = 1").geom.wkt
+        assertEquals "POLYGON ((0 5, 0 10, 5 10, 10 10, 10 5, 5 5, 0 5))", rowLayer.first(filter: "row = 2").geom.wkt
+
+        Layer colLayer = layer.dissolve(layer.schema.get("col"))
+        assertEquals 2, colLayer.count
+        assertEquals "POLYGON ((0 0, 0 5, 0 10, 5 10, 5 5, 5 0, 0 0))", colLayer.first(filter: "col = 1").geom.wkt
+        assertEquals "POLYGON ((5 0, 5 5, 5 10, 10 10, 10 5, 10 0, 5 0))", colLayer.first(filter: "col = 2").geom.wkt
+    }
+
+    @Test void dissolveIntersecting() {
+        Schema schema = new Schema("grid",[
+            new Field("geom","Polygon","EPSG:4326")
+        ])
+        Layer layer = new Memory().create(schema)
+
+        Bounds b = new Bounds(0,0,10,10)
+        b.generateGrid(3, 3, "point", {cell, col, row ->
+            layer.add([geom: cell.buffer(col * 1)])
+        })
+
+        Layer dissolved = layer.dissolve()
+        assertEquals 4, dissolved.count
+        assertEquals 1, dissolved.count("count = 6")
+        assertEquals 3, dissolved.count("count = 1")
+    }
+
+    @Test void merge() {
+
+        // Create the first Layer
+        Schema schema1 = new Schema("grid1",[
+            new Field("geom","Polygon","EPSG:4326"),
+            new Field("col","int"),
+            new Field("row","int")
+        ])
+        Layer layer1 = new Memory().create(schema1)
+        new Bounds(0,0,10,10).generateGrid(3, 3, "polygon", {cell, col, row ->
+            layer1.add([
+                "geom": cell,
+                "col": col,
+                "row": row
+            ])
+        })
+
+        // Create the second Layer
+        Schema schema2 = new Schema("grid2",[
+            new Field("geom","Polygon","EPSG:4326"),
+            new Field("col","int"),
+            new Field("row","int")
+        ])
+        Layer layer2 = new Memory().create(schema2)
+        new Bounds(20,20,40,40).generateGrid(4, 4, "polygon", {cell, col, row ->
+            layer2.add([
+                "geom": cell,
+                "col": col,
+                "row": row
+            ])
+        })
+
+        // Merge (include duplicate fields)
+        Layer merged = layer1.merge(layer2)
+        assertEquals 25, merged.count
+        assertTrue merged.schema.has("geom")
+        assertTrue merged.schema.has("col")
+        assertTrue merged.schema.has("row")
+        assertTrue merged.schema.has("col2")
+        assertTrue merged.schema.has("row2")
+        assertEquals 9, merged.count("col IS NOT NULL and row IS NOT NULL")
+        assertEquals 9, merged.count("col2 IS NULL and row2 IS NULL")
+        assertEquals 16, merged.count("col2 IS NOT NULL and row2 IS NOT NULL")
+        assertEquals 16, merged.count("col IS NULL and row IS NULL")
+        merged.eachFeature{f ->
+            assertNotNull f.geom
+            assertTrue f.geom instanceof Geometry
+        }
+
+        // Merge (don't include duplicate fields but set values if present)
+        merged = layer1.merge(layer2, includeDuplicates: false)
+        assertEquals 25, merged.count
+        assertTrue merged.schema.has("geom")
+        assertTrue merged.schema.has("col")
+        assertTrue merged.schema.has("row")
+        assertFalse merged.schema.has("col2")
+        assertFalse merged.schema.has("row2")
+        assertEquals 25, merged.count("col IS NOT NULL and row IS NOT NULL")
+        assertEquals 0, merged.count("col IS NULL or row IS NULL")
+        merged.eachFeature{f ->
+            assertNotNull f.geom
+            assertTrue f.geom instanceof Geometry
+        }
+    }
+
+    @Test void splitByField() {
+        Schema schema = new Schema("grid",[
+            new Field("geom","Polygon","EPSG:4326"),
+            new Field("col","int"),
+            new Field("row","int")
+        ])
+        Layer layer = new Memory().create(schema)
+        Bounds bounds = new Bounds(0,0,10,10)
+        bounds.generateGrid(2, 2, "polygon", {cell, col, row ->
+            layer.add([
+                "geom": cell,
+                "col": col,
+                "row": row
+            ])
+        })
+
+        Memory workspace = new Memory()
+        layer.split(layer.schema.get("col"), workspace)
+        println workspace.names
+        Layer grid1 = workspace.get("grid_1")
+        Layer grid2 = workspace.get("grid_2")
+        assertNotNull grid1
+        assertNotNull grid2
+        assertEquals 2, grid1.count("col = 1")
+        assertEquals 0, grid1.count("col = 2")
+        assertEquals 2, grid2.count("col = 2")
+        assertEquals 0, grid2.count("col = 1")
+    }
+
+    @Test void splitByLayer() {
+
+        // Create the Layer
+        Schema schema = new Schema("grid",[
+            new Field("geom","Polygon","EPSG:4326"),
+            new Field("col","int"),
+            new Field("row","int")
+        ])
+        Layer layer = new Memory().create(schema)
+        new Bounds(0,0,10,10).generateGrid(4, 4, "polygon", {cell, col, row ->
+            layer.add([
+                "geom": cell,
+                "col": col,
+                "row": row
+            ])
+        })
+
+        // Create the split Layer
+        Schema splitSchema = new Schema("grid",[
+            new Field("geom","Polygon","EPSG:4326"),
+            new Field("col","int"),
+            new Field("row","int"),
+            new Field("row_col","String")
+        ])
+        Layer splitLayer = new Memory().create(splitSchema)
+        new Bounds(0,0,10,10).generateGrid(2, 1, "polygon", {cell, col, row ->
+            splitLayer.add([
+                "geom": cell,
+                "col": col,
+                "row": row,
+                "row_col": "${row} ${col}"
+            ])
+        })
+
+        Memory workspace = new Memory()
+        layer.split(splitLayer,splitLayer.schema.get("row_col"),workspace)
+        Layer grid11 = workspace.get("grid_1_1")
+        Layer grid12 = workspace.get("grid_1_2")
+        assertNotNull grid11
+        assertNotNull grid12
+        assertEquals splitLayer.bounds("col = 1"), grid11.bounds
+        assertEquals splitLayer.bounds("col = 2"), grid12.bounds
+    }
+
+    @Test void buffer() {
+        Schema schema = new Schema("points",[
+            new Field("geom","Point","EPSG:4326"),
+            new Field("col","int"),
+            new Field("row","int")
+        ])
+        Layer layer = new Memory().create(schema)
+        new Bounds(0,0,10,10).generateGrid(2, 2, "point", {cell, col, row ->
+            layer.add([
+                "geom": cell,
+                "col": col,
+                "row": row
+            ])
+        })
+
+        // Buffer by distance
+        Layer buffer = layer.buffer(2)
+        assertEquals 4, buffer.count
+        buffer.eachFeature{f ->
+            assertTrue f.geom instanceof Polygon
+            assertEquals 12.48, f.geom.area, 0.01
+        }
+
+        // Buffer by Field
+        buffer = layer.buffer(new geoscript.filter.Property("col"))
+        assertEquals 4, buffer.count
+        buffer.eachFeature("col = 1", {f ->
+            assertTrue f.geom instanceof Polygon
+            assertEquals 3.12, f.geom.area, 0.01
+        })
+        buffer.eachFeature("col = 2", {f ->
+            assertTrue f.geom instanceof Polygon
+            assertEquals 12.48, f.geom.area, 0.01
+        })
+
+        // Buffer by Expression
+        buffer = layer.buffer(geoscript.filter.Expression.fromCQL("col * 2"))
+        assertEquals 4, buffer.count
+        buffer.eachFeature("col = 1", {f ->
+            assertTrue f.geom instanceof Polygon
+            assertEquals 12.48, f.geom.area, 0.01
+        })
+        buffer.eachFeature("col = 2", {f ->
+            assertTrue f.geom instanceof Polygon
+            assertEquals 49.94, f.geom.area, 0.01
+        })
+
+        // Buffer by Function
+        buffer = layer.buffer(new geoscript.filter.Function("calc_buffer(row,col)", {row, col -> row + col}))
+        assertEquals 4, buffer.count
+        assertEquals 12.48, buffer.first(filter: "col = 1 and row = 1").geom.area, 0.01
+        assertEquals 28.09, buffer.first(filter: "(col = 1 and row = 2) or (col = 2 and row = 1)").geom.area, 0.01
+        assertEquals 49.94, buffer.first(filter: "col = 2 and row = 2").geom.area, 0.01
     }
 }
 

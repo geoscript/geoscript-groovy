@@ -16,14 +16,16 @@ class GeoTIFFTestCase {
         File file = new File(getClass().getClassLoader().getResource("alki.tif").toURI())
         assertNotNull(file)
 
-        GeoTIFF geoTIFF = new GeoTIFF()
+        GeoTIFF geoTIFF = new GeoTIFF(file)
         assertNotNull(geoTIFF)
+        assertNotNull(geoTIFF.stream)
         assertEquals("GeoTIFF", geoTIFF.name)
 
         def fmt = Format.getFormat(file)
         assertTrue(fmt instanceof GeoTIFF)
+        assertNotNull(fmt.stream)
 
-        Raster raster = geoTIFF.read(file)
+        Raster raster = geoTIFF.read()
         assertEquals("EPSG:2927", raster.proj.id)
 
         Bounds bounds = raster.bounds

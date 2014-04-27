@@ -1,6 +1,7 @@
 package geoscript.layer.io
 
 import geoscript.proj.Projection
+import org.junit.Rule
 import org.junit.Test
 import geoscript.feature.Schema
 import geoscript.feature.Field
@@ -8,6 +9,7 @@ import geoscript.workspace.Memory
 import geoscript.layer.Layer
 import geoscript.feature.Feature
 import geoscript.geom.Point
+import org.junit.rules.TemporaryFolder
 
 import static org.junit.Assert.assertEquals
 
@@ -16,6 +18,9 @@ import static org.junit.Assert.assertEquals
  * @author Jared Erickson
  */
 class CsvWriterTestCase {
+
+    @Rule
+    public TemporaryFolder folder = new TemporaryFolder()
 
     private Layer createLayer(Projection proj = null) {
         // Create a simple Schema
@@ -50,7 +55,7 @@ class CsvWriterTestCase {
         assertEquals(expected, csv)
 
         // Write Layer as CSV to a File
-        File file = File.createTempFile("layer",".csv")
+        File file = folder.newFile("layer.csv")
         writer.write(layer, file)
         csv = file.text
         assertEquals(expected, csv)
@@ -77,7 +82,7 @@ class CsvWriterTestCase {
         assertEquals(expected, csv)
 
         // Write Layer as CSV to a File
-        File file = File.createTempFile("layer",".csv")
+        File file = folder.newFile("layer.csv")
         writer.write(layer, file)
         csv = file.text
         assertEquals(expected, csv)
@@ -104,7 +109,7 @@ class CsvWriterTestCase {
         assertEquals(expected, csv)
 
         // Write Layer as CSV to a File
-        File file = File.createTempFile("layer",".csv")
+        File file = folder.newFile("layer.csv")
         writer.write(layer, file)
         csv = file.text
         assertEquals(expected, csv)
@@ -131,7 +136,7 @@ class CsvWriterTestCase {
         assertEquals(expected, csv)
 
         // Write Layer as CSV to a File
-        File file = File.createTempFile("layer",".csv")
+        File file = folder.newFile("layer.csv")
         writer.write(layer, file)
         csv = file.text
         assertEquals(expected, csv)
@@ -158,7 +163,7 @@ class CsvWriterTestCase {
         assertEquals(expected, csv)
 
         // Write Layer as CSV to a File
-        File file = File.createTempFile("layer",".csv")
+        File file = folder.newFile("layer.csv")
         writer.write(layer, file)
         csv = file.text
         assertEquals(expected, csv)
@@ -449,8 +454,8 @@ class CsvWriterTestCase {
         Layer layer = createLayer()
 
         String expected = """"geom","name","price"
-"{ ""type"": ""Point"", ""coordinates"": [111.0, -47.0] }","House","12.5"
-"{ ""type"": ""Point"", ""coordinates"": [121.0, -45.0] }","School","22.7"
+"{""type"":""Point"",""coordinates"":[111,-47]}","House","12.5"
+"{""type"":""Point"",""coordinates"":[121,-45]}","School","22.7"
 """
         // Write the Layer to a CSV String
         CsvWriter writer = new CsvWriter(CsvWriter.Type.GEOJSON, encodeFieldType: false)
@@ -463,8 +468,8 @@ class CsvWriterTestCase {
         Layer layer = createLayer()
 
         String expected = """"geom:Point","name:String","price:Float"
-"{ ""type"": ""Point"", ""coordinates"": [111.0, -47.0] }","House","12.5"
-"{ ""type"": ""Point"", ""coordinates"": [121.0, -45.0] }","School","22.7"
+"{""type"":""Point"",""coordinates"":[111,-47]}","House","12.5"
+"{""type"":""Point"",""coordinates"":[121,-45]}","School","22.7"
 """
         // Write the Layer to a CSV String
         CsvWriter writer = new CsvWriter(CsvWriter.Type.GEOJSON)

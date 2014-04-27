@@ -33,11 +33,11 @@ Install GeoScript
 
 #. Unpack the GeoScript tarball::
 
-     unzip geoscript-groovy-1.2.zip
+     unzip geoscript-groovy-1.3.zip
 
-#. Add the geoscript-groovy-1.2\bin directory to your path::
+#. Add the geoscript-groovy-1.3\bin directory to your path::
 
-     export PATH=geoscript-groovy-1.2\bin:$PATH
+     export PATH=geoscript-groovy-1.3\bin:$PATH
 
 That's it. GeoScript Groovy should now be installed on the system. To verify the install execute the :command:`geoscript-groovysh` command::
 

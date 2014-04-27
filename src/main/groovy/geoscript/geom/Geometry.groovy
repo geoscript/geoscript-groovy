@@ -195,7 +195,11 @@ class Geometry {
      * @return The difference between this Geometry and the other Geometry
      */
     Geometry difference(Geometry other) {
-        wrap(this.g.difference(other.g))
+        try {
+            return wrap(this.g.difference(other.g))
+        } catch (com.vividsolutions.jts.geom.TopologyException e) {
+            return wrap(this.g.buffer(0).difference(other.g))
+        }
     }
 
     /**
@@ -844,6 +848,14 @@ class Geometry {
     }
 
     /**
+     * Get a GPX String for this Geometry
+     * @return The GPX String
+     */
+    String getGpx() {
+        new GpxWriter().write(this)
+    }
+
+    /**
      * The string representation
      * @return The string representation
      */
@@ -936,11 +948,11 @@ class Geometry {
         } else if (jts instanceof com.vividsolutions.jts.geom.Point) {
             return new Point(jts)
         }
-        else if (jts instanceof com.vividsolutions.jts.geom.LineString) {
-            return new LineString(jts)
-        }
         else if (jts instanceof com.vividsolutions.jts.geom.LinearRing) {
             return new LinearRing(jts)
+        }
+        else if (jts instanceof com.vividsolutions.jts.geom.LineString) {
+            return new LineString(jts)
         }
         else if (jts instanceof com.vividsolutions.jts.geom.Polygon) {
             return new Polygon(jts)
@@ -1009,7 +1021,7 @@ class Geometry {
 
     /**
      * Get a Geometry from a GML2 String
-     * @param geoJSON A GML2 String
+     * @param gml2 A GML2 String
      * @return A Geometry
      */
     static Geometry fromGML2(String gml2) {
@@ -1018,11 +1030,20 @@ class Geometry {
 
     /**
      * Get a Geometry from a GML3 String
-     * @param geoJSON A GML3 String
+     * @param gml3 A GML3 String
      * @return A Geometry
      */
     static Geometry fromGML3(String gml3) {
         gml3Reader.read(gml3)
+    }
+
+    /**
+     * Get a Geometry from a GPX String
+     * @param gpx A GPX String
+     * @return A Geometry
+     */
+    static Geometry fromGpx(String gpx) {
+        new GpxReader().read(gpx)
     }
 
     /**
@@ -1035,6 +1056,7 @@ class Geometry {
         if (str == null || str.trim().length() == 0) {
             return null
         }
+        str = str.trim()
         List readers = [
             new WktReader(),
             new GeoJSONReader(),
@@ -1042,7 +1064,8 @@ class Geometry {
             new Gml2Reader(),
             new Gml3Reader(),
             new KmlReader(),
-            new WkbReader()
+            new WkbReader(),
+            new GpxReader()
         ]
         Geometry geom = null
         for(def reader in readers ) {

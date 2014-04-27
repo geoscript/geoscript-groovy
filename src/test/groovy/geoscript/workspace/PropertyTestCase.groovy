@@ -1,6 +1,9 @@
 package geoscript.workspace
 
+import org.junit.Rule
 import org.junit.Test
+import org.junit.rules.TemporaryFolder
+
 import static org.junit.Assert.*
 import geoscript.layer.Layer
 import geoscript.feature.Field
@@ -11,6 +14,9 @@ import geoscript.feature.Schema
  * @author Jared Erickson
  */
 class PropertyTestCase {
+
+    @Rule
+    public TemporaryFolder folder = new TemporaryFolder()
 
     @Test void read() {
 
@@ -47,7 +53,7 @@ class PropertyTestCase {
     }
 
     @Test void create() {
-        File dir = new File(System.getProperty("java.io.tmpdir"))
+        File dir = folder.newFolder("points")
         Property property = new Property(dir)
         Layer layer = property.create("points", [new Field("geom","Point","EPSG:4326")])
         assertNotNull(layer)
@@ -63,7 +69,7 @@ class PropertyTestCase {
         Directory directory = new Directory(shpDir)
         Layer statesLayer = directory.get("states")
 
-        File tempDir = new File(System.getProperty("java.io.tmpdir"))
+        File tempDir = folder.newFolder("states")
         Property property = new Property(tempDir)
         Layer propLayer = property.add(statesLayer, "states")
         assertTrue(new File(tempDir,"states.properties").exists())

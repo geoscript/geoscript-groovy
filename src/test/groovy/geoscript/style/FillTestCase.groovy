@@ -3,7 +3,10 @@ package geoscript.style
 import geoscript.layer.Shapefile
 import geoscript.render.Draw
 import geoscript.style.io.SLDReader
+import org.junit.Rule
 import org.junit.Test
+import org.junit.rules.TemporaryFolder
+
 import static org.junit.Assert.*
 import geoscript.filter.Expression
 import geoscript.filter.Color
@@ -14,6 +17,9 @@ import geoscript.filter.Function
  * @author Jared Erickson
  */
 class FillTestCase {
+
+    @Rule
+    public TemporaryFolder folder = new TemporaryFolder()
 
     @Test void constructors() {
 
@@ -65,14 +71,13 @@ class FillTestCase {
 
         // Random fill
         fill = new Fill(null).hatch("slash", new Stroke("#000088",4,null,"round"), 8).random([
-                random:true, symbolCount: "36", seed: "5", tileSize: "100", rotation:true, grid: true
+                random:"free", symbolCount: "36", seed: "5", tileSize: "100", rotation:"none"
         ])
+        assertEquals fill.options["random"], "free"
         assertEquals fill.options["random-seed"], "5"
-        assertEquals fill.options["random-grid"], "true"
-        assertEquals fill.options["random"], "true"
-        assertEquals fill.options["random-tile-size"], "100"
-        assertEquals fill.options["random-space-around"], "0"
         assertEquals fill.options["random-symbol-count"], "36"
+        assertEquals fill.options["random-tile-size"], "100"
+        assertEquals fill.options["random-rotation"], "none"
     }
 
     @Test void apply() {
@@ -108,11 +113,10 @@ class FillTestCase {
     @Test void randomizedFill() {
         File shpFile = new File(getClass().getClassLoader().getResource("states.shp").toURI())
         Shapefile shp = new Shapefile(shpFile)
-        File file = File.createTempFile("randomized_fill",".png")
-        println file
-        shp.style = (new Fill(null).hatch("circle", new Fill("#aaaaaa"), 1).random([random:true, symbolCount: "50", tileSize: "100"]).where("PERSONS < 2000000")) +
-                (new Fill(null).hatch("circle", new Fill("#aaaaaa"), 2).random([random:true, symbolCount: "200", tileSize: "100"]).where("PERSONS BETWEEN 2000000 AND 4000000")) +
-                (new Fill(null).hatch("circle", new Fill("#aaaaaa"), 2).random([random:true, symbolCount: "700", tileSize: "100"]).where("PERSONS > 4000000")) +
+        File file = folder.newFile("randomized_fill.png")
+        shp.style = (new Fill(null).hatch("circle", new Fill("#aaaaaa"), 1).random([random:"free", symbolCount: "50", tileSize: "100"]).where("PERSONS < 2000000")) +
+                (new Fill(null).hatch("circle", new Fill("#aaaaaa"), 2).random([random:"free", symbolCount: "200", tileSize: "100"]).where("PERSONS BETWEEN 2000000 AND 4000000")) +
+                (new Fill(null).hatch("circle", new Fill("#aaaaaa"), 2).random([random:"free", symbolCount: "700", tileSize: "100"]).where("PERSONS > 4000000")) +
                 (new Stroke("black",0.1) + new Label(property: "STATE_ABBR", font: new Font(family: "Times New Roman", style: "normal", size: 14)).point([0.5,0.5]).halo(new Fill("#FFFFFF"),2))
         Draw.draw(shp, out: file, backgroundColor: "white")
         assertTrue file.exists()
