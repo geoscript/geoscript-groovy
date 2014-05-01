@@ -4,24 +4,32 @@ import geoscript.feature.Schema
 import geoscript.layer.Cursor
 import geoscript.layer.Layer
 import org.geotools.data.ogr.OGRDataStore
+import org.geotools.data.ogr.OGRDataStoreFactory
+import org.geotools.data.ogr.bridj.BridjOGRDataStoreFactory
 import org.geotools.data.ogr.jni.JniOGRDataStoreFactory
 import org.geotools.data.simple.SimpleFeatureCollection
 import org.geotools.data.store.ReTypingFeatureCollection
 
+import java.util.logging.Logger
+
 /**
  * A GDAL/OGR based Workspace requires a native installation of GDAL/OGR.
- * http://www.gdal.org/ogr/ogr_formats.html
  * @author Jared Erickson
  */
 class OGR extends Workspace {
 
     /**
-     * The driver string
+     * Logger
+     */
+    private static Logger LOGGER = Logger.getLogger("geoscript.workspace.OGR")
+
+    /**
+     * The driver string (http://www.gdal.org/ogr/ogr_formats.html)
      */
     private String driver
 
     /**
-     * The dataset string
+     * The dataset string (see individual formats)
      */
     private String dataset
 
@@ -31,7 +39,7 @@ class OGR extends Workspace {
      * @param dataset The dataset
      */
     OGR(String driver, String dataset) {
-        super(new JniOGRDataStoreFactory().createDataStore(["DriverName": driver, "DatasourceName": dataset]))
+        super(getOGRDataStoreFactory().createDataStore(["DriverName": driver, "DatasourceName": dataset]))
         this.driver = driver
         this.dataset = dataset
     }
@@ -41,8 +49,24 @@ class OGR extends Workspace {
      * @param dataset The dataset
      */
     OGR(String dataset) {
-        super(new JniOGRDataStoreFactory().createDataStore(["DatasourceName": dataset]))
+        super(getOGRDataStoreFactory().createDataStore(["DatasourceName": dataset]))
         this.dataset = dataset
+    }
+
+    /**
+     * Try to get an OGRDataStoreFactory.  First try the JNI backed
+     * factory but if that fails try to grab the Bridj factory.
+     * @return An OGRDataStoreFactory or null
+     */
+    private static OGRDataStoreFactory getOGRDataStoreFactory() {
+        // Try JNI first
+        OGRDataStoreFactory factory = new JniOGRDataStoreFactory()
+        // If that fails use Bridj
+        if (!factory || !factory.isAvailable()) {
+            factory = new BridjOGRDataStoreFactory()
+        }
+        LOGGER.info "OGRDataStoreFactory = ${factory.class.name}"
+        factory;
     }
 
     /**
@@ -50,7 +74,7 @@ class OGR extends Workspace {
      * @return A Set of drivers
      */
     static Set<String> getDrivers() {
-        def factory =  new JniOGRDataStoreFactory()
+        def factory =  getOGRDataStoreFactory()
         factory.getAvailableDrivers()
     }
 
