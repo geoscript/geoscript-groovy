@@ -9,6 +9,7 @@ GeoScript Groovy
     grails
     download
     releases
+    mavenapp
 
 GeoScript Groovy is a Groovy implementation of GeoScript.
 
@@ -23,6 +24,9 @@ GeoScript Groovy is a Groovy implementation of GeoScript.
 
     :ref:`Releases <releases>`
       Geoscript Groovy Release Notes
+
+    :ref:`Maven App<mavenapp>`
+      Use GeoScript Groovy to create a command line app with Maven
 
     `Learning <../learning>`_
      A tour of the GeoScript library
