@@ -1,12 +1,7 @@
 package geoscript.layer.io
 
 import geoscript.feature.Feature
-import geoscript.filter.Expression
 import geoscript.filter.Property
-import geoscript.geom.Geometry
-import geoscript.geom.LineString
-import geoscript.geom.MultiLineString
-import geoscript.geom.Point
 import geoscript.layer.Layer
 import groovy.xml.StreamingMarkupBuilder
 import groovy.xml.XmlUtil
