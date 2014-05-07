@@ -95,7 +95,7 @@ class Gradient extends Composite {
         // Generate the FeatureTypeStyle
         org.geotools.styling.FeatureTypeStyle featureTypeStyle = org.geotools.brewer.color.StyleGenerator.createFeatureTypeStyle(
             classifier,
-            (org.geotools.filter.Expression) ff.property(field),
+            ff.property(field),
             colors,
             "test",
             layer.fs.schema.geometryDescriptor,

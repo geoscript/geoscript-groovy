@@ -865,8 +865,7 @@ class Layer {
      */
     void update() {
         if (modifiedFeatures != null && !modifiedFeatures.isEmpty()) {
-            def idFilter = filterFactory.createFidFilter()
-            modifiedFeatures.keySet().each{id-> idFilter.addFid(id)}
+            def idFilter = filterFactory.id(*modifiedFeatures.keySet().collect{id-> filterFactory.featureId(id)})
             def results = fs.dataStore.getFeatureWriter(name, idFilter, Transaction.AUTO_COMMIT)
             try {
                 while(results.hasNext()) {
