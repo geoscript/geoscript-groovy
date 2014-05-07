@@ -42,7 +42,7 @@ class ColorTableWriter implements Writer {
      */
     String write(Style style) {
         if (!(style instanceof ColorMap)) {
-            throw IllegalArgumentException("The ColorTableWriter only works with ColorMaps!")
+            throw new IllegalArgumentException("The ColorTableWriter only works with ColorMaps!")
         }
         ColorMap colorMap = style as ColorMap
         StringWriter writer = new StringWriter()

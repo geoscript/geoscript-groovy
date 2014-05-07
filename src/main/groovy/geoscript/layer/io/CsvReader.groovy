@@ -103,7 +103,7 @@ class CsvReader implements Reader {
         this(options)
         this.type = type
         if (!isTypeXY(this.type)) {
-            throw IllegalArgumentException("With two columns, Type must be an XY type!")
+            throw new IllegalArgumentException("With two columns, Type must be an XY type!")
         }
         this.xColumn = xColumn
         this.yColumn = yColumn
