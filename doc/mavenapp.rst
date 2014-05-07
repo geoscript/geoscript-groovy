@@ -4,7 +4,7 @@ Maven Quickstart
 ================
 This is a short example of how to use GeoScript Groovy to create a simple command line application with Maven.
 
-Create the project skeleton.::
+Create the project skeleton::
 
      mvn archetype:generate -B -DgroupId=org.geo -DartifactId=geo-app -DarchetypeArtifactId=maven-archetype-quickstart
 
