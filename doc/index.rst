@@ -10,6 +10,7 @@ GeoScript Groovy
     download
     releases
     mavenapp
+    mavenwebappjndi
 
 GeoScript Groovy is a Groovy implementation of GeoScript.
 
@@ -27,6 +28,9 @@ GeoScript Groovy is a Groovy implementation of GeoScript.
 
     :ref:`Maven App<mavenapp>`
       Use GeoScript Groovy to create a command line app with Maven
+
+    :ref:`Maven Web App with JNDI<mavenwebappjndi>`
+      Use GeoScript Groovy to create a web app with JNDI and Maven
 
     `Learning <../learning>`_
      A tour of the GeoScript library
