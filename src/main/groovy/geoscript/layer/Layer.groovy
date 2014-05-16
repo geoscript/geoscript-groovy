@@ -1429,15 +1429,11 @@ class Layer {
     }
 
     /**
-     * The GML Layer Writer
-     */
-    private static final GmlWriter gmlWriter = new GmlWriter()
-
-    /**
      * Write the Layer as GML to an Outputstream
      * @param out The OutputStream (defaults to System.out)
      */
     void toGML(OutputStream out = System.out) {
+        GmlWriter gmlWriter = new GmlWriter()
         gmlWriter.write(this, out)
     }
 
@@ -1446,6 +1442,7 @@ class Layer {
      * @param file The File
      */
     void toGMLFile(File file) {
+        GmlWriter gmlWriter = new GmlWriter()
         gmlWriter.write(this, file)
     }
 
@@ -1454,19 +1451,16 @@ class Layer {
      * @param out A GML String
      */
     String toGMLString() {
+        GmlWriter gmlWriter = new GmlWriter()
         gmlWriter.write(this)
     }
-
-    /**
-     * The GeoJSON Layer Writer
-     */
-    private final static GeoJSONWriter geoJSONWriter = new GeoJSONWriter()
 
     /**
      * Write the Layer as GeoJSON to an OutputStream
      * @param out The OutputStream (defaults to System.out)
      */
     void toJSON(OutputStream out = System.out) {
+        GeoJSONWriter geoJSONWriter = new GeoJSONWriter()
         geoJSONWriter.write(this, out)
     }
 
@@ -1475,6 +1469,7 @@ class Layer {
      * @param file The File
      */
     void toJSONFile(File file) {
+        GeoJSONWriter geoJSONWriter = new GeoJSONWriter()
         geoJSONWriter.write(this, file)
     }
 
@@ -1483,6 +1478,7 @@ class Layer {
      * @param out A GeoJSON String
      */
     String toJSONString() {
+        GeoJSONWriter geoJSONWriter = new GeoJSONWriter()
         geoJSONWriter.write(this)
     }
 
