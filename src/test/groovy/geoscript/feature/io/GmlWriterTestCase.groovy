@@ -23,7 +23,7 @@ class GmlWriterTestCase {
 
         // Write the Feature to a GML String
         GmlWriter writer = new GmlWriter()
-        String expected = """<gsf:houses xmlns:gsf="http://geoscript.org/feature" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:gml="http://www.opengis.net/gml" fid="house1">
+        String expected = """<gsf:houses xmlns:gsf="http://geoscript.org/feature" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:gml="http://www.opengis.net/gml" fid="house1">
 <gml:name>House</gml:name>
 <gsf:geom>
 <gml:Point>

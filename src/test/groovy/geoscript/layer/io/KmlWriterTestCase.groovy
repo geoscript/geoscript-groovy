@@ -37,20 +37,20 @@ class KmlWriterTestCase {
         KmlWriter writer = new KmlWriter()
         String kml = writer.write(layer)
         println kml
-        assertTrue kml.startsWith("<kml:kml xmlns:kml=\"http://earth.google.com/kml/2.1\">")
+        assertTrue kml.startsWith("<kml:kml xmlns:xs=\"http://www.w3.org/2001/XMLSchema\" xmlns:kml=\"http://earth.google.com/kml/2.1\">")
 
         // Write Layer as KML to an OutputStream
         ByteArrayOutputStream out = new ByteArrayOutputStream()
         writer.write(layer, out)
         out.close()
         kml = out.toString()
-        assertTrue kml.startsWith("<kml:kml xmlns:kml=\"http://earth.google.com/kml/2.1\">")
+        assertTrue kml.startsWith("<kml:kml xmlns:xs=\"http://www.w3.org/2001/XMLSchema\" xmlns:kml=\"http://earth.google.com/kml/2.1\">")
 
         // Write Layer as KML to a File
         File file = folder.newFile("layer.kml")
         writer.write(layer, file)
         kml = file.text
-        assertTrue kml.startsWith("<kml:kml xmlns:kml=\"http://earth.google.com/kml/2.1\">")
+        assertTrue kml.startsWith("<kml:kml xmlns:xs=\"http://www.w3.org/2001/XMLSchema\" xmlns:kml=\"http://earth.google.com/kml/2.1\">")
     }
 
 }

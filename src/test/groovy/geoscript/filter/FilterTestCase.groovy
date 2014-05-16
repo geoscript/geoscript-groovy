@@ -36,7 +36,7 @@ class FilterTestCase {
     @Test void getXml() {
         Filter f = new Filter("name='foobar'")
         String actual = f.xml
-        String expected = """<ogc:Filter xmlns:ogc="http://www.opengis.net/ogc" xmlns:gml="http://www.opengis.net/gml">
+        String expected = """<ogc:Filter xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:ogc="http://www.opengis.net/ogc" xmlns:gml="http://www.opengis.net/gml">
 <ogc:PropertyIsEqualTo>
 <ogc:PropertyName>name</ogc:PropertyName>
 <ogc:Literal>foobar</ogc:Literal>
