@@ -37,66 +37,6 @@ class Geometry {
     static PreparedGeometryFactory preparedFactory = new PreparedGeometryFactory()
 
     /**
-     * The WKT Writer
-     */
-    private static WktWriter wktWriter = new WktWriter()
-
-    /**
-     * The WKT Reader
-     */
-    private static WktReader wktReader = new WktReader()
-
-    /**
-     * The WKB Writer
-     */
-    private static WkbWriter wkbWriter = new WkbWriter()
-
-    /**
-     * The WKB Reader
-     */
-    private static WkbReader wkbReader = new WkbReader()
-
-    /**
-     * The KML Writer
-     */
-    private static KmlWriter kmlWriter = new KmlWriter()
-
-    /**
-     * The KML Reader
-     */
-    private static KmlReader kmlReader = new KmlReader()
-
-    /**
-     * The GeoJSON Writer
-     */
-    private static GeoJSONWriter geoJSONWriter = new GeoJSONWriter()
-
-    /**
-     * The GeoJSON Reader
-     */
-    private static GeoJSONReader geoJSONReader = new GeoJSONReader()
-
-    /**
-     * The GML2 Writer
-     */
-    private static Gml2Writer gml2Writer = new Gml2Writer()
-
-    /**
-     * The Gml2 Reader
-     */
-    private static Gml2Reader gml2Reader = new Gml2Reader()
-
-    /**
-     * The GML3 Writer
-     */
-    private static Gml3Writer gml3Writer = new Gml3Writer()
-
-    /**
-     * The Gml3 Reader
-     */
-    private static Gml3Reader gml3Reader = new Gml3Reader()
-
-    /**
      * Create a new Geometry wrapping a JTS Geometry
      * @param g The JTS Geometry
      */
@@ -796,7 +736,7 @@ class Geometry {
      * @return The WKT of this Geometry
      */
     String getWkt() {
-        wktWriter.write(this)
+        new WktWriter().write(this)
     }
     
     /**
@@ -804,7 +744,7 @@ class Geometry {
      * @return The WKB hex string of this Geometry
      */
     String getWkb() {
-        wkbWriter.write(this)
+        new WkbWriter().write(this)
     }
 
      /**
@@ -812,7 +752,7 @@ class Geometry {
      * @return The WKB byte array of this Geometry
      */
     byte[] getWkbBytes() {
-        wkbWriter.writeBytes(this)
+        new WkbWriter().writeBytes(this)
     }
 
     /**
@@ -820,7 +760,7 @@ class Geometry {
      * @return The KML String
      */
     String getKml() {
-        kmlWriter.write(this)
+        new KmlWriter().write(this)
     }
 
     /**
@@ -828,7 +768,7 @@ class Geometry {
      * @return The GeoJSON String
      */
     String getGeoJSON() {
-        geoJSONWriter.write(this)
+        new GeoJSONWriter().write(this)
     }
 
     /**
@@ -836,7 +776,7 @@ class Geometry {
      * @return The GML 2 String
      */
     String getGml2() {
-        gml2Writer.write(this)
+        new Gml2Writer().write(this)
     }
 
     /**
@@ -844,7 +784,7 @@ class Geometry {
      * @return The GML 3 String
      */
     String getGml3() {
-        gml3Writer.write(this)
+        new Gml3Writer().write(this)
     }
 
     /**
@@ -980,7 +920,7 @@ class Geometry {
      * @return A Geometry
      */
     static Geometry fromWKT(String wkt) {
-        wktReader.read(wkt)
+        new WktReader().read(wkt)
     }
 
     /**
@@ -989,7 +929,7 @@ class Geometry {
      * @return A Geometry
      */
     static Geometry fromWKB(byte[] wkb) {
-        wkbReader.read(wkb)
+        new WkbReader().read(wkb)
     }
 
     /**
@@ -998,7 +938,7 @@ class Geometry {
      * @return A Geometry
      */
     static Geometry fromWKB(String wkb) {
-        wkbReader.read(wkb)
+        new WkbReader().read(wkb)
     }
 
     /**
@@ -1007,7 +947,7 @@ class Geometry {
      * @return A Geometry
      */
     static Geometry fromKml(String kml) {
-        kmlReader.read(kml)
+        new KmlReader().read(kml)
     }
 
     /**
@@ -1016,7 +956,7 @@ class Geometry {
      * @return A Geometry
      */
     static Geometry fromGeoJSON(String geoJSON) {
-        geoJSONReader.read(geoJSON)
+        new GeoJSONReader().read(geoJSON)
     }
 
     /**
@@ -1025,7 +965,7 @@ class Geometry {
      * @return A Geometry
      */
     static Geometry fromGML2(String gml2) {
-        gml2Reader.read(gml2)
+        new Gml2Reader().read(gml2)
     }
 
     /**
@@ -1034,7 +974,7 @@ class Geometry {
      * @return A Geometry
      */
     static Geometry fromGML3(String gml3) {
-        gml3Reader.read(gml3)
+        new Gml3Reader().read(gml3)
     }
 
     /**
