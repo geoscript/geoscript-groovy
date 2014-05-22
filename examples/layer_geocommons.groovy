@@ -9,7 +9,12 @@ import geoscript.geom.*
 import geoscript.workspace.*
 
 // Get a Directory Workspace because we want to create a shapefile
-Workspace workspace = new Directory('/Users/jericks/Downloads/counties/')
+File dir = new File("countries")
+if (!dir.exists()) {
+  dir.mkdir()
+}
+println dir
+Workspace workspace = new Directory(dir)
 
 // The Landfills are in lat/lon and only contain a feature ID
 Schema schema = new Schema("wa_landfills", [['the_geom','Point', 'EPSG:4326'],['id','Integer']])
@@ -29,4 +34,3 @@ URL url = new URL("http://finder.geocommons.com/overlays/6086.csv").eachLine("UT
             layer.add(schema.feature([p,num-2]))
         }
 })
-
