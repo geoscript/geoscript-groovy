@@ -51,4 +51,7 @@ class PNGTestCase {
         assertTrue file.length() > 0
     }
 
+    @Test void getImageType() {
+        assertEquals "png", new PNG().imageType
+    }
 }

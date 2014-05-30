@@ -4,15 +4,11 @@ import geoscript.layer.Layer
 import geoscript.layer.Shapefile
 import geoscript.style.Fill
 import geoscript.style.Stroke
+import javax.imageio.ImageIO
 import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.TemporaryFolder
-
-import javax.imageio.ImageIO
-
-import static org.junit.Assert.assertNotNull
-import static org.junit.Assert.assertTrue
-import static org.junit.Assert.assertTrue
+import static org.junit.Assert.*
 
 /**
  * The JPEG Unit Test
@@ -51,4 +47,7 @@ class JPEGTestCase {
         assertTrue file.length() > 0
     }
 
+    @Test void getImageType() {
+        assertEquals "jpeg", new JPEG().imageType
+    }
 }

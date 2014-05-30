@@ -34,6 +34,14 @@ class Image extends Renderer<BufferedImage> {
     }
 
     /**
+     * Get the image type
+     * @return The image type
+     */
+    String getImageType() {
+        this.imageType
+    }
+
+    /**
      * Render the Map to a BufferedImage
      * @param map The Map
      * @return A BufferedImage

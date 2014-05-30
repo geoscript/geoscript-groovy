@@ -93,4 +93,8 @@ class GIFTestCase {
         assertTrue file.exists()
         assertTrue file.length() > 0
     }
+
+    @Test void getImageType() {
+        assertEquals "gif", new GIF().imageType
+    }
 }
