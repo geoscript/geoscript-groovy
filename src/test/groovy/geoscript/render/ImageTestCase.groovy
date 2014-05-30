@@ -47,4 +47,10 @@ class ImageTestCase {
         assertTrue file.exists()
         assertTrue file.length() > 0
     }
+
+    @Test void getImageType() {
+        assertEquals "png", new Image("png").imageType
+        assertEquals "jpeg", new Image("jpeg").imageType
+        assertEquals "gif", new Image("gif").imageType
+    }
 }
