@@ -237,6 +237,21 @@ class MapTestCase {
         map.close()
     }
 
+    @Test void renderToBase64() {
+        File file = new File(getClass().getClassLoader().getResource("states.shp").toURI())
+        assertNotNull(file)
+        Shapefile shp = new Shapefile(file)
+        assertNotNull(shp)
+        shp.style = new Fill("white") + new Stroke("#CCCCCC", 0.1)
+
+        Map map = new Map(type:"base64", layers: [shp])
+        ByteArrayOutputStream out = new ByteArrayOutputStream()
+        map.render(out)
+        map.close()
+        byte[] bytes = out.toByteArray()
+        assertTrue(bytes.length > 0)
+    }
+
     @Test void getScaleDenominator() {
         File file = new File(getClass().getClassLoader().getResource("states.shp").toURI())
         assertNotNull(file)

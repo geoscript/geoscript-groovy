@@ -49,7 +49,7 @@ class Map {
     int height = 400
 
     /**
-     * The output type (png, jpg, pdf, svg)
+     * The output type (png, jpg, pdf, svg, base64)
      */
     String type = "png"
 
@@ -97,7 +97,8 @@ class Map {
         "png": new Image("png"),
         "gif": new Image("gif"),
         "pdf": new Pdf(),
-        "svg": new Svg()
+        "svg": new Svg(),
+        "base64":  new Base64()
     ]
 
     /**
