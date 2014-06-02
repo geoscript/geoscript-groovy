@@ -32,6 +32,15 @@ class ProjectionTestCase {
         assertEquals "EPSG:2927", p1.id
     }
 
+    @Test void getEpsg() {
+        Projection p = new Projection("EPSG:2927")
+        assertEquals 2927, p.epsg
+        p = new Projection("EPSG:4326")
+        assertEquals 4326, p.epsg
+        p = new Projection("EPSG:3857")
+        assertEquals 3857, p.epsg
+    }
+
     @Test void getWkt() {
         Projection p1 = new Projection("EPSG:4326")
 
