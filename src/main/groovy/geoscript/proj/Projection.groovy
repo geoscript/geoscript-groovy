@@ -71,6 +71,14 @@ class Projection {
     }
 
     /**
+     * Get the EPSG code
+     * @return The EPSG code
+     */
+    int getEpsg() {
+        CRS.lookupEpsgCode(crs, true)
+    }
+
+    /**
      * Get the well known text
      * @return The well known texts
      */
