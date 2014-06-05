@@ -141,4 +141,8 @@ class GeoPackage extends TileLayer {
                 new org.geotools.geopkg.Tile(t.z as Integer, t.x as Integer, t.y as Integer, t.data))
     }
 
+    @Override
+    void close() throws IOException {
+        this.geopkg.close()
+    }
 }

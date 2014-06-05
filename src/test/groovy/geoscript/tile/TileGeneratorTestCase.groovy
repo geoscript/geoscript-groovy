@@ -28,6 +28,7 @@ class TileGeneratorTestCase {
         assertNotNull mbtiles.get(0,0,0).data
         assertNotNull mbtiles.get(1,1,1).data
         assertNotNull mbtiles.get(2,2,2).data
+        mbtiles.close()
     }
 
     @Test void generateGeoPackage() {
@@ -41,6 +42,7 @@ class TileGeneratorTestCase {
         assertNotNull geopkg.get(0,0,0).data
         assertNotNull geopkg.get(1,1,1).data
         assertNotNull geopkg.get(2,2,2).data
+        geopkg.close()
     }
 
 }

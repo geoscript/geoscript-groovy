@@ -40,6 +40,7 @@ class TileLayerTestCase {
             assertEquals 156412.0 / n, g.xResolution, 0.01
             assertEquals 156412.0 / n, g.yResolution, 0.01
         }
+        layer.close()
     }
 
     @Test void get() {
@@ -51,6 +52,7 @@ class TileLayerTestCase {
         assertEquals 2, tile.x
         assertEquals 3, tile.y
         assertNotNull tile.data
+        layer.close()
     }
 
     @Test void put() {
@@ -84,6 +86,7 @@ class TileLayerTestCase {
         assertEquals 0, tile.x
         assertEquals 0, tile.y
         assertNotNull tile.data
+        layer.close()
     }
 
     @Test void tilesByZoomLevel() {
@@ -105,6 +108,7 @@ class TileLayerTestCase {
             c++
         }
         assertEquals 4, c
+        layer.close()
     }
 
     @Test void tilesByTileCoordinates() {
@@ -126,6 +130,7 @@ class TileLayerTestCase {
             c++
         }
         assertEquals 6, c
+        layer.close()
     }
 
     @Test void tilesByBoundsAndZoomLevel() {
@@ -148,6 +153,7 @@ class TileLayerTestCase {
             c++
         }
         assertEquals 1, c
+        layer.close()
     }
 
     @Test void tilesByBoundsAndResolutions() {
@@ -170,6 +176,7 @@ class TileLayerTestCase {
             c++
         }
         assertEquals 8, c
+        layer.close()
     }
 
     @Test void tilesByBoundsAndImageSize() {
@@ -192,6 +199,7 @@ class TileLayerTestCase {
             c++
         }
         assertEquals 8, c
+        layer.close()
     }
 
     @Test void getTileCoordinates() {
@@ -203,6 +211,7 @@ class TileLayerTestCase {
         assertEquals 9, coords.minY
         assertEquals 5, coords.maxX
         assertEquals 10, coords.maxY
+        layer.close()
     }
 
     @Test void getRaster() {
@@ -216,6 +225,7 @@ class TileLayerTestCase {
         format.write(raster)
         assertTrue out.exists()
         assertTrue out.length() > 0
+        layer.close()
     }
 
     @Test void getRasterCropped() {
@@ -229,6 +239,7 @@ class TileLayerTestCase {
         format.write(raster)
         assertTrue out.exists()
         assertTrue out.length() > 0
+        layer.close()
     }
 
 }

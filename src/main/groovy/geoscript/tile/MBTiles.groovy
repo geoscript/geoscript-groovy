@@ -143,4 +143,8 @@ class MBTiles extends TileLayer {
         tiles.saveTile(tile)
     }
 
+    @Override
+    void close() throws IOException {
+        this.tiles.close()
+    }
 }

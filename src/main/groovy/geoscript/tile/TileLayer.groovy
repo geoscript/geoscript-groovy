@@ -11,7 +11,7 @@ import java.awt.image.BufferedImage
  * A TileLayer
  * @author Jared Erickson
  */
-abstract class TileLayer {
+abstract class TileLayer implements Closeable {
 
     /**
      * The name
@@ -48,6 +48,11 @@ abstract class TileLayer {
      * @param t The Tile
      */
     abstract void put(Tile t)
+
+    /**
+     * Close the TileLayer
+     */
+    abstract void close() throws IOException
 
     /**
      * Get a TileCursor for all the Tiles in the zoom level

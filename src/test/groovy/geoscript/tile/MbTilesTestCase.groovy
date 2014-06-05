@@ -40,6 +40,7 @@ class MbTilesTestCase {
             org.junit.Assert.assertEquals 156412.0 / n, g.xResolution, 0.01
             org.junit.Assert.assertEquals 156412.0 / n, g.yResolution, 0.01
         }
+        layer.close()
     }
 
     @Test void get() {
@@ -51,6 +52,7 @@ class MbTilesTestCase {
         org.junit.Assert.assertEquals 2, tile.x
         org.junit.Assert.assertEquals 3, tile.y
         org.junit.Assert.assertNotNull tile.data
+        layer.close()
     }
 
     @Test void put() {
@@ -84,6 +86,7 @@ class MbTilesTestCase {
         org.junit.Assert.assertEquals 0, tile.x
         org.junit.Assert.assertEquals 0, tile.y
         org.junit.Assert.assertNotNull tile.data
+        layer.close()
     }
 
     @Test void tilesByZoomLevel() {
@@ -105,6 +108,7 @@ class MbTilesTestCase {
             c++
         }
         junit.framework.Assert.assertEquals 4, c
+        layer.close()
     }
 
     @Test void tilesByTileCoordinates() {
@@ -126,6 +130,7 @@ class MbTilesTestCase {
             c++
         }
         junit.framework.Assert.assertEquals 6, c
+        layer.close()
     }
 
     @Test void tilesByBoundsAndZoomLevel() {
@@ -148,6 +153,7 @@ class MbTilesTestCase {
             c++
         }
         junit.framework.Assert.assertEquals 1, c
+        layer.close()
     }
 
     @Test void tilesByBoundsAndResolutions() {
@@ -170,6 +176,7 @@ class MbTilesTestCase {
             c++
         }
         junit.framework.Assert.assertEquals 8, c
+        layer.close()
     }
 
     @Test void tilesByBoundsAndImageSize() {
@@ -192,6 +199,7 @@ class MbTilesTestCase {
             c++
         }
         junit.framework.Assert.assertEquals 8, c
+        layer.close()
     }
 
     @Test void getTileCoordinates() {
@@ -203,6 +211,7 @@ class MbTilesTestCase {
         junit.framework.Assert.assertEquals 9, coords.minY
         junit.framework.Assert.assertEquals 5, coords.maxX
         junit.framework.Assert.assertEquals 10, coords.maxY
+        layer.close()
     }
 
     @Test void getRaster() {
@@ -216,6 +225,7 @@ class MbTilesTestCase {
         format.write(raster)
         junit.framework.Assert.assertTrue out.exists()
         junit.framework.Assert.assertTrue out.length() > 0
+        layer.close()
     }
 
     @Test void getRasterCropped() {
@@ -229,6 +239,7 @@ class MbTilesTestCase {
         format.write(raster)
         junit.framework.Assert.assertTrue out.exists()
         junit.framework.Assert.assertTrue out.length() > 0
+        layer.close()
     }
 
 }
