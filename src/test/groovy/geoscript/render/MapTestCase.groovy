@@ -7,6 +7,7 @@ import geoscript.layer.GeoTIFF
 import geoscript.layer.Raster
 import geoscript.style.Fill
 import geoscript.style.Stroke
+import geoscript.tile.MBTiles
 import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.TemporaryFolder
@@ -94,6 +95,23 @@ class MapTestCase {
 
         Map map = new Map()
         map.addRaster(raster)
+        def image = map.renderToImage()
+        assertNotNull(image)
+
+        File out = folder.newFile("raster.png")
+        javax.imageio.ImageIO.write(image, "png", out);
+        assertTrue(out.exists())
+        map.close()
+    }
+
+    @Test void renderTileLayer() {
+        MBTiles layer = new MBTiles(new File(getClass().getClassLoader().getResource("states.mbtiles").toURI()))
+        Shapefile shp = new Shapefile(new File(getClass().getClassLoader().getResource("states.shp").toURI()))
+        shp.style = new Stroke("#ff0000", 2.0)
+
+        Map map = new Map()
+        map.addLayer(shp)
+        map.addTileLayer(layer)
         def image = map.renderToImage()
         assertNotNull(image)
 
