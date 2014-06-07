@@ -128,4 +128,32 @@ class TileCursorTestCase {
         assertNotNull cursorBounds.proj
     }
 
+    @Test void resetAfterHasNextFalse() {
+        File file = new File(getClass().getClassLoader().getResource("states.mbtiles").toURI())
+        MBTiles layer = new MBTiles(file)
+        TileCursor cursor = new TileCursor(layer, 1)
+        assertEquals 1, cursor.z
+        assertEquals 0, cursor.minX
+        assertEquals 0, cursor.minY
+        assertEquals 1, cursor.maxX
+        assertEquals 1, cursor.maxY
+        assertEquals 2, cursor.width
+        assertEquals 2, cursor.height
+        assertEquals 4, cursor.size
+        int c = 0
+        cursor.each{ Tile t ->
+            assertEquals 1, t.z
+            assertNotNull t.data
+            c++
+        }
+        assertEquals 4, c
+        c = 0
+        cursor.each{ Tile t ->
+            assertEquals 1, t.z
+            assertNotNull t.data
+            c++
+        }
+        assertEquals 4, c
+    }
+
 }

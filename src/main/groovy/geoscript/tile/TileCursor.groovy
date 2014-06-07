@@ -259,7 +259,11 @@ class TileCursor implements Iterator {
      */
     @Override
     boolean hasNext() {
-        counter < size
+        boolean hasNext = counter < size
+        if (!hasNext) {
+            reset()
+        }
+        hasNext
     }
 
     /**
