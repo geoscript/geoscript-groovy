@@ -134,8 +134,18 @@ abstract class TileLayer implements Closeable {
         BufferedImage image = new BufferedImage(imageWidth, imageHeight, BufferedImage.TYPE_INT_ARGB)
         Graphics2D g2d = image.createGraphics()
         cursor.each{ Tile tile ->
-            int x = (tile.x - cursor.minX) * pyramid.tileWidth
-            int y = (cursor.maxY - tile.y) * pyramid.tileHeight
+            int x
+            if (pyramid.origin == Pyramid.Origin.TOP_LEFT || pyramid.origin == Pyramid.Origin.BOTTOM_LEFT) {
+                x = (tile.x - cursor.minX) * pyramid.tileWidth
+            } else {
+                x = (cursor.maxX - tile.x) * pyramid.tileWidth
+            }
+            int y
+            if (pyramid.origin == Pyramid.Origin.TOP_LEFT || pyramid.origin == Pyramid.Origin.TOP_RIGHT) {
+                y = (tile.y - cursor.minY) * pyramid.tileHeight
+            } else {
+                y = (cursor.maxY - tile.y) * pyramid.tileHeight
+            }
             g2d.drawImage(tile.image, x, y, pyramid.tileWidth, pyramid.tileHeight, null)
         }
         g2d.dispose()
