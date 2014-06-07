@@ -1,6 +1,8 @@
 package geoscript.tile
 
+import geoscript.feature.Feature
 import geoscript.geom.Bounds
+import geoscript.layer.Layer
 import geoscript.layer.Raster
 import geoscript.layer.WorldImage
 import geoscript.proj.Projection
@@ -240,6 +242,26 @@ class TileLayerTestCase {
         assertTrue out.exists()
         assertTrue out.length() > 0
         layer.close()
+    }
+
+    @Test void getLayer() {
+        File file = new File(getClass().getClassLoader().getResource("states.mbtiles").toURI())
+        MBTiles layer = new MBTiles(file)
+        Layer vlayer = layer.getLayer(layer.tiles(1))
+        assertNotNull vlayer
+        assertTrue vlayer.schema.has("the_geom")
+        assertTrue vlayer.schema.has("id")
+        assertTrue vlayer.schema.has("z")
+        assertTrue vlayer.schema.has("x")
+        assertTrue vlayer.schema.has("y")
+        assertEquals 4, vlayer.count
+        vlayer.eachFeature{Feature f ->
+            assertTrue f['id'] in [0,1,2,3]
+            assertTrue f['z'] == 1
+            assertTrue f['x'] in [0,1]
+            assertTrue f['y'] in [0,1]
+            assertNotNull f.geom
+        }
     }
 
 }

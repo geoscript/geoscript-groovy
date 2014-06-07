@@ -1,8 +1,12 @@
 package geoscript.tile
 
+import geoscript.feature.Field
 import geoscript.geom.Bounds
+import geoscript.layer.Layer
 import geoscript.layer.Raster
 import geoscript.proj.Projection
+import geoscript.workspace.Memory
+import geoscript.workspace.Workspace
 
 import java.awt.Graphics2D
 import java.awt.image.BufferedImage
@@ -150,6 +154,50 @@ abstract class TileLayer implements Closeable {
         }
         g2d.dispose()
         new Raster(image, tileBounds)
+    }
+
+    /**
+     * Get a Layer of the Tiles in a TileCursor
+     * @param options Optional named parameters
+     * <ul>
+     *     <li>outLayer = The name of the Layer</li>
+     *     <li>outWorkspace = The Workspace</li>
+     *     <li>geomFieldName = The name of the geometry Field</li>
+     *     <li>idFieldName = The name of the ID Field</li>
+     *     <li>zFieldName = The name of the Z Field</li>
+     *     <li>xFieldName = The name of the X Field</li>
+     *     <li>yFieldName = The name of the Y Field</li>
+     * </ul>
+     * @param cursor
+     * @return
+     */
+    Layer getLayer(Map options = [:], TileCursor cursor) {
+        String outLayerName = options.get("outLayer", "${this.name}_tiles")
+        Workspace outWorkspace = options.get("outWorkspace", new Memory())
+        String geomFieldName = options.get("geomFieldName","the_geom")
+        String idFieldName = options.get("idFieldName","id")
+        String zFieldName = options.get("zFieldName","z")
+        String xFieldName = options.get("xFieldName","x")
+        String yFieldName = options.get("yFieldName","y")
+        Layer outLayer = outWorkspace.create(outLayerName, [
+                new Field(idFieldName, "int"),
+                new Field(zFieldName, "int"),
+                new Field(xFieldName, "int"),
+                new Field(yFieldName, "int"),
+                new Field(geomFieldName, "Polygon", this.proj)
+        ])
+        outLayer.withWriter{ geoscript.layer.Writer w ->
+            cursor.eachWithIndex { Tile tile, int i ->
+                w.add(outLayer.schema.feature([
+                        (idFieldName): i,
+                        (zFieldName): tile.z,
+                        (xFieldName): tile.x,
+                        (yFieldName): tile.y,
+                        (geomFieldName): this.pyramid.bounds(tile).geometry
+                ]))
+            }
+        }
+        outLayer
     }
 
     /**
