@@ -27,6 +27,11 @@ class Grid {
     int height
 
     /**
+     * The number of tiles
+     */
+    long size
+
+    /**
      * The x resolution
      */
     double xResolution
@@ -50,5 +55,6 @@ class Grid {
         this.height = height
         this.xResolution = xResolution
         this.yResolution = yResolution
+        this.size = this.width * this.height
     }
 }
