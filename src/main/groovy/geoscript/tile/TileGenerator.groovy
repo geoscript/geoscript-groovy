@@ -39,6 +39,7 @@ class TileGenerator {
 
         (startZoom..endZoom).each {zoom ->
             if (verbose) println "Zoom Level ${zoom}"
+            long startTime = System.nanoTime()
             tileLayer.tiles(zoom).eachWithIndex { Tile t, int i ->
                 if (verbose) println "   ${i}). ${t}"
                 Bounds b = tileLayer.pyramid.bounds(t)
@@ -51,6 +52,11 @@ class TileGenerator {
 
                 t.data = out.toByteArray()
                 tileLayer.put(t)
+            }
+            if (verbose) {
+                double endTime = System.nanoTime() - startTime
+                int numberOfTiles = tileLayer.pyramid.grid(zoom).size
+                println "   Generating ${numberOfTiles} tile${numberOfTiles > 1 ? 's':''} took ${endTime / 1000000000.0} seconds"
             }
         }
     }
