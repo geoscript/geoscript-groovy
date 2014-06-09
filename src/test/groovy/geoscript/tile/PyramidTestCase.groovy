@@ -65,6 +65,15 @@ class PyramidTestCase {
         assertEquals bounds, new Bounds(-2.0036395147881314E7,-2.0037471205137067E7,0.0,-3.725290298461914E-9,'EPSG:3857')
     }
 
+    @Test void osmTileBounds() {
+        Pyramid pyramid = Pyramid.createGlobalMercatorPyramid()
+        pyramid.origin = Pyramid.Origin.TOP_LEFT
+        Tile tile = new Tile(7,28,45)
+        Bounds b1 = new Bounds(-1.127047227068324E7,5635538.776444796,-1.0957403596497595E7,5948624.264025062,"EPSG:3857")
+        Bounds b2 = pyramid.bounds(tile)
+        assertEquals(b1, b2)
+    }
+
     @Test void createGlobalMercatorPyramid() {
         Pyramid pyramid = Pyramid.createGlobalMercatorPyramid()
         assertEquals "EPSG:3857", pyramid.proj.id

@@ -116,14 +116,14 @@ class Pyramid {
         if (origin == Origin.BOTTOM_LEFT || origin == Origin.TOP_LEFT) {
             x = bounds.minX + dx * t.x
         } else {
-            x = bounds.minX + dx * (w - t.x)
+            x = bounds.minX + (dx * (w - t.x)) - dx
         }
 
         double y
         if (origin == Origin.BOTTOM_LEFT || origin == Origin.BOTTOM_RIGHT) {
             y = bounds.minY + dy * t.y
         } else {
-            y = bounds.minY + dy * (h - t.y)
+            y = bounds.minY + (dy * (h - t.y)) - dy
         }
 
         new Bounds(x, y, x + dx, y + dy, this.proj)
