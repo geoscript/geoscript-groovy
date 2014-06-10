@@ -10,29 +10,23 @@ import org.geotools.geopkg.GeoPkgDataStoreFactory
 class GeoPackage extends Database {
 
     /**
-     * Create a new GeoPackage Workspace with a name and directory
-     * @param name The name of the database
-     * @param dir The File containing the database
+     * Create a new GeoPackage Workspace from a database file
+     * @param file The GeoPackage database file
+     * @param userName The user name
+     * @param password The password
      */
-    GeoPackage(String name, File dir, String userName = null, String password = null) {
-        super(createDataStore(name, dir, userName, password))
-    }
-
-    /**
-     * Create a new GeoPackage Workspace with a name and directory
-     * @param name The name of the database
-     * @param dir The File containing the database
-     */
-    GeoPackage(String name, String dir, String userName = null, String password = null) {
-        this(name, new File(dir).absoluteFile, userName, password)
+    GeoPackage(File file, String userName = null, String password = null) {
+        super(createDataStore(file, userName, password))
     }
 
     /**
      * Create a new GeoPackage Workspace from a database file
-     * @param file The GeoPackage database file
+     * @param fileName The GeoPackage database file
+     * @param userName The user name
+     * @param password The password
      */
-    GeoPackage(File file, String userName = null, String password = null) {
-        this(file.name, file.parentFile, userName, password)
+    GeoPackage(String fileName, String userName = null, String password = null) {
+        this(new File(fileName), userName, password)
     }
 
     /**
@@ -47,9 +41,9 @@ class GeoPackage extends Database {
     /**
      * Create a new GeoPackage Workspace with a name and directory
      */
-    private static DataStore createDataStore(String name, File dir, String userName = null, String password = null) {
+    private static DataStore createDataStore(File file, String userName = null, String password = null) {
         Map params = new java.util.HashMap()
-        params.put("database", new File(dir, name).absolutePath)
+        params.put("database", file.absolutePath)
         params.put("dbtype", "geopkg")
         params.put("user", userName)
         params.put("passwd", password)

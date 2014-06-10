@@ -1,7 +1,6 @@
 package geoscript.workspace
 
 import geoscript.feature.Feature
-import geoscript.layer.Format
 import geoscript.layer.Layer
 import geoscript.layer.Shapefile
 import org.junit.Rule
