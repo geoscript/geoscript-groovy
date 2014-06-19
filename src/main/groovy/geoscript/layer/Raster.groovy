@@ -21,6 +21,8 @@ import org.geotools.process.raster.RasterZonalStatistics
 import geoscript.workspace.Memory
 import geoscript.feature.Schema
 import org.geotools.process.raster.StyleCoverage
+import org.geotools.util.Converters
+import org.geotools.util.InterpolationConverterFactory
 import org.geotools.util.NumberRange
 import org.jaitools.imageutils.iterator.AbstractSimpleIterator
 import org.jaitools.imageutils.iterator.SimpleIterator
@@ -827,11 +829,23 @@ class Raster {
 
     /**
      * Convert this Raster into a Layer of Points
+     * @param options Optional named parameters:
+     * <ul>
+     *      <li>proj: The target Projection</li>
+     *      <li>scale: The scale</li>
+     *      <li>interpolation: The Interpolation algorithm</li>
+     *      <li>emisphere: Whether to add the emisphere or not</li>
+     * </ul>
      * @return A Layer
      */
-    Layer getPointLayer() {
+    Layer getPointLayer(Map options = [:]) {
+        Projection p = options.get("proj", null)
+        float scale = options.get("scale", 1.0f)
+        Interpolation interpolation = Converters.convert(options.get("interpolation", "InterpolationNearest"), Interpolation.class)
+        boolean emisphere = options.get("emisphere", false)
+
         def process = new RasterAsPointCollectionProcess()
-        def fc = process.execute(coverage)
+        def fc = process.execute(coverage, p?.crs, scale, interpolation, emisphere)
         Schema s = new Schema(fc.schema)
         Schema schema =  new Schema("points", s.fields)
         Layer layer = new Memory().create(schema)
