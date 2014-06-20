@@ -940,4 +940,29 @@ class RasterTestCase {
         Raster raster3 = raster.stylize(sym)
         assertTrue raster.eval(10,10) != raster3.eval(10,10)
     }
+
+    @Test void transform() {
+        File file = new File(getClass().getClassLoader().getResource("raster.tif").toURI())
+        GeoTIFF geoTIFF = new GeoTIFF(file)
+        Raster raster = geoTIFF.read()
+        // Scale
+        Raster scaledRaster = raster.transform(scalex: 2.5, scaley: 1.3)
+        assertNotNull scaledRaster
+        // Shear
+        Raster shearRaster = raster.transform(shearx: 1.5, sheary: 1.1)
+        assertNotNull shearRaster
+        // Translate
+        Raster translatedRaster = raster.transform(translatex: 10.1, translatey: 12.6)
+        assertNotNull translatedRaster
+        // Combo
+        Raster transformedRaster = raster.transform(
+                scalex: 1.1, scaley: 2.1,
+                shearx: 0.4, sheary: 0.3,
+                translatex: 10.1, translatey: 12.6,
+                nodata: [-255],
+                interpolation: "NEAREST"
+        )
+        assertNotNull transformedRaster
+    }
+
 }

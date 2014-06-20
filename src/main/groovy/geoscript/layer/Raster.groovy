@@ -6,7 +6,6 @@ import geoscript.geom.Bounds
 import geoscript.geom.Point
 import geoscript.style.RasterSymbolizer
 import geoscript.style.Style
-import geoscript.style.Symbolizer
 import org.geotools.coverage.grid.GridCoordinates2D
 import org.geotools.coverage.grid.GridCoverage2D
 import org.geotools.coverage.grid.GridEnvelope2D
@@ -14,6 +13,7 @@ import org.geotools.coverage.grid.GridGeometry2D
 import org.geotools.coverage.processing.CoverageProcessor
 import org.geotools.coverage.processing.OperationJAI
 import org.geotools.geometry.DirectPosition2D
+import org.geotools.process.raster.AffineProcess
 import org.geotools.process.raster.ContourProcess
 import org.geotools.process.raster.PolygonExtractionProcess
 import org.geotools.process.raster.RasterAsPointCollectionProcess
@@ -22,13 +22,13 @@ import geoscript.workspace.Memory
 import geoscript.feature.Schema
 import org.geotools.process.raster.StyleCoverage
 import org.geotools.util.Converters
-import org.geotools.util.InterpolationConverterFactory
 import org.geotools.util.NumberRange
 import org.jaitools.imageutils.iterator.AbstractSimpleIterator
 import org.jaitools.imageutils.iterator.SimpleIterator
 import org.jaitools.imageutils.iterator.WindowIterator
 import org.jaitools.numeric.Range
 import org.geotools.coverage.grid.GridCoverageFactory
+import org.opengis.coverage.grid.GridCoverage
 
 import javax.media.jai.Interpolation
 import javax.media.jai.TiledImage
@@ -725,6 +725,41 @@ class Raster {
         params.parameter("GridGeometry").value = gg
         def newCoverage = processor.doOperation(params)
         new Raster(newCoverage)
+    }
+
+    /**
+     * Transform this Raster using an Affine Transformation.
+     * @param options The named parameters
+     * <ul>
+     *     <li>scalex =  The scale x parameter</li>
+     *     <li>scaley =  The scale y parameter</li>
+     *     <li>shearx =  The shear x parameter</li>
+     *     <li>sheary =  The shear y parameter</li>
+     *     <li>translatex =  The translate x parameter</li>
+     *     <li>translatey =  The translate y parameter</li>
+     *     <li>nodata = The nodata values</li>
+     *     <li>interpolation = The Interpolate algorithm (NEAREST, BILINEAR, BICUBIC2, BICUBIC)</li>
+     * </ul>
+     * @return A transformed Raster
+     */
+    Raster transform(Map options = [:]) {
+        double scalex = options.get("scalex",1)
+        double scaley = options.get("scaley",1)
+        double shearx = options.get("shearx",0)
+        double sheary = options.get("sheary",0)
+        double translatex = options.get("translatex",0)
+        double translatey = options.get("translatey",0)
+        def nodata = options.get("nodata")
+        Interpolation interpolation = Converters.convert(options.get("interpolation"), Interpolation.class)
+        AffineProcess process = new AffineProcess()
+        GridCoverage gridCov = process.execute(this.coverage,
+                scalex, scaley,
+                shearx, sheary,
+                translatex, translatey,
+                nodata == null ? null : nodata as double[],
+                interpolation
+        )
+        new Raster(gridCov)
     }
 
     /**
