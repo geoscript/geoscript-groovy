@@ -1,4 +1,4 @@
-package geoscript.tile
+package geoscript.layer
 
 /**
  * A Open Street Map TileLayer that is ready only.

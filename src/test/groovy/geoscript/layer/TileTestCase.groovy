@@ -1,5 +1,6 @@
-package geoscript.tile
+package geoscript.layer
 
+import geoscript.layer.Tile
 import org.junit.Test
 import java.awt.image.BufferedImage
 import static org.junit.Assert.*

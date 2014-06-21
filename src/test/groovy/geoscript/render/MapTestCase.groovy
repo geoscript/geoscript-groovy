@@ -7,7 +7,7 @@ import geoscript.layer.GeoTIFF
 import geoscript.layer.Raster
 import geoscript.style.Fill
 import geoscript.style.Stroke
-import geoscript.tile.MBTiles
+import geoscript.layer.MBTiles
 import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.TemporaryFolder

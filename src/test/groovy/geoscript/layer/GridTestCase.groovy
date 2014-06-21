@@ -1,4 +1,6 @@
-package geoscript.tile
+package geoscript.layer
+
+import geoscript.layer.Grid
 
 import static junit.framework.Assert.*
 import org.junit.Test

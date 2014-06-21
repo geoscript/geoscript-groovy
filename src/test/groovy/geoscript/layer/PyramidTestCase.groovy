@@ -1,6 +1,9 @@
-package geoscript.tile
+package geoscript.layer
 
 import geoscript.geom.Bounds
+import geoscript.layer.Grid
+import geoscript.layer.Pyramid
+import geoscript.layer.Tile
 import geoscript.proj.Projection
 
 import static junit.framework.Assert.*

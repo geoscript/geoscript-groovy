@@ -1,6 +1,10 @@
-package geoscript.tile
+package geoscript.layer
 
+import geoscript.layer.GeoPackage
+import geoscript.layer.MBTiles
+import geoscript.layer.Pyramid
 import geoscript.layer.Shapefile
+import geoscript.layer.TileGenerator
 import geoscript.style.Fill
 import geoscript.style.Stroke
 import org.junit.Rule
@@ -20,7 +24,7 @@ class TileGeneratorTestCase {
         Shapefile shp = new Shapefile(new File(getClass().getClassLoader().getResource("states.shp").toURI()))
         shp.style = new Fill("wheat") + new Stroke("navy", 0.1)
         File file = folder.newFile("states.mbtiles")
-        geoscript.tile.MBTiles mbtiles = new geoscript.tile.MBTiles(
+        MBTiles mbtiles = new MBTiles(
                 file, "states", "A map of the united states"
         )
         TileGenerator generator = new TileGenerator()

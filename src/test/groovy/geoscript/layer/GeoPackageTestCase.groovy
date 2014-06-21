@@ -1,29 +1,31 @@
-package geoscript.tile
+package geoscript.layer
 
-import geoscript.feature.Feature
 import geoscript.geom.Bounds
-import geoscript.layer.Layer
+import geoscript.layer.GeoPackage
+import geoscript.layer.Grid
+import geoscript.layer.Pyramid
 import geoscript.layer.Raster
+import geoscript.layer.Tile
+import geoscript.layer.TileCursor
 import geoscript.layer.WorldImage
 import geoscript.proj.Projection
 import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.TemporaryFolder
-
-import static junit.framework.Assert.*
+import static org.junit.Assert.*
 
 /**
- * The TileLayer Unit Test
+ * The GeoPackage Unit Test
  * @author Jared Erickson
  */
-class TileLayerTestCase {
+class GeoPackageTestCase {
 
     @Rule public TemporaryFolder folder = new TemporaryFolder()
 
     @Test void create() {
-        File file = new File(getClass().getClassLoader().getResource("states.mbtiles").toURI())
-        MBTiles layer = new MBTiles(file)
-        Bounds b = new Bounds(-179.99, -85.0511, 179.99, 85.0511, "EPSG:4326").reproject("EPSG:3857")
+        File file = new File(getClass().getClassLoader().getResource("states.gpkg").toURI())
+        GeoPackage layer = new GeoPackage(file, "states")
+        Bounds b = new Bounds(-2.00363951478813E7,-2.00374712051371E7,2.00363951478813E7,2.00374712051371E7,"EPSG:3857")
         assertEquals "states", layer.name
         assertEquals new Projection("EPSG:3857"), layer.proj
         assertEquals b, layer.bounds
@@ -46,8 +48,8 @@ class TileLayerTestCase {
     }
 
     @Test void get() {
-        File file = new File(getClass().getClassLoader().getResource("states.mbtiles").toURI())
-        MBTiles layer = new MBTiles(file)
+        File file = new File(getClass().getClassLoader().getResource("states.gpkg").toURI())
+        GeoPackage layer = new GeoPackage(file, "states")
         Tile tile = layer.get(4, 2, 3)
         assertNotNull tile
         assertEquals 4, tile.z
@@ -59,14 +61,14 @@ class TileLayerTestCase {
 
     @Test void put() {
         // Since we are modifying the mbtiles file copy it to a temp file
-        File file = new File(getClass().getClassLoader().getResource("states.mbtiles").toURI())
-        File newFile = folder.newFile("states_temp.mbtiles")
+        File file = new File(getClass().getClassLoader().getResource("states.gpkg").toURI())
+        File newFile = folder.newFile("states_temp.gpkg")
         newFile.withOutputStream {out ->
             file.withInputStream {inp ->
                 out << inp
             }
         }
-        MBTiles layer = new MBTiles(newFile)
+        GeoPackage layer = new GeoPackage(newFile, "states")
 
         // Make sure Tile doesn't exist in database
         Tile tile = layer.get(10, 0, 0)
@@ -74,7 +76,7 @@ class TileLayerTestCase {
         assertEquals 10, tile.z
         assertEquals 0, tile.x
         assertEquals 0, tile.y
-        assertNull tile.data
+        junit.framework.Assert.assertNull tile.data
 
         // Load a tile image
         File f = new File(getClass().getClassLoader().getResource("0.png").toURI())
@@ -92,8 +94,8 @@ class TileLayerTestCase {
     }
 
     @Test void tilesByZoomLevel() {
-        File file = new File(getClass().getClassLoader().getResource("states.mbtiles").toURI())
-        MBTiles layer = new MBTiles(file)
+        File file = new File(getClass().getClassLoader().getResource("states.gpkg").toURI())
+        GeoPackage layer = new GeoPackage(file, "states")
         TileCursor cursor = layer.tiles(1)
         assertEquals 1, cursor.z
         assertEquals 0, cursor.minX
@@ -114,8 +116,8 @@ class TileLayerTestCase {
     }
 
     @Test void tilesByTileCoordinates() {
-        File file = new File(getClass().getClassLoader().getResource("states.mbtiles").toURI())
-        MBTiles layer = new MBTiles(file)
+        File file = new File(getClass().getClassLoader().getResource("states.gpkg").toURI())
+        GeoPackage layer = new GeoPackage(file, "states")
         TileCursor cursor = layer.tiles(2, 1, 2, 3, 3)
         assertEquals 2, cursor.z
         assertEquals 1, cursor.minX
@@ -136,8 +138,8 @@ class TileLayerTestCase {
     }
 
     @Test void tilesByBoundsAndZoomLevel() {
-        File file = new File(getClass().getClassLoader().getResource("states.mbtiles").toURI())
-        MBTiles layer = new MBTiles(file)
+        File file = new File(getClass().getClassLoader().getResource("states.gpkg").toURI())
+        GeoPackage layer = new GeoPackage(file, "states")
         Bounds b = new Bounds(-123.09, 46.66, -121.13, 47.48, "EPSG:4326").reproject("EPSG:3857")
         TileCursor cursor = layer.tiles(b, 3)
         assertEquals 3, cursor.z
@@ -159,8 +161,8 @@ class TileLayerTestCase {
     }
 
     @Test void tilesByBoundsAndResolutions() {
-        File file = new File(getClass().getClassLoader().getResource("states.mbtiles").toURI())
-        MBTiles layer = new MBTiles(file)
+        File file = new File(getClass().getClassLoader().getResource("states.gpkg").toURI())
+        GeoPackage layer = new GeoPackage(file, "states")
         Bounds b = new Bounds(-124.73142200000001, 24.955967, -66.969849, 49.371735, "EPSG:4326").reproject("EPSG:3857")
         TileCursor cursor = layer.tiles(b, b.width / 400, b.height / 300)
         assertEquals 4, cursor.z
@@ -182,8 +184,8 @@ class TileLayerTestCase {
     }
 
     @Test void tilesByBoundsAndImageSize() {
-        File file = new File(getClass().getClassLoader().getResource("states.mbtiles").toURI())
-        MBTiles layer = new MBTiles(file)
+        File file = new File(getClass().getClassLoader().getResource("states.gpkg").toURI())
+        GeoPackage layer = new GeoPackage(file, "states")
         Bounds b = new Bounds(-124.73142200000001, 24.955967, -66.969849, 49.371735, "EPSG:4326").reproject("EPSG:3857")
         TileCursor cursor = layer.tiles(b, 400, 300)
         assertEquals 4, cursor.z
@@ -205,8 +207,8 @@ class TileLayerTestCase {
     }
 
     @Test void getTileCoordinates() {
-        File file = new File(getClass().getClassLoader().getResource("states.mbtiles").toURI())
-        MBTiles layer = new MBTiles(file)
+        File file = new File(getClass().getClassLoader().getResource("states.gpkg").toURI())
+        GeoPackage layer = new GeoPackage(file, "states")
         Bounds b = new Bounds(-124.73142200000001, 24.955967, -66.969849, 49.371735, "EPSG:4326").reproject("EPSG:3857")
         Map coords = layer.getTileCoordinates(b, layer.pyramid.grid(4))
         assertEquals 2, coords.minX
@@ -217,8 +219,8 @@ class TileLayerTestCase {
     }
 
     @Test void getRaster() {
-        File file = new File(getClass().getClassLoader().getResource("states.mbtiles").toURI())
-        MBTiles layer = new MBTiles(file)
+        File file = new File(getClass().getClassLoader().getResource("states.gpkg").toURI())
+        GeoPackage layer = new GeoPackage(file, "states")
         Bounds b = new Bounds(-124.73142200000001, 24.955967, -66.969849, 49.371735, "EPSG:4326").reproject("EPSG:3857")
         Raster raster = layer.getRaster(layer.tiles(b, 4))
         assertNotNull raster
@@ -231,8 +233,8 @@ class TileLayerTestCase {
     }
 
     @Test void getRasterCropped() {
-        File file = new File(getClass().getClassLoader().getResource("states.mbtiles").toURI())
-        MBTiles layer = new MBTiles(file)
+        File file = new File(getClass().getClassLoader().getResource("states.gpkg").toURI())
+        GeoPackage layer = new GeoPackage(file, "states")
         Bounds b = new Bounds(-124.73142200000001, 24.955967, -66.969849, 49.371735, "EPSG:4326").reproject("EPSG:3857")
         Raster raster = layer.getRaster(b, 400, 300)
         assertNotNull raster
@@ -242,26 +244,6 @@ class TileLayerTestCase {
         assertTrue out.exists()
         assertTrue out.length() > 0
         layer.close()
-    }
-
-    @Test void getLayer() {
-        File file = new File(getClass().getClassLoader().getResource("states.mbtiles").toURI())
-        MBTiles layer = new MBTiles(file)
-        Layer vlayer = layer.getLayer(layer.tiles(1))
-        assertNotNull vlayer
-        assertTrue vlayer.schema.has("the_geom")
-        assertTrue vlayer.schema.has("id")
-        assertTrue vlayer.schema.has("z")
-        assertTrue vlayer.schema.has("x")
-        assertTrue vlayer.schema.has("y")
-        assertEquals 4, vlayer.count
-        vlayer.eachFeature{Feature f ->
-            assertTrue f['id'] in [0,1,2,3]
-            assertTrue f['z'] == 1
-            assertTrue f['x'] in [0,1]
-            assertTrue f['y'] in [0,1]
-            assertNotNull f.geom
-        }
     }
 
 }

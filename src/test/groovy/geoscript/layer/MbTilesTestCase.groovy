@@ -1,7 +1,12 @@
-package geoscript.tile
+package geoscript.layer
 
 import geoscript.geom.Bounds
+import geoscript.layer.Grid
+import geoscript.layer.MBTiles
+import geoscript.layer.Pyramid
 import geoscript.layer.Raster
+import geoscript.layer.Tile
+import geoscript.layer.TileCursor
 import geoscript.layer.WorldImage
 import geoscript.proj.Projection
 import org.junit.Rule
@@ -14,7 +19,7 @@ import static junit.framework.Assert.*
  * The MbTiles Unit Test
  * @author Jared Erickson
  */
-class MbTilesTestCase {
+class MBTilesTestCase {
 
     @Rule public TemporaryFolder folder = new TemporaryFolder()
 

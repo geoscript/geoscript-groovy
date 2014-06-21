@@ -1,7 +1,12 @@
-package geoscript.tile
+package geoscript.layer
 
 import com.xebialabs.restito.server.StubServer
+import geoscript.layer.Pyramid
 import geoscript.layer.Shapefile
+import geoscript.layer.TMS
+import geoscript.layer.Tile
+import geoscript.layer.TileCursor
+import geoscript.layer.TileGenerator
 import geoscript.style.Fill
 import geoscript.style.Stroke
 import org.glassfish.grizzly.http.Method

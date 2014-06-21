@@ -1,9 +1,7 @@
-package geoscript.tile
+package geoscript.layer
 
 import geoscript.feature.Field
 import geoscript.geom.Bounds
-import geoscript.layer.Layer
-import geoscript.layer.Raster
 import geoscript.proj.Projection
 import geoscript.workspace.Memory
 import geoscript.workspace.Workspace

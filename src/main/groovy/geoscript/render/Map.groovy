@@ -7,7 +7,7 @@ import geoscript.layer.WMS
 import geoscript.proj.Projection
 import geoscript.layer.Raster
 import geoscript.style.RasterSymbolizer
-import geoscript.tile.TileLayer
+import geoscript.layer.TileLayer
 import org.geotools.map.FeatureLayer
 import org.geotools.map.GridCoverageLayer
 import org.geotools.map.WMSLayer

@@ -1,4 +1,4 @@
-import geoscript.tile.OSM
+import geoscript.layer.OSM
 import geoscript.layer.Raster
 import javax.imageio.ImageIO
 

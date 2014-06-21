@@ -1,7 +1,7 @@
 import geoscript.feature.Feature
 import geoscript.layer.Layer
+import geoscript.layer.MBTiles
 import geoscript.workspace.*
-import geoscript.tile.*
 
 File dir = new File("mbtiles")
 dir.mkdir()

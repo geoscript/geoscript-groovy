@@ -1,4 +1,4 @@
-package geoscript.tile
+package geoscript.layer
 
 /**
  * A Tile Map Service (TMS) TileLayer.  A TMS TileLayer can read or write Tiles

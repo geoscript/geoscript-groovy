@@ -2,7 +2,7 @@ import geoscript.feature.Feature
 import geoscript.geom.Bounds
 import geoscript.layer.Raster
 import geoscript.layer.Shapefile
-import geoscript.tile.OSM
+import geoscript.layer.OSM
 
 import javax.imageio.ImageIO
 

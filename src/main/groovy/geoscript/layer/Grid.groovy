@@ -1,4 +1,4 @@
-package geoscript.tile
+package geoscript.layer
 
 import groovy.transform.EqualsAndHashCode
 import groovy.transform.ToString

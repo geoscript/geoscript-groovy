@@ -1,6 +1,9 @@
-package geoscript.tile
+package geoscript.layer
 
 import com.xebialabs.restito.server.StubServer
+import geoscript.layer.OSM
+import geoscript.layer.Tile
+import geoscript.layer.TileCursor
 import org.glassfish.grizzly.http.Method
 import org.glassfish.grizzly.http.util.HttpStatus
 import org.junit.After

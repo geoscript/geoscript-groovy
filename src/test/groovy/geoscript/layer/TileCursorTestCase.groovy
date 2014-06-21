@@ -1,6 +1,10 @@
-package geoscript.tile
+package geoscript.layer
 
 import geoscript.geom.Bounds
+import geoscript.layer.MBTiles
+import geoscript.layer.Tile
+import geoscript.layer.TileCursor
+
 import static org.junit.Assert.*
 import org.junit.Test
 
