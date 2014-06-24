@@ -14,6 +14,7 @@ import org.geotools.coverage.processing.CoverageProcessor
 import org.geotools.coverage.processing.OperationJAI
 import org.geotools.geometry.DirectPosition2D
 import org.geotools.process.raster.AffineProcess
+import org.geotools.process.raster.BandSelectProcess
 import org.geotools.process.raster.ContourProcess
 import org.geotools.process.raster.PolygonExtractionProcess
 import org.geotools.process.raster.RasterAsPointCollectionProcess
@@ -759,6 +760,18 @@ class Raster {
                 nodata == null ? null : nodata as double[],
                 interpolation
         )
+        new Raster(gridCov)
+    }
+
+    /**
+     * Create a new Raster with selection of Bands
+     * @param bands The indices of the selected bands
+     * @param visibleBand The visible band
+     * @return A new Raster
+     */
+    Raster selectBands(List<Integer> bands, int visibleBand = -1) {
+        BandSelectProcess process = new BandSelectProcess();
+        GridCoverage2D gridCov = process.execute(this.coverage, bands as int[], visibleBand == -1 ? null : visibleBand)
         new Raster(gridCov)
     }
 

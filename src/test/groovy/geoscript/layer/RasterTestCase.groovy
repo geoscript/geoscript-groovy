@@ -965,4 +965,12 @@ class RasterTestCase {
         assertNotNull transformedRaster
     }
 
+    @Test void selectBands() {
+        File file = new File(getClass().getClassLoader().getResource("alki.tif").toURI())
+        GeoTIFF geoTIFF = new GeoTIFF(file)
+        Raster raster = geoTIFF.read()
+        Raster rbRaster = raster.selectBands([0,2], 2)
+        assertNotNull rbRaster
+        assertEquals(2, rbRaster.bands.size())
+    }
 }
