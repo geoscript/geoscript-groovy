@@ -973,4 +973,16 @@ class RasterTestCase {
         assertNotNull rbRaster
         assertEquals(2, rbRaster.bands.size())
     }
+
+    @Test void merge() {
+        File file = new File(getClass().getClassLoader().getResource("alki.tif").toURI())
+        GeoTIFF geoTIFF = new GeoTIFF(file)
+        Raster raster = geoTIFF.read()
+        Raster r = raster.selectBands([0])
+        Raster g = raster.selectBands([1])
+        Raster b = raster.selectBands([2])
+        Raster rgb = Raster.merge([r,g,b], transform: "FIRST")
+        assertNotNull rgb
+    }
+
 }

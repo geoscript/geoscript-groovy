@@ -14,6 +14,7 @@ import org.geotools.coverage.processing.CoverageProcessor
 import org.geotools.coverage.processing.OperationJAI
 import org.geotools.geometry.DirectPosition2D
 import org.geotools.process.raster.AffineProcess
+import org.geotools.process.raster.BandMergeProcess
 import org.geotools.process.raster.BandSelectProcess
 import org.geotools.process.raster.ContourProcess
 import org.geotools.process.raster.PolygonExtractionProcess
@@ -772,6 +773,26 @@ class Raster {
     Raster selectBands(List<Integer> bands, int visibleBand = -1) {
         BandSelectProcess process = new BandSelectProcess();
         GridCoverage2D gridCov = process.execute(this.coverage, bands as int[], visibleBand == -1 ? null : visibleBand)
+        new Raster(gridCov)
+    }
+
+    /**
+     * Merge a List of Rasters  into one Raster
+     * @param options Optional named parameters:
+     * <ul>
+     *     <li>roi = regional of interest (a Geometry)</li>
+     *     <li>transform = how to choose the grid to world transform (FIRST, LAST, INDEX)</li>
+     *     <li>index = The index value of the Raster to choose when transform = INDEX</li>
+     * </ul>
+     * @param rasters A List of Rasters to merge
+     * @return
+     */
+    static Raster merge(Map options = [:], List<Raster> rasters) {
+        Geometry roi = options.get("roi")
+        String transform = options.get("transform", "FIRST")
+        int index = options.get("index",0)
+        BandMergeProcess process = new BandMergeProcess()
+        GridCoverage2D gridCov = process.execute(rasters.collect { it.coverage }, roi?.g, transform, index)
         new Raster(gridCov)
     }
 
