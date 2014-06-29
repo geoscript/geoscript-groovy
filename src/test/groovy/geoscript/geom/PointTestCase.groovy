@@ -25,6 +25,13 @@ class PointTestCase {
         assertEquals(-47, p1.y, 0.0)
     }
 
+    @Test void getXYZ() {
+        def p = new Point(111, -47, 12.34)
+        assertEquals(111, p.x, 0.01)
+        assertEquals(-47, p.y, 0.01)
+        assertEquals(12.34, p.z, 0.01)
+    }
+
     @Test void getAngle() {
         // Default is degrees
         assertEquals(45, new Point(0,0).getAngle(new Point(10,10)), 0.1)

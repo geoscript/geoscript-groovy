@@ -36,6 +36,19 @@ class Point extends Geometry {
     }
 
     /**
+     * Create a Point with an x,y,z coordinate
+     * <p><blockquote><pre>
+     * def p = new Point(111,-47, 5.4)
+     * </pre></blockquote></p>
+     * @param x The x coordinate
+     * @param y The y coordinate
+     * @param z The z coordinate
+     */
+    Point(double x, double y, double z) {
+        super(Geometry.factory.createPoint(new Coordinate(x,y,z)))
+    }
+
+    /**
      * Get the X coordinate
      * @return The X coordinate
      */
@@ -49,6 +62,14 @@ class Point extends Geometry {
      */
     double getY() {
         return g.y
+    }
+
+    /**
+     * Get the Z coordinate
+     * @return The Z coordinate
+     */
+    double getZ() {
+        return g.coordinate.z
     }
 
     /**
