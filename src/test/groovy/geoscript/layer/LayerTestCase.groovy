@@ -782,6 +782,7 @@ class LayerTestCase {
         assertEquals "House 1", layer.first(sort: "price ASC").get("name")
         assertEquals "House 2", layer.first(filter: "price > 13 AND price < 14").get("name")
         assertEquals "House 3", layer.first(filter: "price > 13 AND price < 15", sort: "price DESC").get("name")
+        assertNull layer.first(filter: "price < 10")
     }
 
     @Test void transform() {
