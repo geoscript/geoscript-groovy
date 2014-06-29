@@ -658,8 +658,11 @@ class Layer {
         }
         Map params = options.get("params")
         Cursor c = getCursor(filter: filter, sort: sort, params: params)
-        Feature f = c.next()
-        c.close()
+        Feature f = null
+        if (c.hasNext()) {
+            f = c.next()
+            c.close()
+        }
         f
     }
 
