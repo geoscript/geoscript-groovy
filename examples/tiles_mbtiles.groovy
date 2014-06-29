@@ -1,9 +1,11 @@
 import geoscript.feature.Feature
 import geoscript.geom.Bounds
+import geoscript.layer.ImageTileRenderer
 import geoscript.layer.MBTiles
 import geoscript.layer.Raster
 import geoscript.layer.Shapefile
 import geoscript.layer.TileGenerator
+import geoscript.layer.TileRenderer
 import geoscript.style.*
 
 import javax.imageio.ImageIO
@@ -17,8 +19,9 @@ shp.style = new Fill("wheat") + new Stroke("navy", 0.1)
 File file = new File("states.mbtiles")
 MBTiles mbtiles = new MBTiles(file, "states", "A map of the united states")
 
+TileRenderer renderer = new ImageTileRenderer(mbtiles, shp)
 TileGenerator generator = new TileGenerator(verbose: true)
-generator.generate(mbtiles, shp, 0, 4)
+generator.generate(mbtiles, renderer, 0, 4)
 
 (0..3).each{int zoom ->
     Raster raster = mbtiles.getRaster(mbtiles.tiles(zoom))

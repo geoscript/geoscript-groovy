@@ -16,7 +16,7 @@ import org.junit.rules.TemporaryFolder
 import static junit.framework.Assert.*
 
 /**
- * The MbTiles Unit Test
+ * The MBTiles Unit Test
  * @author Jared Erickson
  */
 class MBTilesTestCase {

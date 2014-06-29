@@ -9,34 +9,18 @@ import geoscript.geom.Bounds
 class TileGenerator {
 
     /**
-     * The image type
-     */
-    String imageType = "png"
-
-    /**
      * Whether to verbosely print status or not
      */
     boolean verbose = false
 
     /**
-     * Generate Tiles for the TileLayer using one of more Map Layers between the start and end zoom levels
+     * Generate Tiles for a TileLayer using a TileRenderer
      * @param tileLayer The TileLayer
-     * @param layers A Map Layer or a List of Map Layers
+     * @param renderer The TileRenderer
      * @param startZoom The start zoom level
-     * @param endZoom The end zoom levelå
+     * @param endZoom The end zoom level
      */
-    void generate(TileLayer tileLayer, def layers, int startZoom, int endZoom) {
-
-        geoscript.render.Map map = new geoscript.render.Map(
-            fixAspectRatio: false,
-            proj: tileLayer.proj,
-            width: tileLayer.pyramid.tileWidth,
-            height: tileLayer.pyramid.tileHeight,
-            type: imageType,
-            layers: layers instanceof List ? layers : [layers],
-            bounds: tileLayer.bounds
-        )
-
+    void generate(TileLayer tileLayer, TileRenderer renderer, int startZoom, int endZoom) {
         (startZoom..endZoom).each {zoom ->
             if (verbose) println "Zoom Level ${zoom}"
             long startTime = System.nanoTime()
@@ -44,13 +28,7 @@ class TileGenerator {
                 if (verbose) println "   ${i}). ${t}"
                 Bounds b = tileLayer.pyramid.bounds(t)
                 if (verbose) println "          Bounds${b}"
-                map.bounds = b
-
-                def out = new ByteArrayOutputStream()
-                map.render(out)
-                out.close()
-
-                t.data = out.toByteArray()
+                t.data = renderer.render(b)
                 tileLayer.put(t)
             }
             if (verbose) {

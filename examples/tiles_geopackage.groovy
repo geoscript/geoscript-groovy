@@ -1,10 +1,12 @@
 import geoscript.feature.Feature
 import geoscript.geom.Bounds
 import geoscript.layer.GeoPackage
+import geoscript.layer.ImageTileRenderer
 import geoscript.layer.Pyramid
 import geoscript.layer.Raster
 import geoscript.layer.Shapefile
 import geoscript.layer.TileGenerator
+import geoscript.layer.TileRenderer
 import geoscript.style.*
 
 import javax.imageio.ImageIO
@@ -18,8 +20,9 @@ shp.style = new Fill("wheat") + new Stroke("navy", 0.1)
 File file = new File("states.mbtiles")
 GeoPackage gpkg = new GeoPackage(file, "states", Pyramid.createGlobalMercatorPyramid())
 
+TileRenderer renderer = new ImageTileRenderer(gpkg, shp)
 TileGenerator generator = new TileGenerator(verbose: true)
-generator.generate(gpkg, shp, 0, 4)
+generator.generate(gpkg, renderer, 0, 4)
 
 (0..3).each{int zoom ->
     Raster raster = gpkg.getRaster(gpkg.tiles(zoom))

@@ -27,8 +27,9 @@ class TileGeneratorTestCase {
         MBTiles mbtiles = new MBTiles(
                 file, "states", "A map of the united states"
         )
+        ImageTileRenderer renderer = new ImageTileRenderer(mbtiles, shp)
         TileGenerator generator = new TileGenerator()
-        generator.generate(mbtiles, shp, 0, 2)
+        generator.generate(mbtiles, renderer, 0, 2)
         assertNotNull mbtiles.get(0,0,0).data
         assertNotNull mbtiles.get(1,1,1).data
         assertNotNull mbtiles.get(2,2,2).data
@@ -40,9 +41,9 @@ class TileGeneratorTestCase {
         shp.style = new Fill("wheat") + new Stroke("navy", 0.1)
         File file = folder.newFile("states.gpkg")
         GeoPackage geopkg = new GeoPackage(file, "states", Pyramid.createGlobalMercatorPyramid())
-        println geopkg.bounds
+        ImageTileRenderer renderer = new ImageTileRenderer(geopkg, shp)
         TileGenerator generator = new TileGenerator()
-        generator.generate(geopkg, shp, 0, 2)
+        generator.generate(geopkg, renderer, 0, 2)
         assertNotNull geopkg.get(0,0,0).data
         assertNotNull geopkg.get(1,1,1).data
         assertNotNull geopkg.get(2,2,2).data

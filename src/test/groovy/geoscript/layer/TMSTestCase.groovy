@@ -59,8 +59,9 @@ class TMSTestCase {
         shp.style = new Fill("wheat") + new Stroke("navy", 0.1)
         File file = folder.newFolder("cache")
         TMS tms = new TMS("States", "png", file, Pyramid.createGlobalMercatorPyramid())
+        TileRenderer renderer = new ImageTileRenderer(tms, shp)
         TileGenerator generator = new TileGenerator()
-        generator.generate(tms, shp, 0, 2)
+        generator.generate(tms, renderer, 0, 2)
         [
                 new File(file, "0/0/0.png"),
                 new File(file, "1/0/0.png"),
