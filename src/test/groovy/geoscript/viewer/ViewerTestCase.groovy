@@ -26,7 +26,7 @@ class ViewerTestCase {
         ImageIO.write(image,"png", file)
         assertTrue file.exists()
         File expectedFile = new File(getClass().getClassLoader().getResource("geoscript/viewer/drawtoimage.png").toURI())
-        ImageAssert.assertEquals(expectedFile, image, 1)
+        ImageAssert.assertEquals(expectedFile, image, 100)
     }
 
     @Test void drawToImageWithOptions() {
@@ -40,7 +40,7 @@ class ViewerTestCase {
         ImageIO.write(image,"png", file)
         assertTrue file.exists()
         File expectedFile = new File(getClass().getClassLoader().getResource("geoscript/viewer/drawtoimagewithoptions.png").toURI())
-        ImageAssert.assertEquals(expectedFile, image, 1)
+        ImageAssert.assertEquals(expectedFile, image, 100)
     }
 
     @Test void drawToFile() {
@@ -49,7 +49,7 @@ class ViewerTestCase {
         Viewer.drawToFile(geom, file, size: [400,400])
         assertTrue(file.exists())
         File expectedFile = new File(getClass().getClassLoader().getResource("geoscript/viewer/drawtofile.png").toURI())
-        ImageAssert.assertEquals(expectedFile, ImageIO.read(file), 1)
+        ImageAssert.assertEquals(expectedFile, ImageIO.read(file), 100)
     }
 
     @Test void drawToFileWithOptions() {
@@ -61,7 +61,7 @@ class ViewerTestCase {
         )
         assertTrue file.exists()
         File expectedFile = new File(getClass().getClassLoader().getResource("geoscript/viewer/drawtofilewithoptions.png").toURI())
-        ImageAssert.assertEquals(expectedFile, ImageIO.read(file), 1)
+        ImageAssert.assertEquals(expectedFile, ImageIO.read(file), 100)
     }
 
     @Test void plotToImage() {
@@ -71,8 +71,8 @@ class ViewerTestCase {
         def file = folder.newFile("viewer_plottoimage.png")
         ImageIO.write(image,"png", file)
         assertTrue file.exists()
-        // File expectedFile = new File(getClass().getClassLoader().getResource("geoscript/viewer/plottoimage.png").toURI())
-        // ImageAssert.assertEquals(expectedFile, image, 10)
+        File expectedFile = new File(getClass().getClassLoader().getResource("geoscript/viewer/plottoimage.png").toURI())
+        ImageAssert.assertEquals(expectedFile, image, 10000)
     }
 
     @Test void plotToImageWithOptions() {
@@ -82,8 +82,8 @@ class ViewerTestCase {
         def file = folder.newFile("viewer_plottoimage_withoptions.png")
         ImageIO.write(image,"png", file)
         assertTrue file.exists()
-        // File expectedFile = new File(getClass().getClassLoader().getResource("geoscript/viewer/plottoimagewithoptions.png").toURI())
-        // ImageAssert.assertEquals(expectedFile, image, 10)
+        File expectedFile = new File(getClass().getClassLoader().getResource("geoscript/viewer/plottoimagewithoptions.png").toURI())
+        ImageAssert.assertEquals(expectedFile, image, 10000)
     }
 
     @Test void plotToFile() {
@@ -91,8 +91,8 @@ class ViewerTestCase {
         def geom = Geometry.fromWKT("POINT (-111 45.7)").buffer(10)
         Viewer.plotToFile(geom, size: [400,400], file, legend: false)
         assertTrue(file.exists())
-        // File expectedFile = new File(getClass().getClassLoader().getResource("geoscript/viewer/plottofile.png").toURI())
-        // ImageAssert.assertEquals(expectedFile, ImageIO.read(file), 10)
+        File expectedFile = new File(getClass().getClassLoader().getResource("geoscript/viewer/plottofile.png").toURI())
+        ImageAssert.assertEquals(expectedFile, ImageIO.read(file), 10000)
     }
 
     @Test void plotToFileWithOptions() {
@@ -100,8 +100,8 @@ class ViewerTestCase {
         def geom = Geometry.fromWKT("POINT (-111 45.7)").buffer(10)
         Viewer.plotToFile([geom, geom.buffer(10)], size: [400,400], file, legend: false, drawCoords: false)
         assertTrue(file.exists())
-        // File expectedFile = new File(getClass().getClassLoader().getResource("geoscript/viewer/plottofilewithoptions.png").toURI())
-        // ImageAssert.assertEquals(expectedFile, ImageIO.read(file), 10)
+        File expectedFile = new File(getClass().getClassLoader().getResource("geoscript/viewer/plottofilewithoptions.png").toURI())
+        ImageAssert.assertEquals(expectedFile, ImageIO.read(file), 10000)
     }
 
 }
