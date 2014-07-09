@@ -63,7 +63,7 @@ class DrawTestCase {
         Schema schema  = new Schema("shapes",[new Field("geom","Polygon"), new Field("name", "String")])
         Feature feature = new Feature([new LineString([0,0],[1,1]).bounds.polygon, "square"], "0",  schema)
         Symbolizer sym = new Stroke('navy', 0.1)
-        File file = new File("/Users/jericks/Desktop/draw_feature.png") //folder.newFile("draw_feature.png")
+        File file = folder.newFile("draw_feature.png")
         draw(feature, style: sym, bounds: feature.geom.bounds.scale(1.1), size: [250,250], out: file, format: "png")
         assertTrue file.exists()
         assertTrue file.length() > 0
