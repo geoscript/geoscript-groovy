@@ -1,5 +1,6 @@
 package geoscript.render
 
+import org.geotools.image.test.ImageAssert
 import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.TemporaryFolder
@@ -30,7 +31,11 @@ class DrawTestCase {
 
     @Rule
     public TemporaryFolder folder = new TemporaryFolder()
-    
+
+    private File getFile(String resource) {
+        return new File(getClass().getClassLoader().getResource(resource).toURI())
+    }
+
     @Test void drawGeometry() {
         Symbolizer sym = new Stroke('black', 2) + new Fill('gray',0.75)
         Geometry geom = new Point(0,0).buffer(0.2)
@@ -38,6 +43,8 @@ class DrawTestCase {
         draw(geom, style: sym, bounds: geom.bounds.scale(1.1), size: [250,250], out: file, format: "png", backgroundColor: "white")
         assertTrue file.exists()
         assertTrue file.length() > 0
+        File expectedFile = getFile("geoscript/render/draw_geometry.png")
+        ImageAssert.assertEquals(expectedFile, ImageIO.read(file), 100)
     }
 
     @Test void drawGeometries() {
@@ -48,16 +55,20 @@ class DrawTestCase {
         draw(geometries, style: sym, bounds: new GeometryCollection(geometries).bounds.scale(1.1), size: [250,250], out: file, format: "png")
         assertTrue file.exists()
         assertTrue file.length() > 0
+        File expectedFile = getFile("geoscript/render/draw_geometries.png")
+        ImageAssert.assertEquals(expectedFile, ImageIO.read(file), 100)
     }
 
     @Test void drawFeature() {
         Schema schema  = new Schema("shapes",[new Field("geom","Polygon"), new Field("name", "String")])
         Feature feature = new Feature([new LineString([0,0],[1,1]).bounds.polygon, "square"], "0",  schema)
         Symbolizer sym = new Stroke('navy', 0.1)
-        File file = folder.newFile("draw_feature.png")
+        File file = new File("/Users/jericks/Desktop/draw_feature.png") //folder.newFile("draw_feature.png")
         draw(feature, style: sym, bounds: feature.geom.bounds.scale(1.1), size: [250,250], out: file, format: "png")
         assertTrue file.exists()
         assertTrue file.length() > 0
+        File expectedFile = getFile("geoscript/render/draw_feature.png")
+        ImageAssert.assertEquals(expectedFile, ImageIO.read(file), 100)
     }
 
     @Test void drawLayer() {
@@ -69,6 +80,8 @@ class DrawTestCase {
         draw(layer, bounds: layer.bounds.scale(1.1), size: [250,250], out: file, format: "png")
         assertTrue file.exists()
         assertTrue file.length() > 0
+        File expectedFile = getFile("geoscript/render/draw_layer.png")
+        ImageAssert.assertEquals(expectedFile, ImageIO.read(file), 100)
     }
 
     @Test void drawRaster() {
@@ -79,6 +92,8 @@ class DrawTestCase {
         draw(raster, bounds: raster.bounds.scale(1.1), size: [250,250], out: file, format: "png")
         assertTrue file.exists()
         assertTrue file.length() > 0
+        File expectedFile = getFile("geoscript/render/draw_raster.png")
+        ImageAssert.assertEquals(expectedFile, ImageIO.read(file), 100)
     }
 
     @Test void drawLayerToPdf() {
@@ -101,6 +116,8 @@ class DrawTestCase {
         ImageIO.write(image, "png", file)
         assertTrue file.exists()
         assertTrue file.length() > 0
+        File expectedFile = getFile("geoscript/render/draw_geometry_to_image.png")
+        ImageAssert.assertEquals(expectedFile, image, 100)
     }
 
     @Test void drawGeometriesToImage() {
@@ -113,6 +130,8 @@ class DrawTestCase {
         ImageIO.write(image, "png", file)
         assertTrue file.exists()
         assertTrue file.length() > 0
+        File expectedFile = getFile("geoscript/render/draw_geometries_to_image.png")
+        ImageAssert.assertEquals(expectedFile, image, 100)
     }
 
     @Test void drawFeatureToImage() {
@@ -125,6 +144,8 @@ class DrawTestCase {
         ImageIO.write(image, "png", file)
         assertTrue file.exists()
         assertTrue file.length() > 0
+        File expectedFile = getFile("geoscript/render/draw_feature_to_image.png")
+        ImageAssert.assertEquals(expectedFile, image, 100)
     }
 
     @Test void drawLayerToImage() {
@@ -138,6 +159,8 @@ class DrawTestCase {
         ImageIO.write(image, "png", file)
         assertTrue file.exists()
         assertTrue file.length() > 0
+        File expectedFile = getFile("geoscript/render/draw_layer_to_image.png")
+        ImageAssert.assertEquals(expectedFile, image, 100)
     }
 
     @Test void drawRasterToImage() {
@@ -150,5 +173,7 @@ class DrawTestCase {
         ImageIO.write(image, "png", file)
         assertTrue file.exists()
         assertTrue file.length() > 0
+        File expectedFile = getFile("geoscript/render/draw_raster_to_image.png")
+        ImageAssert.assertEquals(expectedFile, image, 100)
     }
 }
