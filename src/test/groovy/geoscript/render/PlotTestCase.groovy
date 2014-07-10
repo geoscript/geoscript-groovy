@@ -8,6 +8,7 @@ import geoscript.geom.LineString
 import geoscript.layer.Layer
 import geoscript.layer.Shapefile
 import geoscript.workspace.Memory
+import org.geotools.image.test.ImageAssert
 import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.TemporaryFolder
@@ -27,6 +28,10 @@ class PlotTestCase {
     @Rule
     public TemporaryFolder folder = new TemporaryFolder()
 
+    private File getFile(String resource) {
+        return new File(getClass().getClassLoader().getResource(resource).toURI())
+    }
+
     @Test
     void plotGeometryToFile() {
         Geometry geom = Geometry.fromWKT("POINT (-111 45.7)").buffer(10)
@@ -34,6 +39,7 @@ class PlotTestCase {
         plot(geom, size: [400, 400], out: file)
         assertTrue file.exists()
         assertTrue file.length() > 0
+        ImageAssert.assertEquals(getFile("geoscript/render/plot_geom_to_file.png"), ImageIO.read(file), 10000)
     }
 
     @Test
@@ -44,6 +50,7 @@ class PlotTestCase {
         plot(geom, size: [400, 400], out: out, type: "png")
         assertTrue file.exists()
         assertTrue file.length() > 0
+        ImageAssert.assertEquals(getFile("geoscript/render/plot_geom_to_out.png"), ImageIO.read(file), 10000)
     }
 
     @Test
@@ -54,6 +61,7 @@ class PlotTestCase {
         ImageIO.write(image, "png", file)
         assertTrue file.exists()
         assertTrue file.length() > 0
+        ImageAssert.assertEquals(getFile("geoscript/render/plot_geom_to_img.png"), ImageIO.read(file), 10000)
     }
 
     @Test
@@ -65,6 +73,7 @@ class PlotTestCase {
         ImageIO.write(image, "png", file)
         assertTrue file.exists()
         assertTrue file.length() > 0
+        ImageAssert.assertEquals(getFile("geoscript/render/plot_feat_to_file.png"), ImageIO.read(file), 10000)
     }
 
     @Test
@@ -78,5 +87,6 @@ class PlotTestCase {
         ImageIO.write(image, "png", file)
         assertTrue file.exists()
         assertTrue file.length() > 0
+        ImageAssert.assertEquals(getFile("geoscript/render/plot_layer_to_file.png"), ImageIO.read(file), 10000)
     }
 }

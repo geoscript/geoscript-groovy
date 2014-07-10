@@ -4,6 +4,7 @@ import geoscript.layer.Layer
 import geoscript.layer.Shapefile
 import geoscript.style.Fill
 import geoscript.style.Stroke
+import org.geotools.image.test.ImageAssert
 import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.TemporaryFolder
@@ -19,6 +20,10 @@ class GIFTestCase {
     @Rule
     public TemporaryFolder folder = new TemporaryFolder()
 
+    private File getFile(String resource) {
+        return new File(getClass().getClassLoader().getResource(resource).toURI())
+    }
+
     @Test
     void renderToImage() {
         File shpFile = new File(getClass().getClassLoader().getResource("states.shp").toURI())
@@ -32,6 +37,7 @@ class GIFTestCase {
         ImageIO.write(img, "gif", file)
         assertTrue file.exists()
         assertTrue file.length() > 0
+        ImageAssert.assertEquals(getFile("geoscript/render/image.gif"), ImageIO.read(file), 100)
     }
 
     @Test
@@ -47,6 +53,7 @@ class GIFTestCase {
         out.close()
         assertTrue file.exists()
         assertTrue file.length() > 0
+        ImageAssert.assertEquals(getFile("geoscript/render/image_out.gif"), ImageIO.read(file), 100)
     }
 
     @Test
@@ -68,6 +75,7 @@ class GIFTestCase {
         gif.renderAnimated(images, file, 500, true)
         assertTrue file.exists()
         assertTrue file.length() > 0
+        ImageAssert.assertEquals(getFile("geoscript/render/animated.gif"), ImageIO.read(file), 100)
     }
 
     @Test
@@ -92,6 +100,7 @@ class GIFTestCase {
         }
         assertTrue file.exists()
         assertTrue file.length() > 0
+        ImageAssert.assertEquals(getFile("geoscript/render/animated_bytes.gif"), ImageIO.read(file), 100)
     }
 
     @Test void getImageType() {

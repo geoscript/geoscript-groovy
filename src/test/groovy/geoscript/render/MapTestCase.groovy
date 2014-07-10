@@ -7,9 +7,12 @@ import geoscript.layer.GeoTIFF
 import geoscript.layer.Raster
 import geoscript.style.Fill
 import geoscript.style.Stroke
+import org.geotools.image.test.ImageAssert
 import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.TemporaryFolder
+
+import javax.imageio.ImageIO
 
 import static org.junit.Assert.*
 
@@ -21,7 +24,11 @@ class MapTestCase {
 
     @Rule
     public TemporaryFolder folder = new TemporaryFolder()
-    
+
+    private File getFile(String resource) {
+        return new File(getClass().getClassLoader().getResource(resource).toURI())
+    }
+
     @Test void proj() {
         Map map = new Map();
         map.proj = new Projection("EPSG:2927")
@@ -62,6 +69,8 @@ class MapTestCase {
         javax.imageio.ImageIO.write(image, "png", out);
         assertTrue(out.exists())
         map.close()
+
+        ImageAssert.assertEquals(getFile("geoscript/render/map_to_image.png"), ImageIO.read(out), 100)
     }
 
     @Test void renderRasterToImage() {
@@ -82,6 +91,8 @@ class MapTestCase {
         javax.imageio.ImageIO.write(image, "png", out);
         assertTrue(out.exists())
         map.close()
+
+        ImageAssert.assertEquals(getFile("geoscript/render/map_to_raster.png"), ImageIO.read(out), 100)
     }
 
     @Test void renderDemRaster() {
@@ -101,6 +112,8 @@ class MapTestCase {
         javax.imageio.ImageIO.write(image, "png", out);
         assertTrue(out.exists())
         map.close()
+
+        ImageAssert.assertEquals(getFile("geoscript/render/map_to_dem.png"), ImageIO.read(out), 100)
     }
 
     @Test void renderToImageWithMapNoProjection() {
@@ -120,6 +133,8 @@ class MapTestCase {
         javax.imageio.ImageIO.write(image, "png", out);
         assertTrue(out.exists())
         map.close()
+
+        ImageAssert.assertEquals(getFile("geoscript/render/map_to_image_noproj.png"), ImageIO.read(out), 100)
     }
 
     @Test void renderToImageWithMapBoundsNoProjection() {
@@ -139,6 +154,8 @@ class MapTestCase {
         javax.imageio.ImageIO.write(image, "png", out);
         assertTrue(out.exists())
         map.close()
+
+        ImageAssert.assertEquals(getFile("geoscript/render/map_to_image_noproj_nobounds.png"), ImageIO.read(out), 100)
     }
 
     @Test void renderToFile() {
@@ -152,9 +169,11 @@ class MapTestCase {
         map.proj = new Projection("EPSG:2927")
         map.addLayer(shp)
         map.bounds = shp.bounds
-        def image = map.render(out)
+        map.render(out)
         assertTrue(out.exists())
         map.close()
+
+        ImageAssert.assertEquals(getFile("geoscript/render/map_to_file.png"), ImageIO.read(out), 100)
     }
 
     @Test void renderToOutputStream() {
@@ -170,10 +189,12 @@ class MapTestCase {
         map.proj = new Projection("EPSG:2927")
         map.addLayer(shp)
         map.bounds = shp.bounds
-        def image = map.render(out)
+        map.render(out)
         out.close()
         assertTrue(f.exists())
         map.close()
+
+        ImageAssert.assertEquals(getFile("geoscript/render/map_to_out.png"), ImageIO.read(f), 100)
     }
 
     @Test void renderToPdf() {
@@ -187,7 +208,7 @@ class MapTestCase {
 
         Map map = new Map(type:"pdf", layers:[shp])
         map.addLayer(shp)
-        def image = map.render(f)
+        map.render(f)
         assertTrue(f.exists())
         map.close()
     }
@@ -202,7 +223,7 @@ class MapTestCase {
         shp.style = new Fill("white") + new Stroke("#CCCCCC", 0.1)
 
         Map map = new Map(type:"svg", layers:[shp])
-        def image = map.render(f)
+        map.render(f)
         assertTrue(f.exists())
         map.close()
     }
@@ -217,9 +238,11 @@ class MapTestCase {
         shp.style = new Fill("white") + new Stroke("#CCCCCC", 0.1)
 
         Map map = new Map(type:"jpeg", layers: [shp])
-        def image = map.render(f)
+        map.render(f)
         assertTrue(f.exists())
         map.close()
+
+        ImageAssert.assertEquals(getFile("geoscript/render/map.jpeg"), ImageIO.read(f), 100)
     }
 
     @Test void renderToGif() {
@@ -232,9 +255,13 @@ class MapTestCase {
         shp.style = new Fill("white") + new Stroke("#CCCCCC", 0.1)
 
         Map map = new Map(type:"gif", layers: [shp])
-        def image = map.render(f)
+        map.render(f)
         assertTrue(f.exists())
         map.close()
+
+        File f2 = folder.newFile("map2.gif")
+        ImageIO.write(ImageIO.read(f), 'gif', f2)
+        ImageAssert.assertEquals(getFile("geoscript/render/map.gif"), ImageIO.read(f2), 100)
     }
 
     @Test void renderToBase64() {

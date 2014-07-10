@@ -15,7 +15,7 @@ import com.sun.media.imageioimpl.plugins.gif.GIFImageWriterSpi
  * Render a Map to a GIF image.
  * @author Jared Erickson
  */
-class GIF extends Image{
+class GIF extends Image {
 
     /**
      * Create a new GIF
