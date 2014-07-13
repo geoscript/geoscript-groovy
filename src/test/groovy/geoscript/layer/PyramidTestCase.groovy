@@ -1,13 +1,10 @@
 package geoscript.layer
 
 import geoscript.geom.Bounds
-import geoscript.layer.Grid
-import geoscript.layer.Pyramid
-import geoscript.layer.Tile
 import geoscript.proj.Projection
+import org.junit.Test
 
 import static junit.framework.Assert.*
-import org.junit.Test
 
 /**
  * The Tile Pyramid Unit Test
@@ -15,7 +12,8 @@ import org.junit.Test
  */
 class PyramidTestCase {
 
-    @Test void create() {
+    @Test
+    void create() {
         Pyramid pyramid = new Pyramid(
                 proj: new Projection("EPSG:3857"),
                 bounds: new Bounds(-179.99, -85.0511, 179.99, 85.0511, "EPSG:4326").reproject("EPSG:3857"),
@@ -37,14 +35,16 @@ class PyramidTestCase {
         assertEquals 2, pyramid.grids.size()
     }
 
-    @Test void gridByZoomLevel() {
+    @Test
+    void gridByZoomLevel() {
         Pyramid pyramid = Pyramid.createGlobalMercatorPyramid()
         Grid grid = pyramid.grid(4)
         assertNotNull grid
         assertEquals 4, grid.z
     }
 
-    @Test void gridByBoundsAndResolutions() {
+    @Test
+    void gridByBoundsAndResolutions() {
         Pyramid pyramid = Pyramid.createGlobalMercatorPyramid()
         Bounds bounds = new Bounds(-123.09, 46.66, -121.13, 47.48, "EPSG:4326").reproject("EPSG:3857")
         Grid grid = pyramid.grid(bounds, bounds.width / 400.0, bounds.height / 200.0)
@@ -52,7 +52,8 @@ class PyramidTestCase {
         assertEquals 8, grid.z
     }
 
-    @Test void gridByBoundsAndSize() {
+    @Test
+    void gridByBoundsAndSize() {
         Pyramid pyramid = Pyramid.createGlobalMercatorPyramid()
         Bounds bounds = new Bounds(-123.09, 46.66, -121.13, 47.48, "EPSG:4326").reproject("EPSG:3857")
         Grid grid = pyramid.grid(bounds, 400, 200)
@@ -60,24 +61,27 @@ class PyramidTestCase {
         assertEquals 8, grid.z
     }
 
-    @Test void tileBounds() {
+    @Test
+    void tileBounds() {
         Pyramid pyramid = Pyramid.createGlobalMercatorPyramid()
-        Bounds bounds = pyramid.bounds(new Tile(0,0,0))
-        assertEquals bounds, new Bounds(-2.0036395147881314E7,-2.0037471205137067E7,2.0036395147881314E7,2.003747120513706E7,'EPSG:3857')
-        bounds = pyramid.bounds(new Tile(1,0,0))
-        assertEquals bounds, new Bounds(-2.0036395147881314E7,-2.0037471205137067E7,0.0,-3.725290298461914E-9,'EPSG:3857')
+        Bounds bounds = pyramid.bounds(new Tile(0, 0, 0))
+        assertEquals bounds, new Bounds(-2.0036395147881314E7, -2.0037471205137067E7, 2.0036395147881314E7, 2.003747120513706E7, 'EPSG:3857')
+        bounds = pyramid.bounds(new Tile(1, 0, 0))
+        assertEquals bounds, new Bounds(-2.0036395147881314E7, -2.0037471205137067E7, 0.0, -3.725290298461914E-9, 'EPSG:3857')
     }
 
-    @Test void osmTileBounds() {
+    @Test
+    void osmTileBounds() {
         Pyramid pyramid = Pyramid.createGlobalMercatorPyramid()
         pyramid.origin = Pyramid.Origin.TOP_LEFT
-        Tile tile = new Tile(7,28,45)
-        Bounds b1 = new Bounds(-1.127047227068324E7,5635538.776444796,-1.0957403596497595E7,5948624.264025062,"EPSG:3857")
+        Tile tile = new Tile(7, 28, 45)
+        Bounds b1 = new Bounds(-1.127047227068324E7, 5635538.776444796, -1.0957403596497595E7, 5948624.264025062, "EPSG:3857")
         Bounds b2 = pyramid.bounds(tile)
         assertEquals(b1, b2)
     }
 
-    @Test void createGlobalMercatorPyramid() {
+    @Test
+    void createGlobalMercatorPyramid() {
         Pyramid pyramid = Pyramid.createGlobalMercatorPyramid()
         assertEquals "EPSG:3857", pyramid.proj.id
         Bounds b = new Bounds(-179.99, -85.0511, 179.99, 85.0511, "EPSG:4326").reproject("EPSG:3857")

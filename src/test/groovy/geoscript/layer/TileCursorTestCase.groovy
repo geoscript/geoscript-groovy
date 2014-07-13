@@ -1,12 +1,9 @@
 package geoscript.layer
 
 import geoscript.geom.Bounds
-import geoscript.layer.MBTiles
-import geoscript.layer.Tile
-import geoscript.layer.TileCursor
+import org.junit.Test
 
 import static org.junit.Assert.*
-import org.junit.Test
 
 /**
  * The TileCursor Unit Test
@@ -14,7 +11,8 @@ import org.junit.Test
  */
 class TileCursorTestCase {
 
-    @Test void zoomLevel() {
+    @Test
+    void zoomLevel() {
         File file = new File(getClass().getClassLoader().getResource("states.mbtiles").toURI())
         MBTiles layer = new MBTiles(file)
         TileCursor cursor = new TileCursor(layer, 1)
@@ -27,7 +25,7 @@ class TileCursorTestCase {
         assertEquals 2, cursor.height
         assertEquals 4, cursor.size
         int c = 0
-        cursor.each{ Tile t ->
+        cursor.each { Tile t ->
             assertEquals 1, t.z
             assertNotNull t.data
             c++
@@ -35,7 +33,8 @@ class TileCursorTestCase {
         assertEquals 4, c
     }
 
-    @Test void tileCoordinates() {
+    @Test
+    void tileCoordinates() {
         File file = new File(getClass().getClassLoader().getResource("states.mbtiles").toURI())
         MBTiles layer = new MBTiles(file)
         TileCursor cursor = new TileCursor(layer, 2, 1, 2, 3, 3)
@@ -48,7 +47,7 @@ class TileCursorTestCase {
         assertEquals 2, cursor.height
         assertEquals 6, cursor.size
         int c = 0
-        cursor.each{ Tile t ->
+        cursor.each { Tile t ->
             assertEquals 2, t.z
             assertNotNull t.data
             c++
@@ -56,7 +55,8 @@ class TileCursorTestCase {
         assertEquals 6, c
     }
 
-    @Test void zoomAndBounds() {
+    @Test
+    void zoomAndBounds() {
         File file = new File(getClass().getClassLoader().getResource("states.mbtiles").toURI())
         MBTiles layer = new MBTiles(file)
         Bounds b = new Bounds(-123.09, 46.66, -121.13, 47.48, "EPSG:4326").reproject("EPSG:3857")
@@ -70,7 +70,7 @@ class TileCursorTestCase {
         assertEquals 1, cursor.height
         assertEquals 1, cursor.size
         int c = 0
-        cursor.each{ Tile t ->
+        cursor.each { Tile t ->
             assertEquals 3, t.z
             assertNotNull t.data
             c++
@@ -78,7 +78,8 @@ class TileCursorTestCase {
         assertEquals 1, c
     }
 
-    @Test void boundsAndResolution() {
+    @Test
+    void boundsAndResolution() {
         File file = new File(getClass().getClassLoader().getResource("states.mbtiles").toURI())
         MBTiles layer = new MBTiles(file)
         Bounds b = new Bounds(-124.73142200000001, 24.955967, -66.969849, 49.371735, "EPSG:4326").reproject("EPSG:3857")
@@ -92,7 +93,7 @@ class TileCursorTestCase {
         assertEquals 2, cursor.height
         assertEquals 8, cursor.size
         int c = 0
-        cursor.each{ Tile t ->
+        cursor.each { Tile t ->
             assertEquals 4, t.z
             assertNotNull t.data
             c++
@@ -100,7 +101,8 @@ class TileCursorTestCase {
         assertEquals 8, c
     }
 
-    @Test void boundsAndSize() {
+    @Test
+    void boundsAndSize() {
         File file = new File(getClass().getClassLoader().getResource("states.mbtiles").toURI())
         MBTiles layer = new MBTiles(file)
         Bounds b = new Bounds(-124.73142200000001, 24.955967, -66.969849, 49.371735, "EPSG:4326").reproject("EPSG:3857")
@@ -114,7 +116,7 @@ class TileCursorTestCase {
         assertEquals 2, cursor.height
         assertEquals 8, cursor.size
         int c = 0
-        cursor.each{ Tile t ->
+        cursor.each { Tile t ->
             assertEquals 4, t.z
             assertNotNull t.data
             c++
@@ -122,7 +124,8 @@ class TileCursorTestCase {
         assertEquals 8, c
     }
 
-    @Test void getBounds() {
+    @Test
+    void getBounds() {
         File file = new File(getClass().getClassLoader().getResource("states.mbtiles").toURI())
         MBTiles layer = new MBTiles(file)
         Bounds b = new Bounds(-124.73142200000001, 24.955967, -66.969849, 49.371735, "EPSG:4326").reproject("EPSG:3857")
@@ -132,7 +135,8 @@ class TileCursorTestCase {
         assertNotNull cursorBounds.proj
     }
 
-    @Test void resetAfterHasNextFalse() {
+    @Test
+    void resetAfterHasNextFalse() {
         File file = new File(getClass().getClassLoader().getResource("states.mbtiles").toURI())
         MBTiles layer = new MBTiles(file)
         TileCursor cursor = new TileCursor(layer, 1)
@@ -145,14 +149,14 @@ class TileCursorTestCase {
         assertEquals 2, cursor.height
         assertEquals 4, cursor.size
         int c = 0
-        cursor.each{ Tile t ->
+        cursor.each { Tile t ->
             assertEquals 1, t.z
             assertNotNull t.data
             c++
         }
         assertEquals 4, c
         c = 0
-        cursor.each{ Tile t ->
+        cursor.each { Tile t ->
             assertEquals 1, t.z
             assertNotNull t.data
             c++

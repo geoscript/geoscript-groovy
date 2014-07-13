@@ -1,7 +1,5 @@
 package geoscript.layer
 
-import geoscript.style.Fill
-import geoscript.style.Stroke
 import groovy.json.JsonSlurper
 import org.junit.Rule
 import org.junit.Test
@@ -18,12 +16,13 @@ class UTFGridTileRendererTestCase {
     @Rule
     public TemporaryFolder folder = new TemporaryFolder()
 
-    @Test void render() {
+    @Test
+    void render() {
         Shapefile shp = new Shapefile(new File(getClass().getClassLoader().getResource("states.shp").toURI()))
         File dir = folder.newFolder("states")
         UTFGrid utf = new UTFGrid(dir)
-        UTFGridTileRenderer renderer = new UTFGridTileRenderer(utf,shp,[shp.schema.get("STATE_NAME")])
-        byte[] data = renderer.render(utf.pyramid.bounds(utf.get(0,0,0)))
+        UTFGridTileRenderer renderer = new UTFGridTileRenderer(utf, shp, [shp.schema.get("STATE_NAME")])
+        byte[] data = renderer.render(utf.pyramid.bounds(utf.get(0, 0, 0)))
         assertNotNull data
         assertTrue data.length > 0
         String str = new String(data)

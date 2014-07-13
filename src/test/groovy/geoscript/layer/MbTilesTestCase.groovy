@@ -1,13 +1,6 @@
 package geoscript.layer
 
 import geoscript.geom.Bounds
-import geoscript.layer.Grid
-import geoscript.layer.MBTiles
-import geoscript.layer.Pyramid
-import geoscript.layer.Raster
-import geoscript.layer.Tile
-import geoscript.layer.TileCursor
-import geoscript.layer.WorldImage
 import geoscript.proj.Projection
 import org.junit.Rule
 import org.junit.Test
@@ -21,9 +14,11 @@ import static junit.framework.Assert.*
  */
 class MBTilesTestCase {
 
-    @Rule public TemporaryFolder folder = new TemporaryFolder()
+    @Rule
+    public TemporaryFolder folder = new TemporaryFolder()
 
-    @Test void create() {
+    @Test
+    void create() {
         File file = new File(getClass().getClassLoader().getResource("states.mbtiles").toURI())
         MBTiles layer = new MBTiles(file)
         Bounds b = new Bounds(-179.99, -85.0511, 179.99, 85.0511, "EPSG:4326").reproject("EPSG:3857")
@@ -48,7 +43,8 @@ class MBTilesTestCase {
         layer.close()
     }
 
-    @Test void get() {
+    @Test
+    void get() {
         File file = new File(getClass().getClassLoader().getResource("states.mbtiles").toURI())
         MBTiles layer = new MBTiles(file)
         Tile tile = layer.get(4, 2, 3)
@@ -60,12 +56,13 @@ class MBTilesTestCase {
         layer.close()
     }
 
-    @Test void put() {
+    @Test
+    void put() {
         // Since we are modifying the mbtiles file copy it to a temp file
         File file = new File(getClass().getClassLoader().getResource("states.mbtiles").toURI())
         File newFile = folder.newFile("states_temp.mbtiles")
-        newFile.withOutputStream {out ->
-            file.withInputStream {inp ->
+        newFile.withOutputStream { out ->
+            file.withInputStream { inp ->
                 out << inp
             }
         }
@@ -94,7 +91,8 @@ class MBTilesTestCase {
         layer.close()
     }
 
-    @Test void tilesByZoomLevel() {
+    @Test
+    void tilesByZoomLevel() {
         File file = new File(getClass().getClassLoader().getResource("states.mbtiles").toURI())
         MBTiles layer = new MBTiles(file)
         TileCursor cursor = layer.tiles(1)
@@ -107,7 +105,7 @@ class MBTilesTestCase {
         assertEquals 2, cursor.height
         assertEquals 4, cursor.size
         int c = 0
-        cursor.each{ Tile t ->
+        cursor.each { Tile t ->
             assertEquals 1, t.z
             assertNotNull t.data
             c++
@@ -116,7 +114,8 @@ class MBTilesTestCase {
         layer.close()
     }
 
-    @Test void tilesByTileCoordinates() {
+    @Test
+    void tilesByTileCoordinates() {
         File file = new File(getClass().getClassLoader().getResource("states.mbtiles").toURI())
         MBTiles layer = new MBTiles(file)
         TileCursor cursor = layer.tiles(2, 1, 2, 3, 3)
@@ -129,7 +128,7 @@ class MBTilesTestCase {
         assertEquals 2, cursor.height
         assertEquals 6, cursor.size
         int c = 0
-        cursor.each{ Tile t ->
+        cursor.each { Tile t ->
             assertEquals 2, t.z
             assertNotNull t.data
             c++
@@ -138,7 +137,8 @@ class MBTilesTestCase {
         layer.close()
     }
 
-    @Test void tilesByBoundsAndZoomLevel() {
+    @Test
+    void tilesByBoundsAndZoomLevel() {
         File file = new File(getClass().getClassLoader().getResource("states.mbtiles").toURI())
         MBTiles layer = new MBTiles(file)
         Bounds b = new Bounds(-123.09, 46.66, -121.13, 47.48, "EPSG:4326").reproject("EPSG:3857")
@@ -152,7 +152,7 @@ class MBTilesTestCase {
         assertEquals 1, cursor.height
         assertEquals 1, cursor.size
         int c = 0
-        cursor.each{ Tile t ->
+        cursor.each { Tile t ->
             assertEquals 3, t.z
             assertNotNull t.data
             c++
@@ -161,7 +161,8 @@ class MBTilesTestCase {
         layer.close()
     }
 
-    @Test void tilesByBoundsAndResolutions() {
+    @Test
+    void tilesByBoundsAndResolutions() {
         File file = new File(getClass().getClassLoader().getResource("states.mbtiles").toURI())
         MBTiles layer = new MBTiles(file)
         Bounds b = new Bounds(-124.73142200000001, 24.955967, -66.969849, 49.371735, "EPSG:4326").reproject("EPSG:3857")
@@ -175,7 +176,7 @@ class MBTilesTestCase {
         assertEquals 2, cursor.height
         assertEquals 8, cursor.size
         int c = 0
-        cursor.each{ Tile t ->
+        cursor.each { Tile t ->
             assertEquals 4, t.z
             assertNotNull t.data
             c++
@@ -184,7 +185,8 @@ class MBTilesTestCase {
         layer.close()
     }
 
-    @Test void tilesByBoundsAndImageSize() {
+    @Test
+    void tilesByBoundsAndImageSize() {
         File file = new File(getClass().getClassLoader().getResource("states.mbtiles").toURI())
         MBTiles layer = new MBTiles(file)
         Bounds b = new Bounds(-124.73142200000001, 24.955967, -66.969849, 49.371735, "EPSG:4326").reproject("EPSG:3857")
@@ -198,7 +200,7 @@ class MBTilesTestCase {
         assertEquals 2, cursor.height
         assertEquals 8, cursor.size
         int c = 0
-        cursor.each{ Tile t ->
+        cursor.each { Tile t ->
             assertEquals 4, t.z
             assertNotNull t.data
             c++
@@ -207,7 +209,8 @@ class MBTilesTestCase {
         layer.close()
     }
 
-    @Test void getTileCoordinates() {
+    @Test
+    void getTileCoordinates() {
         File file = new File(getClass().getClassLoader().getResource("states.mbtiles").toURI())
         MBTiles layer = new MBTiles(file)
         Bounds b = new Bounds(-124.73142200000001, 24.955967, -66.969849, 49.371735, "EPSG:4326").reproject("EPSG:3857")
@@ -219,7 +222,8 @@ class MBTilesTestCase {
         layer.close()
     }
 
-    @Test void getRaster() {
+    @Test
+    void getRaster() {
         File file = new File(getClass().getClassLoader().getResource("states.mbtiles").toURI())
         MBTiles layer = new MBTiles(file)
         Bounds b = new Bounds(-124.73142200000001, 24.955967, -66.969849, 49.371735, "EPSG:4326").reproject("EPSG:3857")
@@ -233,7 +237,8 @@ class MBTilesTestCase {
         layer.close()
     }
 
-    @Test void getRasterCropped() {
+    @Test
+    void getRasterCropped() {
         File file = new File(getClass().getClassLoader().getResource("states.mbtiles").toURI())
         MBTiles layer = new MBTiles(file)
         Bounds b = new Bounds(-124.73142200000001, 24.955967, -66.969849, 49.371735, "EPSG:4326").reproject("EPSG:3857")

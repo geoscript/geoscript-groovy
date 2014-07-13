@@ -1,9 +1,8 @@
 package geoscript.layer
 
-import geoscript.layer.Grid
-
-import static junit.framework.Assert.*
 import org.junit.Test
+
+import static junit.framework.Assert.assertEquals
 
 /**
  * The Tile Grid Unit Test
@@ -11,8 +10,9 @@ import org.junit.Test
  */
 class GridTestCase {
 
-    @Test void grid() {
-        Grid grid = new Grid(1,2,3,520,250)
+    @Test
+    void grid() {
+        Grid grid = new Grid(1, 2, 3, 520, 250)
         assertEquals 1, grid.z
         assertEquals 2, grid.width
         assertEquals 3, grid.height

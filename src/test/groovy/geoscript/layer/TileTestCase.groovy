@@ -1,6 +1,5 @@
 package geoscript.layer
 
-import geoscript.layer.Tile
 import org.junit.Test
 import java.awt.image.BufferedImage
 import static org.junit.Assert.*
@@ -11,7 +10,8 @@ import static org.junit.Assert.*
  */
 class TileTestCase {
 
-    @Test void tile() {
+    @Test
+    void tile() {
         Tile t = new Tile(1, 0, 2)
         assertEquals 1, t.z
         assertEquals 0, t.x
