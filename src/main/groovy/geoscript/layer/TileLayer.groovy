@@ -13,7 +13,7 @@ import java.awt.image.BufferedImage
  * A TileLayer
  * @author Jared Erickson
  */
-abstract class TileLayer implements Closeable {
+abstract class TileLayer<T extends Tile> implements Closeable {
 
     /**
      * The name
@@ -43,13 +43,13 @@ abstract class TileLayer implements Closeable {
      * @param y The row
      * @return A Tile
      */
-    abstract Tile get(long z, long x, long y)
+    abstract T get(long z, long x, long y)
 
     /**
      * Add a Tile
      * @param t The Tile
      */
-    abstract void put(Tile t)
+    abstract void put(T t)
 
     /**
      * Close the TileLayer
@@ -61,7 +61,7 @@ abstract class TileLayer implements Closeable {
      * @param z The zoom level
      * @return A TileCursor
      */
-    TileCursor tiles(long z) {
+    TileCursor<T> tiles(long z) {
         new TileCursor(this, z)
     }
 
@@ -74,7 +74,7 @@ abstract class TileLayer implements Closeable {
      * @param maxY The max y or row
      * @return A TileCursor
      */
-    TileCursor tiles(long z, long minX, long minY, long maxX, long maxY) {
+    TileCursor<T> tiles(long z, long minX, long minY, long maxX, long maxY) {
         new TileCursor(this, z, minX, minY, maxX, maxY)
     }
 
@@ -84,7 +84,7 @@ abstract class TileLayer implements Closeable {
      * @param b The Bounds
      * @return A TileCursor
      */
-    TileCursor tiles(Bounds b, long z) {
+    TileCursor<T> tiles(Bounds b, long z) {
         new TileCursor(this, b, z)
     }
 
@@ -95,7 +95,7 @@ abstract class TileLayer implements Closeable {
      * @param resY The y resolution
      * @return A TileCursor
      */
-    TileCursor tiles(Bounds b, double resX, double resY) {
+    TileCursor<T> tiles(Bounds b, double resX, double resY) {
         new TileCursor(this, b, resX, resY)
     }
 
@@ -106,7 +106,7 @@ abstract class TileLayer implements Closeable {
      * @param h The image height
      * @return A TileCursor
      */
-    TileCursor tiles(Bounds b, int w, int h) {
+    TileCursor<T> tiles(Bounds b, int w, int h) {
         new TileCursor(this, b, w, h)
     }
 
@@ -134,36 +134,6 @@ abstract class TileLayer implements Closeable {
             maxY = invertedMaxY - 1
         }
         [minX: minX, minY: minY, maxX: maxX, maxY: maxY]
-    }
-
-    /**
-     * Get a Raster using Tiles from the TileCursor
-     * @param cursor The TileCursor
-     * @return A Raster
-     */
-    Raster getRaster(TileCursor cursor) {
-        Bounds tileBounds = cursor.bounds
-        int imageWidth = cursor.width * pyramid.tileWidth
-        int imageHeight =  cursor.height * pyramid.tileHeight
-        BufferedImage image = new BufferedImage(imageWidth, imageHeight, BufferedImage.TYPE_INT_ARGB)
-        Graphics2D g2d = image.createGraphics()
-        cursor.each{ Tile tile ->
-            int x
-            if (pyramid.origin == Pyramid.Origin.TOP_LEFT || pyramid.origin == Pyramid.Origin.BOTTOM_LEFT) {
-                x = (tile.x - cursor.minX) * pyramid.tileWidth
-            } else {
-                x = (cursor.maxX - tile.x) * pyramid.tileWidth
-            }
-            int y
-            if (pyramid.origin == Pyramid.Origin.TOP_LEFT || pyramid.origin == Pyramid.Origin.TOP_RIGHT) {
-                y = (tile.y - cursor.minY) * pyramid.tileHeight
-            } else {
-                y = (cursor.maxY - tile.y) * pyramid.tileHeight
-            }
-            g2d.drawImage(tile.image, x, y, pyramid.tileWidth, pyramid.tileHeight, null)
-        }
-        g2d.dispose()
-        new Raster(image, tileBounds)
     }
 
     /**
@@ -208,18 +178,6 @@ abstract class TileLayer implements Closeable {
             }
         }
         outLayer
-    }
-
-    /**
-     * Get a Raster using Tiles for the Bounds and image size.  The Raster is cropped
-     * to exactly the given Bounds
-     * @param b Bounds
-     * @param w The image width
-     * @param h The image height
-     * @return A Raster
-     */
-    Raster getRaster(Bounds b, int w, int h) {
-        getRaster(tiles(b,w,h)).crop(b)
     }
 
     @Override

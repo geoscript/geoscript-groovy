@@ -4,7 +4,7 @@ package geoscript.layer
  * A Open Street Map TileLayer that is ready only.
  * @author Jared Erickson
  */
-class OSM extends TileLayer {
+class OSM extends ImageTileLayer {
 
     /**
      * The base URL for OSM map tiles
@@ -71,8 +71,8 @@ class OSM extends TileLayer {
      * @return A Tile
      */
     @Override
-    Tile get(long z, long x, long y) {
-        Tile tile = new Tile(z, x, y)
+    ImageTile get(long z, long x, long y) {
+        ImageTile tile = new ImageTile(z, x, y)
         String baseUrl = getBaseUrl()
         URL url = new URL("${baseUrl}/${z}/${x}/${y}.${imageType}")
         url.withInputStream {input ->
@@ -99,7 +99,7 @@ class OSM extends TileLayer {
      * @param t The Tile
      */
     @Override
-    void put(Tile t) {
+    void put(ImageTile t) {
         throw new IllegalArgumentException("OSM is ready only!")
     }
 

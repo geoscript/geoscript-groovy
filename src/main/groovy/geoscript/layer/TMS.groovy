@@ -5,7 +5,7 @@ package geoscript.layer
  * if given a File directory but it is ready only if given a URL.
  * @author Jared Erickson
  */
-class TMS extends TileLayer {
+class TMS extends ImageTileLayer {
 
     /**
      * The File directory
@@ -87,8 +87,8 @@ class TMS extends TileLayer {
      * @return A Tile
      */
     @Override
-    Tile get(long z, long x, long y) {
-        Tile tile = new Tile(z, x, y)
+    ImageTile get(long z, long x, long y) {
+        ImageTile tile = new ImageTile(z, x, y)
         if (dir) {
             File file = new File(new File(new File(this.dir, String.valueOf(z)), String.valueOf(x)), "${y}.${imageType}")
             if (file.exists()) {
@@ -108,7 +108,7 @@ class TMS extends TileLayer {
      * @param t The Tile
      */
     @Override
-    void put(Tile t) {
+    void put(ImageTile t) {
         if(!dir) {
             throw new IllegalArgumentException("TMS with URL are ready only!")
         }

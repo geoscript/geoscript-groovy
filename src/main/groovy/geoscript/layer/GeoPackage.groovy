@@ -10,7 +10,7 @@ import org.geotools.geopkg.TileReader
  * A GeoPackage TileLayer
  * @author Jared Erickson
  */
-class GeoPackage extends TileLayer {
+class GeoPackage extends ImageTileLayer {
 
     /**
      * The MBTiles File
@@ -116,8 +116,8 @@ class GeoPackage extends TileLayer {
     }
 
     @Override
-    Tile get(long z, long x, long y) {
-        Tile t = null
+    ImageTile get(long z, long x, long y) {
+        ImageTile t = null
         TileReader tileReader = this.geopkg.reader(this.tileEntry,
                 z as Integer, z as Integer,
                 x as Integer, x as Integer,
@@ -125,9 +125,9 @@ class GeoPackage extends TileLayer {
         try {
             if (tileReader.hasNext()) {
                 org.geotools.geopkg.Tile tile = tileReader.next()
-                t = new Tile(tile.zoom, tile.column, tile.row, tile.data)
+                t = new ImageTile(tile.zoom, tile.column, tile.row, tile.data)
             } else {
-                t = new Tile(z, x, y)
+                t = new ImageTile(z, x, y)
             }
         } finally {
             tileReader.close()
@@ -136,7 +136,7 @@ class GeoPackage extends TileLayer {
     }
 
     @Override
-    void put(Tile t) {
+    void put(ImageTile t) {
         this.geopkg.add(this.tileEntry,
                 new org.geotools.geopkg.Tile(t.z as Integer, t.x as Integer, t.y as Integer, t.data))
     }

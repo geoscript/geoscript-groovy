@@ -7,7 +7,7 @@ import geoscript.proj.Projection
  * A UTFGrid TileLayer
  * @author Jared Erickson
  */
-class UTFGrid extends TileLayer {
+class UTFGrid extends TileLayer<Tile> {
 
     /**
      * The UTFGrid directory

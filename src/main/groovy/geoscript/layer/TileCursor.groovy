@@ -6,7 +6,7 @@ import geoscript.geom.Bounds
  * A TileCursor provides an easy way to iterate through Tiles.
  * @author Jared Erickson
  */
-class TileCursor implements Iterator {
+class TileCursor<T extends Tile> implements Iterator {
 
     /**
      * The TileLayer that the Tiles comes from

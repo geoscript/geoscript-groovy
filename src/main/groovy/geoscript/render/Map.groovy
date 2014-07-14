@@ -2,6 +2,7 @@ package geoscript.render
 
 import geoscript.filter.Color
 import geoscript.geom.Bounds
+import geoscript.layer.ImageTileLayer
 import geoscript.layer.Layer
 import geoscript.layer.WMS
 import geoscript.proj.Projection
@@ -292,8 +293,8 @@ class Map {
                 mapLayer = new FeatureLayer(layer.fs, layer.style.gtStyle)
             } else if (layer instanceof Raster) {
                 mapLayer = new GridCoverageLayer(layer.coverage, layer.style.gtStyle)
-            } else if (layer instanceof TileLayer) {
-                TileLayer tileLayer = layer as TileLayer
+            } else if (layer instanceof ImageTileLayer) {
+                ImageTileLayer tileLayer = layer as ImageTileLayer
                 def raster = tileLayer.getRaster(this.bounds.reproject(tileLayer.proj), this.width, this.height)
                 mapLayer = new GridCoverageLayer(raster.coverage, new RasterSymbolizer().gtStyle)
             } else if (layer instanceof geoscript.layer.WMSLayer) {

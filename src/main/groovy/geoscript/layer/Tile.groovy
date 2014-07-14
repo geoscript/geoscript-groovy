@@ -62,21 +62,6 @@ class Tile {
     }
 
     /**
-     * Get the data as a BufferedImage
-     * @return A BufferedImage
-     */
-    BufferedImage getImage() {
-        if (data == null) {
-            null
-        } else {
-            InputStream input = new ByteArrayInputStream(data)
-            BufferedImage image = ImageIO.read(input)
-            input.close()
-            image
-        }
-    }
-
-    /**
      * Get the data as a Base64 encoded string
      * @return A Base64 encoded string
      */

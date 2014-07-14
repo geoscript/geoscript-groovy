@@ -17,7 +17,6 @@ class TileTestCase {
         assertEquals 0, t.x
         assertEquals 2, t.y
         assertNull t.data
-        assertNull t.image
         assertNull t.base64String
         assertEquals "Tile(x:0, y:2, z:1)", t.toString()
 
@@ -28,9 +27,6 @@ class TileTestCase {
         assertEquals 2, t.y
         assertNotNull t.data
         assertEquals "Tile(x:0, y:2, z:1)", t.toString()
-
-        BufferedImage image = t.image
-        assertNotNull image
 
         String base64str = t.base64String
         assertNotNull base64str

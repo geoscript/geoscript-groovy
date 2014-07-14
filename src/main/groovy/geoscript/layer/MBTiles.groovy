@@ -10,7 +10,7 @@ import org.geotools.mbtiles.MBTilesTile
  * The MBTiles TileLayer
  * @author Jared Erickson
  */
-class MBTiles extends TileLayer {
+class MBTiles extends ImageTileLayer {
 
     /**
      * The MBTiles File
@@ -131,13 +131,13 @@ class MBTiles extends TileLayer {
     }
 
     @Override
-    Tile get(long z, long x, long y) {
+    ImageTile get(long z, long x, long y) {
         MBTilesTile t = tiles.loadTile(z, x, y)
-        new Tile(t.zoomLevel, t.tileColumn, t.tileRow, t.data)
+        new ImageTile(t.zoomLevel, t.tileColumn, t.tileRow, t.data)
     }
 
     @Override
-    void put(Tile t) {
+    void put(ImageTile t) {
         MBTilesTile tile = new MBTilesTile(t.z, t.x, t.y)
         tile.data = t.data
         tiles.saveTile(tile)
