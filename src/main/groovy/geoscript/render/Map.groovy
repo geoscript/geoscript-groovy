@@ -2,10 +2,13 @@ package geoscript.render
 
 import geoscript.filter.Color
 import geoscript.geom.Bounds
+import geoscript.layer.ImageTileLayer
 import geoscript.layer.Layer
 import geoscript.layer.WMS
 import geoscript.proj.Projection
 import geoscript.layer.Raster
+import geoscript.style.RasterSymbolizer
+import geoscript.layer.TileLayer
 import org.geotools.map.FeatureLayer
 import org.geotools.map.GridCoverageLayer
 import org.geotools.map.WMSLayer
@@ -168,6 +171,14 @@ class Map {
     }
 
     /**
+     * Add a TileLayer
+     * @param layer The TileLayer
+     */
+    void addTileLayer(TileLayer layer) {
+        layers.add(layer)
+    }
+
+    /**
      * Get the Bounds
      * @return The Bounds
      */
@@ -282,6 +293,10 @@ class Map {
                 mapLayer = new FeatureLayer(layer.fs, layer.style.gtStyle)
             } else if (layer instanceof Raster) {
                 mapLayer = new GridCoverageLayer(layer.coverage, layer.style.gtStyle)
+            } else if (layer instanceof ImageTileLayer) {
+                ImageTileLayer tileLayer = layer as ImageTileLayer
+                def raster = tileLayer.getRaster(this.bounds.reproject(tileLayer.proj), this.width, this.height)
+                mapLayer = new GridCoverageLayer(raster.coverage, new RasterSymbolizer().gtStyle)
             } else if (layer instanceof geoscript.layer.WMSLayer) {
                 def wmsLayer = layer as geoscript.layer.WMSLayer
                 def gtWmsLayer = new WMSLayer(wmsLayer.wms.wms, wmsLayer.layers[0].layer)

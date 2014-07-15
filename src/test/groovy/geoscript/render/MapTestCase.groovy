@@ -8,6 +8,7 @@ import geoscript.layer.Raster
 import geoscript.style.Fill
 import geoscript.style.Stroke
 import org.geotools.image.test.ImageAssert
+import geoscript.layer.MBTiles
 import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.TemporaryFolder
@@ -114,6 +115,23 @@ class MapTestCase {
         map.close()
 
         ImageAssert.assertEquals(getFile("geoscript/render/map_to_dem.png"), ImageIO.read(out), 100)
+    }
+
+    @Test void renderTileLayer() {
+        MBTiles layer = new MBTiles(new File(getClass().getClassLoader().getResource("states.mbtiles").toURI()))
+        Shapefile shp = new Shapefile(new File(getClass().getClassLoader().getResource("states.shp").toURI()))
+        shp.style = new Stroke("#ff0000", 2.0)
+
+        Map map = new Map()
+        map.addLayer(shp)
+        map.addTileLayer(layer)
+        def image = map.renderToImage()
+        assertNotNull(image)
+
+        File out = folder.newFile("raster.png")
+        javax.imageio.ImageIO.write(image, "png", out);
+        assertTrue(out.exists())
+        map.close()
     }
 
     @Test void renderToImageWithMapNoProjection() {
