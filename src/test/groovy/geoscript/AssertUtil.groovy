@@ -1,6 +1,12 @@
 package geoscript
 
+import geoscript.geom.Bounds
+
 import static org.junit.Assert.*
+import static org.junit.Assert.assertEquals
+import static org.junit.Assert.assertEquals
+import static org.junit.Assert.assertEquals
+import static org.junit.Assert.assertEquals
 
 /**
  * A collection of assertion utilities.
@@ -28,6 +34,14 @@ class AssertUtil {
             }
             assertEquals("Lines should match", exp, act)
         }
+    }
+
+    static void assertBoundsEquals(Bounds expected, Bounds actual, double delta) {
+        assertEquals expected.minX, actual.minX, delta
+        assertEquals expected.minY, actual.minY, delta
+        assertEquals expected.maxX, actual.maxX, delta
+        assertEquals expected.maxY, actual.maxY, delta
+        assertEquals expected.proj, actual.proj
     }
 
 }

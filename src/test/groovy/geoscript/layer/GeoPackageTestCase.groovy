@@ -1,18 +1,13 @@
 package geoscript.layer
 
 import geoscript.geom.Bounds
-import geoscript.layer.GeoPackage
-import geoscript.layer.Grid
-import geoscript.layer.Pyramid
-import geoscript.layer.Raster
-import geoscript.layer.Tile
-import geoscript.layer.TileCursor
-import geoscript.layer.WorldImage
 import geoscript.proj.Projection
 import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.TemporaryFolder
+
 import static org.junit.Assert.*
+import static geoscript.AssertUtil.assertBoundsEquals
 
 /**
  * The GeoPackage Unit Test
@@ -20,22 +15,20 @@ import static org.junit.Assert.*
  */
 class GeoPackageTestCase {
 
-    @Rule public TemporaryFolder folder = new TemporaryFolder()
+    @Rule
+    public TemporaryFolder folder = new TemporaryFolder()
 
-    @Test void create() {
+    @Test
+    void create() {
         File file = new File(getClass().getClassLoader().getResource("states.gpkg").toURI())
         GeoPackage layer = new GeoPackage(file, "states")
-        Bounds b = new Bounds(-2.00363951478813E7,-2.00374712051371E7,2.00363951478813E7,2.00374712051371E7,"EPSG:3857")
+        Bounds b = new Bounds(-2.00363951478813E7, -2.00374712051371E7, 2.00363951478813E7, 2.00374712051371E7, "EPSG:3857")
         assertEquals "states", layer.name
         assertEquals new Projection("EPSG:3857"), layer.proj
-        assertEquals b, layer.bounds
+        assertBoundsEquals b, layer.bounds, 0.0001
         Pyramid pyramid = layer.pyramid
         assertEquals "EPSG:3857", pyramid.proj.id
-        assertEquals b.minX, pyramid.bounds.minX, 0.0001
-        assertEquals b.minY, pyramid.bounds.minY, 0.0001
-        assertEquals b.maxX, pyramid.bounds.maxX, 0.0001
-        assertEquals b.maxY, pyramid.bounds.maxY, 0.0001
-        assertEquals b.proj, pyramid.bounds.proj
+        assertBoundsEquals b, pyramid.bounds, 0.0001
         assertEquals 256, pyramid.tileWidth
         assertEquals 256, pyramid.tileHeight
         assertEquals Pyramid.Origin.BOTTOM_LEFT, pyramid.origin
@@ -51,7 +44,8 @@ class GeoPackageTestCase {
         layer.close()
     }
 
-    @Test void get() {
+    @Test
+    void get() {
         File file = new File(getClass().getClassLoader().getResource("states.gpkg").toURI())
         GeoPackage layer = new GeoPackage(file, "states")
         Tile tile = layer.get(4, 2, 3)
@@ -63,12 +57,13 @@ class GeoPackageTestCase {
         layer.close()
     }
 
-    @Test void put() {
+    @Test
+    void put() {
         // Since we are modifying the mbtiles file copy it to a temp file
         File file = new File(getClass().getClassLoader().getResource("states.gpkg").toURI())
         File newFile = folder.newFile("states_temp.gpkg")
-        newFile.withOutputStream {out ->
-            file.withInputStream {inp ->
+        newFile.withOutputStream { out ->
+            file.withInputStream { inp ->
                 out << inp
             }
         }
@@ -97,7 +92,8 @@ class GeoPackageTestCase {
         layer.close()
     }
 
-    @Test void tilesByZoomLevel() {
+    @Test
+    void tilesByZoomLevel() {
         File file = new File(getClass().getClassLoader().getResource("states.gpkg").toURI())
         GeoPackage layer = new GeoPackage(file, "states")
         TileCursor cursor = layer.tiles(1)
@@ -110,7 +106,7 @@ class GeoPackageTestCase {
         assertEquals 2, cursor.height
         assertEquals 4, cursor.size
         int c = 0
-        cursor.each{ Tile t ->
+        cursor.each { Tile t ->
             assertEquals 1, t.z
             assertNotNull t.data
             c++
@@ -119,7 +115,8 @@ class GeoPackageTestCase {
         layer.close()
     }
 
-    @Test void tilesByTileCoordinates() {
+    @Test
+    void tilesByTileCoordinates() {
         File file = new File(getClass().getClassLoader().getResource("states.gpkg").toURI())
         GeoPackage layer = new GeoPackage(file, "states")
         TileCursor cursor = layer.tiles(2, 1, 2, 3, 3)
@@ -132,7 +129,7 @@ class GeoPackageTestCase {
         assertEquals 2, cursor.height
         assertEquals 6, cursor.size
         int c = 0
-        cursor.each{ Tile t ->
+        cursor.each { Tile t ->
             assertEquals 2, t.z
             assertNotNull t.data
             c++
@@ -141,7 +138,8 @@ class GeoPackageTestCase {
         layer.close()
     }
 
-    @Test void tilesByBoundsAndZoomLevel() {
+    @Test
+    void tilesByBoundsAndZoomLevel() {
         File file = new File(getClass().getClassLoader().getResource("states.gpkg").toURI())
         GeoPackage layer = new GeoPackage(file, "states")
         Bounds b = new Bounds(-123.09, 46.66, -121.13, 47.48, "EPSG:4326").reproject("EPSG:3857")
@@ -155,7 +153,7 @@ class GeoPackageTestCase {
         assertEquals 1, cursor.height
         assertEquals 1, cursor.size
         int c = 0
-        cursor.each{ Tile t ->
+        cursor.each { Tile t ->
             assertEquals 3, t.z
             assertNotNull t.data
             c++
@@ -164,7 +162,8 @@ class GeoPackageTestCase {
         layer.close()
     }
 
-    @Test void tilesByBoundsAndResolutions() {
+    @Test
+    void tilesByBoundsAndResolutions() {
         File file = new File(getClass().getClassLoader().getResource("states.gpkg").toURI())
         GeoPackage layer = new GeoPackage(file, "states")
         Bounds b = new Bounds(-124.73142200000001, 24.955967, -66.969849, 49.371735, "EPSG:4326").reproject("EPSG:3857")
@@ -178,7 +177,7 @@ class GeoPackageTestCase {
         assertEquals 2, cursor.height
         assertEquals 8, cursor.size
         int c = 0
-        cursor.each{ Tile t ->
+        cursor.each { Tile t ->
             assertEquals 4, t.z
             assertNotNull t.data
             c++
@@ -187,7 +186,8 @@ class GeoPackageTestCase {
         layer.close()
     }
 
-    @Test void tilesByBoundsAndImageSize() {
+    @Test
+    void tilesByBoundsAndImageSize() {
         File file = new File(getClass().getClassLoader().getResource("states.gpkg").toURI())
         GeoPackage layer = new GeoPackage(file, "states")
         Bounds b = new Bounds(-124.73142200000001, 24.955967, -66.969849, 49.371735, "EPSG:4326").reproject("EPSG:3857")
@@ -201,7 +201,7 @@ class GeoPackageTestCase {
         assertEquals 2, cursor.height
         assertEquals 8, cursor.size
         int c = 0
-        cursor.each{ Tile t ->
+        cursor.each { Tile t ->
             assertEquals 4, t.z
             assertNotNull t.data
             c++
@@ -210,7 +210,8 @@ class GeoPackageTestCase {
         layer.close()
     }
 
-    @Test void getTileCoordinates() {
+    @Test
+    void getTileCoordinates() {
         File file = new File(getClass().getClassLoader().getResource("states.gpkg").toURI())
         GeoPackage layer = new GeoPackage(file, "states")
         Bounds b = new Bounds(-124.73142200000001, 24.955967, -66.969849, 49.371735, "EPSG:4326").reproject("EPSG:3857")
@@ -222,7 +223,8 @@ class GeoPackageTestCase {
         layer.close()
     }
 
-    @Test void getRaster() {
+    @Test
+    void getRaster() {
         File file = new File(getClass().getClassLoader().getResource("states.gpkg").toURI())
         GeoPackage layer = new GeoPackage(file, "states")
         Bounds b = new Bounds(-124.73142200000001, 24.955967, -66.969849, 49.371735, "EPSG:4326").reproject("EPSG:3857")
@@ -236,7 +238,8 @@ class GeoPackageTestCase {
         layer.close()
     }
 
-    @Test void getRasterCropped() {
+    @Test
+    void getRasterCropped() {
         File file = new File(getClass().getClassLoader().getResource("states.gpkg").toURI())
         GeoPackage layer = new GeoPackage(file, "states")
         Bounds b = new Bounds(-124.73142200000001, 24.955967, -66.969849, 49.371735, "EPSG:4326").reproject("EPSG:3857")
