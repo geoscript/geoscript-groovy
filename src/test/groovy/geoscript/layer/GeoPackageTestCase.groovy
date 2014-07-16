@@ -31,7 +31,11 @@ class GeoPackageTestCase {
         assertEquals b, layer.bounds
         Pyramid pyramid = layer.pyramid
         assertEquals "EPSG:3857", pyramid.proj.id
-        assertEquals b, pyramid.bounds
+        assertEquals b.minX, pyramid.bounds.minX, 0.0001
+        assertEquals b.minY, pyramid.bounds.minY, 0.0001
+        assertEquals b.maxX, pyramid.bounds.maxX, 0.0001
+        assertEquals b.maxY, pyramid.bounds.maxY, 0.0001
+        assertEquals b.proj, pyramid.bounds.proj
         assertEquals 256, pyramid.tileWidth
         assertEquals 256, pyramid.tileHeight
         assertEquals Pyramid.Origin.BOTTOM_LEFT, pyramid.origin
