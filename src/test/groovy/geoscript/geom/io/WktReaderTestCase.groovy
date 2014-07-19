@@ -1,7 +1,7 @@
 package geoscript.geom.io
 
 import org.junit.Test
-import static org.junit.Assert.assertEquals
+import static org.junit.Assert.*
 import geoscript.geom.*
 
 /**
@@ -55,6 +55,14 @@ class WktReaderTestCase {
         assertEquals expected.wkt, actual.wkt
     }
 
+    @Test void readMultiPoint2() {
+        WktReader reader = new WktReader()
+        String wkt = "MULTIPOINT (111 -47, 110 -46.5)"
+        MultiPoint expected = new MultiPoint([111,-47],[110,-46.5])
+        MultiPoint actual = reader.read(wkt)
+        assertEquals expected.wkt, actual.wkt
+    }
+
     @Test void readMultiLineString() {
         WktReader reader = new WktReader()
         String wkt = "MULTILINESTRING ((1 2, 3 4), (5 6, 7 8))"
@@ -76,6 +84,56 @@ class WktReaderTestCase {
         String wkt = "GEOMETRYCOLLECTION (POINT (100 0), LINESTRING (101 0, 102 1))"
         GeometryCollection expected = new GeometryCollection(new Point(100.0, 0.0), new LineString([101.0, 0.0], [102.0,1.0]))
         GeometryCollection actual = reader.read(wkt)
+        assertEquals expected.wkt, actual.wkt
+    }
+
+    @Test void readCircularString() {
+        WktReader reader = new WktReader()
+        String wkt = "CIRCULARSTRING(6.12 10.0, 7.07 7.07, 10.0 0.0)"
+        CircularString expected = new CircularString([6.12, 10.0],[7.07, 7.07],[10.0, 0.0])
+        CircularString actual = reader.read(wkt)
+        assertEquals expected.curvedWkt, actual.curvedWkt
+        assertEquals expected.wkt, actual.wkt
+
+        [
+                "CIRCULARSTRING (4 1, 7 4, 4 7)",
+                "CIRCULARSTRING(1 1, 2 0, 2 0, 1 1, 0 1)"
+        ].each {
+            assertTrue reader.read(it) instanceof CircularString
+        }
+
+    }
+
+    @Test void readCircularRing() {
+        WktReader reader = new WktReader()
+        String wkt = "CIRCULARSTRING(2.0 1.0, 1.0 2.0, 0.0 1.0, 1.0 0.0, 2.0 1.0)"
+        CircularRing expected = new CircularRing([2, 1],[1, 2],[0, 1],[1, 0],[2, 1])
+        CircularRing actual = reader.read(wkt)
+        assertEquals expected.curvedWkt, actual.curvedWkt
+        assertEquals expected.wkt, actual.wkt
+    }
+
+    @Test void readCompoundCurve() {
+        WktReader reader = new WktReader()
+        String wkt = "COMPOUNDCURVE(CIRCULARSTRING(10.0 10.0, 0.0 20.0, -10.0 10.0), (-10.0 10.0, -10.0 0.0, 10.0 0.0, 5.0 5.0))"
+        CompoundCurve expected = new CompoundCurve(
+                new CircularString([10.0, 10.0], [0.0, 20.0], [-10.0, 10.0]),
+                new LineString([-10.0, 10.0], [-10.0, 0.0], [10.0, 0.0], [5.0, 5.0])
+        )
+        CompoundCurve actual = reader.read(wkt)
+        assertEquals expected.curvedWkt, actual.curvedWkt
+        assertEquals expected.wkt, actual.wkt
+    }
+
+    @Test void readCompoundRing() {
+        WktReader reader = new WktReader()
+        String wkt = "COMPOUNDCURVE(CIRCULARSTRING(10.0 10.0, 0.0 20.0, -10.0 10.0), (-10.0 10.0, -10.0 0.0, 10.0 0.0, 10.0 10.0))"
+        CompoundRing expected = new CompoundRing(
+                new CircularString([10.0, 10.0], [0.0, 20.0], [-10.0, 10.0]),
+                new LineString([-10.0, 10.0], [-10.0, 0.0], [10.0, 0.0], [10.0, 10.0])
+        )
+        CompoundRing actual = reader.read(wkt)
+        assertEquals expected.curvedWkt, actual.curvedWkt
         assertEquals expected.wkt, actual.wkt
     }
 }

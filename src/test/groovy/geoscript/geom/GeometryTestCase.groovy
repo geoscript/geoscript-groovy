@@ -541,4 +541,10 @@ class GeometryTestCase {
         assertEquals "POINT (173.96210441769105 -94.53669248798772)", points[1].wkt
     }
 
+    @Test void isCurved() {
+        assertFalse Geometry.fromWKT("POINT (1 1)").isCurved()
+        assertFalse Geometry.fromWKT("LINESTRING (1 1, 10 10)").isCurved()
+        assertTrue Geometry.fromWKT("CIRCULARSTRING(6.12 10.0, 7.07 7.07, 10.0 0.0)").isCurved()
+    }
+
 }

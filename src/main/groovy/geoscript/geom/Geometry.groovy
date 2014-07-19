@@ -14,6 +14,7 @@ import com.vividsolutions.jts.operation.overlay.snap.GeometrySnapper
 import geoscript.geom.io.*
 import com.vividsolutions.jts.geom.PrecisionModel
 import com.vividsolutions.jts.precision.GeometryPrecisionReducer
+import org.geotools.geometry.jts.CurvedGeometries
 
 /**
  * The base class for other Geometries.
@@ -335,6 +336,14 @@ class Geometry {
     String getValidReason() {
         def op = new com.vividsolutions.jts.operation.valid.IsValidOp(this.g)
         op.validationError.message
+    }
+
+    /**
+     * Whether this Geometry is curved
+     * @return Whether this Geometry is curved
+     */
+    boolean isCurved() {
+        CurvedGeometries.isCurved(this.g)
     }
 
     /**
@@ -887,6 +896,18 @@ class Geometry {
             return null
         } else if (jts instanceof com.vividsolutions.jts.geom.Point) {
             return new Point(jts)
+        }
+        else if (jts instanceof org.geotools.geometry.jts.CompoundRing) {
+            return new CompoundRing(jts)
+        }
+        else if (jts instanceof org.geotools.geometry.jts.CompoundCurve) {
+            return new CompoundCurve(jts)
+        }
+        else if (jts instanceof org.geotools.geometry.jts.CircularRing) {
+            return new CircularRing(jts)
+        }
+        else if (jts instanceof org.geotools.geometry.jts.CircularString) {
+            return new CircularString(jts)
         }
         else if (jts instanceof com.vividsolutions.jts.geom.LinearRing) {
             return new LinearRing(jts)
