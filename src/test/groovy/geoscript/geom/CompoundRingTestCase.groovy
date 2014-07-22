@@ -17,8 +17,7 @@ class CompoundRingTestCase {
         )
         assertTrue cc.isClosed()
         assertTrue cc.isCurved()
-        // @TODO this is probably a bug
-        assertEquals "CircularString", cc.geometryType
+        assertEquals "CompoundRing", cc.geometryType
         assertEquals "COMPOUNDCURVE(CIRCULARSTRING(10.0 10.0, 0.0 20.0, -10.0 10.0), (-10.0 10.0, -10.0 0.0, 10.0 0.0, 10.0 10.0))", cc.curvedWkt
         assertTrue cc.wkt.startsWith("LINEARRING")
         List lines = cc.components
@@ -36,8 +35,7 @@ class CompoundRingTestCase {
         ])
         assertTrue cc.isClosed()
         assertTrue cc.isCurved()
-        // @TODO this is probably a bug
-        assertEquals "CircularString", cc.geometryType
+        assertEquals "CompoundRing", cc.geometryType
         assertEquals "COMPOUNDCURVE(CIRCULARSTRING(10.0 10.0, 0.0 20.0, -10.0 10.0), (-10.0 10.0, -10.0 0.0, 10.0 0.0, 10.0 10.0))", cc.curvedWkt
         assertTrue cc.wkt.startsWith("LINEARRING")
         List lines = cc.components
