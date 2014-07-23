@@ -117,6 +117,8 @@ class Map {
             (StreamingRenderer.LABEL_CACHE_KEY): labelCache,
             (StreamingRenderer.SCALE_COMPUTATION_METHOD_KEY): StreamingRenderer.SCALE_ACCURATE,
             (StreamingRenderer.LINE_WIDTH_OPTIMIZATION_KEY): Boolean.FALSE,
+            (StreamingRenderer.ADVANCED_PROJECTION_HANDLING_KEY): true,
+            (StreamingRenderer.CONTINUOUS_MAP_WRAPPING): true
         ])
         renderer.setMapContent(content)
     }

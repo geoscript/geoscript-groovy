@@ -194,6 +194,26 @@ class MapTestCase {
         ImageAssert.assertEquals(getFile("geoscript/render/map_to_file.png"), ImageIO.read(out), 100)
     }
 
+    @Test void renderToContinuousFile() {
+        File out = folder.newFile("map.png")
+        File file = new File(getClass().getClassLoader().getResource("states.shp").toURI())
+        assertNotNull(file)
+        Shapefile shp = new Shapefile(file)
+        assertNotNull(shp)
+
+        Map map = new Map()
+        map.width = 400
+        map.height = 100
+        map.proj = new Projection("EPSG:4326")
+        map.addLayer(shp)
+        map.bounds = new Bounds(-180, -90, 180, 90, "EPSG:4326")
+        map.render(out)
+        assertTrue(out.exists())
+        map.close()
+
+        ImageAssert.assertEquals(getFile("geoscript/render/map_continuous.png"), ImageIO.read(out), 100)
+    }
+
     @Test void renderToOutputStream() {
         File f = folder.newFile("map.png")
         FileOutputStream out = new FileOutputStream(f)
