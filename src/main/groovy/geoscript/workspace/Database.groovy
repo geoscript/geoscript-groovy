@@ -116,36 +116,6 @@ class Database extends Workspace {
     }
 
     /**
-     * Add a SQL Query as a Layer.  Deprecated, please use createView instead.
-     * @param name The new Layer's name
-     * @param sql The SQL Query that creates the new Layer
-     * @param geometryFld The Geometry Field
-     * @param primaryKeyFields A List of primary key Fields or Field names
-     */
-    @Deprecated
-    Layer addSqlQuery(String layerName, String sql, Field geometryFld, List primaryKeyFields = []) {
-        createView([
-            primaryKeyFields: primaryKeyFields
-        ], layerName, sql, geometryFld)
-    }
-
-    /**
-     * Add a SQL Query as a Layer. Deprecated, please use createView instead.
-     * @param name The new Layer's name
-     * @param sql The SQL Query that creates the new Layer
-     * @param geometryFieldName The Geometry Field name
-     * @param geometryFieldType The Geometry Field type (Point, LineString, Polygon, ect...)
-     * @param epsg The EPSG code (minus the EPSG: prefix)
-     * @param primaryKeyFields A List of primary key Fields or Field names
-     */
-    @Deprecated
-    Layer addSqlQuery(String layerName, String sql, String geometryFieldName, String geometryFieldType, int epsg, List primaryKeyFields = []) {
-        createView([
-                primaryKeyFields: primaryKeyFields
-        ], layerName, sql, new Field(geometryFieldName, geometryFieldType, "EPSG:${epsg}"))
-    }
-
-    /**
      * Create and add a virtual table to the JDBC based DataStore
      * @param options The named parameters
      * <ul>
