@@ -10,14 +10,6 @@ class GTopo30 extends Format {
 
     /**
      * Create a new GTopo30 Format
-     */
-    @Deprecated
-    GTopo30 () {
-        super(new GTopo30Format())
-    }
-
-    /**
-     * Create a new GTopo30 Format
      * @param stream
      */
     GTopo30 (def stream) {

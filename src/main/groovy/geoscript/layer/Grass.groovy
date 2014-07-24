@@ -10,14 +10,6 @@ class Grass extends Format {
 
     /**
      * Create a new Grass Format
-     */
-    @Deprecated
-    Grass() {
-        super(new GrassCoverageFormat())
-    }
-
-    /**
-     * Create a new Grass Format
      * @param stream The file
      */
     Grass(def stream) {

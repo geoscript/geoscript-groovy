@@ -43,15 +43,6 @@ class Format {
     /**
      * Create a new Format wrapping an AbstractGridFormat
      * @param gridFormat The GeoTools AbstractGridFormat
-     */
-    @Deprecated
-    Format(AbstractGridFormat gridFormat) {
-        this.gridFormat = gridFormat
-    }
-
-    /**
-     * Create a new Format wrapping an AbstractGridFormat
-     * @param gridFormat The GeoTools AbstractGridFormat
      * @param stream The input or output stream
      */
     Format(AbstractGridFormat gridFormat, def stream) {
@@ -65,24 +56,6 @@ class Format {
      */
     String getName() {
         gridFormat.name
-    }
-
-    /**
-     * Write the Raster to the destination object (usually a File)
-     * @param raster The Raster to write
-     * @param destination The destination object (usually a File)
-     */
-    @Deprecated
-    void write(Map options = [:], Raster raster, def destination) {
-        def writer = gridFormat.getWriter(destination)
-        ParameterValueGroup params = writer.format.writeParameters
-        options.each{k,v ->
-            params.parameter(k).setValue(v)
-        }
-        def gpv = options.collect{k,v ->
-            params.parameter(k)
-        }
-        writer.write(raster.coverage, gpv as GeneralParameterValue[])
     }
 
     /**
@@ -106,18 +79,6 @@ class Format {
     }
 
     /**
-     * Read a Raster from the source (usually a File)
-     * @param options Optional named parameters that are turned into an array
-     * of GeoTools GeneralParameterValues
-     * @param source The source (usually a File)
-     * @return A Raster
-     */
-    @Deprecated
-    Raster read(Map options = [:], def source) {
-        this.read(options, source, GeoTools.getDefaultHints())
-    }
-
-    /**
      * Read a Raster from the stream (usually a File)
      * @param options Optional named parameters that are turned into an array
      * of GeoTools GeneralParameterValues
@@ -136,24 +97,6 @@ class Format {
      */
     Raster read(Map options = [:], String name) {
         this.read(options, name, GeoTools.getDefaultHints())
-    }
-
-    /**
-     * Read a Raster from the source (usually a File)
-     * @param options Optional named parameters that are turned into an array
-     * of GeoTools GeneralParameterValues
-     * @param source The source (usually a File)
-     * @param proj The Projection
-     * @return A Raster
-     */
-    @Deprecated
-    Raster read(Map options = [:], def source, Projection proj) {
-        // Create Hints
-        Hints hints = GeoTools.getDefaultHints()
-        if (proj) {
-            hints.put(Hints.DEFAULT_COORDINATE_REFERENCE_SYSTEM, proj.crs)
-        }
-        this.read(options, source, hints)
     }
 
     /**
@@ -182,30 +125,6 @@ class Format {
             hints.put(Hints.DEFAULT_COORDINATE_REFERENCE_SYSTEM, proj.crs)
         }
         this.read(options, name, hints)
-    }
-
-    /**
-     * Read a Raster from the source (usually a File)
-     * @param options Optional named parameters that are turned into an array
-     * of GeoTools GeneralParameterValues
-     * @param source The source (usually a File)
-     * @param hints GeoTools Hints
-     * @return A Raster
-     */
-    @Deprecated
-    Raster read(Map options = [:], def source, Hints hints) {
-        // Create Reader
-        def reader = gridFormat.getReader(source, hints)
-        // Create GeneralParameterValues
-        ParameterValueGroup params = reader.format.readParameters
-        options.each{k,v ->
-            params.parameter(k).setValue(v)
-        }
-        def gpv = options.collect{k,v ->
-            params.parameter(k)
-        }
-        // Read the Raster
-        new Raster(reader.read(gpv as GeneralParameterValue[]), this)
     }
 
     /**

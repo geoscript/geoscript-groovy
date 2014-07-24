@@ -13,14 +13,6 @@ class GeoTIFF extends Format {
 
     /**
      * Create a new GeoTIFF
-     */
-    @Deprecated
-    GeoTIFF() {
-        super(new GeoTiffFormat())
-    }
-
-    /**
-     * Create a new GeoTIFF
      * @param stream The file
      */
     GeoTIFF(def stream) {

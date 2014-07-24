@@ -12,35 +12,10 @@ class WorldImage extends Format {
 
     /**
      * Create a new WorldImage Format
-     */
-    @Deprecated
-    WorldImage() {
-        super(new WorldImageFormat())
-    }
-
-    /**
-     * Create a new WorldImage Format
      * @param stream The file
      */
     WorldImage(def stream) {
         super(new WorldImageFormat(), stream)
-    }
-
-    /**
-     * Write the Raster to the destination object (usually a File)
-     * @param raster The Raster to write
-     * @param destination The destination object (usually a File)
-     */
-    @Override
-    @Deprecated
-    void write(Map options = [:], Raster raster, def destination) {
-        String format = WorldImageFormat.FORMAT.getDefaultValue();
-        if (destination instanceof File) {
-            String fileName = ((File)destination).getName()
-            format = fileName.substring(fileName.lastIndexOf(".") + 1)
-        }
-        options.put(WorldImageFormat.FORMAT.getName().toString(), format)
-        super.write(options, raster, destination)
     }
 
     /**

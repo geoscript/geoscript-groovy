@@ -10,14 +10,6 @@ class ImagePyramid extends Format {
 
     /**
      * Create a new ImagePyramid Format
-     */
-    @Deprecated
-    ImagePyramid() {
-        super(new ImagePyramidFormat())
-    }
-
-    /**
-     * Create a new ImagePyramid Format
      * @param stream The file
      */
     ImagePyramid(def stream) {

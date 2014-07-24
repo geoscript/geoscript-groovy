@@ -14,39 +14,11 @@ import java.nio.charset.Charset
 class ArcGrid extends Format {
 
     /**
-     * Create a new ArcGrid.
-     */
-    @Deprecated
-    ArcGrid() {
-        super(new org.geotools.gce.arcgrid.ArcGridFormat())
-    }
-
-    /**
      * Create a new ArcGrid
      * @param stream The file
      */
     ArcGrid(def stream) {
         super(new org.geotools.gce.arcgrid.ArcGridFormat(), stream)
-    }
-
-    /**
-     * Read a Raster from the source (usually a File)
-     * @param options Optional named parameters that are turned into an array
-     * of GeoTools GeneralParameterValues
-     * @param source The source (usually a File)
-     * @return A Raster
-     */
-    @Deprecated
-    Raster read(Map options = [:], def source) {
-        if (source instanceof String) {
-            String charset = "UTF-8"
-            if (options.containsKey("charset")) {
-                charset = options.get("charset")
-                options.remove(charset)
-            }
-            source = new ReaderInputStream(new StringReader(source), Charset.forName(charset))
-        }
-        super.read(options, source, GeoTools.getDefaultHints())
     }
 
     /**
@@ -70,27 +42,6 @@ class ArcGrid extends Format {
     }
 
     /**
-     * Read a Raster from the source (usually a File)
-     * @param options Optional named parameters that are turned into an array
-     * of GeoTools GeneralParameterValues
-     * @param source The source (usually a File)
-     * @param proj The Projection
-     * @return A Raster
-     */
-    @Deprecated
-    Raster read(Map options = [:], def source, Projection proj) {
-        if (source instanceof String) {
-            String charset = "UTF-8"
-            if (options.containsKey("charset")) {
-                charset = options.get("charset")
-                options.remove(charset)
-            }
-            source = new ReaderInputStream(new StringReader(source), Charset.forName(charset))
-        }
-        super.read(options, source, proj)
-    }
-
-    /**
      * Read a Raster from the stream (usually a File)
      * @param options Optional named parameters that are turned into an array
      * of GeoTools GeneralParameterValues
@@ -108,27 +59,6 @@ class ArcGrid extends Format {
             stream = new ReaderInputStream(new StringReader(stream), Charset.forName(charset))
         }
         super.read(options, proj)
-    }
-
-    /**
-     * Read a Raster from the source (usually a File)
-     * @param options Optional named parameters that are turned into an array
-     * of GeoTools GeneralParameterValues
-     * @param source The source (usually a File)
-     * @param hints GeoTools Hints
-     * @return A Raster
-     */
-    @Deprecated
-    Raster read(Map options = [:], def source, Hints hints) {
-        if (source instanceof String) {
-            String charset = "UTF-8"
-            if (options.containsKey("charset")) {
-                charset = options.get("charset")
-                options.remove(charset)
-            }
-            source = new ReaderInputStream(new StringReader(source), Charset.forName(charset))
-        }
-        super.read(options, source, hints)
     }
 
     /**

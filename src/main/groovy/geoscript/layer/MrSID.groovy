@@ -10,14 +10,6 @@ class MrSID extends Format {
 
     /**
      * Create a new MrSID Format
-     */
-    @Deprecated
-    MrSID() {
-        super(new MrSIDFormat())
-    }
-
-    /**
-     * Create a new MrSID Format
      * @param stream The file
      */
     MrSID(def stream) {
