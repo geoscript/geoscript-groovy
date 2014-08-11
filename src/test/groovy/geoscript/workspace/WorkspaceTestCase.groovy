@@ -123,6 +123,15 @@ class WorkspaceTestCase {
         params = Workspace.getParametersFromString("layers.gpkg")
         assertEquals(params['dbtype'], "geopkg")
         assertTrue(params['database'].toString().endsWith("layers.gpkg"))
+
+        // Spatialite
+        params = Workspace.getParametersFromString("dbtype=spatialite database=layers.sqlite")
+        assertEquals(params['dbtype'], "spatialite")
+        assertEquals(params['database'], "layers.sqlite")
+
+        params = Workspace.getParametersFromString("layers.sqlite")
+        assertEquals(params['dbtype'], "spatialite")
+        assertTrue(params['database'].toString().endsWith("layers.sqlite"))
     }
 
     @Test void getWorkspaceNames() {

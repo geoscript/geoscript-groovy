@@ -223,6 +223,9 @@ class Workspace {
             } else if (str.endsWith(".gpkg")) {
                 params.put("dbtype", "geopkg")
                 params.put("database", new File(str).absolutePath)
+            } else if (str.endsWith(".sqlite") || str.endsWith(".spatialite")) {
+                params.put("dbtype", "spatialite")
+                params.put("database", new File(str).absolutePath)
             } else if (new File(str).isDirectory()) {
                 params.put("url", new File(str).toURL())
             } else {
