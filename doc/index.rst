@@ -11,6 +11,7 @@ GeoScript Groovy
     releases
     mavenapp
     mavenwebappjndi
+    gradle
 
 GeoScript Groovy is a Groovy implementation of GeoScript.
 
