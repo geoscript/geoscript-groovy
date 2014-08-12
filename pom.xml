@@ -25,6 +25,16 @@
             <name>Java.net repository</name>
             <url>http://download.java.net/maven/2</url>
         </repository>
+        <repository>
+            <id>geosolutions</id>
+            <name>GeoSolutions Repository</name>
+            <url>http://maven.geo-solutions.it/</url>
+        </repository>
+        <repository>
+            <id>unidata</id>
+            <name>Unidata UCAR Repository</name>
+            <url>https://artifacts.unidata.ucar.edu/content/repositories/unidata/</url>
+        </repository>
     </repositories>
     <dependencies>
         <dependency>
