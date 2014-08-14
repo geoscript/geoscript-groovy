@@ -90,13 +90,13 @@ Reading a Raster::
 
 See the `web site <http://geoscript.org>`_ or the `examples directory <https://github.com/jericks/geoscript-groovy/tree/master/examples>`_ for more examples.
 
-You can also use GeoScript Groovy as a library. If you use Maven you will need to add OpenGeo's repository::
+You can also use GeoScript Groovy as a library. If you use Maven you will need to add the Boundless Maven Repository::
 
     <repositories>
         <repository>
-            <id>opengeo</id>
-            <name>OpenGeo Maven Repository</name>
-            <url>http://repo.opengeo.org</url>
+            <id>boundless</id>
+            <name>Boundless Maven Repository</name>
+            <url>http://repo.boundlessgeo.com/main</url>
             <snapshots>
                 <enabled>true</enabled>
             </snapshots>

@@ -29,9 +29,9 @@ Add geoscript as a dependency in the **pom.xml** file:
 
     <repositories>
         <repository>
-            <id>opengeo</id>
-            <name>OpenGeo Maven Repository</name>
-            <url>http://repo.opengeo.org</url>
+            <id>boundless</id>
+            <name>Boundless Maven Repository</name>
+            <url>http://repo.boundlessgeo.com/main</url>
             <snapshots>
                 <enabled>true</enabled>
             </snapshots>
