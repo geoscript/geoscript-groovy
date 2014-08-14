@@ -2,6 +2,7 @@ package geoscript.layer
 
 import geoscript.style.Fill
 import geoscript.style.Stroke
+import org.geotools.image.test.ImageAssert
 import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.TemporaryFolder
@@ -33,6 +34,7 @@ class ImageTileRendererTestCase {
         BufferedImage image = ImageIO.read(input)
         input.close()
         assertNotNull image
+        ImageAssert.assertEquals(new File(getClass().getClassLoader().getResource("geoscript/layer/imagetilerenderer.png").toURI()), image, 100)
     }
 
 }

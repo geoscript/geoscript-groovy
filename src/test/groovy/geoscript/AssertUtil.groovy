@@ -1,12 +1,7 @@
 package geoscript
 
 import geoscript.geom.Bounds
-
 import static org.junit.Assert.*
-import static org.junit.Assert.assertEquals
-import static org.junit.Assert.assertEquals
-import static org.junit.Assert.assertEquals
-import static org.junit.Assert.assertEquals
 
 /**
  * A collection of assertion utilities.

@@ -2,6 +2,7 @@ package geoscript.layer
 
 import geoscript.geom.Bounds
 import geoscript.proj.Projection
+import org.geotools.image.test.ImageAssert
 import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.TemporaryFolder
@@ -75,7 +76,7 @@ class GeoPackageTestCase {
         assertEquals 10, tile.z
         assertEquals 0, tile.x
         assertEquals 0, tile.y
-        junit.framework.Assert.assertNull tile.data
+        assertNull tile.data
 
         // Load a tile image
         File f = new File(getClass().getClassLoader().getResource("0.png").toURI())
@@ -230,6 +231,7 @@ class GeoPackageTestCase {
         Bounds b = new Bounds(-124.73142200000001, 24.955967, -66.969849, 49.371735, "EPSG:4326").reproject("EPSG:3857")
         Raster raster = layer.getRaster(layer.tiles(b, 4))
         assertNotNull raster
+        ImageAssert.assertEquals(getFile("geoscript/layer/gpkg_raster.png"), raster.image, 100)
         File out = folder.newFile("raster.png")
         WorldImage format = new WorldImage(out)
         format.write(raster)
@@ -245,12 +247,17 @@ class GeoPackageTestCase {
         Bounds b = new Bounds(-124.73142200000001, 24.955967, -66.969849, 49.371735, "EPSG:4326").reproject("EPSG:3857")
         Raster raster = layer.getRaster(b, 400, 300)
         assertNotNull raster
+        ImageAssert.assertEquals(getFile("geoscript/layer/gpkg_raster_cropped.png"), raster.image, 100)
         File out = folder.newFile("raster.png")
         WorldImage format = new WorldImage(out)
         format.write(raster)
         assertTrue out.exists()
         assertTrue out.length() > 0
         layer.close()
+    }
+
+    private File getFile(String resource) {
+        new File(getClass().getClassLoader().getResource(resource).toURI())
     }
 
 }
