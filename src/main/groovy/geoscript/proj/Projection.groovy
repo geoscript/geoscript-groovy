@@ -3,6 +3,7 @@ package geoscript.proj
 import geoscript.geom.Geometry
 import geoscript.geom.Bounds
 import org.geotools.geometry.jts.GeometryCoordinateSequenceTransformer
+import org.geotools.metadata.iso.citation.Citations
 import org.geotools.referencing.CRS
 import org.opengis.referencing.crs.CoordinateReferenceSystem
 import org.opengis.referencing.operation.MathTransform
@@ -67,7 +68,7 @@ class Projection {
      */
     String getId() {
         // Sometimes CRS.lookupIdentifier returns null
-        return CRS.lookupIdentifier(crs, true)
+        CRS.lookupIdentifier(crs, true)
     }
 
     /**
@@ -80,10 +81,16 @@ class Projection {
 
     /**
      * Get the well known text
+     * @param citation The citation (can be epsg, the default, or esri)
+     * @param indentation The number of spaces to indent (defaults to 2)
      * @return The well known texts
      */
-    String getWkt() {
-        return crs.toString()
+    String getWkt(String citation = "epsg", int indentation = 2) {
+        if (citation.equalsIgnoreCase("esri")) {
+            ((org.geotools.referencing.wkt.Formattable)crs).toWKT(Citations.ESRI, indentation)
+        } else {
+            ((org.geotools.referencing.wkt.Formattable)crs).toWKT(Citations.EPSG, indentation)
+        }
     }
 
     /**
@@ -93,9 +100,9 @@ class Projection {
     Bounds getBounds() {
         def extent = CRS.getEnvelope(crs)
         if (extent != null) {
-            return new Bounds(extent.getMinimum(0), extent.getMinimum(1), extent.getMaximum(0), extent.getMaximum(1), this)
+            new Bounds(extent.getMinimum(0), extent.getMinimum(1), extent.getMaximum(0), extent.getMaximum(1), this)
         } else {
-            return null
+            null
         }
     }
 
@@ -106,9 +113,9 @@ class Projection {
     Bounds getGeoBounds() {
         def extent = CRS.getGeographicBoundingBox(crs)
         if (extent != null) {
-            return new Bounds(extent.westBoundLongitude, extent.southBoundLatitude, extent.eastBoundLongitude, extent.northBoundLatitude, 'epsg:4326')
+            new Bounds(extent.westBoundLongitude, extent.southBoundLatitude, extent.eastBoundLongitude, extent.northBoundLatitude, 'epsg:4326')
         } else {
-            return null
+            null
         }
     }
 
@@ -124,7 +131,7 @@ class Projection {
         MathTransform tx = CRS.findMathTransform(fromCrs, toCrs)
         GeometryCoordinateSequenceTransformer gtx = new GeometryCoordinateSequenceTransformer()
         gtx.mathTransform = tx
-        return Geometry.wrap(gtx.transform(geom.g))
+        Geometry.wrap(gtx.transform(geom.g))
     }
 
     /**
@@ -143,7 +150,7 @@ class Projection {
      */
     String toString() {
         String projId = id
-        return projId != null ? projId : wkt
+        projId != null ? projId : wkt
     }
 
     /**
@@ -152,9 +159,12 @@ class Projection {
      */
     @Override
     boolean equals(Object other) {
-        if (!(other instanceof Projection))
-        return false;
-        return CRS.equalsIgnoreMetadata(crs, other.crs)
+        if (!(other instanceof Projection)) {
+            false
+        } else {
+            CRS.equalsIgnoreMetadata(crs, other.crs)
+        }
+
     }
 
     /**
@@ -182,11 +192,11 @@ class Projection {
                 throw new Exception("Unable to determine projection from ${str}!")
             }
         }
-        return crs
+        crs
     }
 
     /**
-     * Reproject the Geometry from the source Projection to the destintation
+     * Reproject the Geometry from the source Projection to the destination
      * Projection
      * @param geom The Geometry
      * @param src The Projection source/from
@@ -194,11 +204,11 @@ class Projection {
      * @return A new Geometry
      */
     static Geometry transform(Geometry geom, Projection src, Projection dest) {
-        return src.transform(geom, dest)
+        src.transform(geom, dest)
     }
 
     /**
-     * Reproject the Geometry from the source Projection to the destintation
+     * Reproject the Geometry from the source Projection to the destination
      * Projection
      * @param geom The Geometry
      * @param src The Projection String source/from
@@ -206,7 +216,7 @@ class Projection {
      * @return A new Geometry
      */
     static Geometry transform(Geometry geom, String src, String dest) {
-        return new Projection(src).transform(geom, new Projection(dest))
+        new Projection(src).transform(geom, new Projection(dest))
     }
 
 
@@ -217,15 +227,13 @@ class Projection {
      */
     static List<Projection> projections() {
         List<Projection> projections = []
-        CRS.getSupportedCodes("epsg").foreach{
+        CRS.getSupportedCodes("epsg").each {
             try {
-                p = new Projection("EPSG:${it}")
-                projectsion.add(p)
+                projections.add(new Projection("EPSG:${it}"))
             }
             catch (Exception ex){
             }
         }
-        return projections
+        projections
     }
-	
 }

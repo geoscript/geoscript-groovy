@@ -42,9 +42,8 @@ class ProjectionTestCase {
     }
 
     @Test void getWkt() {
-        Projection p1 = new Projection("EPSG:4326")
-
-        String expected = """GEOGCS["WGS 84", 
+        Projection p = new Projection("EPSG:4326")
+        String expected = """GEOGCS["WGS 84",
   DATUM["World Geodetic System 1984", 
     SPHEROID["WGS 84", 6378137.0, 298.257223563, AUTHORITY["EPSG","7030"]], 
     AUTHORITY["EPSG","6326"]], 
@@ -53,13 +52,21 @@ class ProjectionTestCase {
   AXIS["Geodetic longitude", EAST], 
   AXIS["Geodetic latitude", NORTH], 
   AUTHORITY["EPSG","4326"]]""".replaceAll(" ","").replaceAll("\n","")
-
-        String actual = p1.wkt.replaceAll(" ","").replaceAll(System.getProperty("line.separator"),"")
-        
+        String actual = p.wkt.replaceAll(" ","").replaceAll(System.getProperty("line.separator"),"")
         assertEquals expected, actual
 
     }
-    
+
+    @Test void getEsriWkt() {
+        Projection p = new Projection("EPSG:4326")
+        String expected = "GEOGCS[\"WGS 84\", DATUM[\"D_WGS_1984\", SPHEROID[\"D_WGS_1984\", 6378137.0, 298.257223563, " +
+                "AUTHORITY[\"EPSG\",\"7030\"]], AUTHORITY[\"EPSG\",\"6326\"]], PRIMEM[\"Greenwich\", 0.0, " +
+                "AUTHORITY[\"EPSG\",\"8901\"]], UNIT[\"Degree\", 0.017453292519943295], AXIS[\"Geodetic longitude\", EAST], " +
+                "AXIS[\"Geodetic latitude\", NORTH], AUTHORITY[\"EPSG\",\"4326\"]]"
+        String actual = p.getWkt("esri", 0)
+        assertEquals expected, actual
+    }
+
     @Test void getBounds() {
         Bounds bounds = new Projection("EPSG:2927").bounds
         assertNotNull(bounds)
