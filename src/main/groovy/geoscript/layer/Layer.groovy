@@ -244,7 +244,8 @@ class Layer {
      */
     protected void setDefaultSymbolizer(String geometryType) {
         if(!this.style) {
-            if (this instanceof Shapefile || this.format.equalsIgnoreCase("Directory")) {
+            if (this instanceof Shapefile || this.format.equalsIgnoreCase("Directory")
+                    || this.fs instanceof org.geotools.data.directory.DirectoryFeatureStore) {
                 def dir
                 def fileName
                 if (this instanceof Shapefile) {
@@ -258,15 +259,21 @@ class Layer {
                 // Check for SLD
                 def f = new File(dir,"${fileName}.sld")
                 if (f.exists()) {
-                    def reader = new geoscript.style.io.SLDReader()
-                    this.style = reader.read(f)
+                    try {
+                        def reader = new geoscript.style.io.SLDReader()
+                        this.style = reader.read(f)
+                    } catch(Exception ignore) {
+                    }
                 }
                 // Check for CSS but only if the style is still falsey
                 if (!this.style) {
                     f = new File(dir,"${fileName}.css")
                     if (f.exists()) {
-                        def reader = new geoscript.style.io.CSSReader()
-                        this.style = reader.read(f)
+                        try {
+                            def reader = new geoscript.style.io.CSSReader()
+                            this.style = reader.read(f)
+                        } catch (Exception ignore) {
+                        }
                     }
                 }
             }
