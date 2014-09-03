@@ -175,4 +175,10 @@ class WorkspaceTestCase {
         assertEquals 3, layer2.count
     }
 
+    @Test void has() {
+        Workspace workspace = new Memory()
+        assertFalse workspace.has("points")
+        workspace.create("points", [["the_geom", "Point", "EPSG:4326"]])
+        assertTrue workspace.has("points")
+    }
 }

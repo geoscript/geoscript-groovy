@@ -80,7 +80,16 @@ class Workspace {
     List<Layer> getLayers() {
         getNames().collect{name -> get(name)}
     }
-    
+
+    /**
+     * Whether the Workspace has a Layer by the given name
+     * @param name The Layer name
+     * @return Whether the Workspace has a Layer by the given name
+     */
+    boolean has(String name) {
+        getNames().contains(name)
+    }
+
     /**
      * Get a Layer by name
      * @param The Layer name
