@@ -3,6 +3,233 @@
 GeoScript Groovy Releases
 =========================
 
+1.4 (in progress)
+-----------------
+
+    The 1.4 release of GeoScript is built on Groovy 2.2, GeoTools 12, and the Java Topology Suite 1.13.
+
+    In addition to many bug fixes and performance improvements, the major new features include a tile module,
+    GeoPackage support, curved geometry types, and quick start docs for maven and gradle.
+
+    **Tile Module**
+
+        The tile module provides simple ways to consume and create tiled maps.
+
+        Supported tiled formats include:
+
+            * MBTiles
+
+            * GeoPackage
+
+            * UTFGrid
+
+            * TMS
+
+            * OSM
+
+        You can create tiles in MBTiles, GeoPackage, TMS, or OSM formats::
+
+            Shapefile shp = new Shapefile(new File("states.shp"))
+            shp.style = new Fill("wheat") + new Stroke("navy", 0.1)
+
+            File file = new File("states.mbtiles")
+            MBTiles mbtiles = new MBTiles(file, "states", "A map of the united states")
+
+            TileRenderer renderer = new ImageTileRenderer(mbtiles, shp)
+            TileGenerator generator = new TileGenerator(verbose: true)
+            generator.generate(mbtiles, renderer, 0, 4)
+
+        You can then use these tile sets to extract Rasters or as base maps when rendering::
+
+            OSM osm = new OSM("Stamen Terrain", [
+                "http://a.tile.stamen.com/terrain",
+                "http://b.tile.stamen.com/terrain",
+                "http://c.tile.stamen.com/terrain",
+                "http://d.tile.stamen.com/terrain"
+            ])
+
+            Shapefile shp = new Shapefile("states.shp")
+            ["North Dakota", "Oregon", "Washington"].each { String name ->
+                shp.getFeatures("STATE_NAME = '${name}'").each { Feature f ->
+                    Bounds b = f.geom.bounds.expandBy(0.5)
+                    b.proj = "EPSG:4326"
+                    Raster raster = osm.getRaster(b.reproject("EPSG:3857"), 400, 400)
+                    ImageIO.write(raster.image, "png", new File("images", "${name}.png"))
+                }
+            }
+
+    **GeoPackage**
+
+        GeoPackage support includes a Workspace (geoscript.workspace.GeoPackage) for vector features::
+
+            Workspace geopkg = new GeoPackage(folder.newFile("geopkg.gpkg"))
+            try {
+                // Get the States Shapefile
+                File file = new File(getClass().getClassLoader().getResource("states.shp").toURI())
+                Shapefile shp = new Shapefile(file)
+
+                // Add states shapefile to the GeoPackage database
+                Layer l = geopkg.add(shp, 'states')
+                geopkg.get('states').eachFeature { Feature f ->
+                    println "${f['STATE_NAME']} at ${f.geom}"
+                }
+
+                // Add the centroids of each state to the GeoPackage database
+                Layer l2 = geopkg.add(shp.transform("state_centroids", [
+                        geom: "centroid(the_geom)",
+                        abbr: "STATE_ABBR",
+                        name: "STATE_NAME"
+                ]))
+                geopkg.get('state_centroids').eachFeature { Feature f ->
+                    println "${f['STATE_NAME']} at ${f.geom}"
+                }
+            } finally {
+                geopkg.close()
+            }
+
+        And a TileLayer (geoscript.layer.GeoPackage) for tiled layers::
+
+            Shapefile shp = new Shapefile(new File("states.shp"))
+            shp.style = new Fill("wheat") + new Stroke("navy", 0.1)
+
+            File file = new File("states.mbtiles")
+            GeoPackage gpkg = new GeoPackage(file, "states", Pyramid.createGlobalMercatorPyramid())
+
+            TileRenderer renderer = new ImageTileRenderer(gpkg, shp)
+            TileGenerator generator = new TileGenerator(verbose: true)
+            generator.generate(gpkg, renderer, 0, 4)
+
+    **Curved Geometries**
+
+        * CircularString::
+
+            CircularString cs = new CircularString(
+                new Point(6.12, 10.0),
+                new Point(7.07, 7.07),
+                new Point(10.0, 0.0)
+            )
+
+        * CircularRing::
+
+            CircularRing cr = new CircularRing(
+                new Point(2, 1),
+                new Point(1, 2),
+                new Point(0, 1),
+                new Point(1, 0),
+                new Point(2, 1)
+            )
+
+        * CompoundCurve::
+
+            CompoundCurve cc = new CompoundCurve(
+                new CircularString([10.0, 10.0], [0.0, 20.0], [-10.0, 10.0]),
+                new LineString([-10.0, 10.0], [-10.0, 0.0], [10.0, 0.0], [5.0, 5.0])
+            )
+
+        * CompoundRing::
+
+            CompoundRing cc = new CompoundRing(
+                new CircularString([10.0, 10.0], [0.0, 20.0], [-10.0, 10.0]),
+                new LineString([-10.0, 10.0], [-10.0, 0.0], [10.0, 0.0], [10.0, 10.0])
+            )
+
+    **Quick start docs**
+
+        * **Maven** Create a simple app using Maven
+
+        * **Maven Web App with JNDI** Create a web app with Maven using JNDI
+
+        * **Gradle** Create a simple app using Gradle
+
+    **API Updates**
+
+        * Workspace.has(String name)::
+
+            Workspace workspace = new Memory()
+            if (!workspace.has("points")) {
+                workspace.create("points", [["the_geom", "Point", "EPSG:4326"]])
+            }
+
+        * Raster.selectBands(List<Integer> bands, int visibleBand = -1)::
+
+            File file = new File("alki.tif")
+            GeoTIFF geoTIFF = new GeoTIFF(file)
+            Raster raster = geoTIFF.read()
+            Raster rbRaster = raster.selectBands([0,2], 2)
+
+        * Raster.transform(Map options = [:])::
+
+            File file = new File("raster.tif")
+            GeoTIFF geoTIFF = new GeoTIFF(file)
+            Raster raster = geoTIFF.read()
+
+            // Scale
+            Raster scaledRaster = raster.transform(scalex: 2.5, scaley: 1.3)
+
+            // Shear
+            Raster shearRaster = raster.transform(shearx: 1.5, sheary: 1.1)
+
+            // Translate
+            Raster translatedRaster = raster.transform(translatex: 10.1, translatey: 12.6)
+
+            // Combo
+            Raster transformedRaster = raster.transform(
+                    scalex: 1.1, scaley: 2.1,
+                    shearx: 0.4, sheary: 0.3,
+                    translatex: 10.1, translatey: 12.6,
+                    nodata: [-255],
+                    interpolation: "NEAREST"
+            )
+
+        * Projection.getEpsg()::
+
+            Projection p = new Projection("EPSG:2927")
+            int epsg = p.epsg
+
+        * Added advanced projection handling and continous map wrapping to the Map Renderer::
+
+            import geoscript.layer.*
+            import geoscript.render.*
+            import geoscript.style.*
+            import geoscript.geom.*
+
+            Shapefile layer = new Shapefile(new File("110m_admin_0_countries.shp"))
+            layer.style = new Stroke("#eee", 0.1) + new Fill("#666")
+            File file = new File("world.png")
+
+            Map map = new Map(
+                layers: [layer],
+                width: 700,
+                height: 200,
+                backgroundColor: "blue",
+                proj: "EPSG:4326",
+                bounds: new Bounds(-180,-90,180,90,"EPSG:4326")
+            )
+
+            map.render(file)
+
+        .. image:: images/world.png
+
+        * Base64 Renderer::
+
+            Layer layer = new Shapefile(new File("states.shp"))
+            layer.style = new Stroke('black', 0.1) + new Fill('gray', 0.75)
+            Map map = new Map(layers: [layer], backgroundColor: "white")
+            Base64 base64 = new Base64()
+            String str = base64.render(map)
+
+        * Moved static Writer variables inside methods
+
+        * Fixed performance problem with writing Layers to GeoRSS feeds due Proj.getId() being realllllly slow
+
+        * Added ImageAssert tests
+
+        * Workspace.getParametersFromString can now handle spatialite database files
+
+        * Removed deprecated raster methods
+
+        * Removed deprecated addSqlView methods from Database Workspace
+
 1.3
 ---
 
