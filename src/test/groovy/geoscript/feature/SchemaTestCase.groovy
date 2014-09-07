@@ -300,5 +300,20 @@ class SchemaTestCase {
         assertEquals "points_new geom: Point(EPSG:4326), x: Double, y: Double", s3.toString()
         assertEquals "points geom: Point(EPSG:4326), name: String, x: Double, y: Double", s1.toString()
     }
+
+    @Test void lookUpAlias() {
+        assertEquals "CircularRing", Schema.lookUpAlias("org.geotools.geometry.jts.CircularRing")
+        assertEquals "CircularString", Schema.lookUpAlias("org.geotools.geometry.jts.CircularString")
+        assertEquals "CompoundRing", Schema.lookUpAlias("org.geotools.geometry.jts.CompoundRing")
+        assertEquals "CompoundCurve", Schema.lookUpAlias("org.geotools.geometry.jts.CompoundCurve")
+    }
+
+    @Test void lookUpBinding() {
+        assertEquals "org.geotools.geometry.jts.CircularRing", Schema.lookUpBinding("CircularRing")
+        assertEquals "org.geotools.geometry.jts.CircularString", Schema.lookUpBinding("CircularString")
+        assertEquals "org.geotools.geometry.jts.CompoundRing", Schema.lookUpBinding("CompoundRing")
+        assertEquals "org.geotools.geometry.jts.CompoundCurve", Schema.lookUpBinding("CompoundCurve")
+    }
+
 }
 

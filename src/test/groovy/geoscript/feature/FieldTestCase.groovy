@@ -65,18 +65,14 @@ class FieldTestCase {
     }
 
     @Test void isGeometry() {
-
-        Field f1 = new Field("name","String")
-        assertFalse f1.isGeometry()
-
-        Field f2 = new Field("geom","Point", "EPSG:2927")
-        assertTrue f2.isGeometry()
-
-        Field f3 = new Field("geom","Point", new Projection("EPSG:2927"))
-        assertTrue f3.isGeometry()
-
-        Field f4 = new Field("geom","Geometry", new Projection("EPSG:2927"))
-        assertTrue f4.isGeometry()
+        assertFalse new Field("name","String").isGeometry()
+        assertTrue new Field("geom","Point", "EPSG:2927").isGeometry()
+        assertTrue new Field("geom","Point", new Projection("EPSG:2927")).isGeometry()
+        assertTrue new Field("geom","Geometry", new Projection("EPSG:2927")).isGeometry()
+        assertTrue new Field("geom","CircularRing", new Projection("EPSG:2927")).isGeometry()
+        assertTrue new Field("geom","CircularString", new Projection("EPSG:2927")).isGeometry()
+        assertTrue new Field("geom","CompoundCurve", new Projection("EPSG:2927")).isGeometry()
+        assertTrue new Field("geom","CompoundRing", new Projection("EPSG:2927")).isGeometry()
     }
 
     @Test void equalsAndHashCode() {
