@@ -302,6 +302,8 @@ class SchemaTestCase {
     }
 
     @Test void lookUpAlias() {
+        assertEquals "String", Schema.lookUpAlias("java.lang.String")
+        assertEquals "Double", Schema.lookUpAlias("java.lang.Double")
         assertEquals "CircularRing", Schema.lookUpAlias("org.geotools.geometry.jts.CircularRing")
         assertEquals "CircularString", Schema.lookUpAlias("org.geotools.geometry.jts.CircularString")
         assertEquals "CompoundRing", Schema.lookUpAlias("org.geotools.geometry.jts.CompoundRing")
@@ -309,6 +311,8 @@ class SchemaTestCase {
     }
 
     @Test void lookUpBinding() {
+        assertEquals "java.lang.String", Schema.lookUpBinding("String")
+        assertEquals "java.lang.Double", Schema.lookUpBinding("Double")
         assertEquals "org.geotools.geometry.jts.CircularRing", Schema.lookUpBinding("CircularRing")
         assertEquals "org.geotools.geometry.jts.CircularString", Schema.lookUpBinding("CircularString")
         assertEquals "org.geotools.geometry.jts.CompoundRing", Schema.lookUpBinding("CompoundRing")
