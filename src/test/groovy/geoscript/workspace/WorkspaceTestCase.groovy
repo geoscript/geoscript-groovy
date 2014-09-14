@@ -89,6 +89,10 @@ class WorkspaceTestCase {
         assertEquals(params['dbtype'], "h2")
         assertEquals(params['database'], "C:\\My Data\\my.db")
 
+        params = Workspace.getParametersFromString("C:\\My Data\\my.db");
+        assertEquals(params['dbtype'], "h2")
+        assertTrue params['database'].toString().endsWith("my.db")
+
         // Shapefile
         params = Workspace.getParametersFromString("/my/states.shp")
         assertTrue(params.containsKey("url"))
@@ -105,7 +109,6 @@ class WorkspaceTestCase {
         params = Workspace.getParametersFromString("directory=/my/states.properties")
         assertTrue(params.containsKey("directory"))
         assertTrue(params['directory'].toString().endsWith("my/states.properties"))
-
 
         params = Workspace.getParametersFromString("directory=/my/propertyfiles")
         assertTrue(params.containsKey("directory"))
@@ -132,6 +135,11 @@ class WorkspaceTestCase {
         params = Workspace.getParametersFromString("layers.sqlite")
         assertEquals(params['dbtype'], "spatialite")
         assertTrue(params['database'].toString().endsWith("layers.sqlite"))
+
+        // WFS
+        String wfsUrl = "http://localhost:8080/geoserver/ows?service=wfs&version=1.1.0&request=GetCapabilities"
+        params = Workspace.getParametersFromString(wfsUrl)
+        assertEquals params["WFSDataStoreFactory:GET_CAPABILITIES_URL"], wfsUrl
     }
 
     @Test void getWorkspaceNames() {

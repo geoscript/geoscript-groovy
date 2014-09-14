@@ -98,8 +98,8 @@ class Workspace {
     Layer get(String name) {
         new Layer(this, ds.getFeatureSource(name))
     }
-    
-    
+
+
     /**
      * Another way to get a Layer by name.
      * <p><code>Layer layer = workspace["hospitals"]</code><p>
@@ -213,14 +213,17 @@ class Workspace {
      */
     private static Map getParametersFromString(String str) {
         Map params = [:]
-        if (str.indexOf("=") == -1) {
+        if (str.indexOf("=") == -1 || str.toLowerCase().startsWith("http")) {
+            // Directory (Shapefile)
             if (str.endsWith(".shp")) {
                 if (str.startsWith("file:/")) {
                     params.put("url", DataUtilities.fileToURL(DataUtilities.urlToFile(new URL(str)).getAbsoluteFile().getParentFile()))
                 } else {
                     params.put("url", DataUtilities.fileToURL(new File(str).getAbsoluteFile().getParentFile()))
                 }
-            } else if (str.endsWith(".properties")) {
+            }
+            // Properties
+            else if (str.endsWith(".properties")) {
                 String dir
                 File f = new File(str)
                 if (f.exists()) {
@@ -229,13 +232,29 @@ class Workspace {
                     dir = f.absolutePath.substring(0,f.absolutePath.lastIndexOf(File.separator))
                 }
                 params.put("directory", dir)
-            } else if (str.endsWith(".gpkg")) {
+            }
+            // GeoPackage
+            else if (str.endsWith(".gpkg")) {
                 params.put("dbtype", "geopkg")
                 params.put("database", new File(str).absolutePath)
-            } else if (str.endsWith(".sqlite") || str.endsWith(".spatialite")) {
+            }
+            // SpatiaLite
+            else if (str.endsWith(".sqlite") || str.endsWith(".spatialite")) {
                 params.put("dbtype", "spatialite")
                 params.put("database", new File(str).absolutePath)
-            } else if (new File(str).isDirectory()) {
+            }
+            // H2
+            else if (str.endsWith(".db")) {
+                params.put("dbtype", "h2")
+                params.put("database", new File(str).absolutePath)
+            }
+            // WFS
+            else if (str.toLowerCase().startsWith("http") && str.toLowerCase().contains("service=wfs")
+                    && str.toLowerCase().contains("request=getcapabilities")) {
+                params.put("WFSDataStoreFactory:GET_CAPABILITIES_URL", str)
+            }
+            // Directory
+            else if (new File(str).isDirectory()) {
                 params.put("url", new File(str).toURL())
             } else {
                 throw new IllegalArgumentException("Unknown Workspace parameter string: ${str}")
