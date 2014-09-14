@@ -111,15 +111,34 @@ and then include the GeoScript Groovy dependency::
         <version>1.3</version>
     </dependency>
 
+Versions
+--------
+
++-----------+----------+-----------+------+--------+
+| GeoScript | GeoTools | GeoServer | JTS  | Groovy |
++-----------+----------+-----------+------+--------+
+| 1.4       | 12       | 2.6       | 1.13 | 2.2.2  |
++-----------+----------+-----------+------+--------+
+| 1.3       | 11       | 2.5       | 1.13 | 2.1.9  |
++-----------+----------+-----------+------+--------+
+| 1.2       | 10       | 2.4       | 1.13 | 2.1.6  |
++-----------+----------+-----------+------+--------+
+| 1.1       | 9        | 2.3       | 1.13 | 1.8.9  |
++-----------+----------+-----------+------+--------+
+| 1.0       | 8        | 2.2       | 1.12 | 1.8.8  |
++-----------+----------+-----------+------+--------+
+
 Presentations
 -------------
-`GeoScript: Spatial Capabilities for Scripting Languages <http://www.slideshare.net/jdeolive/geoscript-spatial-capabilities-for-scripting-languages>`_
+`GeoScript: The GeoSpatial Swiss Army Knife (FOSS4G 2014) <http://geoscript.github.io/foss4g2014-talk/#/>`_
 
-`Using GeoScript Groovy <http://www.slideshare.net/JaredErickson/using-geoscript-groovy>`_
+`Using GeoScript Groovy (CUGOS 2014) <http://www.slideshare.net/JaredErickson/using-geoscript-groovy>`_
 
-`Rendering Maps in GeoScript <http://www.slideshare.net/JaredErickson/geo-scriptstylerendering>`_
+`Rendering Maps in GeoScript (CUGOS 2012) <http://www.slideshare.net/JaredErickson/geo-scriptstylerendering>`_
 
-`Scripting GeoServer <http://www.slideshare.net/JaredErickson/scripting-geoserver>`_
+`Scripting GeoServer (CUGOS 2012) <http://www.slideshare.net/JaredErickson/scripting-geoserver>`_
+
+`GeoScript: Spatial Capabilities for Scripting Languages (FOSS4G 2011) <http://www.slideshare.net/jdeolive/geoscript-spatial-capabilities-for-scripting-languages>`_
 
 License
 -------
