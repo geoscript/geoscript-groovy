@@ -230,6 +230,25 @@ GeoScript Groovy Releases
 
         * Removed deprecated addSqlView methods from Database Workspace
 
+1.3.1
+-----
+
+    The 1.3.1 release of GeoScript is built on Groovy 2.1.9, GeoTools 11.2, and the Java Topology Suite 1.13.  It contains a few minor bug fixes and performance improvements.
+
+    * Fixed a bug with Layer.first() call if there are no features
+
+    * Added Projection.getEpsg() method
+
+    * Fixed bug with JPEG renderer
+
+    * Added Image.getImageType() method
+
+    * Improved performance of the Layer GeoRSS writer
+
+    * Added Base64 renderer
+
+    * Moved static io reader/writers to instance variables
+
 1.3
 ---
 
