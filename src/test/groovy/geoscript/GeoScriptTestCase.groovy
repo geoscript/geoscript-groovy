@@ -220,7 +220,8 @@ class GeoScriptTestCase {
     @Test void stringAsWorkspace() {
         use(GeoScript) {
             URL url = getClass().getClassLoader().getResource("states.shp")
-            Workspace w = new Workspace("url='${url}' 'create spatial index'=true")
+            String str = "url='${url}' 'create spatial index'=true".toString()
+            Workspace w = str as Workspace
             assertNotNull(w)
             assertEquals("org.geotools.data.shapefile.ShapefileDataStore", w.format)
         }
@@ -229,7 +230,7 @@ class GeoScriptTestCase {
     @Test void mapAsWorkspace() {
         use(GeoScript) {
             URL url = getClass().getClassLoader().getResource("states.shp")
-            Workspace w = new Workspace(["url": url])
+            Workspace w = ["url": url] as Workspace
             assertNotNull(w)
             assertEquals("org.geotools.data.shapefile.ShapefileDataStore", w.format)
         }
