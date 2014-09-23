@@ -196,7 +196,7 @@ class CsvReader implements Reader {
      * <ul>
      *     <li>workspace: The Workspace used to create the Layer (defaults to Memory)</li>
      *     <li>projection: The Projection assigned to the Layer (defaults to null)</li>
-     *     <li>name: The name of the Layer (defaults to geojson)</li>
+     *     <li>name: The name of the Layer (defaults to csv)</li>
      * </ul>
      * @param input The input java.io.Reader
      * @return A Layer

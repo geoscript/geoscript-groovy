@@ -21,7 +21,7 @@ class GeoRSSReader implements Reader {
      * <ul>
      *     <li>workspace: The Workspace used to create the Layer (defaults to Memory)</li>
      *     <li>projection: The Projection assigned to the Layer (defaults to null)</li>
-     *     <li>name: The name of the Layer (defaults to geojson)</li>
+     *     <li>name: The name of the Layer (defaults to georss)</li>
      * </ul>
      * @param file The GeoRSS File
      * @return A Layer
@@ -39,7 +39,7 @@ class GeoRSSReader implements Reader {
      * <ul>
      *     <li>workspace: The Workspace used to create the Layer (defaults to Memory)</li>
      *     <li>projection: The Projection assigned to the Layer (defaults to null)</li>
-     *     <li>name: The name of the Layer (defaults to geojson)</li>
+     *     <li>name: The name of the Layer (defaults to georss)</li>
      * </ul>
      * @param str The GeoRSS String
      * @return A Layer
@@ -57,7 +57,7 @@ class GeoRSSReader implements Reader {
      * <ul>
      *     <li>workspace: The Workspace used to create the Layer (defaults to Memory)</li>
      *     <li>projection: The Projection assigned to the Layer (defaults to null)</li>
-     *     <li>name: The name of the Layer (defaults to geojson)</li>
+     *     <li>name: The name of the Layer (defaults to georss)</li>
      * </ul>
      * @param input The InputStream
      * @return A Layer
