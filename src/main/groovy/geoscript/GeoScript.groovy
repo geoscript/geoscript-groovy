@@ -39,59 +39,117 @@ import geoscript.workspace.Workspace
  */
 class GeoScript {
 
+    /**
+     * Convert a List of numbers to a GeoScript Geometry.
+     * @param list A List of numbers
+     * @param type The Geometry Class
+     * @return A Geometry
+     */
     static Object asType(List list, Class type) {
+        // Point pt = [1,2] as Point
         if (type == Point && list.size() == 2) {
             return new Point(list[0], list[1])
-        } else if (type == MultiPoint) {
+        }
+        // MultiPoint p = [[1,1],[2,2]] as MultiPoint
+        else if (type == MultiPoint) {
             return new MultiPoint(list)
-        } else if (type == LineString) {
+        }
+        // LineString line = [[1,2],[2,3],[3,4]] as LineString
+        else if (type == LineString) {
             return new LineString(list)
-        } else if (type == MultiLineString) {
+        }
+        // MultiLineString line = [[[1,2],[3,4]], [[5,6],[7,8]]] as MultiLineString
+        else if (type == MultiLineString) {
             return new MultiLineString(list)
-        } else if (type == Polygon) {
+        }
+        // Polygon p = [[[1,2],[3,4],[5,6],[1,2]]] as Polygon
+        else if (type == Polygon) {
             return new Polygon(list)
-        } else if (type == MultiPolygon) {
+        }
+        // MultiPolygon p = [[[[1,2],[3,4],[5,6],[1,2]]], [[[7,8],[9,10],[11,12],[7,8]]]] as MultiPolygon
+        else if (type == MultiPolygon) {
             return new MultiPolygon(list)
-        } else if (type == Bounds && list.size() == 4) {
+        }
+        // Bounds b = [1,3,2,4] as Bounds
+        else if (type == Bounds && list.size() == 4) {
             return new Bounds(list[0], list[1], list[2], list[3])
         }
         DefaultGroovyMethods.asType(list, type)
     }
 
+    /**
+     * Convert a File to GeoScript Layer
+     * @param file The File
+     * @param type The GeoScript Layer class
+     * @return A GeoScript Layer
+     */
     static Object asType(File file, Class type) {
+        // Shapefile shp = file as Shapefile
         if (type == Shapefile && file.name.endsWith(".shp")) {
             return new Shapefile(file)
-        } else if (type == Property && file.name.endsWith(".properties")) {
+        }
+        // Property prop = file as Property
+        else if (type == Property && file.name.endsWith(".properties")) {
             return new Property(file)
-        } else if (type == Layer && file.name.endsWith(".csv")) {
+        }
+        // Layer layer = csvFile as Layer
+        else if (type == Layer && file.name.endsWith(".csv")) {
             return new CsvReader().read(file)
-        } else if (type == Layer && file.name.endsWith(".json")) {
+        }
+        // Layer layer = jsonFile as Layer
+        else if (type == Layer && file.name.endsWith(".json")) {
             return new GeoJSONReader().read(file)
         }
         DefaultGroovyMethods.asType(file, type)
     }
 
+    /**
+     * Convert a String to a GeoScript object (Color, Projection, Geometry, Workspace, Expression, Geodetic)
+     * @param str The String
+     * @param type The GeoScript class
+     * @return A GeoScript object
+     */
     static Object asType(String str, Class type) {
+        // Color c = "255,255,255" as Color
         if (type == Color) {
             return new Color(str)
-        } else if (type == Projection) {
+        }
+        // Projection p = "EPSG:2927" as Projection
+        else if (type == Projection) {
             return new Projection(str)
-        } else if (type == Geometry) {
+        }
+        // Geometry g = "POINT (1 1)" as Geometry
+        else if (type == Geometry) {
             return Geometry.fromWKT(str)
-        } else if (type == Workspace) {
+        }
+        // Workspace w = "url='states.shp' 'create spatial index'=true" as Workspace
+        else if (type == Workspace) {
             return new Workspace(str)
-        } else if (type == Expression) {
+        }
+        // Expression expr = "max(2,4)" as Expression
+        else if (type == Expression) {
             return Expression.fromCQL(str)
-        } else if (type == Geodetic) {
+        }
+        // Geodetic geod = "clrk66" as Geodetic
+        else if (type == Geodetic) {
             return new Geodetic(str)
         }
         DefaultGroovyMethods.asType(str, type)
     }
 
+    /**
+     * Create a GeoScript Workspace from a Map
+     * @param map The Map
+     * @param type The GeoScript Workspace class
+     * @return A GeoScript Workspace
+     */
     static Object asType(Map map, Class type) {
+        // PostGIS p = [name: 'naturalearth', host: 'localhost', port: 5432] as PostGIS
         if (type == PostGIS) {
             return new PostGIS(map, map.get("name"))
-        } else if (type == Workspace) {
+        }
+        // Workspace w = ['url': 'states.shp', 'create spatial index': true] as Workspace
+        else if (type == Workspace) {
             return new Workspace(map)
         }
         DefaultGroovyMethods.asType(map, type)
