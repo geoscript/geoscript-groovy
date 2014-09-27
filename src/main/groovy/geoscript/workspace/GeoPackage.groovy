@@ -2,6 +2,7 @@ package geoscript.workspace
 
 import org.geotools.data.DataStore
 import org.geotools.geopkg.GeoPkgDataStoreFactory
+import org.geotools.jdbc.JDBCDataStore
 
 /**
  * A GeoPackage Workspace.
@@ -27,6 +28,14 @@ class GeoPackage extends Database {
      */
     GeoPackage(String fileName, String userName = null, String password = null) {
         this(new File(fileName), userName, password)
+    }
+
+    /**
+     * Create a new GeoPackage Workspace from a GeoTools JDBCDataStore
+     * @param ds The GeoTools JDBCDataStore
+     */
+    GeoPackage(JDBCDataStore ds) {
+        super(ds)
     }
 
     /**

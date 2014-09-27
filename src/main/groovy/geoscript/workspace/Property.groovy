@@ -2,6 +2,7 @@ package geoscript.workspace
 
 import geoscript.layer.Layer
 import org.geotools.data.DataStore
+import org.geotools.data.property.PropertyDataStore
 import org.geotools.data.property.PropertyDataStoreFactory
 
 /**
@@ -28,6 +29,14 @@ class Property extends Workspace {
      */
     Property(String directory) {
         this(new File(directory).absoluteFile)
+    }
+
+    /**
+     * Create a new Property Workspace from a GeoTools PropertyDataStore
+     * @param ds The GeoTools PropertyDataStore
+     */
+    Property(PropertyDataStore ds) {
+        super(ds)
     }
 
     /**

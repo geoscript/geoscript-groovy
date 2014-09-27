@@ -3,6 +3,7 @@ package geoscript.workspace
 import org.geotools.data.DataStore
 import org.geotools.data.mysql.MySQLDataStoreFactory
 import org.geotools.data.mysql.MySQLJNDIDataStoreFactory
+import org.geotools.jdbc.JDBCDataStore
 
 /**
  * A MySQL Workspace connects to a MySQL database.
@@ -39,6 +40,14 @@ class MySQL extends Database {
     MySQL(Map options = [:], String name) {
         super(createDataStore(name, options.get("host", "localhost"), options.get("port", 3306),
                 options.get("user", System.getProperty("user.name")), options.get("password")))
+    }
+
+    /**
+     * Create a new MySQL Workspace from a GeoTools JDBCDataStore
+     * @param ds The GeoTools JDBCDataStore
+     */
+    MySQL(JDBCDataStore ds) {
+        super(ds)
     }
 
     /**

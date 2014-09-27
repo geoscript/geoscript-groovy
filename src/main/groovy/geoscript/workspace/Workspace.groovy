@@ -307,4 +307,75 @@ class Workspace {
             [key: param.name, type: param.type.name, required: param.required]
         }
     }
+
+    /**
+     * Get a Workspace from a parameter string
+     * @param paramString The parameter string
+     * @return A Workspace or null
+     */
+    static Workspace getWorkspace(String paramString) {
+        getWorkspace(getParametersFromString(paramString))
+    }
+
+    /**
+     * Get a Workspace from a connection paramater Map
+     * @param params The Map of connection parameters
+     * @return A Workspace or null
+     */
+    static Workspace getWorkspace(Map params) {
+        wrap(DataStoreFinder.getDataStore(params))
+    }
+
+    /**
+     * Wrap a GeoTools DataStore in the appropriate GeoScript Workspace
+     * @param ds The GeoTools DataStore
+     * @return A GeoScript Workspace or null
+     */
+    static Workspace wrap(DataStore ds) {
+        if (ds == null) {
+            null
+        }
+        else if (ds instanceof org.geotools.data.directory.DirectoryDataStore ||
+                ds instanceof org.geotools.data.shapefile.ShapefileDataStore) {
+            new Directory(ds)
+        }
+        else if (ds instanceof org.geotools.data.memory.MemoryDataStore) {
+            new Memory(ds)
+        }
+        else if (ds instanceof org.geotools.data.property.PropertyDataStore) {
+            new Property(ds)
+        }
+        else if (ds instanceof org.geotools.data.wfs.WFSDataStore) {
+            new WFS(ds)
+        }
+        else if (ds instanceof org.geotools.jdbc.JDBCDataStore) {
+            def jdbcds = ds as org.geotools.jdbc.JDBCDataStore
+            if (jdbcds.dataStoreFactory instanceof org.geotools.geopkg.GeoPkgDataStoreFactory) {
+                new GeoPackage(ds)
+            }
+            else if (jdbcds.dataStoreFactory instanceof org.geotools.data.h2.H2DataStoreFactory ||
+                    jdbcds.dataStoreFactory instanceof org.geotools.data.h2.H2JNDIDataStoreFactory) {
+                new H2(ds)
+            }
+            else if (jdbcds.dataStoreFactory instanceof org.geotools.data.mysql.MySQLDataStoreFactory ||
+                    jdbcds.dataStoreFactory instanceof org.geotools.data.mysql.MySQLJNDIDataStoreFactory) {
+                new MySQL(ds)
+            }
+            else if (jdbcds.dataStoreFactory instanceof org.geotools.data.postgis.PostgisNGDataStoreFactory ||
+                    jdbcds.dataStoreFactory instanceof org.geotools.data.postgis.PostgisNGJNDIDataStoreFactory) {
+                new PostGIS(ds)
+            }
+            else if (jdbcds.dataStoreFactory instanceof org.geotools.data.spatialite.SpatiaLiteDataStoreFactory ||
+                    jdbcds.dataStoreFactory instanceof org.geotools.data.spatialite.SpatiaLiteJNDIDataStoreFactory) {
+                new SpatiaLite(ds)
+            }
+            else (ds instanceof org.geotools.jdbc.JDBCDataStore) {
+                    new Database(ds)
+                }
+        }
+        else {
+            new Workspace(ds)
+        }
+    }
+
 }

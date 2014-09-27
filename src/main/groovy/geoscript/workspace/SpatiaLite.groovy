@@ -2,6 +2,7 @@ package geoscript.workspace
 
 import org.geotools.data.DataStore
 import org.geotools.data.spatialite.SpatiaLiteDataStoreFactory
+import org.geotools.jdbc.JDBCDataStore
 
 /**
  * A SpatiaLite Workspace connects to a SpatiaLite database.
@@ -28,6 +29,14 @@ class SpatiaLite extends Database {
      */
     SpatiaLite(String name, String dir) {
         this(name, new File(dir).absoluteFile)
+    }
+
+    /**
+     * Create a new SpatiaLite Workspace from a GeoTools JDBCDataStore
+     * @param ds The GeoTools JDBCDataStore
+     */
+    SpatiaLite(JDBCDataStore ds) {
+        super(ds)
     }
 
     /**

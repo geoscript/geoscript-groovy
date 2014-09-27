@@ -189,4 +189,59 @@ class WorkspaceTestCase {
         workspace.create("points", [["the_geom", "Point", "EPSG:4326"]])
         assertTrue workspace.has("points")
     }
+
+    @Test void getWorkspaceWithParams() {
+        // H2
+        Workspace h2 = Workspace.getWorkspace(["dbtype": "h2", "database": folder.newFile("roads.db").absolutePath])
+        assertNotNull(h2.ds)
+        assertTrue(h2 instanceof H2)
+        h2.close()
+
+        // Shapefile
+        URL url = getClass().getClassLoader().getResource("states.shp")
+        Workspace shp = Workspace.getWorkspace(["url": url])
+        assertNotNull(shp.ds)
+        println shp.ds.class.name
+        assertTrue(shp instanceof Directory)
+    }
+
+    @Test void getWorkspaceWithParamString() {
+        // H2
+        Workspace h2 = Workspace.getWorkspace("dbtype=h2 database=" + folder.newFile("roads.db").absolutePath)
+        assertNotNull(h2.ds)
+        assertTrue(h2 instanceof H2)
+        h2.close()
+
+        // Shapefile
+        URL url = getClass().getClassLoader().getResource("states.shp")
+        Workspace shp = Workspace.getWorkspace("url='${url}' 'create spatial index'=true")
+        assertNotNull(shp.ds)
+        assertTrue(shp instanceof Directory)
+
+        Workspace shp2 = Workspace.getWorkspace("${url}")
+        assertNotNull(shp2.ds)
+        assertTrue(shp instanceof Directory)
+
+        Workspace shp3 = Workspace.getWorkspace("${url.file}")
+        assertNotNull(shp3.ds)
+        assertTrue(shp instanceof Directory)
+
+        Workspace dir = Workspace.getWorkspace("${new File(url.file).getAbsoluteFile().getParent()}")
+        assertNotNull(dir.ds)
+        assertTrue(shp instanceof Directory)
+
+        // Properties
+        File propFile = new File(getClass().getClassLoader().getResource("points.properties").file)
+        Workspace prop = Workspace.getWorkspace("directory='${propFile}'")
+        assertNotNull(prop.ds)
+        assertTrue(prop instanceof Property)
+
+        Workspace prop2 = Workspace.getWorkspace(propFile.absolutePath)
+        assertNotNull(prop2.ds)
+        assertTrue(prop instanceof Property)
+
+        Workspace prop3 = Workspace.getWorkspace(new File(propFile.parentFile, "asdfasdfas.properties").absolutePath)
+        assertNotNull(prop3.ds)
+        assertTrue(prop instanceof Property)
+    }
 }

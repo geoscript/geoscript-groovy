@@ -3,6 +3,7 @@ package geoscript.workspace
 import org.geotools.data.DataStore
 import org.geotools.data.postgis.PostgisNGDataStoreFactory
 import org.geotools.data.postgis.PostgisNGJNDIDataStoreFactory
+import org.geotools.jdbc.JDBCDataStore
 
 /**
  * A PostGIS Workspace connects to a PostGIS database.
@@ -48,6 +49,14 @@ class PostGIS extends Database {
             options.get("estimatedExtent",false) as boolean,
             options.get("createDatabase", false) as boolean, options.get("createDatabaseParams","")
         )
+    }
+
+    /**
+     * Create a new PostGIS Workspace from a GeoTools JDBCDataStore
+     * @param ds The GeoTools JDBCDataStore
+     */
+    PostGIS(JDBCDataStore ds) {
+        super(ds)
     }
 
     /**

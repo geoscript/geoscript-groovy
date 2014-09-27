@@ -23,6 +23,14 @@ class Memory extends Workspace {
     }
 
     /**
+     * Create a new Memory Workspace from a GeoTools MemoryDataStore
+     * @param ds The MemoryDataStore
+     */
+    Memory(MemoryDataStore ds) {
+        super(ds)
+    }
+
+    /**
      * Get the format
      * @return The workspace format name
      */

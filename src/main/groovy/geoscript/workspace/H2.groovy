@@ -3,6 +3,7 @@ package geoscript.workspace
 import org.geotools.data.DataStore
 import org.geotools.data.h2.H2DataStoreFactory
 import org.geotools.data.h2.H2JNDIDataStoreFactory
+import org.geotools.jdbc.JDBCDataStore
 
 /**
  * A H2 Workspace connects to a spatially enabled H2 database.
@@ -71,6 +72,14 @@ class H2 extends Database {
     H2(Map options = [:], String database) {
         this(database, options.get("host", "localhost"), options.get("port", ""), options.get("schema"),
                 options.get("user", "sa"), options.get("password", ""))
+    }
+
+    /**
+     * Create a new H2 Workspace from a GeoTools JDBCDataStore
+     * @param ds The GeoTools JDBCDataStore
+     */
+    H2(JDBCDataStore ds) {
+        super(ds)
     }
 
     /**

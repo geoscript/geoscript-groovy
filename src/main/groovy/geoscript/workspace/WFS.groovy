@@ -33,6 +33,14 @@ class WFS extends Workspace {
     }
 
     /**
+     * Create a new WFS Workspace from a GeoTools WFSDataStore
+     * @param ds The GeoTools WFSDataStore
+     */
+    WFS(WFSDataStore ds) {
+        super(ds)
+    }
+
+    /**
      * Get the format
      * @return The workspace format name
      */

@@ -2,6 +2,7 @@ package geoscript.workspace
 
 import geoscript.layer.Layer
 import org.geotools.data.directory.DirectoryDataStore
+import org.geotools.data.shapefile.ShapefileDataStore
 import org.geotools.data.shapefile.ShapefileDataStoreFactory
 
 /**
@@ -28,6 +29,22 @@ class Directory extends Workspace {
      */
     Directory(String dir) {
         this(new File(dir))
+    }
+
+    /**
+     * Create a Directory Workspace from a GeoTools DirectoryDataStore
+     * @param ds The GeoTools DirectoryDataStore
+     */
+    Directory(DirectoryDataStore ds) {
+        super(ds)
+    }
+
+    /**
+     * Create a Directory Workspace from a GeoTools ShapefileDataStore
+     * @param ds The GeoTools ShapefileDataStore
+     */
+    Directory(ShapefileDataStore ds) {
+        super(ds)
     }
 
     /**
