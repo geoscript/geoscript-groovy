@@ -3,8 +3,8 @@
 GeoScript Groovy Releases
 =========================
 
-1.4 (in progress)
------------------
+1.4.0
+-----
 
     The 1.4 release of GeoScript is built on Groovy 2.2, GeoTools 12, and the Java Topology Suite 1.13.
 
