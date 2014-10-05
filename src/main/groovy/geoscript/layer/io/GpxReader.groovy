@@ -42,7 +42,16 @@ class GpxReader implements Reader {
      * @return A GeoScript Layer
      */
     @Override
-    Layer read(Map options = [:], InputStream input) {
+    Layer read(InputStream input) {
+        read([:], input)
+    }
+
+    /**
+     * Read a GeoScript Layer from an InputStream
+     * @param input An InputStream
+     * @return A GeoScript Layer
+     */
+    Layer read(Map options, InputStream input) {
 
         // Default parameters
         Workspace workspace = options.get("workspace", new Memory())
@@ -196,7 +205,16 @@ class GpxReader implements Reader {
      * @return A GeoScript Layer
      */
     @Override
-    Layer read(Map options = [:], File file) {
+    Layer read(File file) {
+        read([:], file)
+    }
+
+    /**
+     * Read a GeoScript Layer from a File
+     * @param file A File
+     * @return A GeoScript Layer
+     */
+    Layer read(Map options, File file) {
         InputStream input = new FileInputStream(file)
         Layer layer = read(options, input)
         input.close()
@@ -209,7 +227,16 @@ class GpxReader implements Reader {
      * @return A GeoScript Layer
      */
     @Override
-    Layer read(Map options = [:], String str) {
+    Layer read(String str) {
+        read([:], str)
+    }
+
+    /**
+     * Read a GeoScript Layer from a String
+     * @param str A String
+     * @return A GeoScript Layer
+     */
+    Layer read(Map options, String str) {
         InputStream input = new ByteArrayInputStream(str.getBytes(Charset.forName("UTF-8")))
         Layer layer = read(options, input)
         input.close()

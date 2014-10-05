@@ -176,7 +176,7 @@ class GeoRSSReader implements Reader {
      * @return A List of Points
      */
     private List<Point> getPoints(String str) {
-        def values = str.split(" ")
+        def values = str.trim().split(" ")
         int num = values.length / 2
         List points = []
         for (i in (0..<num)) {

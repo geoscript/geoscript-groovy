@@ -859,7 +859,6 @@ class Geometry {
      * @param type The Class
      * @return The converted Object
      */
-    @Override
     Object asType(Class type) {
         if (type == Point) {
             return centroid

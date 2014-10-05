@@ -674,7 +674,6 @@ class Bounds {
      * @param type The Class
      * @return The converted Object
      */
-    @Override
     Object asType(Class type) {
         if (type == Geometry) {
             return this.geometry
