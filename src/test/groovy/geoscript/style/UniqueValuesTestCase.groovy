@@ -50,7 +50,7 @@ class UniqueValuesTestCase {
         shapefile.style = sym2
         imgFile = folder.newFile("uniquevalues_states2.png")
         map.render(imgFile)
-        ImageAssert.assertEquals(getFile("geoscript/style/uniquevalues_states2.png"), ImageIO.read(imgFile), 100)
+        ImageAssert.assertEquals(getFile("geoscript/style/uniquevalues_states2.png"), ImageIO.read(imgFile), 200)
 
         // Color list
         UniqueValues sym3 = new UniqueValues(shapefile, "STATE_ABBR", ["teal","slateblue","tan","wheat","salmon"])

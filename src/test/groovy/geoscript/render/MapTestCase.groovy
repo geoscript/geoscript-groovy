@@ -71,7 +71,7 @@ class MapTestCase {
         assertTrue(out.exists())
         map.close()
 
-        ImageAssert.assertEquals(getFile("geoscript/render/map_to_image.png"), ImageIO.read(out), 100)
+        ImageAssert.assertEquals(getFile("geoscript/render/map_to_image.png"), ImageIO.read(out), 200)
     }
 
     @Test void renderRasterToImage() {
@@ -152,7 +152,7 @@ class MapTestCase {
         assertTrue(out.exists())
         map.close()
 
-        ImageAssert.assertEquals(getFile("geoscript/render/map_to_image_noproj.png"), ImageIO.read(out), 100)
+        ImageAssert.assertEquals(getFile("geoscript/render/map_to_image_noproj.png"), ImageIO.read(out), 200)
     }
 
     @Test void renderToImageWithMapBoundsNoProjection() {
@@ -191,7 +191,7 @@ class MapTestCase {
         assertTrue(out.exists())
         map.close()
 
-        ImageAssert.assertEquals(getFile("geoscript/render/map_to_file.png"), ImageIO.read(out), 100)
+        ImageAssert.assertEquals(getFile("geoscript/render/map_to_file.png"), ImageIO.read(out), 200)
     }
 
     @Test void renderToContinuousFile() {
@@ -232,7 +232,7 @@ class MapTestCase {
         assertTrue(f.exists())
         map.close()
 
-        ImageAssert.assertEquals(getFile("geoscript/render/map_to_out.png"), ImageIO.read(f), 100)
+        ImageAssert.assertEquals(getFile("geoscript/render/map_to_out.png"), ImageIO.read(f), 200)
     }
 
     @Test void renderToPdf() {
