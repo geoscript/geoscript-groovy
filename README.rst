@@ -145,3 +145,5 @@ Presentations
 License
 -------
 GeoScript Groovy is open source and licensed under the MIT license.
+
+[![Current Status](https://secure.travis-ci.org/geoscript/geoscript-groovy.png?branch=master)](https://travis-ci.org/geoscript/geoscript-groovy)
