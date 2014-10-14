@@ -173,7 +173,7 @@ class MapTestCase {
         assertTrue(out.exists())
         map.close()
 
-        ImageAssert.assertEquals(getFile("geoscript/render/map_to_image_noproj_nobounds.png"), ImageIO.read(out), 100)
+        ImageAssert.assertEquals(getFile("geoscript/render/map_to_image_noproj_nobounds.png"), ImageIO.read(out), 200)
     }
 
     @Test void renderToFile() {
