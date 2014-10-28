@@ -1,6 +1,8 @@
 package geoscript.layer
 
 import geoscript.geom.Bounds
+import org.geotools.util.logging.Logging
+import java.util.logging.Logger
 
 /**
  * A TileCursor provides an easy way to iterate through Tiles.
@@ -58,6 +60,9 @@ class TileCursor<T extends Tile> implements Iterator {
      */
     private long counter = 0
 
+
+    private static final Logger LOGGER = Logging.getLogger("geoscript.layer.TileCursor");
+
     /**
      * Create a TileCursor that iterates over every Tile in a given zoom level
      * @param layer The TileLayer
@@ -79,11 +84,12 @@ class TileCursor<T extends Tile> implements Iterator {
      */
     TileCursor (TileLayer layer, long z, long minX, long minY, long maxX, long maxY) {
         this.tileLayer = layer
-        this.z = z
-        this.minX = minX
-        this.minY = minY
-        this.maxX = maxX
-        this.maxY = maxY
+        this.z = validate(z, 0, tileLayer.pyramid.grids.size() - 1, "z")
+        Grid grid = tileLayer.pyramid.grid(this.z)
+        this.minX = validate(minX, 0, grid.width - 1, "minX")
+        this.minY = validate(minY, 0, grid.height - 1, "minY")
+        this.maxX = validate(maxX, 0, grid.width - 1, "maxX")
+        this.maxY = validate(maxY, 0, grid.height - 1, "maxY")
         this.width = (maxX - minX) + 1
         this.height = (maxY - minY) + 1
         this.size = width * height
@@ -96,14 +102,17 @@ class TileCursor<T extends Tile> implements Iterator {
      * @param z The zoom level
      */
     TileCursor(TileLayer layer, Bounds b, long z) {
+        Bounds pyramidBounds = layer.pyramid.bounds
+        Bounds safeBounds = pyramidBounds.intersection(b)
         Grid m = layer.pyramid.grid(z)
-        Map tileCoords = layer.getTileCoordinates(b, m)
+        Map tileCoords = layer.getTileCoordinates(safeBounds, m)
         this.tileLayer = layer
-        this.z = z
-        this.minX = tileCoords.minX
-        this.minY = tileCoords.minY
-        this.maxX = tileCoords.maxX
-        this.maxY = tileCoords.maxY
+        this.z = validate(z, 0, tileLayer.pyramid.grids.size() - 1, "z")
+        Grid grid = tileLayer.pyramid.grid(this.z)
+        this.minX = validate(tileCoords.minX, 0, grid.width - 1, "minX")
+        this.minY = validate(tileCoords.minY, 0, grid.height - 1, "minY")
+        this.maxX = validate(tileCoords.maxX, 0, grid.width - 1, "maxX")
+        this.maxY = validate(tileCoords.maxY, 0, grid.height - 1, "maxY")
         this.width = (maxX - minX) + 1
         this.height = (maxY - minY) + 1
         this.size = width * height
@@ -117,14 +126,17 @@ class TileCursor<T extends Tile> implements Iterator {
      * @param resY The y resolution
      */
     TileCursor(TileLayer layer, Bounds b, double resX, double resY) {
-        Grid m = layer.pyramid.grid(b, resX, resY)
-        Map tileCoords = layer.getTileCoordinates(b, m)
+        Bounds pyramidBounds = layer.pyramid.bounds
+        Bounds safeBounds = pyramidBounds.intersection(b)
+        Grid m = layer.pyramid.grid(safeBounds, resX, resY)
+        Map tileCoords = layer.getTileCoordinates(safeBounds, m)
         this.tileLayer = layer
-        this.z = m.z
-        this.minX = tileCoords.minX
-        this.minY = tileCoords.minY
-        this.maxX = tileCoords.maxX
-        this.maxY = tileCoords.maxY
+        this.z = validate(m.z, 0, tileLayer.pyramid.grids.size() - 1, "z")
+        Grid grid = tileLayer.pyramid.grid(this.z)
+        this.minX = validate(tileCoords.minX, 0, grid.width - 1, "minX")
+        this.minY = validate(tileCoords.minY, 0, grid.height - 1, "minY")
+        this.maxX = validate(tileCoords.maxX, 0, grid.width - 1, "maxX")
+        this.maxY = validate(tileCoords.maxY, 0, grid.height - 1, "maxY")
         this.width = (maxX - minX) + 1
         this.height = (maxY - minY) + 1
         this.size = width * height
@@ -138,17 +150,39 @@ class TileCursor<T extends Tile> implements Iterator {
      * @param h The image height
      */
     TileCursor(TileLayer layer, Bounds b, int w, int h) {
-        Grid m = layer.pyramid.grid(b, w, h)
-        Map tileCoords = layer.getTileCoordinates(b, m)
+        Bounds pyramidBounds = layer.pyramid.bounds
+        Bounds safeBounds = pyramidBounds.intersection(b)
+        Grid m = layer.pyramid.grid(safeBounds, w, h)
+        Map tileCoords = layer.getTileCoordinates(safeBounds, m)
         this.tileLayer = layer
-        this.z = m.z
-        this.minX = tileCoords.minX
-        this.minY = tileCoords.minY
-        this.maxX = tileCoords.maxX
-        this.maxY = tileCoords.maxY
+        this.z = validate(m.z, 0, tileLayer.pyramid.grids.size() - 1, "z")
+        Grid grid = tileLayer.pyramid.grid(this.z)
+        this.minX = validate(tileCoords.minX, 0, grid.width - 1, "minX")
+        this.minY = validate(tileCoords.minY, 0, grid.height - 1, "minY")
+        this.maxX = validate(tileCoords.maxX, 0, grid.width - 1, "maxX")
+        this.maxY = validate(tileCoords.maxY, 0, grid.height - 1, "maxY")
         this.width = (maxX - minX) + 1
         this.height = (maxY - minY) + 1
         this.size = width * height
+    }
+
+    /**
+     * Validate number parameters passed into the TileCursor constructor
+     * @param num The number value
+     * @param min The minimum value
+     * @param max The maximum value
+     * @param name The name of the value for logging
+     * @return The validated value
+     */
+    private long validate(long num, long min, long max, String name) {
+        if (num < min) {
+            LOGGER.warning("${name} cannot be less than ${min}!")
+            num = min
+        } else if (num > max) {
+            LOGGER.warning("${name} cannot be greater than ${max}")
+            num = max
+        }
+        num
     }
 
     /**
