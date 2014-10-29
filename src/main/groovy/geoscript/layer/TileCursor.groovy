@@ -60,7 +60,14 @@ class TileCursor<T extends Tile> implements Iterator {
      */
     private long counter = 0
 
+    /**
+     * The internal cached Bounds
+     */
+    private Bounds bounds
 
+    /**
+     * The Logger
+     */
     private static final Logger LOGGER = Logging.getLogger("geoscript.layer.TileCursor");
 
     /**
@@ -102,20 +109,29 @@ class TileCursor<T extends Tile> implements Iterator {
      * @param z The zoom level
      */
     TileCursor(TileLayer layer, Bounds b, long z) {
+        // Limit the Bounds to the intersection of the requested Bounds
+        // and the Pyramid's Bounds
         Bounds pyramidBounds = layer.pyramid.bounds
-        Bounds safeBounds = pyramidBounds.intersection(b)
-        Grid m = layer.pyramid.grid(z)
-        Map tileCoords = layer.getTileCoordinates(safeBounds, m)
-        this.tileLayer = layer
-        this.z = validate(z, 0, tileLayer.pyramid.grids.size() - 1, "z")
-        Grid grid = tileLayer.pyramid.grid(this.z)
-        this.minX = validate(tileCoords.minX, 0, grid.width - 1, "minX")
-        this.minY = validate(tileCoords.minY, 0, grid.height - 1, "minY")
-        this.maxX = validate(tileCoords.maxX, 0, grid.width - 1, "maxX")
-        this.maxY = validate(tileCoords.maxY, 0, grid.height - 1, "maxY")
-        this.width = (maxX - minX) + 1
-        this.height = (maxY - minY) + 1
-        this.size = width * height
+        Bounds intersectedBounds = pyramidBounds.intersection(b)
+        // Check that the intersected Bounds is not empty
+        if (!intersectedBounds.empty) {
+            Grid m = layer.pyramid.grid(z)
+            Map tileCoords = layer.getTileCoordinates(intersectedBounds, m)
+            this.tileLayer = layer
+            this.z = validate(z, 0, tileLayer.pyramid.grids.size() - 1, "z")
+            Grid grid = tileLayer.pyramid.grid(this.z)
+            this.minX = validate(tileCoords.minX, 0, grid.width - 1, "minX")
+            this.minY = validate(tileCoords.minY, 0, grid.height - 1, "minY")
+            this.maxX = validate(tileCoords.maxX, 0, grid.width - 1, "maxX")
+            this.maxY = validate(tileCoords.maxY, 0, grid.height - 1, "maxY")
+            this.width = (maxX - minX) + 1
+            this.height = (maxY - minY) + 1
+            this.size = width * height
+        } else {
+            // Cache the bounds as the empty Bounds with the correct projection
+            this.bounds = intersectedBounds
+            this.size = 0
+        }
     }
 
     /**
@@ -126,20 +142,29 @@ class TileCursor<T extends Tile> implements Iterator {
      * @param resY The y resolution
      */
     TileCursor(TileLayer layer, Bounds b, double resX, double resY) {
+        // Limit the Bounds to the intersection of the requested Bounds
+        // and the Pyramid's Bounds
         Bounds pyramidBounds = layer.pyramid.bounds
-        Bounds safeBounds = pyramidBounds.intersection(b)
-        Grid m = layer.pyramid.grid(safeBounds, resX, resY)
-        Map tileCoords = layer.getTileCoordinates(safeBounds, m)
-        this.tileLayer = layer
-        this.z = validate(m.z, 0, tileLayer.pyramid.grids.size() - 1, "z")
-        Grid grid = tileLayer.pyramid.grid(this.z)
-        this.minX = validate(tileCoords.minX, 0, grid.width - 1, "minX")
-        this.minY = validate(tileCoords.minY, 0, grid.height - 1, "minY")
-        this.maxX = validate(tileCoords.maxX, 0, grid.width - 1, "maxX")
-        this.maxY = validate(tileCoords.maxY, 0, grid.height - 1, "maxY")
-        this.width = (maxX - minX) + 1
-        this.height = (maxY - minY) + 1
-        this.size = width * height
+        Bounds intersectedBounds = pyramidBounds.intersection(b)
+        // Check that the intersected Bounds is not empty
+        if (!intersectedBounds.empty) {
+            Grid m = layer.pyramid.grid(intersectedBounds, resX, resY)
+            Map tileCoords = layer.getTileCoordinates(intersectedBounds, m)
+            this.tileLayer = layer
+            this.z = validate(m.z, 0, tileLayer.pyramid.grids.size() - 1, "z")
+            Grid grid = tileLayer.pyramid.grid(this.z)
+            this.minX = validate(tileCoords.minX, 0, grid.width - 1, "minX")
+            this.minY = validate(tileCoords.minY, 0, grid.height - 1, "minY")
+            this.maxX = validate(tileCoords.maxX, 0, grid.width - 1, "maxX")
+            this.maxY = validate(tileCoords.maxY, 0, grid.height - 1, "maxY")
+            this.width = (maxX - minX) + 1
+            this.height = (maxY - minY) + 1
+            this.size = width * height
+        } else {
+            // Cache the bounds as the empty Bounds with the correct projection
+            this.bounds = intersectedBounds
+            this.size = 0
+        }
     }
 
     /**
@@ -150,20 +175,29 @@ class TileCursor<T extends Tile> implements Iterator {
      * @param h The image height
      */
     TileCursor(TileLayer layer, Bounds b, int w, int h) {
+        // Limit the Bounds to the intersection of the requested Bounds
+        // and the Pyramid's Bounds
         Bounds pyramidBounds = layer.pyramid.bounds
-        Bounds safeBounds = pyramidBounds.intersection(b)
-        Grid m = layer.pyramid.grid(safeBounds, w, h)
-        Map tileCoords = layer.getTileCoordinates(safeBounds, m)
-        this.tileLayer = layer
-        this.z = validate(m.z, 0, tileLayer.pyramid.grids.size() - 1, "z")
-        Grid grid = tileLayer.pyramid.grid(this.z)
-        this.minX = validate(tileCoords.minX, 0, grid.width - 1, "minX")
-        this.minY = validate(tileCoords.minY, 0, grid.height - 1, "minY")
-        this.maxX = validate(tileCoords.maxX, 0, grid.width - 1, "maxX")
-        this.maxY = validate(tileCoords.maxY, 0, grid.height - 1, "maxY")
-        this.width = (maxX - minX) + 1
-        this.height = (maxY - minY) + 1
-        this.size = width * height
+        Bounds intersectedBounds = pyramidBounds.intersection(b)
+        // Check that the intersected Bounds is not empty
+        if (!intersectedBounds.empty) {
+            Grid m = layer.pyramid.grid(intersectedBounds, w, h)
+            Map tileCoords = layer.getTileCoordinates(intersectedBounds, m)
+            this.tileLayer = layer
+            this.z = validate(m.z, 0, tileLayer.pyramid.grids.size() - 1, "z")
+            Grid grid = tileLayer.pyramid.grid(this.z)
+            this.minX = validate(tileCoords.minX, 0, grid.width - 1, "minX")
+            this.minY = validate(tileCoords.minY, 0, grid.height - 1, "minY")
+            this.maxX = validate(tileCoords.maxX, 0, grid.width - 1, "maxX")
+            this.maxY = validate(tileCoords.maxY, 0, grid.height - 1, "maxY")
+            this.width = (maxX - minX) + 1
+            this.height = (maxY - minY) + 1
+            this.size = width * height
+        } else {
+            // Cache the bounds as the empty Bounds with the correct projection
+            this.bounds = intersectedBounds
+            this.size = 0
+        }
     }
 
     /**
@@ -262,9 +296,12 @@ class TileCursor<T extends Tile> implements Iterator {
      * @return The Bounds
      */
     Bounds getBounds() {
-        Bounds min = tileLayer.pyramid.bounds(new Tile(z, minX, minY))
-        Bounds max = tileLayer.pyramid.bounds(new Tile(z, maxX, maxY))
-        min.expand(max)
+        if (!this.bounds) {
+            Bounds min = tileLayer.pyramid.bounds(new Tile(z, minX, minY))
+            Bounds max = tileLayer.pyramid.bounds(new Tile(z, maxX, maxY))
+            this.bounds = min.expand(max)
+        }
+        this.bounds
     }
 
     /**
@@ -298,6 +335,14 @@ class TileCursor<T extends Tile> implements Iterator {
             reset()
         }
         hasNext
+    }
+
+    /**
+     * Whether the TileCursor is empty or not
+     * @return
+     */
+    boolean getEmpty() {
+        this.size == 0
     }
 
     /**
