@@ -373,7 +373,7 @@ class Bounds {
      * @return The intersection Bounds between this and the other Bounds
      */
     Bounds intersection(Bounds other) {
-        new Bounds(env.intersection(other.env))
+        new Bounds(new ReferencedEnvelope(env.intersection(other.env), this.proj?.crs))
     }
 
     /**

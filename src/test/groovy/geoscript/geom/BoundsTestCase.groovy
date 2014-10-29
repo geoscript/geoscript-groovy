@@ -272,10 +272,10 @@ class BoundsTestCase {
     }
 
     @Test void intersection() {
-        def b1 = new Bounds(0,0,10,10)
-        def b2 = new Bounds(3,3,6,6)
-        def b3 = new Bounds(20,25,25,30)
-        assertEquals new Bounds(3,3,6,6), b1.intersection(b2)
+        def b1 = new Bounds(0,0,10,10,"EPSG:4326")
+        def b2 = new Bounds(3,3,6,6,"EPSG:4326")
+        def b3 = new Bounds(20,25,25,30,"EPSG:4326")
+        assertEquals new Bounds(3,3,6,6,"EPSG:4326"), b1.intersection(b2)
         assertTrue b1.intersection(b3).empty
     }
 
