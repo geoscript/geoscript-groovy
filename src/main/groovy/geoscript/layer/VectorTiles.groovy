@@ -62,7 +62,8 @@ class VectorTiles extends TileLayer<Tile> {
      * @param options The optional named parameters
      * <ul>
      *     <li>proj = The Projection of the vector Layers</li>
-     *     <li>style = A Style or a Map of Styles with the Layer name as key
+     *     <li>style = A Style or a Map of Styles with the Layer name as key</li>
+     * </ul>
      * @param name The name of the TileLayer
      * @param dir The directory of the Tiles
      * @param pyramid The Pyramid
@@ -84,7 +85,8 @@ class VectorTiles extends TileLayer<Tile> {
      * @param options The optional named parameters
      * <ul>
      *     <li>proj = The Projection of the vector Layers</li>
-     *     <li>style = A Style or a Map of Styles with the Layer name as key
+     *     <li>style = A Style or a Map of Styles with the Layer name as key</li>
+     * </ul>
      * @param name The name of the TileLayer
      * @param url The base URL
      * @param pyramid The Pyramid
