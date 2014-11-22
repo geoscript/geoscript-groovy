@@ -1038,8 +1038,9 @@ class Geometry {
         }
         if (!geom) {
             def parts = str.split(",")
-            if (parts.length == 4) {
-                geom = new Bounds(parts[0] as double, parts[1] as double, parts[2] as double, parts[3] as double).geometry
+            if (parts.length == 4 || parts.length == 5) {
+                geom = new Bounds(parts[0] as double, parts[1] as double, 
+                    parts[2] as double, parts[3] as double, parts.length > 4 ? parts[4] : null).geometry
             } else if (parts.length == 2) {
                 geom = new Point(parts[0] as double, parts[1] as double)
             }

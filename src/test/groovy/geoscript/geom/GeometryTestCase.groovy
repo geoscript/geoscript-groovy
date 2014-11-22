@@ -487,6 +487,9 @@ class GeometryTestCase {
         g = Geometry.fromString("1,1,10,10")
         assertNotNull g
         assertEquals "POLYGON ((1 1, 1 10, 10 10, 10 1, 1 1))", g.wkt
+        // Bounds with projection
+        g = Geometry.fromString("1,1,10,10,EPSG:4326")
+        assertEquals "POLYGON ((1 1, 1 10, 10 10, 10 1, 1 1))", g.wkt
         // Point
         g = Geometry.fromString("1,1")
         assertNotNull g
