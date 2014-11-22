@@ -4,6 +4,7 @@ import geoscript.filter.Color
 import geoscript.geom.Bounds
 import geoscript.layer.ImageTileLayer
 import geoscript.layer.Layer
+import geoscript.layer.VectorTiles
 import geoscript.layer.WMS
 import geoscript.proj.Projection
 import geoscript.layer.Raster
@@ -289,7 +290,7 @@ class Map {
      */
     protected void setUpRendering() {
         // Add Layers
-        layers.each{layer ->
+        layers.each { layer ->
             GtLayer mapLayer
             if (layer instanceof Layer) {
                 mapLayer = new FeatureLayer(layer.fs, layer.style.gtStyle)
@@ -299,6 +300,11 @@ class Map {
                 ImageTileLayer tileLayer = layer as ImageTileLayer
                 def raster = tileLayer.getRaster(this.bounds.reproject(tileLayer.proj), this.width, this.height)
                 mapLayer = new GridCoverageLayer(raster.coverage, new RasterSymbolizer().gtStyle)
+            } else if (layer instanceof VectorTiles) {
+                VectorTiles vectorTiles = layer as VectorTiles
+                vectorTiles.getLayers(vectorTiles.tiles(this.bounds.reproject(vectorTiles.proj), this.width, this.height)).each { Layer lyr ->
+                    content.addLayer(new FeatureLayer(lyr.fs, lyr.style.gtStyle))
+                }
             } else if (layer instanceof geoscript.layer.WMSLayer) {
                 def wmsLayer = layer as geoscript.layer.WMSLayer
                 def gtWmsLayer = new WMSLayer(wmsLayer.wms.wms, wmsLayer.layers[0].layer)
@@ -309,7 +315,9 @@ class Map {
             } else if (layer instanceof GtLayer) {
                 mapLayer = layer
             }
-            content.addLayer(mapLayer)
+            if (mapLayer) {
+                content.addLayer(mapLayer)
+            }
         }
         // Set Bounds and Projections
         def b = getBounds()
