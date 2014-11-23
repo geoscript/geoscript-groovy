@@ -1,4 +1,4 @@
-.. _mavenwebappjndi
+.. _mavenwebappjndi:
 
 Create GeoScript Web App with JNDI and Maven
 ============================================
