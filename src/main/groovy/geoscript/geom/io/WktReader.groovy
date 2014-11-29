@@ -32,6 +32,13 @@ class WktReader implements Reader {
      * @return A Geometry
      */
     Geometry read(String str) {
+        // Handle EWKT (SRID=4326;)
+        if (str.startsWith("SRID=")) {
+            int start = str.indexOf("SRID=")
+            int end = str.indexOf(";", start)
+            String srid = str.substring(start, end)
+            str = str.substring(end + 1)
+        }
         if (str.startsWith("MULTIPOINT")) {
             Geometry.wrap(reader.read(str))
         } else {

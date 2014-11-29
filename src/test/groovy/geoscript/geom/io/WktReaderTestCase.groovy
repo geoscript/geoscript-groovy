@@ -136,4 +136,12 @@ class WktReaderTestCase {
         assertEquals expected.curvedWkt, actual.curvedWkt
         assertEquals expected.wkt, actual.wkt
     }
+
+    @Test void readPointWithSrid() {
+        WktReader reader = new WktReader()
+        String wkt = "SRID=4326;POINT (111 -47)"
+        Point expected = new Point(111,-47)
+        Point actual = reader.read(wkt)
+        assertEquals expected.wkt, actual.wkt
+    }
 }
