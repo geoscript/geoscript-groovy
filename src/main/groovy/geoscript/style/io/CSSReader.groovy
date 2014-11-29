@@ -1,8 +1,14 @@
 package geoscript.style.io
 
 import geoscript.style.Style
-import org.geoscript.geocss.compat.CSS2SLD
 import org.geotools.styling.Style as GtStyle
+import org.geotools.styling.css.CssParser
+import org.geotools.styling.css.CssTranslator
+import org.geotools.styling.css.Stylesheet
+import org.parboiled.Parboiled
+import org.parboiled.errors.ErrorUtils
+import org.parboiled.parserunners.ReportingParseRunner
+import org.parboiled.support.ParsingResult
 
 /**
  * Read a Geoscript Style from a CSS File, InputStream or String
@@ -29,7 +35,15 @@ class CSSReader implements Reader {
      * @return A GeoScript Style
      */
     Style read(java.io.Reader reader) {
-        GtStyle style = CSS2SLD.convert(reader)
+        String css = reader.text
+        CssParser parser = Parboiled.createParser(CssParser.class)
+        ParsingResult result = new ReportingParseRunner(parser.StyleSheet()).run(css)
+        if (result.hasErrors()) {
+           println ErrorUtils.printParseErrors(result)
+        }
+        Stylesheet ss = result.parseTreeRoot.value
+        CssTranslator translator = new CssTranslator()
+        GtStyle style = translator.translate(ss)
         new CSSStyle(style)
     }
 

@@ -148,9 +148,15 @@
             <version>${gt.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.geoscript</groupId>
-            <artifactId>geocss_2.10</artifactId>
-            <version>0.8.3</version>
+            <groupId>org.geotools</groupId>
+            <artifactId>gt-css</artifactId>
+            <version>${gt.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.geoscript</groupId>
+                    <artifactId>geocss_2.10</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.geotools</groupId>
