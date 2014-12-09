@@ -2,7 +2,6 @@ package geoscript.style
 
 import org.junit.Test
 import static org.junit.Assert.*
-import org.geotools.styling.LineSymbolizer
 import geoscript.filter.Color
 import geoscript.filter.Expression
 
@@ -98,4 +97,20 @@ class ShapeTestCase {
         //stroke.asSLD()
     }
 
+    @Test void anchorPointAndDisplacement() {
+        Shape shape = new Shape(color:  "blue",  size: 6, type: "square", anchorPoint: [0.2, 0.7], displacement: [0.45, 0.55])
+        assertEquals "#0000ff", shape.color.value
+        assertEquals 6, shape.size.value, 0.1
+        assertEquals "square", shape.type.value
+        assertEquals shape.anchorPoint.anchorPointX.value, 0.2, 0.1
+        assertEquals shape.anchorPoint.anchorPointY.value, 0.7, 0.1
+        assertEquals shape.displacement.displacementX.value, 0.45, 0.1
+        assertEquals shape.displacement.displacementY.value, 0.55, 0.1
+        def sym = Symbolizer.styleFactory.createPointSymbolizer()
+        shape.apply(sym)
+        assertEquals sym.graphic.anchorPoint.anchorPointX.value, 0.2, 0.1
+        assertEquals sym.graphic.anchorPoint.anchorPointY.value, 0.7, 0.1
+        assertEquals sym.graphic.displacement.displacementX.value, 0.45, 0.1
+        assertEquals sym.graphic.displacement.displacementY.value, 0.55, 0.1
+    }
 }

@@ -56,6 +56,16 @@ class Shape extends Symbolizer {
     Expression opacity
 
     /**
+     * The anchor point
+     */
+    def anchorPoint
+
+    /**
+     * The displacement
+     */
+    def displacement
+
+    /**
      * Create a new Shape
      */
     Shape() {
@@ -139,6 +149,24 @@ class Shape extends Symbolizer {
     }
 
     /**
+     * Set the anchor points (List of two values between 0 and 1)
+     * @param anchorPoints A List of two values between 0 and 1
+     */
+    void setAnchorPoint(List anchorPoints) {
+        this.anchorPoint = styleFactory.createAnchorPoint(
+            new Expression(anchorPoints[0]).expr, new Expression(anchorPoints[1]).expr)
+    }
+
+    /**
+     * Set the displacement (List of two values between 0 and 1)
+     * @param displacement A List of two values between 0 and 1
+     */
+    void setDisplacement(List displacements) {
+        this.displacement = styleFactory.createDisplacement(
+                new Expression(displacements[0]).expr, new Expression(displacements[1]).expr)
+    }
+
+    /**
      * Add a Stroke to this Shape
      * @param color The color
      * @param width The width
@@ -172,6 +200,12 @@ class Shape extends Symbolizer {
     protected void apply(GtSymbolizer sym) {
         super.apply(sym)
         Graphic graphic = createGraphic(sym)
+        if (anchorPoint) {
+            graphic.anchorPoint = anchorPoint
+        }
+        if (displacement) {
+            graphic.displacement = displacement
+        }
         graphic.size = size.expr
         if (rotation != null && rotation.value != null) {
             graphic.rotation = rotation.expr
