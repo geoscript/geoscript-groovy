@@ -20,6 +20,7 @@ import org.geotools.process.raster.ContourProcess
 import org.geotools.process.raster.PolygonExtractionProcess
 import org.geotools.process.raster.RasterAsPointCollectionProcess
 import org.geotools.process.raster.RasterZonalStatistics
+import org.geotools.process.raster.MarchingSquaresVectorizer.ImageLoadingType
 import geoscript.workspace.Memory
 import geoscript.feature.Schema
 import org.geotools.process.raster.StyleCoverage
@@ -915,6 +916,48 @@ class Raster {
 
         def process = new RasterAsPointCollectionProcess()
         def fc = process.execute(coverage, p?.crs, scale, interpolation, emisphere)
+        Schema s = new Schema(fc.schema)
+        Schema schema =  new Schema("points", s.fields)
+        Layer layer = new Memory().create(schema)
+        layer.add(fc)
+        layer
+    }
+
+    /**
+     * Extract the foot print of this Raster as a vector Layer
+     * @param options Optional named parameters:
+     * <ul>
+     *      <li>exclusionRange: A List of Maps with min and max values used to exclude values from the search.</li>
+     *      <li>thresholdArea: A number used to exclude small Polygons</li>
+     *      <li>computeSimplifiedFootprint: Whether to compute a simplified footprint or not</li>
+     *      <li>simplifierFactor: A number used to simplify the geometry.</li>
+     *      <li>removeCollinear: Whether to remove collinear coordinates.</li>
+     *      <li>forceValid: Whether to force creation of valid polygons.</li>
+     *      <li>loadingType: The image loading type (DEFERRED or IMMEDIATE)</li>
+     * </ul>
+     * @return A Layer
+     */
+    Layer extractFootPrint(Map options = [:]) {
+        List exclusionRanges = options.get("exclusionRange", []).collect { Map range ->
+            org.geotools.util.Range(Integer.class, range.min, range.max)
+        }
+        Double thresholdArea = options.get("thresholdArea")
+        Boolean computeSimplifiedFootprint = options.get("computeSimplifiedFootprint")
+        Double simplifierFactory = options.get("simplifierFactor")
+        Boolean removeCollinear = options.get("removeCollinear")
+        Boolean forceValid = options.get("forceValid")
+        String loadingTypeStr = options.get("loadingType")
+        ImageLoadingType loadType = null
+        if (loadingTypeStr) {
+            if (loadingTypeStr.equalsIgnoreCase("DEFERRED")) {
+                loadType = ImageLoadingType.DEFERRED
+            } else if (loadingTypeStr.equalsIgnoreCase("IMMEDIATE")) {
+                loadType = ImageLoadingType.IMMEDIATE
+            }
+        }
+        def process = new org.geotools.process.raster.FootprintExtractionProcess()
+        def fc = process.execute(this.coverage, exclusionRanges, thresholdArea, computeSimplifiedFootprint,
+                simplifierFactory, removeCollinear, forceValid, loadType, null)
         Schema s = new Schema(fc.schema)
         Schema schema =  new Schema("points", s.fields)
         Layer layer = new Memory().create(schema)

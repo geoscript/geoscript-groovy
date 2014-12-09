@@ -985,4 +985,15 @@ class RasterTestCase {
         assertNotNull rgb
     }
 
+    @Test void extractFootPrint() {
+        File file = new File(getClass().getClassLoader().getResource("raster_circle_cropped.tif").toURI())
+        GeoTIFF geoTIFF = new GeoTIFF(file)
+        Raster raster = geoTIFF.read()
+        Layer layer = raster.extractFootPrint()
+        assertEquals "points", layer.name
+        assertEquals 1, layer.count
+        assertTrue layer.schema.has("the_geom")
+        assertTrue layer.schema.has("value")
+    }
+
 }
