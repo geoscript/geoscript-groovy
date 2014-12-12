@@ -32,7 +32,7 @@ class GeoPackageTestCase {
         assertBoundsEquals b, pyramid.bounds, 0.0001
         assertEquals 256, pyramid.tileWidth
         assertEquals 256, pyramid.tileHeight
-        assertEquals Pyramid.Origin.BOTTOM_LEFT, pyramid.origin
+        assertEquals Pyramid.Origin.TOP_LEFT, pyramid.origin
         assertEquals 20, pyramid.grids.size()
         pyramid.grids.eachWithIndex { Grid g, int z ->
             assertEquals z, g.z
@@ -147,9 +147,9 @@ class GeoPackageTestCase {
         TileCursor cursor = layer.tiles(b, 3)
         assertEquals 3, cursor.z
         assertEquals 1, cursor.minX
-        assertEquals 5, cursor.minY
+        assertEquals 2, cursor.minY
         assertEquals 1, cursor.maxX
-        assertEquals 5, cursor.maxY
+        assertEquals 2, cursor.maxY
         assertEquals 1, cursor.width
         assertEquals 1, cursor.height
         assertEquals 1, cursor.size
@@ -171,9 +171,9 @@ class GeoPackageTestCase {
         TileCursor cursor = layer.tiles(b, b.width / 400, b.height / 300)
         assertEquals 4, cursor.z
         assertEquals 2, cursor.minX
-        assertEquals 9, cursor.minY
+        assertEquals 5, cursor.minY
         assertEquals 5, cursor.maxX
-        assertEquals 10, cursor.maxY
+        assertEquals 6, cursor.maxY
         assertEquals 4, cursor.width
         assertEquals 2, cursor.height
         assertEquals 8, cursor.size
@@ -195,9 +195,9 @@ class GeoPackageTestCase {
         TileCursor cursor = layer.tiles(b, 400, 300)
         assertEquals 4, cursor.z
         assertEquals 2, cursor.minX
-        assertEquals 9, cursor.minY
+        assertEquals 5, cursor.minY
         assertEquals 5, cursor.maxX
-        assertEquals 10, cursor.maxY
+        assertEquals 6, cursor.maxY
         assertEquals 4, cursor.width
         assertEquals 2, cursor.height
         assertEquals 8, cursor.size
@@ -218,9 +218,9 @@ class GeoPackageTestCase {
         Bounds b = new Bounds(-124.73142200000001, 24.955967, -66.969849, 49.371735, "EPSG:4326").reproject("EPSG:3857")
         Map coords = layer.getTileCoordinates(b, layer.pyramid.grid(4))
         assertEquals 2, coords.minX
-        assertEquals 9, coords.minY
+        assertEquals 5, coords.minY
         assertEquals 5, coords.maxX
-        assertEquals 10, coords.maxY
+        assertEquals 6, coords.maxY
         layer.close()
     }
 
