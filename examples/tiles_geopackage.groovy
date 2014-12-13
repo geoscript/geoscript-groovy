@@ -18,7 +18,7 @@ Shapefile shp = new Shapefile(new File("states.shp"))
 shp.style = new Fill("wheat") + new Stroke("navy", 0.1)
 
 File file = new File("states.gpkg")
-GeoPackage gpkg = new GeoPackage(file, "states", Pyramid.createGlobalMercatorPyramid())
+GeoPackage gpkg = new GeoPackage(file, "states", Pyramid.createGlobalMercatorPyramid(origin: Pyramid.Origin.TOP_LEFT))
 
 TileRenderer renderer = new ImageTileRenderer(gpkg, shp)
 TileGenerator generator = new TileGenerator(verbose: true)

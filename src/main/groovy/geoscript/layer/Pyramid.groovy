@@ -133,7 +133,7 @@ class Pyramid {
      * Create a Pyramid with Grids for common global web mercator tile sets
      * @return A Pyramid
      */
-    static Pyramid createGlobalMercatorPyramid() {
+    static Pyramid createGlobalMercatorPyramid(Map options = [:]) {
         Projection latLonProj = new Projection("EPSG:4326")
         Projection mercatorProj = new Projection("EPSG:3857")
         Bounds latLonBounds = new Bounds(-179.99, -85.0511, 179.99, 85.0511, latLonProj)
@@ -141,7 +141,7 @@ class Pyramid {
         Pyramid p = new Pyramid(
             proj: mercatorProj,
             bounds: mercatorBounds,
-            origin: Pyramid.Origin.BOTTOM_LEFT,
+            origin: options.get("origin", Pyramid.Origin.BOTTOM_LEFT),
             tileWidth: 256,
             tileHeight: 256
         )
