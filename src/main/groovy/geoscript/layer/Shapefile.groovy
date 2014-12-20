@@ -1,5 +1,6 @@
 package geoscript.layer
 
+import geoscript.GeoScript
 import geoscript.workspace.Directory
 import org.geotools.data.DataUtilities
 import org.geotools.data.shapefile.files.ShpFileType
@@ -36,6 +37,40 @@ class Shapefile extends Layer {
      */
     File getFile() {
         DataUtilities.urlToFile(new URL(fs.dataStore.shpFiles.get(ShpFileType.SHP)))
+    }
+
+    /**
+     * Create a zip file with all of the Shapefile's files
+     * @param options The optional named parameters
+     * <ul>
+     *     <li> zipFile = The optional zip File which defaults to a zip file in the same directory as the Shapefile</li>
+     * </ul>
+     * @return The zip File
+     */
+    File zip(Map options = [:]) {
+        File dir = this.file.absoluteFile.parentFile
+        File zipFile = options.get("zipFile", new File(dir, "${this.name}.zip"))
+        GeoScript.zip(["shp", "dbf", "shx", "prj", "qix", "fix"].collect { String ext ->
+            new File(dir, "${this.name}.${ext}")
+        }, zipFile)
+    }
+
+    /**
+     * Unzip the zip file and return a Shapefile if possible
+     * @param options The optional named parameters
+     * <ul>
+     *     <li>dir = The directory in which the zip file is unzipped</li>
+     * </ul>
+     * @param file The zip File or file name
+     * @return A Shapefile or null
+     */
+    static Shapefile unzip(Map options = [:], def file) {
+        File zipFile = file instanceof File ? file as File : new File(file)
+        String name = options.get("name", ".shp")
+        File dir = options.get("dir", new File(zipFile.absoluteFile.parentFile, zipFile.name.substring(0, zipFile.name.lastIndexOf(".zip"))))
+        GeoScript.unzip(zipFile, dir)
+        File shpFile = dir.listFiles().find{ File f -> f.name.endsWith(name)}
+        shpFile != null ? new Shapefile(shpFile) : null
     }
 
     /**

@@ -21,6 +21,10 @@ import geoscript.proj.Projection
 import geoscript.workspace.PostGIS
 import geoscript.workspace.Workspace
 
+import java.util.zip.ZipEntry
+import java.util.zip.ZipFile
+import java.util.zip.ZipOutputStream
+
 /**
  * The GeoScript class contains category methods.
  * <p>You can easily create a Point from a list:</p>
@@ -292,4 +296,35 @@ class GeoScript {
             return obj
         }
     }
+
+    static File zip(List<File> files, File zipFile) {
+        ZipOutputStream out = new ZipOutputStream(new FileOutputStream(zipFile))
+        try {
+            files.each { File file ->
+                if (file.exists()) {
+                    out.putNextEntry(new ZipEntry(file.name))
+                    file.withInputStream { InputStream inputStream ->
+                        out << inputStream
+                    }
+                    out.closeEntry()
+                }
+            }
+        } finally {
+            out.close()
+        }
+        zipFile
+    }
+
+    static File unzip(File zipFile, File dir = zipFile.parentFile) {
+        if (!dir.exists()) dir.mkdir()
+        ZipFile zip = new ZipFile(zipFile)
+        zip.entries().each { ZipEntry entry ->
+            File f = new File(dir, entry.name)
+            f.withOutputStream { OutputStream out ->
+                out << zip.getInputStream(entry)
+            }
+        }
+        dir
+    }
+
 }

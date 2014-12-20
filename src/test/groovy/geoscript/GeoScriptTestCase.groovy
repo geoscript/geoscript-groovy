@@ -235,4 +235,24 @@ class GeoScriptTestCase {
             assertEquals("org.geotools.data.shapefile.ShapefileDataStore", w.format)
         }
     }
+
+    @Test void zipUnzip() {
+        File dir = folder.newFolder("files")
+        List files = ["file1","file2","file3"].collect {
+            File file = new File(dir, "${it}.txt")
+            file.write("123")
+            file
+        }
+        File zipFile = folder.newFile("files.zip")
+        GeoScript.zip(files, zipFile)
+        assertTrue zipFile.exists()
+        assertTrue zipFile.length() > 0
+        File newDir = folder.newFolder("unzipped")
+        GeoScript.unzip(zipFile, newDir)
+        ["file1","file2","file3"].each { String name ->
+            File f = new File(newDir, "${name}.txt")
+            assertTrue f.exists()
+            assertEquals "123", f.text
+        }
+    }
 }

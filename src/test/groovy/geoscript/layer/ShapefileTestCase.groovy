@@ -6,6 +6,7 @@ import geoscript.feature.Schema
 import geoscript.geom.Point
 import geoscript.workspace.Directory
 import geoscript.workspace.Workspace
+import org.apache.commons.io.FileUtils
 import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.TemporaryFolder
@@ -76,6 +77,29 @@ class ShapefileTestCase {
         features = shp.features
         assertEquals "test22", features[1]["areallylon"]
         assertEquals "test22", features[1]["areallylongfieldname"]
+    }
+
+    @Test void zipUnzip() {
+        // Create a temp dir
+        File dir = folder.newFolder("states")
+        // Copy shapefile files to the new temporary directory
+        File file = new File(getClass().getClassLoader().getResource("states.shp").toURI())
+        ["shp", "dbf", "shx", "prj", "qix", "fix"].each {String ext ->
+            File f = new File(file.parentFile, "states.${ext}")
+            if (f.exists()) {
+                FileUtils.copyFile(f, new File(dir, "states.${ext}"))
+            }
+        }
+        // Create a Shapefile that points to the temp dir
+        Shapefile shp = new Shapefile(new File(dir, "states.shp"))
+        // Zip the Shapefile's files
+        File zipFile = shp.zip()
+        assertTrue(zipFile.exists())
+        assertTrue(zipFile.length() > 0)
+        // Unzip
+        Shapefile shp2 = Shapefile.unzip(zipFile)
+        assertNotNull shp2
+        assertEquals 49, shp2.count
     }
 }
 
