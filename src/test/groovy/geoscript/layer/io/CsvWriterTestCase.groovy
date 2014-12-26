@@ -560,4 +560,27 @@ class CsvWriterTestCase {
         String csv = writer.write(layer)
         assertEquals(expected, csv)
     }
+
+    private Layer createLayerWithNewLines(Projection proj = null) {
+        // Create a simple Schema
+        Schema schema = new Schema("houses", [new Field("geom","Point", proj), new Field("name","string"), new Field("price","float")])
+
+        // Create a Layer in memory with a couple of Features
+        Memory memory = new Memory()
+        Layer layer = memory.create(schema)
+        layer.add(new Feature([new Point(111,-47), "House\n", 12.5], "house1", schema))
+        layer.add(new Feature([new Point(121,-45), "School\ris\r\non vacation", 22.7], "house2", schema))
+        layer
+    }
+
+    @Test void writeWithNewLines() {
+        Layer layer = createLayerWithNewLines()
+        String expected = """"geom:Point","name:String","price:Float"
+"POINT (111 -47)","House ","12.5"
+"POINT (121 -45)","School is on vacation","22.7"
+"""
+        CsvWriter writer = new CsvWriter()
+        String csv = writer.write(layer)
+        assertEquals(expected, csv)
+    }
 }

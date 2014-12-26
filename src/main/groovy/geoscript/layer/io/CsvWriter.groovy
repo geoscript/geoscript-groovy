@@ -12,6 +12,7 @@ import geoscript.geom.io.GeoJSONWriter
 import geoscript.geom.io.KmlWriter
 import geoscript.geom.io.Gml2Writer
 import geoscript.geom.io.Gml3Writer
+import org.codehaus.groovy.util.StringUtil
 
 /**
  * Write a {@link geoscript.layer.Layer Layer} to a CSV String.
@@ -218,7 +219,7 @@ class CsvWriter implements Writer {
                         values.add(geomWriter.write(f.get(fld) as Geometry))
                     }
                     else {
-                        values.add(f.get(fld))
+                        values.add(process(f.get(fld)))
                     }
                 }
             }
@@ -226,6 +227,20 @@ class CsvWriter implements Writer {
         }
         writer.flush()
         writer.close()
+    }
+
+    /**
+     * Process the value before adding it to the CSVWriter.
+     * @param value The value
+     * @return The processed value
+     */
+    private String process(Object value) {
+        // Remove line breaks
+        if (value != null && value instanceof String) {
+            value.toString().replaceAll("(\r\n|\r|\n|\n\r)+"," ")
+        } else {
+            value
+        }
     }
 
     /**
