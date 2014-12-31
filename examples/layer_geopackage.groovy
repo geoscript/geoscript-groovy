@@ -1,6 +1,7 @@
 import geoscript.feature.Feature
 import geoscript.layer.Layer
 import geoscript.layer.Shapefile
+import geoscript.proj.Projection
 import geoscript.workspace.GeoPackage
 import geoscript.workspace.Workspace
 
@@ -27,6 +28,14 @@ try {
     geopkg.get('state_centroids').eachFeature { Feature f ->
         println "${f['abbr']} = ${f['name']} at ${f.geom.centroid}"
     }
+
+    // Add a reprojected Layer
+    Layer l3 = geopkg.add(shp.reproject(new Projection("EPSG:2927"), "states2927"))
+    println "Projected Layer has ${l3.count} features:"
+    geopkg.get('states2927').eachFeature { Feature f ->
+        println "${f['STATE_ABBR']} = ${f['STATE_NAME']} at ${f.geom.centroid}"
+    }
+
 } finally {
     geopkg.close()
 }
