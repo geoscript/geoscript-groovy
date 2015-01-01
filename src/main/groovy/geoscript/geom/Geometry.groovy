@@ -244,6 +244,14 @@ class Geometry {
     }
 
     /**
+     * Get the dimension of the Geometry
+     * @return The dimension
+     */
+    int getDimension() {
+        this.g.dimension
+    }
+
+    /**
      * Get the number of Geometries in this Geometry
      * @return The number of Geometries in this Geometry
      */

@@ -550,4 +550,10 @@ class GeometryTestCase {
         assertTrue Geometry.fromWKT("CIRCULARSTRING(6.12 10.0, 7.07 7.07, 10.0 0.0)").isCurved()
     }
 
+    @Test void getDimension() {
+        assertEquals 0, Geometry.fromWKT("POINT (1 1)").dimension
+        assertEquals 1, Geometry.fromWKT("LINESTRING (1 1, 10 10)").dimension
+        assertEquals 2, Geometry.fromWKT("POLYGON ((90 90, 90 110, 110 110, 110 90, 90 90))").dimension
+    }
+
 }
