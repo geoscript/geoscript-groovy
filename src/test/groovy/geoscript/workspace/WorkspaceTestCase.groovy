@@ -140,6 +140,11 @@ class WorkspaceTestCase {
         String wfsUrl = "http://localhost:8080/geoserver/ows?service=wfs&version=1.1.0&request=GetCapabilities"
         params = Workspace.getParametersFromString(wfsUrl)
         assertEquals params["WFSDataStoreFactory:GET_CAPABILITIES_URL"], wfsUrl
+
+        // Memory
+        params = Workspace.getParametersFromString("memory")
+        assertTrue params.containsKey("type")
+        assertEquals "memory", params.type
     }
 
     @Test void getWorkspaceNames() {
@@ -243,5 +248,13 @@ class WorkspaceTestCase {
         Workspace prop3 = Workspace.getWorkspace(new File(propFile.parentFile, "asdfasdfas.properties").absolutePath)
         assertNotNull(prop3.ds)
         assertTrue(prop instanceof Property)
+
+        // Memory
+        Workspace mem = Workspace.getWorkspace("memory")
+        assertNotNull(mem.ds)
+        assertTrue(mem instanceof Memory)
+        mem = Workspace.getWorkspace([type: "memory"])
+        assertNotNull(mem.ds)
+        assertTrue(mem instanceof Memory)
     }
 }

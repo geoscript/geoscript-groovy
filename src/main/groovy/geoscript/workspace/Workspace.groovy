@@ -213,7 +213,10 @@ class Workspace {
      */
     private static Map getParametersFromString(String str) {
         Map params = [:]
-        if (str.indexOf("=") == -1 || str.toLowerCase().startsWith("http")) {
+        if (str.equalsIgnoreCase("memory")) {
+            params["type"] = "memory"
+        }
+        else if (str.indexOf("=") == -1 || str.toLowerCase().startsWith("http")) {
             // Directory (Shapefile)
             if (str.endsWith(".shp")) {
                 if (str.startsWith("file:/")) {
@@ -256,7 +259,9 @@ class Workspace {
             // Directory
             else if (new File(str).isDirectory()) {
                 params.put("url", new File(str).toURL())
-            } else {
+            }
+            // Unknown
+            else {
                 throw new IllegalArgumentException("Unknown Workspace parameter string: ${str}")
             }
         }
@@ -323,7 +328,13 @@ class Workspace {
      * @return A Workspace or null
      */
     static Workspace getWorkspace(Map params) {
-        wrap(DataStoreFinder.getDataStore(params))
+        DataStore ds
+        if (params.type && params.type.equalsIgnoreCase("memory")) {
+            ds = new org.geotools.data.memory.MemoryDataStore()
+        } else {
+            ds =  DataStoreFinder.getDataStore(params)
+        }
+        wrap(ds)
     }
 
     /**
@@ -371,7 +382,7 @@ class Workspace {
             }
             else (ds instanceof org.geotools.jdbc.JDBCDataStore) {
                     new Database(ds)
-                }
+            }
         }
         else {
             new Workspace(ds)
