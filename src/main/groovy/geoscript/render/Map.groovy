@@ -102,7 +102,8 @@ class Map {
         "gif": new Image("gif"),
         "pdf": new Pdf(),
         "svg": new Svg(),
-        "base64":  new Base64()
+        "base64":  new Base64(),
+        "ascii" : new ASCII()
     ]
 
     /**
