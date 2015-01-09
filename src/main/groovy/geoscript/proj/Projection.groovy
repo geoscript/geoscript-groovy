@@ -72,6 +72,15 @@ class Projection {
     }
 
     /**
+     * Get the SRS Code
+     * @param codeOnly Whether to include the code only (defaults to false)
+     * @return The SRS code
+     */
+    String getSrs(boolean codeOnly = false) {
+        CRS.toSRS(this.crs, codeOnly)
+    }
+
+    /**
      * Get the EPSG code
      * @return The EPSG code
      */

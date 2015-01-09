@@ -41,6 +41,20 @@ class ProjectionTestCase {
         assertEquals 3857, p.epsg
     }
 
+    @Test void getSrs() {
+        Projection p = new Projection("EPSG:2927")
+        assertEquals "EPSG:2927", p.srs
+        p = new Projection("EPSG:4326")
+        assertEquals "EPSG:4326", p.srs
+        p = new Projection("EPSG:3857")
+        assertEquals "EPSG:3857", p.srs
+        p = new Projection("urn:ogc:def:crs:EPSG::4326")
+        assertEquals "urn:ogc:def:crs:EPSG::4326", p.srs
+        assertEquals "4326", p.getSrs(true)
+        assertEquals 4326, p.epsg
+        assertEquals "EPSG:4326", p.id
+    }
+
     @Test void getWkt() {
         Projection p = new Projection("EPSG:4326")
         String expected = """GEOGCS["WGS 84",
@@ -54,7 +68,6 @@ class ProjectionTestCase {
   AUTHORITY["EPSG","4326"]]""".replaceAll(" ","").replaceAll("\n","")
         String actual = p.wkt.replaceAll(" ","").replaceAll(System.getProperty("line.separator"),"")
         assertEquals expected, actual
-
     }
 
     @Test void getEsriWkt() {
