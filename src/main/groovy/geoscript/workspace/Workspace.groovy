@@ -338,6 +338,40 @@ class Workspace {
     }
 
     /**
+     * Use a Workspace within the Closure.  The Workspace will
+     * be closed.
+     * @param paramString The param string
+     * @param closure The Closure that gets the opened Workspace
+     */
+    static void withWorkspace(String paramString, Closure closure) {
+        withWorkspace(Workspace.getWorkspace(paramString), closure)
+    }
+
+    /**
+     * Use a Workspace within the Closure.  The Workspace will
+     * be closed.
+     * @param params The parameter Map
+     * @param closure The Closure that gets the opened Workspace
+     */
+    static void withWorkspace(Map params, Closure closure) {
+        withWorkspace(Workspace.getWorkspace(params), closure)
+    }
+
+    /**
+     * Use a Workspace within the Closure.  The Workspace will
+     * be closed.
+     * @param workspace The Workspace
+     * @param closure The Closure that gets the Workspace
+     */
+    static void withWorkspace(Workspace workspace, Closure closure) {
+        try {
+            closure.call(workspace)
+        } finally {
+            workspace.close()
+        }
+    }
+
+    /**
      * Wrap a GeoTools DataStore in the appropriate GeoScript Workspace
      * @param ds The GeoTools DataStore
      * @return A GeoScript Workspace or null

@@ -206,7 +206,6 @@ class WorkspaceTestCase {
         URL url = getClass().getClassLoader().getResource("states.shp")
         Workspace shp = Workspace.getWorkspace(["url": url])
         assertNotNull(shp.ds)
-        println shp.ds.class.name
         assertTrue(shp instanceof Directory)
     }
 
@@ -256,5 +255,20 @@ class WorkspaceTestCase {
         mem = Workspace.getWorkspace([type: "memory"])
         assertNotNull(mem.ds)
         assertTrue(mem instanceof Memory)
+    }
+
+    @Test void withWorkspace() {
+        Workspace.withWorkspace(["dbtype": "h2", "database": folder.newFile("roads.db").absolutePath]) { Workspace w ->
+            assertNotNull w
+            assertEquals "H2", w.format
+        }
+        Workspace.withWorkspace("dbtype=h2 database=" + folder.newFile("roads.db").absolutePath) { Workspace w ->
+            assertNotNull w
+            assertEquals "H2", w.format
+        }
+        Workspace.withWorkspace(new H2(folder.newFile("roads.db").absolutePath)) { Workspace w ->
+            assertNotNull w
+            assertEquals "H2", w.format
+        }
     }
 }
