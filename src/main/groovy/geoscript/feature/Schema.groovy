@@ -417,6 +417,14 @@ class Schema {
     }
 
     /**
+     * Get the spec string
+     * @return The spec string
+     */
+    String getSpec() {
+        DataUtilities.encodeType(this.featureType)
+    }
+
+    /**
      * The string representation
      * @return The string representation
      */

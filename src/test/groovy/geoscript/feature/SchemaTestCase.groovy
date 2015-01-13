@@ -319,5 +319,11 @@ class SchemaTestCase {
         assertEquals "org.geotools.geometry.jts.CompoundCurve", Schema.lookUpBinding("CompoundCurve")
     }
 
+    @Test void spec() {
+        Schema s1 = new Schema("widgets", [new Field("geom","Point"), new Field("name","string"), new Field("price","float")])
+        assertEquals "geom:Point,name:String,price:Float", s1.spec
+        Schema s2 = new Schema("widgets", [new Field("geom","Point","EPSG:2927"), new Field("name","string"), new Field("price","float")])
+        assertEquals "geom:Point:srid=2927,name:String,price:Float", s2.spec
+    }
 }
 
