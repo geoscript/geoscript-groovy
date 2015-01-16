@@ -21,7 +21,7 @@ class Pyramid {
     /**
      * The Bounds
      */
-    Bounds bounds = new Bounds(-179.99, 179.99, -90, 90, "EPSG:4326")
+    Bounds bounds = new Bounds(-179.99, -90, 179.99, 90, "EPSG:4326")
 
     /**
      * The Origin

@@ -36,6 +36,19 @@ class PyramidTestCase {
     }
 
     @Test
+    void createDefault() {
+        Pyramid pyramid = new Pyramid()
+        assertEquals "EPSG:4326", pyramid.proj.id
+        Bounds b = new Bounds(-179.99, -90, 179.99, 90, "EPSG:4326")
+        assertEquals b, pyramid.bounds
+        assertEquals 256, pyramid.tileWidth
+        assertEquals 256, pyramid.tileHeight
+        assertEquals Pyramid.Origin.BOTTOM_LEFT, pyramid.origin
+        assertEquals 0, pyramid.grids.size()
+    }
+
+
+    @Test
     void gridByZoomLevel() {
         Pyramid pyramid = Pyramid.createGlobalMercatorPyramid()
         Grid grid = pyramid.grid(4)
