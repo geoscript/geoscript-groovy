@@ -311,8 +311,8 @@ class LayerTestCase {
         layer1.add(new Feature([new Point(-122.494165, 47.198096), "House", 12.5], "house1", s1))
         Layer layer2 = layer1.reproject(new Projection("EPSG:2927"))
         assertEquals 1, layer2.count()
-        assertEquals 1144731.06, layer2.features[0].geom.x, 0.01
-        assertEquals 686299.16, layer2.features[0].geom.y, 0.01
+        assertEquals 1144727.44, layer2.features[0].geom.x, 0.01
+        assertEquals 686301.31, layer2.features[0].geom.y, 0.01
 
         // Without Layer Projection
         s1 = new Schema("facilities", [new Field("geom","Point"), new Field("name","string"), new Field("price","float")])
@@ -320,8 +320,8 @@ class LayerTestCase {
         layer1.add(new Feature([new Point(-122.494165, 47.198096), "House", 12.5], "house1", s1))
         layer2 = layer1.reproject(new Projection("EPSG:2927"), "projected_facilties", 1000, new Projection("EPSG:4326"))
         assertEquals 1, layer2.count()
-        assertEquals 1144731.06, layer2.features[0].geom.x, 0.01
-        assertEquals 686299.16, layer2.features[0].geom.y, 0.01
+        assertEquals 1144727.44, layer2.features[0].geom.x, 0.01
+        assertEquals 686301.31, layer2.features[0].geom.y, 0.01
     }
 
     @Test void reprojectToWorkspace() {
@@ -335,8 +335,8 @@ class LayerTestCase {
         Property property = new Property(file.parentFile)
         Layer layer2 = layer1.reproject(new Projection("EPSG:2927"), property, "facilities_reprojected")
         assertEquals 1, layer2.count()
-        assertEquals 1144731.06, layer2.features[0].geom.x, 0.01
-        assertEquals 686299.16, layer2.features[0].geom.y, 0.01
+        assertEquals 1144727.44, layer2.features[0].geom.x, 0.01
+        assertEquals 686301.31, layer2.features[0].geom.y, 0.01
     }
 
     @Test void reprojectToLayer() {
@@ -351,8 +351,8 @@ class LayerTestCase {
         Layer propertyLayer = property.create(layer1.schema.reproject("EPSG:2927","facilities_epsg_2927"))
         Layer layer2 = layer1.reproject(propertyLayer)
         assertEquals 1, layer2.count()
-        assertEquals 1144731.06, layer2.features[0].geom.x, 0.01
-        assertEquals 686299.16, layer2.features[0].geom.y, 0.01
+        assertEquals 1144727.44, layer2.features[0].geom.x, 0.01
+        assertEquals 686301.31, layer2.features[0].geom.y, 0.01
     }
 
     @Test void delete() {
@@ -652,12 +652,12 @@ class LayerTestCase {
         c.close()
 
         // Page
-        c = layer.getCursor(start:0, max:2)
+        c = layer.getCursor(start:0, max:2, sort: [["name", "ASC"]])
         assertEquals "A", c.next()["name"]
         assertEquals "B", c.next()["name"]
         assertFalse c.hasNext()
         c.close()
-        c = layer.getCursor(start:2, max:2)
+        c = layer.getCursor(start:2, max:2, sort: [["name", "ASC"]])
         assertEquals "C", c.next()["name"]
         assertEquals "D", c.next()["name"]
         assertFalse c.hasNext()
@@ -721,11 +721,11 @@ class LayerTestCase {
 
         Cursor c = layer.getCursor(destProj: "EPSG:2927")
         Point pt = c.next().geom as Point
-        assertEquals 1187990.8097648006, pt.x, 0.01
-        assertEquals 643824.5636732922, pt.y, 0.01
+        assertEquals 1187987.19, pt.x, 0.01
+        assertEquals 643826.70, pt.y, 0.01
         pt = c.next().geom as Point
-        assertEquals 1202840.788220999, pt.x, 0.01
-        assertEquals 611729.5935845084, pt.y, 0.01
+        assertEquals 1202837.17, pt.x, 0.01
+        assertEquals 611731.73, pt.y, 0.01
         assertFalse c.hasNext()
         c.close()
 
@@ -737,11 +737,11 @@ class LayerTestCase {
 
         c = layer.getCursor(sourceProj: "EPSG:4326", destProj: "EPSG:2927")
         pt = c.next().geom as Point
-        assertEquals 1187990.8097648006, pt.x, 0.01
-        assertEquals 643824.5636732922, pt.y, 0.01
+        assertEquals 1187987.19, pt.x, 0.01
+        assertEquals 643826.70, pt.y, 0.01
         pt = c.next().geom as Point
-        assertEquals 1202840.788220999, pt.x, 0.01
-        assertEquals 611729.5935845084, pt.y, 0.01
+        assertEquals 1202837.17, pt.x, 0.01
+        assertEquals 611731.73, pt.y, 0.01
         assertFalse c.hasNext()
         c.close()
     }

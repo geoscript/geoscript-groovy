@@ -1,7 +1,11 @@
 package geoscript.layer
 
 import geoscript.feature.Feature
+import org.geotools.data.crs.ReprojectFeatureIterator
+import org.geotools.data.store.ReprojectingFeatureIterator
 import org.geotools.feature.FeatureIterator
+import org.geotools.feature.FeatureTypes
+import org.geotools.geometry.jts.GeometryCoordinateSequenceTransformer
 import org.opengis.feature.simple.SimpleFeature
 import org.opengis.feature.simple.SimpleFeatureType
 import org.geotools.feature.FeatureCollection
@@ -81,6 +85,15 @@ class Cursor implements Iterator {
            long max = options.max as long
            this.iter = new MaxFeaturesIterator<SimpleFeature>(this.iter, start, max)
        }
+       if (options.containsKey("sourceProj") && options.containsKey("destProj")) {
+           this.iter = new ReprojectingFeatureIterator(
+               this.iter,
+               options["sourceProj"].crs,
+               options["destProj"].crs,
+               FeatureTypes.transform(this.col.schema, options["destProj"].crs),
+               new GeometryCoordinateSequenceTransformer()
+           )
+       }
     }
 
     /**
@@ -130,7 +143,11 @@ class Cursor implements Iterator {
      * Closes the Cursor.  This should always be called.
      */
     void close() {
-        iter.close()
+        try {
+            iter.close()
+        } catch(IllegalStateException ex) {
+            // Do nothing, it just means it's already been closed
+        }
     }
 
     /**

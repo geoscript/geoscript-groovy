@@ -85,8 +85,8 @@ class ProjectionTestCase {
         assertNotNull(bounds)
         assertEquals "EPSG:2927", bounds.proj.id
         assertEquals(641400.91, bounds.minX, 0.1)
-        assertEquals(75407.62, bounds.minY, 0.1)
-        assertEquals(2557520.70, bounds.maxX, 0.1)
+        assertEquals(75405.06, bounds.minY, 0.1)
+        assertEquals(2560080.68, bounds.maxX, 0.1)
         assertEquals(854063.65, bounds.maxY, 0.1)
     }
 
@@ -105,7 +105,7 @@ class ProjectionTestCase {
         Projection src = new Projection("EPSG:2927")
         Projection dest = new Projection("EPSG:4326")
         Point projectedPoint = src.transform(point, dest)
-        assertEquals "POINT (-122.34429002073523 47.10679261700989)", projectedPoint.toString()
+        assertEquals "POINT (-122.34427530579649 47.10678696848592)", projectedPoint.toString()
     }
 
     @Test void testToString() {
@@ -123,7 +123,7 @@ class ProjectionTestCase {
         Projection src = new Projection("EPSG:2927")
         Projection dest = new Projection("EPSG:4326")
         Point projectedPoint = Projection.transform(point, src, dest)
-        assertEquals "POINT (-122.34429002073523 47.10679261700989)", projectedPoint.toString()
+        assertEquals "POINT (-122.34427530579649 47.10678696848592)", projectedPoint.toString()
     }
 
     @Test void transform26916To4326() {

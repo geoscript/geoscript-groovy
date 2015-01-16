@@ -607,7 +607,12 @@ class Layer {
         }
         // Set destination Projection
         if (destProj) {
-            q.coordinateSystemReproject = new Projection(destProj).crs
+            if (getProj()) {
+                q.coordinateSystemReproject = new Projection(destProj).crs
+            } else if (sourceProj) {
+                cursorOptions["sourceProj"] = new Projection(sourceProj)
+                cursorOptions["destProj"] = new Projection(destProj)
+            }
         }
         // Add sorting to the Query
         if (sort != null && sort.size() > 0) {
@@ -932,15 +937,7 @@ class Layer {
      * @return The projected Layer
      */
     Layer reproject(Layer projectedLayer, int chunk = 1000, Projection sourceProjection = new Projection("EPSG:4326")) {
-        Query q = new Query(getName(), Filter.PASS.filter)
-        if (getProj() != null) {
-            q.coordinateSystem = getProj().crs
-        } else {
-            q.coordinateSystem = sourceProjection.crs
-        }
-        q.coordinateSystemReproject = projectedLayer.proj.crs
-        FeatureCollection fc = fs.getFeatures(q)
-        Cursor c = new Cursor(fc)
+        Cursor c = this.getCursor(sourceProj: sourceProjection, destProj: projectedLayer.proj)
         projectedLayer.withWriter{ w ->
             while(true) {
                 def features = readFeatures(c, projectedLayer.schema, chunk)
