@@ -104,7 +104,6 @@ class SymbolizerTestCase {
         assertEquals pointSym2.color.hex, "#000000"
 
         def geomSym = Symbolizer.getDefault(null)
-        println geomSym
         assertTrue geomSym instanceof Composite
         assertEquals 2, geomSym.parts.size()
         assertTrue geomSym.parts[0] instanceof Composite
@@ -331,7 +330,6 @@ class SymbolizerTestCase {
 
         ByteArrayOutputStream out = new ByteArrayOutputStream()
         sym.asSLD(out)
-        println out.toString()
         String sld = out.toString().trim().replaceAll(NEW_LINE,"")
         assertNotNull sld
         assertTrue sld.length() > 0
