@@ -45,9 +45,14 @@ class Symbolizer implements Style, Cloneable {
     int z
 
     /**
-     * A Map of options
+     * A Map of Symbolizer options
      */ 
     Map options = [:]
+
+    /**
+     * A Map of FeatureTypeStyle options
+     */
+    protected Map styleOptions = [:]
 
     /**
      * The GeoTools StyleFactory
@@ -119,6 +124,40 @@ class Symbolizer implements Style, Cloneable {
      */
     Symbolizer zindex(int z) {
         this.z = z
+        this
+    }
+
+    /**
+     * Set composite (copy, destination, source-over, destination-over, source-in, destination-in,
+     * source-out, destination-out, source-atop, destination-atop, xor) or blending (multiply, screen, overlay, darken,
+     * lighten, color-dodge, color-burn, hard-light, soft-light, difference, exclusion)
+     * @param params The optional named parameters:
+     * <ul>
+     *     <li>opacity = The opacity value between 0 and 1.  It defaults to 1.</li>
+     *     <li>base = The flag that indicates whether this composite should be used as base or not.  Defaults to false.</li>
+     *     <li>symbolizer = The flag that indicates whether the composite should be applied to this symbolizer (true)
+     *         or all grouped symbolizers / at the featuretype style (false).  Defaults to true.
+     *     </li>
+     * </ul>
+     * @param composite The composite of blending value
+     * @return The Symbolizer
+     */
+    Symbolizer composite(Map params = [:], String composite) {
+        double opacity = params.get("opacity", 1.0)
+        boolean isBase = params.get("base", false)
+        boolean isSymbolizer = params.get("symbolizer", true)
+        String compositeValue = composite
+        if (opacity != 1.0) {
+            compositeValue = "${compositeValue}, ${opacity}"
+        }
+        if (isSymbolizer) {
+            this.options.composite = compositeValue
+        } else {
+            this.styleOptions.composite = compositeValue
+        }
+        if (isBase) {
+            this.styleOptions["composite-base"] = "true"
+        }
         this
     }
 
@@ -290,6 +329,10 @@ class Symbolizer implements Style, Cloneable {
 
                     syms.each {Symbolizer sym ->
                         sym.prepare(fts, rule)
+                        // Apply FeatureTypeStyle vendor options
+                        if (!sym.styleOptions.isEmpty()) {
+                            fts.options.putAll(sym.styleOptions)
+                        }
                     }
                 }
             }

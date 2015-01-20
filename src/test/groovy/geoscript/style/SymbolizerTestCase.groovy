@@ -1,5 +1,6 @@
 package geoscript.style
 
+import geoscript.style.io.SLDWriter
 import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.TemporaryFolder
@@ -346,6 +347,24 @@ class SymbolizerTestCase {
         assertNotNull sld
         assertTrue sld.length() > 0
         assertEquals expectedSld, sld
+    }
+
+    @Test
+    void compositeAndBlending() {
+        String NEW_LINE = System.getProperty("line.separator")
+        SLDWriter writer = new SLDWriter(format: false)
+        // Symbolizer composite
+        Symbolizer sym = new Fill("wheat").composite("source-in")
+        assertTrue writer.write(sym).trim().replaceAll(NEW_LINE, "")
+                .contains("</sld:Fill><sld:VendorOption name=\"composite\">source-in</sld:VendorOption></sld:PolygonSymbolizer>")
+        // Symbolizer composite with opacity
+        sym = new Fill("wheat").composite("source-in", opacity: 0.45)
+        assertTrue writer.write(sym).trim().replaceAll(NEW_LINE, "")
+                .contains("</sld:Fill><sld:VendorOption name=\"composite\">source-in, 0.45</sld:VendorOption></sld:PolygonSymbolizer>")
+        // FeatureType composite and composite-base
+        sym = new Fill("wheat").composite("source-in", base: true, symbolizer: false)
+        assertTrue writer.write(sym).trim().replaceAll(NEW_LINE, "")
+                .contains("</sld:Rule><sld:VendorOption name=\"composite-base\">true</sld:VendorOption><sld:VendorOption name=\"composite\">source-in</sld:VendorOption></sld:FeatureTypeStyle>")
     }
 
 }
