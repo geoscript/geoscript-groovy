@@ -36,8 +36,10 @@ class CSSReaderTestCase {
 
         String css = """
             states {
-               fill-color: 'wheat';
-               stroke-color: 'steelblue';
+              fill: #E6E6E6;
+              fill-opacity: 0.5;
+              stroke: #4C4C4C;
+              stroke-width: 0.1;
             }
         """
 
