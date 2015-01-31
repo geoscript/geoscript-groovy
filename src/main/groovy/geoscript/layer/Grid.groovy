@@ -19,12 +19,12 @@ class Grid {
     /**
      * The width or number of columns
      */
-    int width
+    long width
 
     /**
      * The height or number of rows
      */
-    int height
+    long height
 
     /**
      * The number of tiles
@@ -49,7 +49,7 @@ class Grid {
      * @param xResolution The x resolution
      * @param yResolution The y resolution
      */
-    Grid(long z, int width, int height, double xResolution, double yResolution) {
+    Grid(long z, long width, long height, double xResolution, double yResolution) {
         this.z = z
         this.width = width
         this.height = height
