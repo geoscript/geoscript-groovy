@@ -364,7 +364,8 @@ class SymbolizerTestCase {
         // FeatureType composite and composite-base
         sym = new Fill("wheat").composite("source-in", base: true, symbolizer: false)
         assertTrue writer.write(sym).trim().replaceAll(NEW_LINE, "")
-                .contains("</sld:Rule><sld:VendorOption name=\"composite-base\">true</sld:VendorOption><sld:VendorOption name=\"composite\">source-in</sld:VendorOption></sld:FeatureTypeStyle>")
+                .contains("</sld:Rule><sld:VendorOption name=\"composite\">source-in</sld:VendorOption>" +
+                "<sld:VendorOption name=\"composite-base\">true</sld:VendorOption></sld:FeatureTypeStyle>")
     }
 
 }
