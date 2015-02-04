@@ -225,53 +225,63 @@ class Format {
     }
 
     /**
-     * Get the Format that can read the given File
-     * @param file The File
+     * Get the Format that can read the given input stream
+     * @param input The input stream (which is usually a File, but can be a URL, InputStream, or connection string)
      * @return A Format
      */
-    static Format getFormat(File file) {
-        if (file.exists()) {
-            AbstractGridFormat format = GridFormatFinder.findFormat(file);
+    static Format getFormat(Object input) {
+        if(input instanceof File) {
+            File file = input as File
+            if (file.exists()) {
+                AbstractGridFormat format = GridFormatFinder.findFormat(file);
+                if (format == null || format instanceof UnknownFormat) {
+                    return null
+                }
+                if (format instanceof GeoTiffFormat) {
+                    return new GeoTIFF(file)
+                } else if (format instanceof ArcGridFormat) {
+                    return new ArcGrid(file)
+                } else if (format instanceof GrassCoverageFormat) {
+                    return new Grass(file)
+                } else if (format instanceof GTopo30Format) {
+                    return new GTopo30(file)
+                } else if (format instanceof ImagePyramidFormat) {
+                    return new ImagePyramid(file)
+                } else if (format instanceof ImageMosaicFormat) {
+                    return new Mosaic(file)
+                } else if (format instanceof MrSIDFormat) {
+                    return new MrSID(file)
+                } else if (format instanceof WorldImageFormat) {
+                    return new WorldImage(file)
+                } else if (format instanceof NetCDFFormat) {
+                    return new NetCDF(file)
+                } else {
+                    return new Format(format, file)
+                }
+            } else {
+                String ext = file.name.substring(file.name.lastIndexOf(".") + 1).toLowerCase()
+                if (ext in ["tif"]) {
+                    return new GeoTIFF(file)
+                } else if (ext in ["png", "jpg", "jpeg", "gif"]) {
+                    return new WorldImage(file)
+                } else if (ext in ["arx"]) {
+                    return new Grass(file)
+                } else if (ext in ["sid"]) {
+                    return new MrSID(file)
+                } else if (ext in ["asc"]) {
+                    return new ArcGrid(file)
+                } else if (ext in ["nc"]) {
+                    return new NetCDF(file)
+                } else {
+                    return null
+                }
+            }
+        }  else {
+            AbstractGridFormat format = GridFormatFinder.findFormat(input);
             if (format == null || format instanceof UnknownFormat) {
                 return null
-            }
-            if (format instanceof GeoTiffFormat) {
-                return new GeoTIFF(file)
-            } else if (format instanceof ArcGridFormat) {
-                return new ArcGrid(file)
-            } else if (format instanceof GrassCoverageFormat) {
-                return new Grass(file)
-            } else if (format instanceof GTopo30Format) {
-                return new GTopo30(file)
-            } else if (format instanceof ImagePyramidFormat) {
-                return new ImagePyramid(file)
-            } else if (format instanceof ImageMosaicFormat) {
-                return new Mosaic(file)
-            } else if (format instanceof MrSIDFormat) {
-                return new MrSID(file)
-            } else if (format instanceof WorldImageFormat) {
-                return new WorldImage(file)
-            } else if (format instanceof NetCDFFormat) {
-                return new NetCDF(file)
-            } else {
-                return new Format(format, file)
-            }
-        } else {
-            String ext = file.name.substring(file.name.lastIndexOf(".") + 1).toLowerCase()
-            if (ext in ["tif"]) {
-                return new GeoTIFF(file)
-            } else if (ext in ["png","jpg","jpeg","gif"]) {
-                return new WorldImage(file)
-            } else if (ext in ["arx"]) {
-                return new Grass(file)
-            } else if (ext in ["sid"]) {
-                return new MrSID(file)
-            } else if (ext in ["asc"]) {
-                return new ArcGrid(file)
-            } else if (ext in ["nc"]) {
-                return new NetCDF(file)
-            } else {
-                return null
+            }else{
+                return new Format(format, input)
             }
         }
     }
