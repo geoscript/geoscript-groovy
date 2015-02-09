@@ -27,6 +27,17 @@ class LayerTestCase {
     @Rule
     public TemporaryFolder folder = new TemporaryFolder();
 
+    @Test void createLayer() {
+        Layer layer1 = new Layer()
+        assertTrue layer1.name.startsWith("layer_")
+        Layer layer2 = new Layer()
+        assertTrue layer2.name.startsWith("layer_")
+        Layer layer3 = new Layer("cities")
+        assertEquals "cities", layer3.name
+        Layer layer4 = new Layer("stations")
+        assertEquals "stations", layer4.name
+    }
+
     @Test void eachFeature() {
         Layer layer = new Shapefile(new File(getClass().getClassLoader().getResource("states.shp").toURI()))
         int count = 0

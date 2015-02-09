@@ -196,14 +196,14 @@ class Layer {
      * Create a new Layer with a default name, Schema in the Memory Workspace
      */
     Layer() {
-        this(newname(), new Schema("features", [new Field("geom","Geometry")]))
+        this(newname())
     }
 
     /**
      * Create a new Layer with the given name, a simple Schema with just a Geometry Field in the Memory Workspace
      */
     Layer(String name) {
-        this(name, new Schema("features", [new Field("geom","Geometry")]))
+        this(name, new Schema(name, [new Field("geom","Geometry")]))
     }
 
     /**
