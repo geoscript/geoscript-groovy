@@ -8,84 +8,217 @@ GeoScript Groovy Releases
 
     The 1.5 release of GeoScript is build on Groovy 2.3, GeoTools 13, and the Java Topology Suite 1.13.
 
-    In addition to many bug fixes, there are significant improvements to the GeoPackage Workspace and TileLayer,
-    and the tile module in general.  This release also include support for generating and consuming vector tiles.
+    In addition to bug fixes, there are significant improvements to the GeoPackage Workspace and TileLayer,
+    and the tile module in general including support for generating and consuming vector tiles.  GeoScript switched
+    to the Java based CSS module and includes composite and blending support.
     
     **Tiles**
     
-        Vector Tile Support geojson, mvt, pbf
+        Vector Tile support includes geojson, mvt, pbf::
+
+            File dir = new File("states_vector_tiles_pbf")
+            Pyramid pyramid = Pyramid.createGlobalMercatorPyramid(origin: Pyramid.Origin.TOP_LEFT)
+            VectorTiles vectorTiles = new VectorTiles(
+                "states",
+                dir,
+                pyramid,
+                "pbf",
+                style: [
+                    "states": new Fill("wheat"),
+                    "states_centroids": new Shape("red",12,"circle")
+                ]
+            )
+
+            Layer layer = new Shapefile("states.shp")
+            Layer centroidLayer = layer.transform("states_centroids", [
+                "geom": "centroid(the_geom)",
+                "name": "STATE_NAME"
+            ])
+
+            PbfVectorTileRenderer renderer = new PbfVectorTileRenderer([layer, centroidLayer], [
+                    "states": ["STATE_NAME"],
+                    "states_centroids": ["name"]
+            ])
+            TileGenerator generator = new TileGenerator(verbose: true)
+            generator.generate(vectorTiles, renderer, 0, 6)
+
+        The GeoPackage Tile origin is TOP LEFT not BOTTOM LEFT.
         
-        GeoPackage tiles origin is TOP LEFT not BOTTOM LEFT
-        
-        Pyramid.createGlobalMercatorPyramid can take named parameter origin
+        Pyramid.createGlobalMercatorPyramid can take named parameter origin::
+
+            Pyramid pyramid = Pyramid.createGlobalMercatorPyramid(origin: Pyramid.Origin.TOP_LEFT)
         
         TileCursor validates z values
 
-        TileCursor guard against empty bounds
+        TileCursor guards against empty bounds
             
         TileCursor getEmpty method    
             
-        TileCursor empty = blank raster
+        An empty TileCursor return a blank raster
         
-        TileGenerate can now generate tiles that intersect a bounds    
+        TileGenerate can now generate tiles that intersect a bounds::
+
+            TileGenerator generator = new TileGenerator(verbose: true)
+            generator.generate(layer, renderer, 0, 6, bounds: new Bounds(0,0,45,45))
         
-        Fix bounds bug in Pyramid
+        Fixed bounds bug in Pyramid
         
-        grid size exceeding precision
+        Fixed Grid size exceeding precision
                 
     **Geometry**
         
-        Bounds intersection should keep projection
+        Bounds intersection keeps projection
     
-        Bounds string can include Projection
+        Bounds string can include Projection::
+
+            Bounds bounds = Bounds.fromString("0,0,10,10,EPSG:4326")
         
-        WktReader can read EWKT with SRID prefixes
+        WktReader can read EWKT with SRID prefixes::
+
+            WktReader reader = new WktReader()
+            Point pt = reader.read("SRID=4326;POINT (111 -47)")
         
-        Geometry.getDimension()
+        Added missing Geometry.getDimension() method::
+
+            Geometry.fromWKT("POINT (1 1)").dimension
+            >>> 0
+            Geometry.fromWKT("LINESTRING (1 1, 10 10)").dimension
+            >>> 1
+            Geometry.fromWKT("POLYGON ((90 90, 90 110, 110 110, 110 90, 90 90))").dimension
+            >>> 2
         
     **Projection**
     
-        Projection.getSrs()
+        Added Projection.getSrs() method::
+
+            Projection p = new Projection("urn:ogc:def:crs:EPSG::4326")
+            println p.srs
+            >>> "urn:ogc:def:crs:EPSG::4326"
+            println p.getSrs(true)
+            >>> "4326"
     
     **Style**
     
-        CSS readers uses java version instead of scala
+        CSS reader uses Java version instead of Scala version
     
-        ColorMap document opacity and label properties
-        
-        Composite and Blending style api
+        Document ColorMap's opacity and label properties
+
+        Shape Symbolizer support anchor and displacement properties::
+
+            Shape shape = new Shape(color:  "blue",  size: 6, type: "square", anchorPoint: [0.2, 0.7], displacement: [0.45, 0.55])
+
+        Composite and Blending support were added to the Style API::
+
+            Layer shp = new Shapefile("states.shp")
+            Function func = new Function("Recode(SUB_REGION,'N Eng','#6495ED','Mid Atl','#B0C4DE','S Atl','#00FFFF',
+                'E N Cen','#9ACD32','E S Cen','#00FA9A','W N Cen','#FFF8DC','W S Cen','#F5DEB3','Mtn','#F4A460','Pacific','#87CEEB')")
+            shp.style = (new Fill(func).composite("multiply", symbolizer: false, base: true)).zindex(1) +
+                (new Stroke("black", 10).composite("destination-in", symbolizer: false)).zindex(2) +
+                (new Stroke("#999999", 0.1) + new Label("STATE_ABBR").point([0.5, 0.5])).zindex(3)
+
+            Map map = new Map(
+                layers: [shp],
+                backgroundColor: "white"
+            )
+            map.render(new File("style_composite.png"))
+
+        .. image:: images/style_composite.png
     
     **Workspace** 
     
-        GeoPackage Workspace Layers are now compatible with GDAL/OGR, QGIS, and ArcMap
+        GeoPackage Workspace Layers are now compatible with GDAL/OGR, QGIS, and ArcMap.
     
-        Workspace.withWorkspace()
-    
+        To make sure that Workspaces are closed you can use the new Workspace.withWorkspace(Workspace, Closure) idiom::
+
+            Workspace.withWorkspace(new H2(folder.newFile("roads.db").absolutePath)) { Workspace w ->
+                // Use the Workspace here
+            }
+
     **Layer**
     
-        Shapefile zip and unzip methods
-        
+        The Shapefile Layers gets zip and unzip methods::
+
+            Shapefile shp = new Shapefile(new File(dir, "states.shp"))
+
+            // Zip the Shapefile's files
+            File zipFile = shp.zip()
+
+            // Unzip
+            Shapefile shp2 = Shapefile.unzip(zipFile)
+
         Remove new lines from content in CsvWriter
         
-        Layer.reproject bug fix
+        Fixed a bug with Groovy and Layer.reproject
         
-        Schema.getSpec()
-    
+        The Schema class gets a getSpec() method::
+
+            Schema schema = new Schema("widgets", [
+                new Field("geom","Point"),
+                new Field("name","string"),
+                new Field("price","float")
+            ])
+            println schema.spec
+            >>> "geom:Point,name:String,price:Float"
+
     **Raster**
     
         Format.getFormat() accepts inputs besides file
     
-        Raster.extractFootPrint
+        The Raster class has a new extractFootPrint() method::
+
+            File file = new File("raster.tif")
+            GeoTIFF geoTIFF = new GeoTIFF(file)
+            Raster raster = geoTIFF.read()
+            Layer layer = raster.extractFootPrint()
       
-        Shape Symbolizer support anchor and displacement properties
-    
     **Rendering**
     
-        ASCII Map Renderer
-    
+        ASCII Map Renderer::
+
+            Layer layer = new Shapefile(new File("states.shp"))
+            layer.style = new Stroke('black', 0.1) + new Fill('gray', 0.75)
+            Map map = new Map(layers: [layer], backgroundColor: "white")
+            ASCII renderer = new ASCII(width: 50)
+
+        ```
+        ..................................................
+        ..................................................
+        ..................................................
+        ..................................................
+        ..................................................
+        ..................................................
+        ..)))))$))))))))))))))))))........................
+        ))))))))))))))))))))))))))))))....................
+        +)))))))))))))))))))))))))))))))-):............)).
+        .))))))))$))))))))))))))))))))))^.))..........-))+
+        :)))))))))))))))))))))))))))$))).)))......)):)$)..
+        ))))))))))))))))))+****))))))))).))))...))))*))...
+        )))))))))))))))))))))))))))))))).)))..)))))))))...
+        )))))))))))))-))))))))))))))))))))$))))))))):.....
+        .))))))))))))+))))))))))))))))))))*))))+%)$+......
+        .))))))))))))+))))))))))))))))))))))%)))))).......
+        ..)))))))))))+))))))))))))))))$)))))*))))*........
+        ...))))))))))$))))))))))))))))))))))%)))):?.......
+        ...:)))))))))$))))))))))))))))))))))))+)))........
+        ......)))))))$)))))))))))))))))-))))))))..........
+        ......-.*))))$))))))))))))$)))))))))))!...........
+        ............:$..)))))))))))))))))))))*............
+        .................)))))))))))))!..:)))^............
+        ..................-..)))))..........))............
+        .....................)))............%)............
+        ......................)).............))...........
+        ..................................................
+        ..................................................
+        ..................................................
+        ..................................................
+        ..................................................
+        ..................................................
+        ..................................................
+        ```
+
     **Development**
         
-        Starting using Travis CI
+        Started using `Travis CI <https://travis-ci.org/geoscript/geoscript-groovy>`_
 
 1.4.0
 -----
