@@ -11,7 +11,7 @@ GeoScript Groovy Releases
     In addition to many bug fixes, there are significant improvements to the GeoPackage Workspace and TileLayer,
     and the tile module in general.  This release also include support for generating and consuming vector tiles.
     
-    ** Tile Module **
+    **Tiles**
     
         Vector Tile Support geojson, mvt, pbf
         
@@ -33,7 +33,7 @@ GeoScript Groovy Releases
         
         grid size exceeding precision
                 
-    ** Geometry **
+    **Geometry**
         
         Bounds intersection should keep projection
     
@@ -43,11 +43,11 @@ GeoScript Groovy Releases
         
         Geometry.getDimension()
         
-    ** Projection **
+    **Projection**
     
         Projection.getSrs()
     
-    ** Style **
+    **Style**
     
         CSS readers uses java version instead of scala
     
@@ -55,13 +55,13 @@ GeoScript Groovy Releases
         
         Composite and Blending style api
     
-    ** Workspace ** 
+    **Workspace** 
     
         GeoPackage Workspace Layers are now compatible with GDAL/OGR, QGIS, and ArcMap
     
         Workspace.withWorkspace()
     
-    ** Layer **
+    **Layer**
     
         Shapefile zip and unzip methods
         
@@ -71,7 +71,7 @@ GeoScript Groovy Releases
         
         Schema.getSpec()
     
-    ** Raster **
+    **Raster**
     
         Format.getFormat() accepts inputs besides file
     
@@ -79,11 +79,11 @@ GeoScript Groovy Releases
       
         Shape Symbolizer support anchor and displacement properties
     
-    ** Rendering **
+    **Rendering**
     
         ASCII Map Renderer
     
-    ** Development **
+    **Development**
         
         Starting using Travis CI
 
