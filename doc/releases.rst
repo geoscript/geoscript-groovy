@@ -3,6 +3,90 @@
 GeoScript Groovy Releases
 =========================
 
+1.5.0 (in development)
+----------------------
+
+    The 1.5 release of GeoScript is build on Groovy 2.3, GeoTools 13, and the Java Topology Suite 1.13.
+
+    In addition to many bug fixes, there are significant improvements to the GeoPackage Workspace and TileLayer,
+    and the tile module in general.  This release also include support for generating and consuming vector tiles.
+    
+    ** Tile Module **
+    
+        Vector Tile Support geojson, mvt, pbf
+        
+        GeoPackage tiles origin is TOP LEFT not BOTTOM LEFT
+        
+        Pyramid.createGlobalMercatorPyramid can take named parameter origin
+        
+        TileCursor validates z values
+
+        TileCursor guard against empty bounds
+            
+        TileCursor getEmpty method    
+            
+        TileCursor empty = blank raster
+        
+        TileGenerate can now generate tiles that intersect a bounds    
+        
+        Fix bounds bug in Pyramid
+        
+        grid size exceeding precision
+                
+    ** Geometry **
+        
+        Bounds intersection should keep projection
+    
+        Bounds string can include Projection
+        
+        WktReader can read EWKT with SRID prefixes
+        
+        Geometry.getDimension()
+        
+    ** Projection **
+    
+        Projection.getSrs()
+    
+    ** Style **
+    
+        CSS readers uses java version instead of scala
+    
+        ColorMap document opacity and label properties
+        
+        Composite and Blending style api
+    
+    ** Workspace ** 
+    
+        GeoPackage Workspace Layers are now compatible with GDAL/OGR, QGIS, and ArcMap
+    
+        Workspace.withWorkspace()
+    
+    ** Layer **
+    
+        Shapefile zip and unzip methods
+        
+        Remove new lines from content in CsvWriter
+        
+        Layer.reproject bug fix
+        
+        Schema.getSpec()
+    
+    ** Raster **
+    
+        Format.getFormat() accepts inputs besides file
+    
+        Raster.extractFootPrint
+      
+        Shape Symbolizer support anchor and displacement properties
+    
+    ** Rendering **
+    
+        ASCII Map Renderer
+    
+    ** Development **
+        
+        Starting using Travis CI
+
 1.4.0
 -----
 
