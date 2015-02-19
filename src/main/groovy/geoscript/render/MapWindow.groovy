@@ -34,7 +34,7 @@ class MapWindow {
         map.setUpRendering()
 
         // Create the map
-        JMapPane mapPane = new JMapPane(map.context)
+        JMapPane mapPane = new JMapPane(map.content)
         mapPane.setSize(map.width, map.height)
         mapPane.visible = true
 
