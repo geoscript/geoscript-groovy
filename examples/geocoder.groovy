@@ -13,12 +13,43 @@ interface ReverseGeocoder {
 }
 
 class NominatimGeocoder implements Geocoder {
-    
-    Layer geocode(String value) {
-        URL url = new URL("http://nominatim.openstreetmap.org/search?format=json&q=${value}")
+
+    private final String baseUrl
+
+    NominatimGeocoder() {
+        this("http://nominatim.openstreetmap.org/search")
+    }
+
+    NominatimGeocoder(String baseUrl) {
+        this.baseUrl = baseUrl
+    }
+
+    Layer geocode(Map options = [:], String value) {
+        // Optional params
+        List countryCodes = options.get("countrycodes")
+        Bounds bounds = options.get("bounds")
+        boolean bounded = options.get("bounded", false)
+        int limit = options.get("limit", -1)
+        // Build the URL
+        String urlStr = "${baseUrl}?format=json&q=${value}"
+        if (countryCodes) {
+            urlStr += "&countrycodes=${countryCodes.join(',')}"
+        }
+        if (bounds) {
+            urlStr += "&viewbox=${bounds.minX},${bounds.maxY},${bounds.maxX},${bounds.minY}"
+        }
+        if (bounded) {
+            urlStr += "&bounded=1"
+        }
+        if (limit > -1) {
+            urlStr += "&limit=${limit}"
+        }
+        URL url = new URL(urlStr)
+        // Make the request and parse the results
         String response = url.text
         JsonSlurper jsonSlurper = new JsonSlurper()
         def results = jsonSlurper.parseText(response)
+        // Create the Layer
         Schema schema = new Schema("geocode", [
             new Field("geom","Point","EPSG:4326"),
             new Field("value","String"),
@@ -27,6 +58,7 @@ class NominatimGeocoder implements Geocoder {
         ])
         Workspace workspace = new Memory()
         Layer layer = workspace.create(schema)
+        // Add the results
         layer.withWriter { writer ->
             results.each { result ->
                 Feature feature = writer.newFeature
@@ -44,10 +76,68 @@ class NominatimGeocoder implements Geocoder {
 
 }
 
+class MapQuestGeocoder implements Geocoder {
+
+    private final String key
+
+    MapQuestGeocoder(String key) {
+        this.key = key
+    }
+
+    Layer geocode(Map options = [:], String value) {
+        int maxresults = options.get("maxResults", -1)
+        boolean thumbMaps = options.get("thumbMaps", false)
+        Bounds bounds = options.get("bounds")
+        String urlStr = "http://open.mapquestapi.com/geocoding/v1/address?key=${key}&location=${value.replaceAll(' ', '%20')}&maxResults=${maxresults}&thumbMaps=${thumbMaps ? 'true' : 'false'}"
+        if (bounds) {
+            urlStr += "&boundingBox=${bounds.maxY},${bounds.minX},${bounds.minY},${bounds.maxX}"
+        }
+        URL url = new URL(urlStr)
+        // Make the request and parse the results
+        String response = url.text
+        JsonSlurper jsonSlurper = new JsonSlurper()
+        def json = jsonSlurper.parseText(response)
+        // Create the Layer
+        Schema schema = new Schema("geocode", [
+                new Field("geom","Point","EPSG:4326"),
+                new Field("value","String")
+        ])
+        Workspace workspace = new Memory()
+        Layer layer = workspace.create(schema)
+        // Add the results
+        layer.withWriter { writer ->
+            json.results.each { result ->
+                result.locations.each { location ->
+                    Feature feature = writer.newFeature
+                    feature.set([
+                            geom : new Point(location.latLng.lng as double, location.latLng.lat as double),
+                            value: "${location.street} ${location.adminArea5}, ${location.adminArea3} ${location.postalCode}"
+                    ])
+                    writer.add(feature)
+                }
+            }
+        }
+        layer
+    }
+
+}
+
+
 class NominatimReverseGeocoder implements ReverseGeocoder {
 
-    Layer reverseGeocode(Point pt) {
-        URL url = new URL("http://nominatim.openstreetmap.org/reverse?format=json&lon=${pt.x}&lat=${pt.y}&zoom=18")
+    private final String baseUrl
+
+    NominatimReverseGeocoder() {
+        this("http://nominatim.openstreetmap.org/reverse")
+    }
+
+    NominatimReverseGeocoder(String baseUrl) {
+        this.baseUrl = baseUrl
+    }
+
+    Layer reverseGeocode(Map options = [:], Point pt) {
+        int zoom = options.get("zoom", 18)
+        URL url = new URL("${baseUrl}?format=json&lon=${pt.x}&lat=${pt.y}&zoom=${zoom}")
         String response = url.text
         JsonSlurper jsonSlurper = new JsonSlurper()
         def result = jsonSlurper.parseText(response)
@@ -88,17 +178,68 @@ class NominatimReverseGeocoder implements ReverseGeocoder {
 
 }
 
+class MapQuestReverseGeocoder implements ReverseGeocoder {
+
+    private final String key
+
+    MapQuestReverseGeocoder(String key) {
+        this.key = key
+    }
+
+    Layer reverseGeocode(Map options = [:], Point pt) {
+        URL url = new URL("http://open.mapquestapi.com/geocoding/v1/reverse?key=${key}&location=${pt.y},${pt.x}")
+        String response = url.text
+        JsonSlurper jsonSlurper = new JsonSlurper()
+        def json = jsonSlurper.parseText(response)
+        Schema schema = new Schema("geocode", [
+                new Field("geom","Point","EPSG:4326"),
+                new Field("value","String")
+        ])
+        Workspace workspace = new Memory()
+        Layer layer = workspace.create(schema)
+        layer.withWriter { writer ->
+            json.results.each { result ->
+                result.locations.each { location ->
+                    Feature feature = writer.newFeature
+                    feature.set([
+                            geom: new Point(location.latLng.lng as double, location.latLng.lat as double),
+                            value: "${location.street} ${location.adminArea5} ${location.adminArea3} ${location.postalCode}"
+                    ])
+                    writer.add(feature)
+                }
+            }
+        }
+        layer
+    }
+
+}
+
 Geocoder geocoder = new NominatimGeocoder()
 Layer result = geocoder.geocode("Seattle, WA")
-println "Geocoder found ${result.count} results:"
+println "Nominatim Geocoder found ${result.count} results:"
+result.eachFeature { Feature f ->
+    println f
+}
+
+geocoder = new MapQuestGeocoder("Fmjtd%7Cluu821utng%2C80%3Do5-94b50r")
+result = geocoder.geocode("950 Fawcett Tacoma WA")
+println "MapQuest Geocoder found ${result.count} results:"
 result.eachFeature { Feature f ->
     println f
 }
 
 ReverseGeocoder reverseGeocoder = new NominatimReverseGeocoder()
 result = reverseGeocoder.reverseGeocode(new Point(-122.384515,47.575863))
-println "ReverseGeocoder Found ${result.count} results:"
+println "Nominatim ReverseGeocoder Found ${result.count} results:"
 result.eachFeature { Feature f ->
     println f
 }
+
+reverseGeocoder = new MapQuestReverseGeocoder("Fmjtd%7Cluu821utng%2C80%3Do5-94b50r")
+result = reverseGeocoder.reverseGeocode(new Point(-122.384515,47.575863))
+println "MapQuest ReverseGeocoder Found ${result.count} results:"
+result.eachFeature { Feature f ->
+    println f
+}
+
 
