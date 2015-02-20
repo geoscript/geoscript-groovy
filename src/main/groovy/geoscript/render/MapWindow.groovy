@@ -34,7 +34,7 @@ class MapWindow {
         map.setUpRendering()
 
         // Create the map
-        JMapPane mapPane = new JMapPane(map.content)
+        JMapPane mapPane = new JMapPane()
         mapPane.setSize(map.width, map.height)
         mapPane.visible = true
 
@@ -99,6 +99,7 @@ class MapWindow {
         }
         swing.edt {
             frame.visible = true
+            mapPane.mapContent = map.content
         }
     }
 }
