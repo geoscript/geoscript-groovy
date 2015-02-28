@@ -584,11 +584,11 @@ class Layer {
         if (fields != null && fields.size() > 0) {
             q.propertyNames = ((fields[0] instanceof Field) ? fields*.name : fields) as String[]
         }
-        if (max > -1) {
+        if (max > -1 && !(fs.dataStore instanceof org.geotools.data.memory.MemoryDataStore)) {
             q.maxFeatures = max
         }
         if (start > -1) {
-            if (fs.queryCapabilities.offsetSupported) {
+            if (fs.queryCapabilities.offsetSupported && !(fs.dataStore instanceof org.geotools.data.memory.MemoryDataStore)) {
                 q.startIndex = start
             } else {
                 cursorOptions.start = start
