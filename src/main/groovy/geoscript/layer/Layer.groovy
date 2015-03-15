@@ -705,7 +705,7 @@ class Layer {
      * @param c A Closure which takes one parameter, a Writer
      */
     void withWriter(Map options = [:], Closure c) {
-        Writer w = new Writer(options, this)
+        Writer w = getWriter(options)
         try {
             c.call(w)
         } finally {
