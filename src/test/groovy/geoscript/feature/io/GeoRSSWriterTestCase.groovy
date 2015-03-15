@@ -6,6 +6,7 @@ import geoscript.feature.Field
 import geoscript.feature.Schema
 import geoscript.geom.Point
 import org.junit.Test
+import static org.junit.Assert.*
 
 /**
  * The GeoRSSWriter Unit Test
@@ -21,41 +22,44 @@ class GeoRSSWriterTestCase {
     @Test void writeDefaults() {
         Feature feature = getFeature()
         GeoRSSWriter writer = new GeoRSSWriter(itemDate: "12/7/2013")
-        String expected = "<entry xmlns:georss='http://www.georss.org/georss' xmlns='http://www.w3.org/2005/Atom'>" +
-                "<title>house1</title>" +
-                "<summary>[geom:POINT (111 -47), name:House, price:12.5]</summary>" +
-                "<updated>12/7/2013</updated>" +
-                "<georss:point>-47.0 111.0</georss:point>" +
-                "</entry>"
-        String actual = writer.write(feature)
-        AssertUtil.assertStringsEqual expected, actual
+        def xml = new XmlSlurper().parseText(writer.write(feature)).declareNamespace(["georss": 'http://www.georss.org/georss'])
+        assertEquals "entry", xml.name()
+        assertEquals "http://www.georss.org/georss", xml.lookupNamespace("georss")
+        assertEquals "http://www.w3.org/2005/Atom", xml.lookupNamespace("")
+        assertEquals "house1", xml.title.text()
+        assertEquals "[geom:POINT (111 -47), name:House, price:12.5]", xml.summary.text()
+        assertEquals "12/7/2013", xml.updated.text()
+        assertEquals "-47.0 111.0", xml["georss:point"].text()
     }
 
     @Test void writeAtomSimple() {
         Feature feature = getFeature()
         GeoRSSWriter writer = new GeoRSSWriter(feedType: "atom", geometryType: "simple", itemDate: "12/7/2013")
-        String expected = "<entry xmlns:georss='http://www.georss.org/georss' xmlns='http://www.w3.org/2005/Atom'>" +
-                "<title>house1</title>" +
-                "<summary>[geom:POINT (111 -47), name:House, price:12.5]</summary>" +
-                "<updated>12/7/2013</updated>" +
-                "<georss:point>-47.0 111.0</georss:point>" +
-                "</entry>"
-        String actual = writer.write(feature)
-        AssertUtil.assertStringsEqual expected, actual
+        def xml = new XmlSlurper().parseText(writer.write(feature)).declareNamespace(["georss": 'http://www.georss.org/georss'])
+        assertEquals "entry", xml.name()
+        assertEquals "http://www.georss.org/georss", xml.lookupNamespace("georss")
+        assertEquals "http://www.w3.org/2005/Atom", xml.lookupNamespace("")
+        assertEquals "house1", xml.title.text()
+        assertEquals "[geom:POINT (111 -47), name:House, price:12.5]", xml.summary.text()
+        assertEquals "12/7/2013", xml.updated.text()
+        assertEquals "-47.0 111.0", xml["georss:point"].text()
     }
 
     @Test void writeAtomGml() {
         Feature feature = getFeature()
         GeoRSSWriter writer = new GeoRSSWriter(feedType: "atom", geometryType: "gml", itemDate: "12/7/2013")
-        String expected = "<entry xmlns:georss='http://www.georss.org/georss' xmlns='http://www.w3.org/2005/Atom' " +
-                "xmlns:gml='http://www.opengis.net/gml'>" +
-                "<title>house1</title>" +
-                "<summary>[geom:POINT (111 -47), name:House, price:12.5]</summary>" +
-                "<updated>12/7/2013</updated>" +
-                "<georss:where><gml:Point><gml:pos>-47.0 111.0</gml:pos></gml:Point></georss:where>" +
-                "</entry>"
-        String actual = writer.write(feature)
-        AssertUtil.assertStringsEqual expected, actual
+        def xml = new XmlSlurper().parseText(writer.write(feature)).declareNamespace([
+                "georss": 'http://www.georss.org/georss',
+                "gml": 'http://www.opengis.net/gml'
+        ])
+        assertEquals "entry", xml.name()
+        assertEquals "http://www.georss.org/georss", xml.lookupNamespace("georss")
+        assertEquals "http://www.opengis.net/gml", xml.lookupNamespace("gml")
+        assertEquals "http://www.w3.org/2005/Atom", xml.lookupNamespace("")
+        assertEquals "house1", xml.title.text()
+        assertEquals "[geom:POINT (111 -47), name:House, price:12.5]", xml.summary.text()
+        assertEquals "12/7/2013", xml.updated.text()
+        assertEquals "-47.0 111.0", xml["georss:where"].text()
     }
 
     @Test void writeAtomW3C() {
@@ -68,7 +72,7 @@ class GeoRSSWriterTestCase {
                 "<geo:Point><geo:lat>-47.0</geo:lat><geo:long>111.0</geo:long></geo:Point>" +
                 "</entry>"
         String actual = writer.write(feature)
-        AssertUtil.assertStringsEqual expected, actual
+        AssertUtil.assertStringsEqual expected, actual, removeXmlNS: true
     }
 
     @Test void writeRssSimple() {
@@ -81,7 +85,7 @@ class GeoRSSWriterTestCase {
                 "<georss:point>-47.0 111.0</georss:point>" +
                 "</item>"
         String actual = writer.write(feature)
-        AssertUtil.assertStringsEqual expected, actual
+        AssertUtil.assertStringsEqual expected, actual, removeXmlNS: true
     }
 
     @Test void writeRssGml() {
@@ -94,7 +98,7 @@ class GeoRSSWriterTestCase {
                 "<georss:where><gml:Point><gml:pos>-47.0 111.0</gml:pos></gml:Point></georss:where>" +
                 "</item>"
         String actual = writer.write(feature)
-        AssertUtil.assertStringsEqual expected, actual
+        AssertUtil.assertStringsEqual expected, actual, removeXmlNS: true
     }
 
     @Test void writeRssW3C() {
@@ -107,6 +111,6 @@ class GeoRSSWriterTestCase {
                 "<geo:Point><geo:lat>-47.0</geo:lat><geo:long>111.0</geo:long></geo:Point>" +
                 "</item>"
         String actual = writer.write(feature)
-        AssertUtil.assertStringsEqual expected, actual
+        AssertUtil.assertStringsEqual expected, actual, removeXmlNS: true
     }
 }

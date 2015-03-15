@@ -12,6 +12,7 @@ class AssertUtil {
     static void assertStringsEqual(Map options = [:], String expected, String actual) {
         boolean trim = options.get("trim", false)
         boolean debug = options.get("debug", false)
+        boolean removeXmlNS = options.get("removeXmlNS", false)
         StringReader expectedReader = new StringReader(expected)
         StringReader actualReader = new StringReader(actual)
         List<String> expectedLines = expectedReader.readLines()
@@ -22,6 +23,10 @@ class AssertUtil {
             if (trim) {
                 exp = exp.trim()
                 act = act.trim()
+            }
+            if (removeXmlNS) {
+                exp = exp.replaceAll("xmlns.*?(\"|\').*?(\"|\')", "")
+                act = act.replaceAll("xmlns.*?(\"|\').*?(\"|\')", "")
             }
             if (debug) {
                 println "Expected: ${exp}"

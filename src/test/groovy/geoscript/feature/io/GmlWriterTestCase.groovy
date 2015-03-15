@@ -37,7 +37,7 @@ class GmlWriterTestCase {
 </gsf:houses>
 """
         String actual = writer.write(feature)
-        AssertUtil.assertStringsEqual expected, actual
+        AssertUtil.assertStringsEqual expected, actual, removeXmlNS: true
     }
 
 }

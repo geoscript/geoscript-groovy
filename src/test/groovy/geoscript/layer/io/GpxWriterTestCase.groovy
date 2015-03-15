@@ -95,7 +95,7 @@ class GpxWriterTestCase {
 </trk>
 </gpx>
 """
-        AssertUtil.assertStringsEqual(expected, actual, trim: true)
+        AssertUtil.assertStringsEqual(expected, actual, trim: true, removeXmlNS: true)
     }
 
     @Test void writeWithAttributes() {
@@ -140,6 +140,6 @@ class GpxWriterTestCase {
 </wpt>
 </gpx>
 """
-        AssertUtil.assertStringsEqual(expected, actual, trim: true)
+        AssertUtil.assertStringsEqual(expected, actual, trim: true, removeXmlNS: true)
     }
 }

@@ -43,7 +43,7 @@ class FilterTestCase {
 </ogc:PropertyIsEqualTo>
 </ogc:Filter>
 """
-        AssertUtil.assertStringsEqual expected, actual
+        AssertUtil.assertStringsEqual expected, actual, removeXmlNS: true
     }
 
     @Test void bbox() {

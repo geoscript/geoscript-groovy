@@ -178,7 +178,7 @@ class FeatureTestCase {
                 "<summary>[geom:POINT (111 -47), name:House, price:12.5]</summary>" +
                 "<updated>12/7/2013</updated>" +
                 "<georss:point>-47.0 111.0</georss:point>" +
-                "</entry>", f1.getGeoRSS(feedType: "atom", geometryType: "simple", itemDate: "12/7/2013")
+                "</entry>", f1.getGeoRSS(feedType: "atom", geometryType: "simple", itemDate: "12/7/2013"), removeXmlNS: true
     }
 
     @Test void getGml() {
@@ -196,7 +196,7 @@ class FeatureTestCase {
 </gsf:geom>
 <gsf:price>12.5</gsf:price>
 </gsf:houses>
-""", f1.gml
+""", f1.gml, removeXmlNS: true
     }
 
     @Test void getKml() {
@@ -208,7 +208,7 @@ class FeatureTestCase {
 <kml:coordinates>111.0,-47.0</kml:coordinates>
 </kml:Point>
 </kml:Placemark>
-""", f1.kml
+""", f1.kml, removeXmlNS: true
     }
 
     @Test void getGpx() {
