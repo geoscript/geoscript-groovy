@@ -329,8 +329,8 @@ class CsvReader implements Reader {
                     }
                 }
                 // Try to guess the geometry Field
-                if (!hasGeom && (c.toLowerCase().contains("geom") || c.toLowerCase().contains("shape"))) {
-                    fieldType = "Point"
+                if (!hasGeom && (isGeometry(fieldType) || c.toLowerCase().contains("geom") || c.toLowerCase().contains("shape"))) {
+                    fieldType = fieldType.equalsIgnoreCase("String") ? "Point" : fieldType
                     hasGeom = true
                 }
                 new Field(c, fieldType, proj)
@@ -343,6 +343,19 @@ class CsvReader implements Reader {
 
         }
         return layer
+    }
+
+    /**
+     * Determine whether the field type is a geometry field type or nor
+     * @param fieldType The field type
+     * @return Whether the field type is a geometry field type
+     */
+    private boolean isGeometry(String fieldType) {
+        List geometryNames = [
+                "point","linestring","polygon","linearring","geometry","geometrycollection",
+                "circularstring","circularring","compoundring","compoundcurve"
+        ]
+        geometryNames.any{geomName -> fieldType.toLowerCase().endsWith(geomName)}
     }
 
     /**

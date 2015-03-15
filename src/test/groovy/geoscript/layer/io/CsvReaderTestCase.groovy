@@ -429,6 +429,33 @@ ak,10501917,?,"Thursday, June 28, 2012 02:30:58 UTC",60.0233,-152.9946,2,2.9,?,"
         assertEquals("csv geom: Point(EPSG:4326), id: Integer, name: String", layer.schema.toString())
     }
 
+    @Test void readNoFeaturesWithLineStringType() {
+        String csv = """"abc:LineString:EPSG:2927","id:int","name:String"
+"""
+        CsvReader reader = new CsvReader()
+        Layer layer = reader.read(csv)
+        assertEquals(0, layer.count)
+        assertEquals("csv abc: LineString(EPSG:2927), id: Integer, name: String", layer.schema.toString())
+    }
+
+    @Test void readNoFeatureWithPolygonType() {
+        String csv = "\"the_geom:MultiPolygon:EPSG:4326\",\"STATE_NAME:String\",\"STATE_FIPS:String\"," +
+                "\"SUB_REGION:String\",\"STATE_ABBR:String\",\"LAND_KM:Double\",\"WATER_KM:Double\"," +
+                "\"PERSONS:Double\",\"FAMILIES:Double\",\"HOUSHOLD:Double\",\"MALE:Double\"," +
+                "\"FEMALE:Double\",\"WORKERS:Double\",\"DRVALONE:Double\",\"CARPOOL:Double\"," +
+                "\"PUBTRANS:Double\",\"EMPLOYED:Double\",\"UNEMPLOY:Double\",\"SERVICE:Double\"," +
+                "\"MANUAL:Double\",\"P_MALE:Double\",\"P_FEMALE:Double\",\"SAMP_POP:Double\""
+        CsvReader reader = new CsvReader()
+        Layer layer = reader.read(csv)
+        assertEquals(0, layer.count)
+        assertEquals("csv the_geom: MultiPolygon(EPSG:4326), STATE_NAME: String, STATE_FIPS: String, " +
+                "SUB_REGION: String, STATE_ABBR: String, LAND_KM: Double, WATER_KM: Double, PERSONS: Double, " +
+                "FAMILIES: Double, HOUSHOLD: Double, MALE: Double, FEMALE: Double, WORKERS: Double, " +
+                "DRVALONE: Double, CARPOOL: Double, PUBTRANS: Double, EMPLOYED: Double, UNEMPLOY: Double, " +
+                "SERVICE: Double, MANUAL: Double, P_MALE: Double, P_FEMALE: Double, SAMP_POP: Double",
+                layer.schema.toString())
+    }
+
     @Test void readFromWktWithNoSpace() {
         String csv = """the_geom,ADMIN_NAME
 POINT(10.1999998092651 59.7000007629395),Buskerud
