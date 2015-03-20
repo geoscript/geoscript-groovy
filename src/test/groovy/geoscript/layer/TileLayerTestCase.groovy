@@ -277,4 +277,16 @@ class TileLayerTestCase {
         }
     }
 
+    @Test
+    void withTileLayer() {
+        File file = new File(getClass().getClassLoader().getResource("states.mbtiles").toURI())
+        TileLayer.withTileLayer(new MBTiles(file)) { TileLayer layer ->
+            Tile tile = layer.get(4, 2, 3)
+            assertNotNull tile
+            assertEquals 4, tile.z
+            assertEquals 2, tile.x
+            assertEquals 3, tile.y
+            assertNotNull tile.data
+        }
+    }
 }

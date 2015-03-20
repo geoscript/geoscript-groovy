@@ -184,5 +184,18 @@ abstract class TileLayer<T extends Tile> implements Closeable {
     String toString() {
         this.name
     }
+    
+    /**
+     * Use a TileLayer within a Closure and make sure it gets closed.
+     * @param tileLayer The TileLayer
+     * @param closure A Closure that takes the TileLayer
+     */
+    static void withTileLayer(TileLayer tileLayer, Closure closure) {
+        try {
+            closure.call(tileLayer)
+        } finally {
+            tileLayer.close()
+        }
+    }
 
 }
