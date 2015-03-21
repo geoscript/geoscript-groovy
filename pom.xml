@@ -5,7 +5,7 @@
     <groupId>org.geoscript</groupId>
     <artifactId>geoscript-groovy</artifactId>
     <packaging>jar</packaging>
-    <version>1.5-SNAPSHOT</version>
+    <version>1.5.0</version>
     <repositories>
         <repository>
             <id>boundless</id>
@@ -406,7 +406,7 @@
         </plugins>
     </reporting>
     <properties>
-        <gt.version>13-SNAPSHOT</gt.version>
+        <gt.version>13.0</gt.version>
     </properties>
     <name>geoscript groovy</name>
     <description>A groovy implementation of geoscript.</description>
