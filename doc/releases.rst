@@ -3,10 +3,10 @@
 GeoScript Groovy Releases
 =========================
 
-1.5.0 (in development)
-----------------------
+1.5.0
+-----
 
-    The 1.5 release of GeoScript is built on Groovy 2.3.x, GeoTools 13.x, and the Java Topology Suite 1.13.
+    The 1.5.0 release of GeoScript is built on Groovy 2.3.10, GeoTools 13.0, and the Java Topology Suite 1.13.
 
     In addition to bug fixes, there are significant improvements to the GeoPackage Workspace and TileLayer,
     and the tile module in general including support for generating and consuming vector tiles.  GeoScript switched
