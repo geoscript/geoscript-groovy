@@ -100,6 +100,20 @@ class LineString extends Geometry {
     }
 
     /**
+     * Close a LineString to create a LinearRing
+     * @return A LinearRing
+     */
+    LinearRing close() {
+        if (points.size() < 3) {
+            throw new IllegalArgumentException("You need at least three points to close a LineString!")
+        }
+        List closedPoints = []
+        closedPoints.addAll(points)
+        closedPoints.add(points[0])
+        new LinearRing(closedPoints)
+    }
+
+    /**
      * Create a new LineString where the coordinates are in reverse order
      * @return A LineString
      */
