@@ -51,11 +51,26 @@ class LineStringTestCase {
     @Test void isClosed() {
         def line = new LineString([1,2],[3,4],[5,6])
         assertFalse(line.isClosed())
+        assertTrue(new LineString([1,1],[1,4],[4,4],[4,1],[1,1]).isClosed())
     }
 
     @Test void isRing() {
         def line = new LineString([1,2],[3,4],[5,6])
         assertFalse(line.isRing())
+        assertTrue(new LineString([1,1],[1,4],[4,4],[4,1],[1,1]).isRing())
+    }
+
+    @Test void close() {
+        LineString lineString = new LineString([1,1],[1,4],[4,4],[4,1])
+        assertFalse lineString.isClosed()
+        LinearRing linearRing = lineString.close()
+        assertTrue linearRing.isClosed()
+        assertEquals "LINEARRING (1 1, 1 4, 4 4, 4 1, 1 1)", linearRing.wkt
+    }
+
+    @Test(expected = IllegalArgumentException) void closeWithError() {
+        LineString lineString = new LineString([1,1],[1,4])
+        lineString.close()
     }
 
     @Test void interpolatePoint() {
