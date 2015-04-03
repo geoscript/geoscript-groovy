@@ -107,10 +107,14 @@ class LineString extends Geometry {
         if (points.size() < 3) {
             throw new IllegalArgumentException("You need at least three points to close a LineString!")
         }
-        List closedPoints = []
-        closedPoints.addAll(points)
-        closedPoints.add(points[0])
-        new LinearRing(closedPoints)
+        if (isClosed()) {
+            new LinearRing(points)
+        } else {
+            List closedPoints = []
+            closedPoints.addAll(points)
+            closedPoints.add(points[0])
+            new LinearRing(closedPoints)
+        }
     }
 
     /**

@@ -61,11 +61,18 @@ class LineStringTestCase {
     }
 
     @Test void close() {
+        // Not closed
         LineString lineString = new LineString([1,1],[1,4],[4,4],[4,1])
         assertFalse lineString.isClosed()
         LinearRing linearRing = lineString.close()
         assertTrue linearRing.isClosed()
         assertEquals "LINEARRING (1 1, 1 4, 4 4, 4 1, 1 1)", linearRing.wkt
+        // Already closed
+        lineString = new LineString([1,1],[1,4],[4,4],[4,1],[1,1])
+        linearRing = lineString.close()
+        assertTrue linearRing.isClosed()
+        assertEquals "LINEARRING (1 1, 1 4, 4 4, 4 1, 1 1)", linearRing.wkt
+
     }
 
     @Test(expected = IllegalArgumentException) void closeWithError() {
