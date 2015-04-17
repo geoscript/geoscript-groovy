@@ -1016,4 +1016,21 @@ class RasterTestCase {
         assertEquals 1.318815744E9, raster2.eval(new Point(2.5,2.5))[0], 0.1
         assertEquals 442413.40625, raster2.eval(new Point(3.5,2.5))[0], 0.1
     }
+
+    @Test void log() {
+        Bounds bounds = new Bounds(0, 0, 7, 5, "EPSG:4326")
+        List data1 = [
+                [10,10,10,10,10,10,10],
+                [10,11,11,11,11,11,10],
+                [10,11,21,13,12,11,10],
+                [10,11,11,11,11,11,10],
+                [10,10,10,10,10,10,10]
+        ]
+        Raster raster1 = new Raster(data1, bounds)
+        Raster raster2 = raster1.log()
+        assertEquals 2.3025851249694824, raster2.eval(new Point(0.5,0.5))[0], 0.1
+        assertEquals 2.397895336151123, raster2.eval(new Point(1.5,1.5))[0], 0.1
+        assertEquals 3.044522523880005, raster2.eval(new Point(2.5,2.5))[0], 0.1
+        assertEquals 2.5649492740631104, raster2.eval(new Point(3.5,2.5))[0], 0.1
+    }
 }
