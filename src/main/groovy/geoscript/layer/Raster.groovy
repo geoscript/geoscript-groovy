@@ -1241,6 +1241,16 @@ class Raster {
         new Raster(cov)
     }
 
+    /**
+     * Create a new Raster by calculating the exponential value for every cell.
+     * @return A new Raster
+     */
+    Raster exp() {
+        def ops = new Operations()
+        def cov = ops.exp(this.coverage)
+        new Raster(cov)
+    }
+
     static class Divide extends OperationJAI {
 
         private static final long serialVersionUID = 3559075474256896861L

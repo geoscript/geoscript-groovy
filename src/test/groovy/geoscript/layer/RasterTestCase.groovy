@@ -999,4 +999,21 @@ class RasterTestCase {
         assertEquals 2, raster2.eval(new Point(2.5,2.5))[0], 0.1
         assertEquals 3, raster2.eval(new Point(3.5,2.5))[0], 0.1
     }
+
+    @Test void exponential() {
+        Bounds bounds = new Bounds(0, 0, 7, 5, "EPSG:4326")
+        List data1 = [
+                [10,10,10,10,10,10,10],
+                [10,11,11,11,11,11,10],
+                [10,11,21,13,12,11,10],
+                [10,11,11,11,11,11,10],
+                [10,10,10,10,10,10,10]
+        ]
+        Raster raster1 = new Raster(data1, bounds)
+        Raster raster2 = raster1.exp()
+        assertEquals 22026.46484375, raster2.eval(new Point(0.5,0.5))[0], 0.1
+        assertEquals 59874.140625, raster2.eval(new Point(1.5,1.5))[0], 0.1
+        assertEquals 1.318815744E9, raster2.eval(new Point(2.5,2.5))[0], 0.1
+        assertEquals 442413.40625, raster2.eval(new Point(3.5,2.5))[0], 0.1
+    }
 }
