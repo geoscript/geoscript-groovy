@@ -982,4 +982,21 @@ class RasterTestCase {
         assertTrue layer.schema.has("value")
     }
 
+    @Test void absolute() {
+        Bounds bounds = new Bounds(0, 0, 7, 5, "EPSG:4326")
+        List data1 = [
+                [0,0,0,0,0,0,0],
+                [0,-1,-1,1,-1,-1,0],
+                [0,-1,2,-3,-2,1,0],
+                [0,-1,-1,1,-1,-1,0],
+                [0,0,0,0,0,0,0]
+        ]
+        Raster raster1 = new Raster(data1, bounds)
+        Raster raster2 = raster1.absolute()
+
+        assertEquals 0, raster2.eval(new Point(0.5,0.5))[0], 0.1
+        assertEquals 1, raster2.eval(new Point(1.5,1.5))[0], 0.1
+        assertEquals 2, raster2.eval(new Point(2.5,2.5))[0], 0.1
+        assertEquals 3, raster2.eval(new Point(3.5,2.5))[0], 0.1
+    }
 }

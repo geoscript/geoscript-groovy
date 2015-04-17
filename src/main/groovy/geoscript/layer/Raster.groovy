@@ -34,6 +34,7 @@ import org.jaitools.imageutils.iterator.WindowIterator
 import org.jaitools.numeric.Range
 import org.geotools.coverage.grid.GridCoverageFactory
 import org.opengis.coverage.grid.GridCoverage
+import org.geotools.coverage.processing.Operations
 
 import javax.media.jai.Interpolation
 import javax.media.jai.RasterFactory
@@ -1228,6 +1229,16 @@ class Raster {
      */
     Raster negative() {
         invert()
+    }
+
+    /**
+     * Create a new Raster by calculating the absolute value for every cell.
+     * @return A new Raster
+     */
+    Raster absolute() {
+        def ops = new Operations()
+        def cov = ops.absolute(this.coverage)
+        new Raster(cov)
     }
 
     static class Divide extends OperationJAI {
