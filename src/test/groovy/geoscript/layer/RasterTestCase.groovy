@@ -618,18 +618,11 @@ class RasterTestCase {
     }
 
     @Test void invert() {
-        Bounds bounds = new Bounds(0, 0, 7, 5, "EPSG:4326")
-        List data = [
-                [0f,0,0,0,0,0,0],
-                [0f,1,1,1,1,1,0],
-                [0f,1,2,3,2,1,0],
-                [0f,1,1,1,1,1,0],
-                [0f,0,0,0,0,0,0]
-        ]
-        Raster raster = new Raster(data, bounds)
+        File file = new File(getClass().getClassLoader().getResource("raster.tif").toURI())
+        GeoTIFF geoTIFF = new GeoTIFF(file)
+        Raster raster = geoTIFF.read()
         Raster invertedRaster = raster.invert()
         assertNotNull(invertedRaster)
-
         /*assertEquals(-0, invertedRaster.eval(new Point(0.5,0.5))[0], 0.1)
         assertEquals(-1, invertedRaster.eval(new Point(1.5,1.5))[0], 0.1)
         assertEquals(-2, invertedRaster.eval(new Point(2.5,2.5))[0], 0.1)
@@ -637,18 +630,11 @@ class RasterTestCase {
     }
 
     @Test void negative() {
-        Bounds bounds = new Bounds(0, 0, 7, 5, "EPSG:4326")
-        List data = [
-                [0,0,0,0,0,0,0],
-                [0,1,1,1,1,1,0],
-                [0,1,2,3,2,1,0],
-                [0,1,1,1,1,1,0],
-                [0,0,0,0,0,0,0]
-        ]
-        Raster raster = new Raster(data, bounds)
+        File file = new File(getClass().getClassLoader().getResource("raster.tif").toURI())
+        GeoTIFF geoTIFF = new GeoTIFF(file)
+        Raster raster = geoTIFF.read()
         Raster invertedRaster = -raster
         assertNotNull(invertedRaster)
-
         /*assertEquals(-0, invertedRaster.eval(new Point(0.5,0.5))[0], 0.1)
         assertEquals(-1, invertedRaster.eval(new Point(1.5,1.5))[0], 0.1)
         assertEquals(-2, invertedRaster.eval(new Point(2.5,2.5))[0], 0.1)

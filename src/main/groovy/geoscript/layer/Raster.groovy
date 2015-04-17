@@ -626,10 +626,10 @@ class Raster {
         def processor = new CoverageProcessor()
         def params = processor.getOperation("Extrema").parameters
         params.parameter("Source").value = this.coverage
-        def result = processor.doOperation(params).getProperty("extrema")
+        def result = processor.doOperation(params)
         [
-            min: result[0],
-            max: result[1]
+            min: result.getProperty("minimum"),
+            max: result.getProperty("maximum")
         ]
     }
 
@@ -644,31 +644,26 @@ class Raster {
      * @return A Histogram
      */
     Histogram getHistogram(Map options = [:]) {
-        def low = options.get("low")
-        def high = options.get("high")
-        def numberOfBins = options.get("numBins")
+        def low = options.get("low", 0.0)
+        def high = options.get("high", 256.0)
+        def numberOfBins = options.get("numBins", 256)
         int numberOfBands = bands.size()
 
         def processor = new CoverageProcessor()
         def params = processor.getOperation("Histogram").parameters
         params.parameter("Source").value = this.coverage
-        if (low) {
-            if (!(low instanceof List)) {
-                low = [low] * numberOfBands
-                params.parameter("lowValue").value = low as double[]
-            }
+        params.parameter("Bands").value = (0..<numberOfBands) as int[]
+        if (!(low instanceof List)) {
+            low = [low] * numberOfBands
+            params.parameter("lowValue").value = low as double[]
         }
-        if (high) {
-            if (!(high instanceof List)) {
-                high = [high] * numberOfBands
-                params.parameter("highValue").value = high as double[]
-            }
+        if (!(high instanceof List)) {
+            high = [high] * numberOfBands
+            params.parameter("highValue").value = high as double[]
         }
-        if (numberOfBins) {
-            if (!(numberOfBins instanceof List)) {
-                numberOfBins = [numberOfBins] * numberOfBands
-                params.parameter("numBins").value = numberOfBins as int[]
-            }
+        if (!(numberOfBins instanceof List)) {
+            numberOfBins = [numberOfBins] * numberOfBands
+            params.parameter("numBins").value = numberOfBins as int[]
         }
         def h = processor.doOperation(params)
         new Histogram(h.getProperty("histogram"))
@@ -973,8 +968,7 @@ class Raster {
     Raster add(Raster other) {
         def processor = new CoverageProcessor()
         def params = processor.getOperation("Add").parameters
-        params.parameter("Source0").value = this.coverage
-        params.parameter("Source1").value = other.coverage
+        params.parameter("Sources").value = [this.coverage, other.coverage]
         def newCoverage = processor.doOperation(params)
         new Raster(newCoverage)
     }
@@ -996,7 +990,7 @@ class Raster {
     Raster add(List<Double> values) {
         def processor = new CoverageProcessor()
         def params = processor.getOperation("AddConst").parameters
-        params.parameter("Source").value = this.coverage
+        params.parameter("source").value = this.coverage
         params.parameter("constants").value = values as double[]
         def newCoverage = processor.doOperation(params)
         new Raster(newCoverage)
@@ -1039,8 +1033,7 @@ class Raster {
     Raster multiply(Raster other) {
         def processor = new CoverageProcessor()
         def params = processor.getOperation("Multiply").parameters
-        params.parameter("Source0").value = this.coverage
-        params.parameter("Source1").value = other.coverage
+        params.parameter("Sources").value = [this.coverage, other.coverage]
         def newCoverage = processor.doOperation(params)
         new Raster(newCoverage)
     }
@@ -1186,7 +1179,7 @@ class Raster {
     Raster minusFrom(List<Double> values) {
         def processor = new CoverageProcessor()
         def params = processor.getOperation("SubtractFromConst").parameters
-        params.parameter("Source").value = this.coverage
+        params.parameter("source").value = this.coverage
         params.parameter("constants").value = values as double[]
         def newCoverage = processor.doOperation(params)
         new Raster(newCoverage)
@@ -1199,7 +1192,7 @@ class Raster {
     Raster invert() {
         def processor = new CoverageProcessor()
         def params = processor.getOperation("Invert").parameters
-        params.parameter("Source").value = this.coverage
+        params.parameter("Sources").value = [this.coverage]
         def newCoverage = processor.doOperation(params)
         new Raster(newCoverage)
     }
@@ -1260,7 +1253,7 @@ class Raster {
                 final double max1 = range1.getMaximum()
                 final double max = max0 - max1
                 final double min = min0 - min1
-                return NumberRange.create(min, max)
+                return NumberRange.create(Math.min(min,max), Math.max(min,max))
             }
             return null
         }
