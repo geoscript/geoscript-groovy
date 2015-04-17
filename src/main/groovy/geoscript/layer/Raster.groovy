@@ -85,8 +85,8 @@ class Raster {
         def matrix = data.collect{datum ->
             datum.collect{
                 float v = it
-                if (v < min) min = v
-                if (v > max) max = v
+                if (!Float.isNaN(v) && v < min) min = v
+                if (!Float.isNaN(v) && v > max) max = v
                 v
             } as float[]
         } as float[][]
