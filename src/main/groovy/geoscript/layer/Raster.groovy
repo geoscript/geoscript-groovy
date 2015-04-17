@@ -6,6 +6,8 @@ import geoscript.geom.Bounds
 import geoscript.geom.Point
 import geoscript.style.RasterSymbolizer
 import geoscript.style.Style
+import org.geotools.coverage.Category
+import org.geotools.coverage.GridSampleDimension
 import org.geotools.coverage.grid.GridCoordinates2D
 import org.geotools.coverage.grid.GridCoverage2D
 import org.geotools.coverage.grid.GridEnvelope2D
@@ -34,12 +36,16 @@ import org.geotools.coverage.grid.GridCoverageFactory
 import org.opengis.coverage.grid.GridCoverage
 
 import javax.media.jai.Interpolation
+import javax.media.jai.RasterFactory
 import javax.media.jai.TiledImage
 import javax.media.jai.iterator.RandomIterFactory
 import javax.media.jai.iterator.WritableRandomIter
+import java.awt.Color
 import java.awt.Dimension
 import java.awt.Rectangle
+import java.awt.image.DataBuffer
 import java.awt.image.RenderedImage
+import java.awt.image.WritableRaster
 
 /**
  * A Raster
@@ -73,13 +79,28 @@ class Raster {
      * @param bounds The geographic Bounds
      */
     Raster(List data, Bounds bounds) {
+        double min = Double.MAX_VALUE
+        double max = Double.MIN_VALUE
         def matrix = data.collect{datum ->
             datum.collect{
-                it as float
+                float v = it
+                if (v < min) min = v
+                if (v > max) max = v
+                v
             } as float[]
         } as float[][]
+        int width = matrix[0].length
+        int height = matrix.length
+        WritableRaster raster = RasterFactory.createBandedRaster(DataBuffer.TYPE_FLOAT, width, height, 1, null);
+        (0..<width).each { int w ->
+            (0..<height).each { int h ->
+                raster.setSample(w, h, 0, matrix[h][w])
+            }
+        }
         def factory = new GridCoverageFactory()
-        this.coverage = factory.create("Raster", matrix, bounds.env)
+        Category category = new Category("Raster", Color.BLACK, NumberRange.create(min, max))
+        GridSampleDimension gridSampleDimension = new GridSampleDimension("Raster", [category] as Category[], null)
+        this.coverage = factory.create("Raster", raster, bounds.env, [gridSampleDimension] as GridSampleDimension[])
         this.style = new RasterSymbolizer()
     }
 
