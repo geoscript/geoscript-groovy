@@ -6,6 +6,7 @@ import geoscript.geom.*
 import geoscript.index.Quadtree
 import geoscript.index.STRtree
 import geoscript.index.SpatialIndex
+import geoscript.layer.io.GeobufWriter
 import geoscript.proj.Projection
 import geoscript.feature.*
 import geoscript.workspace.*
@@ -1487,6 +1488,42 @@ class Layer {
     String toJSONString() {
         GeoJSONWriter geoJSONWriter = new GeoJSONWriter()
         geoJSONWriter.write(this)
+    }
+
+    /**
+     * Write the Layer as Geobuf to an OutputStream
+     * @param out The OutputStream (defaults to System.out)
+     */
+    void toGeobuf(OutputStream out = System.out) {
+        GeobufWriter writer = new GeobufWriter()
+        writer.write(this, out)
+    }
+
+    /**
+     * Write the Layer as Geobuf to a File
+     * @param file The File
+     */
+    void toGeobufFile(File file) {
+        GeobufWriter writer = new GeobufWriter()
+        writer.write(this, file)
+    }
+
+    /**
+     * Write the Layer as Geobuf to a String
+     * @param out A Geobuf Hex String
+     */
+    String toGeobufString() {
+        GeobufWriter writer = new GeobufWriter()
+        writer.write(this)
+    }
+
+    /**
+     * Write the Layer as Geobuf to a byte array
+     * @param out A Geobuf byte array
+     */
+    byte[] toGeobufBytes() {
+        GeobufWriter writer = new GeobufWriter()
+        writer.writeBytes(this)
     }
 
     /**

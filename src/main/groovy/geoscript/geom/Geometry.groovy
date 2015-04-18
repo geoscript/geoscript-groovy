@@ -813,6 +813,22 @@ class Geometry {
     }
 
     /**
+     * Get a Geobuf hex string for this Geometry
+     * @return The Geobuf hex string
+     */
+    String getGeobuf() {
+        new GeobufWriter().write(this)
+    }
+
+    /**
+     * Get a Geobuf byte array for this Geometry
+     * @return The Geobuf byte array
+     */
+    byte[] getGeobufBytes() {
+        new GeobufWriter().writeBytes(this)
+    }
+
+    /**
      * The string representation
      * @return The string representation
      */
@@ -1015,6 +1031,24 @@ class Geometry {
     }
 
     /**
+     * Get a Geometry from a Geobuf Hex String
+     * @param geobuf A Geobuf Hex String
+     * @return A Geometry
+     */
+    static Geometry fromGeobuf(String geobuf) {
+        new GeobufReader().read(geobuf)
+    }
+
+    /**
+     * Get a Geometry from a Geobuf byte array
+     * @param geobuf A Geobuf byte array
+     * @return A Geometry
+     */
+    static Geometry fromGeobuf(byte[] geobuf) {
+        new GeobufReader().read(geobuf)
+    }
+
+    /**
      * Get a Geometry from a String with an unknown format.
      * @param str The String
      * @return A Geometry or null if the String can't be parsed
@@ -1033,7 +1067,8 @@ class Geometry {
             new Gml3Reader(),
             new KmlReader(),
             new WkbReader(),
-            new GpxReader()
+            new GpxReader(),
+            new GeobufReader()
         ]
         Geometry geom = null
         for(def reader in readers ) {

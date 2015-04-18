@@ -154,6 +154,19 @@ class GeometryTestCase {
         assertEquals "<wpt lat='-47.0' lon='111.0'/>", g.gpx
     }
 
+    @Test void getGeobuf() {
+        Geometry g = Geometry.fromWKT("POINT (111 -47)")
+        assertEquals "10021806320c08001a0880e7ed69ffa6e92c", g.geobuf
+        assertArrayEquals([16, 2, 24, 6, 50, 12, 8, 0, 26, 8, -128, -25, -19, 105, -1, -90, -23, 44] as byte[], g.geobufBytes)
+    }
+
+    @Test void fromGeobuf() {
+        Geometry g = Geometry.fromGeobuf("10021806320c08001a0880e7ed69ffa6e92c")
+        assertEquals "POINT (111 -47)", g.wkt
+        g = Geometry.fromGeobuf([16, 2, 24, 6, 50, 12, 8, 0, 26, 8, -128, -25, -19, 105, -1, -90, -23, 44] as byte[])
+        assertEquals "POINT (111 -47)", g.wkt
+    }
+
     @Test void getCoordinates() {
         Geometry g = Geometry.fromWKT("POINT (111 -47)")
         def coordinates = g.coordinates
@@ -511,6 +524,9 @@ class GeometryTestCase {
         // Bad String
         g = Geometry.fromString("asfasd")
         assertNull g
+        // Geobuf
+        g = Geometry.fromString("10021806320c08001a0880e7ed69ffa6e92c")
+        assertEquals "POINT (111 -47)", g.wkt
     }
 
     @Test void cascadedUnion() {

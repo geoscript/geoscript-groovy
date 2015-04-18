@@ -362,6 +362,33 @@ class Feature {
         writer.write(this)
     }
 
+    /**
+     * Get this Feature as a Geobuf hex string
+     * @param options The optional named parameters
+     * <ul>
+     *     <li> precision = The maximum precision (defaults to 6) </li>
+     *     <li> dimension = The supported geometry coordinates dimension (defaults to 2) </li>
+     * </ul>
+     * @return A Geobuf hex string
+     */
+    String getGeobuf(Map options = [:]) {
+        def writer = new geoscript.feature.io.GeobufWriter(options)
+        writer.write(this)
+    }
+
+    /**
+     * Get this Feature as a Geobuf byte array
+     * @param options The optional named parameters
+     * <ul>
+     *     <li> precision = The maximum precision (defaults to 6) </li>
+     *     <li> dimension = The supported geometry coordinates dimension (defaults to 2) </li>
+     * </ul>
+     * @return A Geobuf byte arary
+     */
+    byte[] getGeobufBytes(Map options = [:]) {
+        def writer = new geoscript.feature.io.GeobufWriter(options)
+        writer.writeBytes(this)
+    }
 
     /**
      * Build a SimpleFeature using the Map of data, the ID, and the Schema

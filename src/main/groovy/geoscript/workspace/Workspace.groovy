@@ -251,6 +251,10 @@ class Workspace {
                 params.put("dbtype", "h2")
                 params.put("database", new File(str).absolutePath)
             }
+            // Geobuf
+            else if (str.endsWith(".pbf")) {
+                params.put("file", new File(str).absolutePath)
+            }
             // WFS
             else if (str.toLowerCase().startsWith("http") && str.toLowerCase().contains("service=wfs")
                     && str.toLowerCase().contains("request=getcapabilities")) {
@@ -392,6 +396,9 @@ class Workspace {
         }
         else if (ds instanceof org.geotools.data.wfs.WFSDataStore) {
             new WFS(ds)
+        }
+        else if (ds instanceof org.geotools.data.geobuf.GeobufDirectoryDataStore) {
+            new Geobuf(ds)
         }
         else if (ds instanceof org.geotools.jdbc.JDBCDataStore) {
             def jdbcds = ds as org.geotools.jdbc.JDBCDataStore

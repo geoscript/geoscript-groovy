@@ -46,6 +46,13 @@
             <groupId>no.ecc.vectortile</groupId>
             <artifactId>java-vector-tile</artifactId>
             <version>1.0.5</version>
+            <!-- Exclude protobuf here so gt-geobuf can pull in a more recent version -->
+            <exclusions>
+                <exclusion>
+                    <groupId>com.google.protobuf</groupId>
+                    <artifactId>protobuf-java</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.geotools</groupId>
@@ -232,6 +239,11 @@
         <dependency>
             <groupId>org.geotools</groupId>
             <artifactId>gt-geopkg</artifactId>
+            <version>${gt.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.geotools</groupId>
+            <artifactId>gt-geobuf</artifactId>
             <version>${gt.version}</version>
         </dependency>
         <dependency>
