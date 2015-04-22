@@ -85,6 +85,8 @@ class Pbf {
                 layer.schema.fields.each { Field fld ->
                     if (!fld.isGeometry()) {
                         if (subFields == null
+                                || subFields.isEmpty()
+                                || !subFields.containsKey(layer.name)
                                 || subFields[layer.name].contains(fld)
                                 || subFields[layer.name].contains(fld.name)) {
                             attributes.put(fld.name, f.get(fld))
