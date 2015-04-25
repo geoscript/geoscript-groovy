@@ -91,7 +91,7 @@ class TileCursor<T extends Tile> implements Iterator {
      */
     TileCursor (TileLayer layer, long z, long minX, long minY, long maxX, long maxY) {
         this.tileLayer = layer
-        this.z = validate(z, 0, tileLayer.pyramid.grids.size() - 1, "z")
+        this.z = validate(z, tileLayer.pyramid.grids[0].z, tileLayer.pyramid.grids[-1].z, "z")
         Grid grid = tileLayer.pyramid.grid(this.z)
         this.minX = validate(minX, 0, grid.width - 1, "minX")
         this.minY = validate(minY, 0, grid.height - 1, "minY")
@@ -118,7 +118,7 @@ class TileCursor<T extends Tile> implements Iterator {
             Grid m = layer.pyramid.grid(z)
             Map tileCoords = layer.getTileCoordinates(intersectedBounds, m)
             this.tileLayer = layer
-            this.z = validate(z, 0, tileLayer.pyramid.grids.size() - 1, "z")
+            this.z = validate(z, tileLayer.pyramid.grids[0].z, tileLayer.pyramid.grids[-1].z, "z")
             Grid grid = tileLayer.pyramid.grid(this.z)
             this.minX = validate(tileCoords.minX, 0, grid.width - 1, "minX")
             this.minY = validate(tileCoords.minY, 0, grid.height - 1, "minY")
@@ -151,7 +151,7 @@ class TileCursor<T extends Tile> implements Iterator {
             Grid m = layer.pyramid.grid(intersectedBounds, resX, resY)
             Map tileCoords = layer.getTileCoordinates(intersectedBounds, m)
             this.tileLayer = layer
-            this.z = validate(m.z, 0, tileLayer.pyramid.grids.size() - 1, "z")
+            this.z = validate(m.z, tileLayer.pyramid.grids[0].z, tileLayer.pyramid.grids[-1].z, "z")
             Grid grid = tileLayer.pyramid.grid(this.z)
             this.minX = validate(tileCoords.minX, 0, grid.width - 1, "minX")
             this.minY = validate(tileCoords.minY, 0, grid.height - 1, "minY")
@@ -184,7 +184,7 @@ class TileCursor<T extends Tile> implements Iterator {
             Grid m = layer.pyramid.grid(intersectedBounds, w, h)
             Map tileCoords = layer.getTileCoordinates(intersectedBounds, m)
             this.tileLayer = layer
-            this.z = validate(m.z, 0, tileLayer.pyramid.grids.size() - 1, "z")
+            this.z = validate(m.z, tileLayer.pyramid.grids[0].z, tileLayer.pyramid.grids[-1].z, "z")
             Grid grid = tileLayer.pyramid.grid(this.z)
             this.minX = validate(tileCoords.minX, 0, grid.width - 1, "minX")
             this.minY = validate(tileCoords.minY, 0, grid.height - 1, "minY")
