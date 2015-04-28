@@ -91,9 +91,8 @@ class TileCursor<T extends Tile> implements Iterator {
      */
     TileCursor (TileLayer layer, long z, long minX, long minY, long maxX, long maxY) {
         this.tileLayer = layer
-       // this.z = validate(z, tileLayer.pyramid.grids[0].z, tileLayer.pyramid.grids[-1].z, "z")
-        this.z = validate(z, tileLayer.pyramid.grids.collect{it.z}, "z")
-        if(this.z>=0)
+        this.z = z
+        if(validate(z, tileLayer.pyramid.grids.collect{it.z}, "z"))
         {
             Grid grid = tileLayer.pyramid.grid(this.z)
             this.minX = validate(minX, 0, grid.width - 1, "minX")
@@ -124,8 +123,8 @@ class TileCursor<T extends Tile> implements Iterator {
             Grid m = layer.pyramid.grid(z)
             Map tileCoords = layer.getTileCoordinates(intersectedBounds, m)
             this.tileLayer = layer
-            this.z = validate(z, tileLayer.pyramid.grids.collect{it.z}, "z")
-            if(this.z >= 0)
+            this.z = z
+            if(validate(z, tileLayer.pyramid.grids.collect{it.z}, "z"))
             {
                 Grid grid = tileLayer.pyramid.grid(this.z)
                 this.minX = validate(tileCoords.minX, 0, grid.width - 1, "minX")
@@ -162,9 +161,8 @@ class TileCursor<T extends Tile> implements Iterator {
             Grid m = layer.pyramid.grid(intersectedBounds, resX, resY)
             Map tileCoords = layer.getTileCoordinates(intersectedBounds, m)
             this.tileLayer = layer
-            //this.z = validate(m.z, tileLayer.pyramid.grids[0].z, tileLayer.pyramid.grids[-1].z, "z")
-            this.z = validate(m.z, tileLayer.pyramid.grids?.collect{it.z}, "z")
-            if(this.z >= 0)
+            this.z = m.z
+            if(validate(m.z, tileLayer.pyramid.grids?.collect{it.z}, "z"))
             {
                 Grid grid = tileLayer.pyramid.grid(this.z)
                 this.minX = validate(tileCoords.minX, 0, grid.width - 1, "minX")
@@ -201,8 +199,8 @@ class TileCursor<T extends Tile> implements Iterator {
             Grid m = layer.pyramid.grid(intersectedBounds, w, h)
             Map tileCoords = layer.getTileCoordinates(intersectedBounds, m)
             this.tileLayer = layer
-            this.z = validate(m.z, tileLayer.pyramid.grids?.collect{it.z}, "z")
-            if(this.z >= 0)
+            this.z = m.z
+            if(validate(m.z, tileLayer.pyramid.grids?.collect{it.z}, "z"))
             {
                 Grid grid = tileLayer.pyramid.grid(this.z)
                 this.minX = validate(tileCoords.minX, 0, grid.width - 1, "minX")
@@ -243,22 +241,22 @@ class TileCursor<T extends Tile> implements Iterator {
     }
 
     /**
-     * Validate number parameters passed into the TileCursor constructor
+     * Validate if the given num is found within a list of values
      * @param num The number value
      * @param list Values to compare if num is in
      * @param name The name of the value for logging
      * @return The validated value
      */
-    private long validate(long num, List values, String name) {
-        long result = num
-        def found = values.find{it==num}
-        if(found==null)
+    private Boolean validate(long num, List values, String name) {
+        
+        Boolean found = (values.find{it==num} != null)
+        if(!found)
         {
             LOGGER.warning("${name} with value ${num} is not found in the given list ${values}!")
             result = -1
         }
 
-        result
+        found
     }
 
     /**
