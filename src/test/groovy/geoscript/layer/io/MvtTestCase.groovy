@@ -2,6 +2,7 @@ package geoscript.layer.io
 
 import geoscript.feature.Field
 import geoscript.layer.Layer
+import geoscript.layer.Property
 import geoscript.layer.Shapefile
 import org.junit.Rule
 import org.junit.Test
@@ -69,4 +70,13 @@ class MvtTestCase {
         assertEquals 6, layer.count
     }
 
+    @Test void writeAndReadEarthquakes() {
+        URL url = getClass().getClassLoader().getResource("earthquakes.properties")
+        File file = new File(url.toURI())
+        Layer inLayer = new Property(file)
+        File outFile = temporaryFolder.newFile("earthquakes.mvt")
+        Mvt.write(inLayer, outFile)
+        Layer outLayer = Mvt.read(outFile)
+        assertEquals inLayer.count, outLayer.count
+    }
 }

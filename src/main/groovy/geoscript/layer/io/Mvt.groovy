@@ -6,8 +6,8 @@ import geoscript.feature.Schema
 import geoscript.geom.Geometry
 import geoscript.geom.io.WkbReader
 import geoscript.layer.Layer
-import org.json.simple.JSONObject
-import org.json.simple.JSONValue
+import groovy.json.JsonBuilder
+import groovy.json.JsonSlurper
 
 import java.nio.ByteBuffer
 import java.util.zip.DeflaterInputStream
@@ -56,7 +56,7 @@ class Mvt {
             featureBuffer.put(geomBytes)
             Map attributes = f.attributes
             attributes.remove(f.schema.geom.name)
-            String jsonStr = JSONValue.toJSONString(attributes)
+            String jsonStr = new JsonBuilder(attributes).toString()
             byte[] jsonBytes = jsonStr.bytes
             featureBuffer.putInt(jsonBytes.length)
             featureBuffer.put(jsonBytes)
@@ -140,6 +140,7 @@ class Mvt {
 
         // Get the features
         List data = []
+        JsonSlurper jsonSlurper = new JsonSlurper()
         WkbReader wkbReader = new WkbReader()
         (0..<count).each { int i ->
             int wkbLength = bodyBuffer.getInt()
@@ -150,11 +151,11 @@ class Mvt {
             byte[] attributes = new byte[attributesLength]
             bodyBuffer.get(attributes)
             String jsonStr = new String(attributes)
-            JSONObject jsonObject = JSONValue.parse(jsonStr)
+            Map json = jsonSlurper.parseText(jsonStr)
             Map datum = [:]
             datum.geom = geom
-            jsonObject.keySet().each { String key ->
-                datum[key] = jsonObject.get(key)
+            json.each{ String key, Object value ->
+                datum[key] = value
             }
             data.add(datum)
         }
