@@ -253,7 +253,6 @@ class TileCursor<T extends Tile> implements Iterator {
         if(!found)
         {
             LOGGER.warning("${name} with value ${num} is not found in the given list ${values}!")
-            result = -1
         }
 
         found
