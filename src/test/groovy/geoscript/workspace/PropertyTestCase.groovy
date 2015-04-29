@@ -29,7 +29,8 @@ class PropertyTestCase {
         assertEquals "Property[${dir}]".toString(), property.toString()
 
         assertEquals 2, property.layers.size()
-        assertEquals "[earthquakes, points]", property.layers.toString()
+        assertTrue property.has("points")
+        assertTrue property.has("earthquakes")
 
         Layer layer = property.get("points")
         assertNotNull(layer)
