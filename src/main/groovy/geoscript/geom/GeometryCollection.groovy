@@ -95,6 +95,15 @@ class GeometryCollection extends Geometry {
     }
 
     /**
+     * Get a Geometry from this GeometryCollection that is the most type specific as possible.
+     * If all of the Geometries are Points, a MultiPoint is returned.
+     * @return A Geometry
+     */
+    Geometry narrow() {
+        Geometry.wrap(this.g.factory.buildGeometry(this.geometries.collect{it.g}))
+    }
+
+    /**
      * Create a GeometryCollection from a List of Geometries
      */
     private static create(List geometries) {

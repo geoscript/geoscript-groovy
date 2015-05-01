@@ -40,4 +40,13 @@ class GeometryCollectionTestCase {
         assertEquals "MULTIPOINT ((1 1), (2 2), (3 3))", g.slice(0, -2).wkt
     }
 
+    @Test void narrow() {
+        GeometryCollection gc = Geometry.fromWKT("GEOMETRYCOLLECTION (POINT (1 2), POINT (3 4), POINT (7 8))")
+        assertEquals "MULTIPOINT ((1 2), (3 4), (7 8))", gc.narrow().wkt
+        gc = Geometry.fromWKT("GEOMETRYCOLLECTION (POINT (8 9))")
+        assertEquals "POINT (8 9)", gc.narrow().wkt
+        gc = Geometry.fromWKT("GEOMETRYCOLLECTION (POINT (8 9), LINESTRING (1 1, 5 5))")
+        assertEquals "GEOMETRYCOLLECTION (POINT (8 9), LINESTRING (1 1, 5 5))", gc.narrow().wkt
+    }
+
 }
