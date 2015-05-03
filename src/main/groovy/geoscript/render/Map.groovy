@@ -213,6 +213,43 @@ class Map {
     }
 
     /**
+     * Set the scale computation algorithm (accurate or ogc). Accurate the default.
+     * @param type The scale computation algorithm (accurate or ogc).
+     * @return This Map
+     */
+    Map setScaleComputation(String type) {
+        java.util.Map hints = renderer.rendererHints
+        hints[StreamingRenderer.SCALE_COMPUTATION_METHOD_KEY] = type.equalsIgnoreCase("accurate") ?
+                StreamingRenderer.SCALE_ACCURATE : StreamingRenderer.SCALE_OGC
+        renderer.rendererHints = hints
+        this
+    }
+
+    /**
+     * Set whether to use advanced projection handling or not.  The default is true.
+     * @param value Whether to use advanced projection handling or not.
+     * @return This Map
+     */
+    Map setAdvancedProjectionHandling(boolean value) {
+        java.util.Map hints = renderer.rendererHints
+        hints[StreamingRenderer.ADVANCED_PROJECTION_HANDLING_KEY] = value
+        renderer.rendererHints = hints
+        this
+    }
+
+    /**
+     * Set whether to enable continuous map wrapping or not. The default is true.
+     * @param value Whether to enable continuous map wrapping ot not
+     * @return This Map
+     */
+    Map setContinuousMapWrapping(boolean value) {
+        java.util.Map hints = renderer.rendererHints
+        hints[StreamingRenderer.CONTINUOUS_MAP_WRAPPING] = value
+        renderer.rendererHints = hints
+        this
+    }
+
+    /**
      * Render the Map at a Bounds to a file name
      * @param bounds The Bounds
      * @param fileName The file name
