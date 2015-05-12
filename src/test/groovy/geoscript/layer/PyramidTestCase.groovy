@@ -2,7 +2,9 @@ package geoscript.layer
 
 import geoscript.geom.Bounds
 import geoscript.proj.Projection
+import org.junit.Rule
 import org.junit.Test
+import org.junit.rules.TemporaryFolder
 
 import static junit.framework.Assert.*
 
@@ -11,6 +13,9 @@ import static junit.framework.Assert.*
  * @author Jared Erickson
  */
 class PyramidTestCase {
+
+    @Rule
+    public TemporaryFolder temporaryFolder = new TemporaryFolder()
 
     @Test
     void create() {
@@ -129,6 +134,74 @@ class PyramidTestCase {
             assertEquals 156412.0 / n, g.xResolution, 0.01
             assertEquals 156412.0 / n, g.yResolution, 0.01
         }
+    }
+
+    @Test void getFromXml() {
+        Pyramid p1 = Pyramid.createGlobalMercatorPyramid()
+        String xml = p1.xml
+        Pyramid p2 = Pyramid.fromXml(xml)
+        assertEquals p1.proj, p2.proj
+        assertEquals p1.bounds, p2.bounds
+        assertEquals p1.origin, p2.origin
+        assertEquals p1.tileWidth, p2.tileWidth
+        assertEquals p1.tileHeight, p2.tileHeight
+        assertEquals p1.grids, p2.grids
+    }
+
+    @Test void getFromJson() {
+        Pyramid p1 = Pyramid.createGlobalMercatorPyramid()
+        String json = p1.json
+        Pyramid p2 = Pyramid.fromJson(json)
+        assertEquals p1.proj, p2.proj
+        assertEquals p1.bounds, p2.bounds
+        assertEquals p1.origin, p2.origin
+        assertEquals p1.tileWidth, p2.tileWidth
+        assertEquals p1.tileHeight, p2.tileHeight
+        assertEquals p1.grids, p2.grids
+    }
+
+    @Test void getFromCsv() {
+        Pyramid p1 = Pyramid.createGlobalMercatorPyramid()
+        String csv = p1.csv
+        Pyramid p2 = Pyramid.fromCsv(csv)
+        assertEquals p1.proj, p2.proj
+        assertEquals p1.bounds, p2.bounds
+        assertEquals p1.origin, p2.origin
+        assertEquals p1.tileWidth, p2.tileWidth
+        assertEquals p1.tileHeight, p2.tileHeight
+        assertEquals p1.grids, p2.grids
+    }
+
+    @Test void fromString() {
+        // Well known names
+        Pyramid p = Pyramid.fromString("GlobalMercator")
+        assertEquals Pyramid.createGlobalMercatorPyramid(), p
+        p = Pyramid.fromString("GlobalMercatorBottomLeft")
+        assertEquals Pyramid.createGlobalMercatorPyramid(origin: Pyramid.Origin.BOTTOM_LEFT), p
+        // JSON
+        String json = Pyramid.createGlobalMercatorPyramid().json
+        p = Pyramid.fromString(json)
+        assertEquals Pyramid.createGlobalMercatorPyramid(), p
+        File f = temporaryFolder.newFile("pyramid.json")
+        f.text = json
+        p = Pyramid.fromString(f.absolutePath)
+        assertEquals Pyramid.createGlobalMercatorPyramid(), p
+        // XML
+        String xml = Pyramid.createGlobalMercatorPyramid().xml
+        p = Pyramid.fromString(xml)
+        assertEquals Pyramid.createGlobalMercatorPyramid(), p
+        f = temporaryFolder.newFile("pyramid.xml")
+        f.text = xml
+        p = Pyramid.fromString(f.absolutePath)
+        assertEquals Pyramid.createGlobalMercatorPyramid(), p
+        // CSV
+        String csv = Pyramid.createGlobalMercatorPyramid().csv
+        p = Pyramid.fromString(csv)
+        assertEquals Pyramid.createGlobalMercatorPyramid(), p
+        f = temporaryFolder.newFile("pyramid.csv")
+        f.text = csv
+        p = Pyramid.fromString(f.absolutePath)
+        assertEquals Pyramid.createGlobalMercatorPyramid(), p
     }
 
 }
