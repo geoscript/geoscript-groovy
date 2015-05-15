@@ -17,7 +17,7 @@ class CompoundCurveTestCase {
         assertFalse cc.isClosed()
         assertTrue cc.isCurved()
         assertEquals "CompoundCurve", cc.geometryType
-        assertEquals "COMPOUNDCURVE(CIRCULARSTRING(10.0 10.0, 0.0 20.0, -10.0 10.0), (-10.0 10.0, -10.0 0.0, 10.0 0.0, 5.0 5.0))", cc.curvedWkt
+        assertEquals "COMPOUNDCURVE (CIRCULARSTRING (10.0 10.0, 0.0 20.0, -10.0 10.0), (-10.0 10.0, -10.0 0.0, 10.0 0.0, 5.0 5.0))", cc.curvedWkt
         assertTrue cc.wkt.startsWith("LINESTRING")
         List lines = cc.components
         assertEquals 2, lines.size()
@@ -35,7 +35,7 @@ class CompoundCurveTestCase {
         assertFalse cc.isClosed()
         assertTrue cc.isCurved()
         assertEquals "CompoundCurve", cc.geometryType
-        assertEquals "COMPOUNDCURVE(CIRCULARSTRING(10.0 10.0, 0.0 20.0, -10.0 10.0), (-10.0 10.0, -10.0 0.0, 10.0 0.0, 5.0 5.0))", cc.curvedWkt
+        assertEquals "COMPOUNDCURVE (CIRCULARSTRING (10.0 10.0, 0.0 20.0, -10.0 10.0), (-10.0 10.0, -10.0 0.0, 10.0 0.0, 5.0 5.0))", cc.curvedWkt
         assertTrue cc.wkt.startsWith("LINESTRING")
         List lines = cc.components
         assertEquals 2, lines.size()

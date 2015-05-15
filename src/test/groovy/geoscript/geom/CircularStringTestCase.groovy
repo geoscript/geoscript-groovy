@@ -19,7 +19,7 @@ class CircularStringTestCase {
         assertFalse cs.isClosed()
         assertTrue cs.isCurved()
         assertEquals "CircularString", cs.geometryType
-        assertEquals "CIRCULARSTRING(6.12 10.0, 7.07 7.07, 10.0 0.0)", cs.curvedWkt
+        assertEquals "CIRCULARSTRING (6.12 10.0, 7.07 7.07, 10.0 0.0)", cs.curvedWkt
         assertTrue cs.wkt.startsWith("LINESTRING")
         List pts = cs.controlPoints
         assertEquals 3, pts.size()
@@ -40,7 +40,7 @@ class CircularStringTestCase {
         assertFalse cs.isClosed()
         assertTrue cs.isCurved()
         assertEquals "CircularString", cs.geometryType
-        assertEquals "CIRCULARSTRING(6.12 10.0, 7.07 7.07, 10.0 0.0)", cs.curvedWkt
+        assertEquals "CIRCULARSTRING (6.12 10.0, 7.07 7.07, 10.0 0.0)", cs.curvedWkt
         assertTrue cs.wkt.startsWith("LINESTRING")
         List pts = cs.controlPoints
         assertEquals 3, pts.size()
@@ -61,7 +61,7 @@ class CircularStringTestCase {
         assertFalse cs.isClosed()
         assertTrue cs.isCurved()
         assertEquals "CircularString", cs.geometryType
-        assertEquals "CIRCULARSTRING(6.12 10.0, 7.07 7.07, 10.0 0.0)", cs.curvedWkt
+        assertEquals "CIRCULARSTRING (6.12 10.0, 7.07 7.07, 10.0 0.0)", cs.curvedWkt
         assertTrue cs.wkt.startsWith("LINESTRING")
         List pts = cs.controlPoints
         assertEquals 3, pts.size()
@@ -82,14 +82,14 @@ class CircularStringTestCase {
         assertFalse cs.isClosed()
         assertTrue cs.isCurved()
         assertEquals "CircularString", cs.geometryType
-        assertEquals "CIRCULARSTRING(6.12 10.0, 7.07 7.07, 10.0 0.0)", cs.curvedWkt
+        assertEquals "CIRCULARSTRING (6.12 10.0, 7.07 7.07, 10.0 0.0)", cs.curvedWkt
         assertTrue cs.wkt.startsWith("LINESTRING")
         List pts = cs.controlPoints
         assertEquals 3, pts.size()
         assertEquals new Point(6.12, 10.0), pts[0]
         assertEquals new Point(7.07, 7.07), pts[1]
         assertEquals new Point(10.0, 0.0), pts[2]
-        cs = Geometry.fromWKT("CIRCULARSTRING(4 1, 7 4, 4 7)")
+        cs = Geometry.fromWKT("CIRCULARSTRING (4 1, 7 4, 4 7)")
         LineString line = cs.linear
         assertTrue line.numPoints > 3
     }

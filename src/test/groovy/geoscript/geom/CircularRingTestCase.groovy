@@ -21,7 +21,7 @@ class CircularRingTestCase {
         assertTrue cr.isClosed()
         assertTrue cr.isCurved()
         assertEquals "CircularRing", cr.geometryType
-        assertEquals "CIRCULARSTRING(2.0 1.0, 1.0 2.0, 0.0 1.0, 1.0 0.0, 2.0 1.0)", cr.curvedWkt
+        assertEquals "CIRCULARSTRING (2.0 1.0, 1.0 2.0, 0.0 1.0, 1.0 0.0, 2.0 1.0)", cr.curvedWkt
         assertTrue cr.wkt.startsWith("LINEARRING")
         List pts = cr.controlPoints
         assertEquals 5, pts.size()
@@ -46,7 +46,7 @@ class CircularRingTestCase {
         assertTrue cr.isClosed()
         assertTrue cr.isCurved()
         assertEquals "CircularRing", cr.geometryType
-        assertEquals "CIRCULARSTRING(2.0 1.0, 1.0 2.0, 0.0 1.0, 1.0 0.0, 2.0 1.0)", cr.curvedWkt
+        assertEquals "CIRCULARSTRING (2.0 1.0, 1.0 2.0, 0.0 1.0, 1.0 0.0, 2.0 1.0)", cr.curvedWkt
         assertTrue cr.wkt.startsWith("LINEARRING")
         List pts = cr.controlPoints
         assertEquals 5, pts.size()
@@ -71,7 +71,7 @@ class CircularRingTestCase {
         assertTrue cr.isClosed()
         assertTrue cr.isCurved()
         assertEquals "CircularRing", cr.geometryType
-        assertEquals "CIRCULARSTRING(2.0 1.0, 1.0 2.0, 0.0 1.0, 1.0 0.0, 2.0 1.0)", cr.curvedWkt
+        assertEquals "CIRCULARSTRING (2.0 1.0, 1.0 2.0, 0.0 1.0, 1.0 0.0, 2.0 1.0)", cr.curvedWkt
         assertTrue cr.wkt.startsWith("LINEARRING")
         List pts = cr.controlPoints
         assertEquals 5, pts.size()
@@ -96,7 +96,7 @@ class CircularRingTestCase {
         assertTrue cr.isClosed()
         assertTrue cr.isCurved()
         assertEquals "CircularRing", cr.geometryType
-        assertEquals "CIRCULARSTRING(2.0 1.0, 1.0 2.0, 0.0 1.0, 1.0 0.0, 2.0 1.0)", cr.curvedWkt
+        assertEquals "CIRCULARSTRING (2.0 1.0, 1.0 2.0, 0.0 1.0, 1.0 0.0, 2.0 1.0)", cr.curvedWkt
         assertTrue cr.wkt.startsWith("LINEARRING")
         List pts = cr.controlPoints
         assertEquals 5, pts.size()
