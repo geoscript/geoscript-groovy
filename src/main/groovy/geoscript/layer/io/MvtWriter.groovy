@@ -1,6 +1,7 @@
 package geoscript.layer.io
 
 import geoscript.layer.Layer
+import org.apache.commons.codec.binary.Base64
 
 /**
  * A Mapnik Vector Tile Writer
@@ -37,6 +38,6 @@ class MvtWriter implements Writer {
     String write(Layer layer) {
         ByteArrayOutputStream out = new ByteArrayOutputStream()
         Mvt.write(layer, out)
-        new String(out.toByteArray())
+        new String(Base64.encodeBase64(out.toByteArray()), "UTF-8")
     }
 }
