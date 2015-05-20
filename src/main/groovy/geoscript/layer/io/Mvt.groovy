@@ -42,43 +42,58 @@ class Mvt {
      */
     static void write(Layer layer, OutputStream out) {
 
-        // Allocate a large main buffer 
-        ByteBuffer buffer = ByteBuffer.allocate(2000000)
-        buffer.put(MVT_SIGNATURE)
+        // Get the number of features
+        int numberOfFeatures = layer.count
 
-        // Allocate a separate buffer for the feature body
-        ByteBuffer featureBuffer = ByteBuffer.allocate(2000000)
-        featureBuffer.putInt(layer.count)
+        // Create a ByteBuffer for each Feature
+        ByteBuffer[] featureBuffers = new ByteBuffer[numberOfFeatures]
+
+        // Remember the total number of bytes for all features
+        int totalFeatureByteCount = 4
+
+        // Write each Feature to a ByteBuffer
+        int index = 0
         layer.eachFeature { Feature f ->
             Geometry geometry = f.geom
             byte[] geomBytes = geometry.wkbBytes
-            featureBuffer.putInt(geomBytes.length)
-            featureBuffer.put(geomBytes)
             Map attributes = f.attributes
             attributes.remove(f.schema.geom.name)
             String jsonStr = new JsonBuilder(attributes).toString()
             byte[] jsonBytes = jsonStr.bytes
-            featureBuffer.putInt(jsonBytes.length)
-            featureBuffer.put(jsonBytes)
+            int numberOfBytes = 4 + geomBytes.length + 4 + jsonBytes.length
+            totalFeatureByteCount += numberOfBytes
+            featureBuffers[index] = ByteBuffer.allocate(numberOfBytes)
+            featureBuffers[index].putInt(geomBytes.length)
+            featureBuffers[index].put(geomBytes)
+            featureBuffers[index].putInt(jsonBytes.length)
+            featureBuffers[index].put(jsonBytes)
+            index++
         }
-        // Remember where we are and change to read mode
-        int featurePosition = featureBuffer.position()
-        featureBuffer.flip()
 
-        // Extract the feature bytes
-        byte[] featureBytes = new byte[featurePosition]
-        featureBuffer.get(featureBytes)
+        // Create a single ByteBuffer for all Features
+        ByteBuffer combinedfeatureBuffer = ByteBuffer.allocate(totalFeatureByteCount)
+        combinedfeatureBuffer.putInt(numberOfFeatures)
+        featureBuffers.each { ByteBuffer b ->
+            b.flip()
+            combinedfeatureBuffer.put(b)
+        }
+
+        // Then extract the byte array
+        byte[] featureBytes = new byte[totalFeatureByteCount]
+        combinedfeatureBuffer.flip()
+        combinedfeatureBuffer.get(featureBytes)
 
         // Zlib compress the feature body
         byte[] compressedBytes = new DeflaterInputStream(new ByteArrayInputStream(featureBytes)).bytes
+
+        // Create the final byte array
+        int finalLength = MVT_SIGNATURE.length + 4 + compressedBytes.length
+        ByteBuffer  buffer = ByteBuffer.allocate(finalLength)
+        buffer.put(MVT_SIGNATURE)
         buffer.putInt(compressedBytes.length)
         buffer.put(compressedBytes)
-
-        // Remember where we are in the main buffer and
-        // switch to read mode
-        int finalLength = buffer.position()
         buffer.flip()
-        // Get the final bytes and write
+
         byte[] finalBytes = new byte[finalLength]
         buffer.get(finalBytes)
         out.write(finalBytes)
