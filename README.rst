@@ -88,6 +88,23 @@ Reading a Raster::
         println "   ${i}). ${b}"
     }
 
+Generating tiles::
+    
+    import geoscript.feature.Feature
+    import geoscript.geom.Bounds
+    import geoscript.layer.*
+    import geoscript.style.*
+
+    Shapefile shp = new Shapefile(new File("states.shp"))
+    shp.style = new Fill("wheat") + new Stroke("navy", 0.1)
+
+    File file = new File("states.gpkg")
+    GeoPackage gpkg = new GeoPackage(file, "states", Pyramid.createGlobalMercatorPyramid(origin: Pyramid.Origin.TOP_LEFT))
+
+    TileRenderer renderer = new ImageTileRenderer(gpkg, shp)
+    TileGenerator generator = new TileGenerator(verbose: true)
+    generator.generate(gpkg, renderer, 0, 4)
+
 See the `web site <http://geoscript.org>`_ or the `examples directory <https://github.com/jericks/geoscript-groovy/tree/master/examples>`_ for more examples.
 
 You can also use GeoScript Groovy as a library. If you use Maven you will need to add the Boundless Maven Repository::
