@@ -70,6 +70,12 @@ class VectorTilesTestCase {
                 assertNotNull t.data
             }
         }
+        // Delete
+        Tile tile = vectorTiles.get(0,0,0)
+        assertNotNull tile.data
+        vectorTiles.delete(tile)
+        tile = vectorTiles.get(0,0,0)
+        assertNull tile.data
         // Get Layers
         List layers = vectorTiles.getLayers(vectorTiles.tiles(2, 0, 1, 1, 1))
         assertEquals 1, layers.size()

@@ -54,6 +54,18 @@ class UTFGrid extends TileLayer<Tile> {
         }
     }
 
+    /**
+     * Delete a Tile
+     * @param t The Tile
+     */
+    @Override
+    void delete(Tile t) {
+        File file = new File(new File(new File(this.dir, String.valueOf(t.z)), String.valueOf(t.x)), "${t.y}.grid.json")
+        if (file.exists()) {
+            file.delete()
+        }
+    }
+
     @Override
     void close() throws IOException {
         // Do Nothing!

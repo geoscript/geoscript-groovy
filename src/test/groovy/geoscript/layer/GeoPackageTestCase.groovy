@@ -62,7 +62,7 @@ class GeoPackageTestCase {
     void put() {
         // Since we are modifying the mbtiles file copy it to a temp file
         File file = new File(getClass().getClassLoader().getResource("states.gpkg").toURI())
-        File newFile = folder.newFile("states_temp.gpkg")
+        File newFile = folder.newFile("states_temp1.gpkg")
         newFile.withOutputStream { out ->
             file.withInputStream { inp ->
                 out << inp
@@ -81,8 +81,10 @@ class GeoPackageTestCase {
         // Load a tile image
         File f = new File(getClass().getClassLoader().getResource("0.png").toURI())
         tile.data = f.bytes
+        assertNotNull tile.data
 
         // Save Tile and make sure it saved correctly by getting it again
+        println tile.data
         layer.put(tile)
         tile = layer.get(10, 0, 0)
         assertNotNull tile
@@ -90,6 +92,27 @@ class GeoPackageTestCase {
         assertEquals 0, tile.x
         assertEquals 0, tile.y
         assertNotNull tile.data
+        layer.close()
+    }
+
+    @Test
+    void delete() {
+        // Since we are modifying the mbtiles file copy it to a temp file
+        File file = new File(getClass().getClassLoader().getResource("states.gpkg").toURI())
+        File newFile = folder.newFile("states_temp2.gpkg")
+        newFile.withOutputStream { out ->
+            file.withInputStream { inp ->
+                out << inp
+            }
+        }
+        GeoPackage layer = new GeoPackage(newFile, "states")
+        Tile tile = layer.get(4, 2, 3)
+        assertNotNull tile
+        assertNotNull tile.data
+        layer.delete(tile)
+        tile = layer.get(4, 2, 3)
+        assertNotNull tile
+        assertNull tile.data
         layer.close()
     }
 

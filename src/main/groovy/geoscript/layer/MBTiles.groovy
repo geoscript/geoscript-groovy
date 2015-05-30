@@ -2,6 +2,7 @@ package geoscript.layer
 
 import geoscript.geom.Bounds
 import geoscript.proj.Projection
+import groovy.sql.Sql
 import org.geotools.mbtiles.MBTilesFile
 import org.geotools.mbtiles.MBTilesMetadata
 import org.geotools.mbtiles.MBTilesTile
@@ -46,6 +47,11 @@ class MBTiles extends ImageTileLayer {
      * The world wide Bounds in EPSG:3857
      */
     private Bounds mercatorBounds = latLonBounds.reproject(mercatorProj)
+
+    /**
+     * The Groovy Sql Connection
+     */
+    private Sql sql
 
     /**
      * Create a new MBTilesLayer with a existing File
@@ -143,8 +149,29 @@ class MBTiles extends ImageTileLayer {
         tiles.saveTile(tile)
     }
 
+    /**
+     * Delete a Tile
+     * @param t The Tile
+     */
+    @Override
+    void delete(ImageTile t) {
+        getSql().execute("DELETE FROM tiles WHERE zoom_level = ? AND tile_column = ? AND tile_row = ?", [t.z, t.x, t.y])
+    }
+
+    /**
+     * Lazily create the Groovy Sql Connection
+     * @return
+     */
+    private Sql getSql() {
+        if (!sql) {
+            sql = Sql.newInstance("jdbc:sqlite:${file.absolutePath}", "org.sqlite.JDBC")
+        }
+        sql
+    }
+
     @Override
     void close() throws IOException {
         this.tiles.close()
+        if (sql) sql.close()
     }
 }

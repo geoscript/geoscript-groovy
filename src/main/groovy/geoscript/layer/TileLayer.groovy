@@ -52,6 +52,12 @@ abstract class TileLayer<T extends Tile> implements Closeable {
     abstract void put(T t)
 
     /**
+     * Delete a Tile
+     * @param t The Tile
+     */
+    abstract void delete(T t)
+
+    /**
      * Close the TileLayer
      */
     abstract void close() throws IOException

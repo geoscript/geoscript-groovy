@@ -122,6 +122,21 @@ class TMS extends ImageTileLayer {
     }
 
     /**
+     * Delete a Tile
+     * @param t The Tile
+     */
+    @Override
+    void delete(ImageTile t) {
+        if(!dir) {
+            throw new IllegalArgumentException("TMS with URL are ready only!")
+        }
+        File file = new File(new File(new File(this.dir, String.valueOf(t.z)), String.valueOf(t.x)), "${t.y}.${imageType}")
+        if (file.exists()) {
+            file.delete()
+        }
+    }
+
+    /**
      * Close the TileLayer
      */
     @Override

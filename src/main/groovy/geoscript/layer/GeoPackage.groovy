@@ -2,6 +2,7 @@ package geoscript.layer
 
 import geoscript.geom.Bounds
 import geoscript.proj.Projection
+import groovy.sql.Sql
 import org.geotools.geopkg.TileEntry
 import org.geotools.geopkg.TileMatrix
 import org.geotools.geopkg.TileReader
@@ -31,6 +32,11 @@ class GeoPackage extends ImageTileLayer {
      * The cached internal Pyramid
      */
     private Pyramid pyramid
+
+    /**
+     * The Groovy Sql connection
+     */
+    private Sql sql
 
     /**
      * Create a new GeoPackage from an existing database and tile layer
@@ -142,8 +148,30 @@ class GeoPackage extends ImageTileLayer {
                 new org.geotools.geopkg.Tile(t.z as Integer, t.x as Integer, t.y as Integer, t.data))
     }
 
+    /**
+     * Delete a Tile
+     * @param t The Tile
+     */
+    @Override
+    void delete(ImageTile t) {
+        getSql().execute("DELETE FROM ${this.tileEntry.tableName} WHERE zoom_level = ? AND tile_column = ? AND tile_row = ?",
+                [t.z, t.x, t.y])
+    }
+
+    /**
+     * Create the Groovy Sql connection lazily
+     * @return The Groovy Sql connection
+     */
+    private Sql getSql() {
+        if (!sql) {
+            sql = Sql.newInstance("jdbc:sqlite:${file.absolutePath}", "org.sqlite.JDBC")
+        }
+        sql
+    }
+
     @Override
     void close() throws IOException {
         this.geopkg.close()
+        if (sql) sql.close()
     }
 }

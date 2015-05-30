@@ -104,6 +104,14 @@ class OSM extends ImageTileLayer {
     }
 
     /**
+     * Delete a Tile
+     * @param t The Tile
+     */
+    @Override
+    void delete(ImageTile t) {
+        throw new IllegalArgumentException("OSM is ready only!")
+    }
+        /**
      * Close the TileLayer
      */
     @Override

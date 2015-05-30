@@ -59,10 +59,32 @@ class MBTilesTestCase {
     }
 
     @Test
+    void delete() {
+        // Since we are modifying the mbtiles file copy it to a temp file
+        File file = new File(getClass().getClassLoader().getResource("states.mbtiles").toURI())
+        File newFile = folder.newFile("states_temp2.mbtiles")
+        newFile.withOutputStream { out ->
+            file.withInputStream { inp ->
+                out << inp
+            }
+        }
+        MBTiles layer = new MBTiles(newFile)
+        Tile tile = layer.get(4, 2, 3)
+        assertNotNull tile
+        assertNotNull tile.data
+        layer.delete(tile)
+        tile = layer.get(4, 2, 3)
+        assertNotNull tile
+        assertNull tile.data
+        layer.close()
+    }
+
+
+    @Test
     void put() {
         // Since we are modifying the mbtiles file copy it to a temp file
         File file = new File(getClass().getClassLoader().getResource("states.mbtiles").toURI())
-        File newFile = folder.newFile("states_temp.mbtiles")
+        File newFile = folder.newFile("states_temp1.mbtiles")
         newFile.withOutputStream { out ->
             file.withInputStream { inp ->
                 out << inp

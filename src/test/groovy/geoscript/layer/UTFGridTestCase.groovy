@@ -59,5 +59,11 @@ class UTFGridTestCase {
                 assertNotNull t.data
             }
         }
+        // Delete
+        Tile tile = utf.get(0,0,0)
+        assertNotNull tile.data
+        utf.delete(tile)
+        tile = utf.get(0,0,0)
+        assertNull tile.data
     }
 }

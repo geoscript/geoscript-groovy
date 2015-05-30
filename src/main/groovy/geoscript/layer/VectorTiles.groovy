@@ -163,7 +163,7 @@ class VectorTiles extends TileLayer<Tile> {
     @Override
     void put(Tile t) {
         if (!dir) {
-            throw new IllegalArgumentException("TMS with URL are ready only!")
+            throw new IllegalArgumentException("Vector Tiles with URL are ready only!")
         }
         File file = new File(new File(new File(this.dir, String.valueOf(t.z)), String.valueOf(t.x)), "${t.y}.${type}")
         if (!file.parentFile.exists()) {
@@ -171,6 +171,21 @@ class VectorTiles extends TileLayer<Tile> {
         }
         file.withOutputStream { out ->
             out.write(t.data)
+        }
+    }
+
+    /**
+     * Delete a Tile
+     * @param t The Tile
+     */
+    @Override
+    void delete(Tile t) {
+        if (!dir) {
+            throw new IllegalArgumentException("Vector Tiles with URL are ready only!")
+        }
+        File file = new File(new File(new File(this.dir, String.valueOf(t.z)), String.valueOf(t.x)), "${t.y}.${type}")
+        if (file.exists()) {
+            file.delete()
         }
     }
 

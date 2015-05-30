@@ -128,4 +128,23 @@ class TMSTestCase {
         verifyHttp(server).once(method(Method.GET), uri("/1/1/1.png"))
     }
 
+    @Test
+    void delete() {
+        File dir =  folder.newFolder("tiles")
+        File tileDir = new File(new File(dir,"0"),"0")
+        tileDir.mkdirs()
+        File file = new File(getClass().getClassLoader().getResource("0.png").toURI())
+        file.withOutputStream { input ->
+            new File(tileDir, file.name).withOutputStream { out ->
+                out << input
+            }
+        }
+        TMS tms = new TMS("Tiles", "png", dir, Pyramid.createGlobalMercatorPyramid())
+        Tile t = tms.get(0,0,0)
+        assertNotNull t.data
+        tms.delete(t)
+        t = tms.get(0,0,0)
+        assertNull t.data
+    }
+
 }
