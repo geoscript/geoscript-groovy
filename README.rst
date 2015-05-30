@@ -90,8 +90,6 @@ Reading a Raster::
 
 Generating tiles::
     
-    import geoscript.feature.Feature
-    import geoscript.geom.Bounds
     import geoscript.layer.*
     import geoscript.style.*
 
