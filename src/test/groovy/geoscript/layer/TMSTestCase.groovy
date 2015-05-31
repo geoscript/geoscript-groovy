@@ -130,12 +130,13 @@ class TMSTestCase {
 
     @Test
     void delete() {
+        File file = new File(getClass().getClassLoader().getResource("0.png").toURI())
         File dir =  folder.newFolder("tiles")
         File tileDir = new File(new File(dir,"0"),"0")
         tileDir.mkdirs()
-        File file = new File(getClass().getClassLoader().getResource("0.png").toURI())
-        file.withOutputStream { input ->
-            new File(tileDir, file.name).withOutputStream { out ->
+        File tileFile = new File(tileDir, file.name)
+        file.withInputStream { input ->
+            tileFile.withOutputStream { out ->
                 out << input
             }
         }
