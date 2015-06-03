@@ -128,7 +128,7 @@ class Writer {
         features.add(feature.f)
         // If there are more features in the cache than the batch
         // size, write it
-        if (features.size() >= batch) {
+        if (!(layer.workspace instanceof geoscript.workspace.OGR) && features.size() >= batch) {
             // Write to the store
             store.addFeatures(features)
             // Commit and transaction
@@ -145,9 +145,13 @@ class Writer {
     void close() {
         // Make sure to add any left over cached features
         if (!features.isEmpty()) {
-            store.addFeatures(features)
-            if (transaction) transaction.commit()
-            features.clear()
+            if (layer.workspace instanceof geoscript.workspace.OGR) {
+                layer.write(new Cursor(features))
+            } else {
+                store.addFeatures(features)
+                if (transaction) transaction.commit()
+                features.clear()
+            }
         }
         // Close the transaction
         if (transaction) transaction.close()

@@ -400,6 +400,9 @@ class Workspace {
         else if (ds instanceof org.geotools.data.geobuf.GeobufDirectoryDataStore) {
             new Geobuf(ds)
         }
+        else if (ds instanceof org.geotools.data.ogr.OGRDataStore) {
+            new OGR(ds)
+        }
         else if (ds instanceof org.geotools.jdbc.JDBCDataStore) {
             def jdbcds = ds as org.geotools.jdbc.JDBCDataStore
             if (jdbcds.dataStoreFactory instanceof org.geotools.geopkg.GeoPkgDataStoreFactory) {

@@ -32,6 +32,11 @@ cd %~dp0
 @REM build up the classpath
 set CLASSPATH=%CD%\..\lib\*
 
+@REM set native library path
+if not "%GEOSCRIPT_GDAL_HOME%" == "" (
+    set "PATH=%GEOSCRIPT_GDAL_HOME%;%PATH%"
+)
+
 cd %CWD%
 set JAVA_OPTS=-Dorg.geotools.referencing.forceXY=true
 %GROOVY% %*

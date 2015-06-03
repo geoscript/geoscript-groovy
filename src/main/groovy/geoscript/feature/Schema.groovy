@@ -517,7 +517,9 @@ class Schema {
     private static SimpleFeatureType buildFeatureType(String name, def fields, String uri = "http://geoscript.org/feature") {
         SimpleFeatureTypeBuilder builder = new SimpleFeatureTypeBuilder()
         builder.setName(new NameImpl(name))
-        builder.namespaceURI = uri
+        if (uri != null) {
+            builder.namespaceURI = uri
+        }
         fields.each{field ->
             if (!(field instanceof Field)) {
                 field = new Field(field)
