@@ -29,7 +29,6 @@ class PyramidTestCase {
                         new Grid(0, 1, 1, 156412, 156412),
                         new Grid(1, 2, 2, 78206, 78206)
                 ]
-
         )
         assertEquals "EPSG:3857", pyramid.proj.id
         Bounds b = new Bounds(-179.99, -85.0511, 179.99, 85.0511, "EPSG:4326").reproject("EPSG:3857")
@@ -53,7 +52,6 @@ class PyramidTestCase {
         assertEquals Pyramid.Origin.BOTTOM_LEFT, pyramid.origin
         assertEquals 0, pyramid.grids.size()
     }
-
 
     @Test
     void gridByZoomLevel() {
