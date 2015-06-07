@@ -261,4 +261,28 @@ class Pyramid {
         p
     }
 
+    /**
+     * Create a Pyramid with Grids for common global geodetic tile sets.
+     * http://wiki.osgeo.org/wiki/Tile_Map_Service_Specification#global-geodetic
+     * @return A Pyramid
+     */
+    static Pyramid createGlobalGeodeticPyramid(Map options = [:]) {
+        Projection latLonProj = new Projection("EPSG:4326")
+        Bounds latLonBounds = new Bounds(-179.99, -89.99, 179.99, 89.99, latLonProj)
+        Pyramid p = new Pyramid(
+                proj: latLonProj,
+                bounds: latLonBounds,
+                origin: Pyramid.Origin.BOTTOM_LEFT,
+                tileWidth: 256,
+                tileHeight: 256
+        )
+        int maxZoom = options.get("maxZoom", 19)
+        p.grids = (0..maxZoom).collect { int z ->
+            int col = Math.pow(2, z + 1)
+            int row = Math.pow(2, z)
+            double res = 0.703125 / Math.pow(2, z)
+            new Grid(z, col, row, res, res)
+        }
+        p
+    }
 }

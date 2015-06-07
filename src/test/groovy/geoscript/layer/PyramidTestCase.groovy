@@ -136,6 +136,28 @@ class PyramidTestCase {
         }
     }
 
+    @Test
+    void createGlobalGeodeticPyramid() {
+        Pyramid pyramid = Pyramid.createGlobalGeodeticPyramid()
+        assertEquals "EPSG:4326", pyramid.proj.id
+        Bounds b = new Bounds(-179.99, -89.99, 179.99, 89.99, "EPSG:4326")
+        assertEquals b, pyramid.bounds
+        assertEquals 256, pyramid.tileWidth
+        assertEquals 256, pyramid.tileHeight
+        assertEquals Pyramid.Origin.BOTTOM_LEFT, pyramid.origin
+        assertEquals 20, pyramid.grids.size()
+        pyramid.grids.eachWithIndex { Grid g, int z ->
+            assertEquals z, g.z
+            int w = Math.pow(2, z + 1)
+            int h = Math.pow(2, z)
+            double res = 0.703125 / Math.pow(2, z)
+            assertEquals w, g.width
+            assertEquals h, g.height
+            assertEquals res, g.xResolution, 0.01
+            assertEquals res, g.yResolution, 0.01
+        }
+    }
+
     @Test void getFromXml() {
         Pyramid p1 = Pyramid.createGlobalMercatorPyramid()
         String xml = p1.xml
