@@ -198,8 +198,14 @@ class PyramidTestCase {
         // Well known names
         Pyramid p = Pyramid.fromString("GlobalMercator")
         assertEquals Pyramid.createGlobalMercatorPyramid(), p
+        p = Pyramid.fromString("mercator")
+        assertEquals Pyramid.createGlobalMercatorPyramid(), p
         p = Pyramid.fromString("GlobalMercatorBottomLeft")
         assertEquals Pyramid.createGlobalMercatorPyramid(origin: Pyramid.Origin.BOTTOM_LEFT), p
+        p = Pyramid.fromString("GlobalGeodetic")
+        assertEquals Pyramid.createGlobalGeodeticPyramid(), p
+        p = Pyramid.fromString("geodetic")
+        assertEquals Pyramid.createGlobalGeodeticPyramid(), p
         // JSON
         String json = Pyramid.createGlobalMercatorPyramid().json
         p = Pyramid.fromString(json)

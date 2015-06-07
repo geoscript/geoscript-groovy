@@ -183,10 +183,12 @@ class Pyramid {
      */
     static Pyramid fromString(String str) {
         // Well known names
-        if (str.equalsIgnoreCase("GlobalMercator")) {
+        if (str.equalsIgnoreCase("GlobalMercator") || str.equalsIgnoreCase("mercator")) {
             Pyramid.createGlobalMercatorPyramid()
         } else if (str.equalsIgnoreCase("GlobalMercatorBottomLeft")) {
             Pyramid.createGlobalMercatorPyramid(origin: Pyramid.Origin.BOTTOM_LEFT)
+        } else if (str.equalsIgnoreCase("GlobalGeodetic") || str.equalsIgnoreCase("geodetic")) {
+            Pyramid.createGlobalGeodeticPyramid()
         }
         // JSON
         else if (str.startsWith("{")) {
@@ -251,7 +253,7 @@ class Pyramid {
             tileWidth: 256,
             tileHeight: 256
         )
-        int maxZoom = 19
+        int maxZoom = options.get("maxZoom", 19)
         p.grids = (0..maxZoom).collect { int z ->
             int n = Math.pow(2, z)
             // http://wiki.openstreetmap.org/wiki/Zoom_levels
