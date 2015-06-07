@@ -104,6 +104,22 @@ class Pyramid {
     }
 
     /**
+     * Get the max Grid by zoom level
+     * @return THe max Grid by zoom level
+     */
+    Grid getMaxGrid() {
+        grids.max { Grid g -> g.z }
+    }
+
+    /**
+     * Get the min Grid by zoom level
+     * @return The min Grid by zoom level
+     */
+    Grid getMinGrid() {
+        grids.min { Grid g -> g.z }
+    }
+
+    /**
      * Calculate the Bounds for the given Tile
      * @param t The Tile
      * @return A Bounds

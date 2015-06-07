@@ -38,6 +38,8 @@ class PyramidTestCase {
         assertEquals 512, pyramid.tileHeight
         assertEquals Pyramid.Origin.TOP_LEFT, pyramid.origin
         assertEquals 2, pyramid.grids.size()
+        assertEquals 0, pyramid.minGrid.z
+        assertEquals 1, pyramid.maxGrid.z
     }
 
     @Test
