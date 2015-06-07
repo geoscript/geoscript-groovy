@@ -36,7 +36,6 @@ class KmlWriterTestCase {
         // Write the Layer to a KML String
         KmlWriter writer = new KmlWriter()
         String kml = writer.write(layer)
-        println kml
         assertTrue kml.startsWith("<kml:kml xmlns:xs=\"http://www.w3.org/2001/XMLSchema\" xmlns:kml=\"http://earth.google.com/kml/2.1\">")
 
         // Write Layer as KML to an OutputStream

@@ -187,7 +187,6 @@ class OGRTestCase {
                     "DescriptionField=STATE_ABBR"
             ])
             assertNotNull layer
-            println layer.schema
             assertEquals "OGR", ogr.format
             assertTrue ogr.toString().startsWith("OGR (Driver = KML, Dataset = ")
             assertTrue ogr.toString().endsWith("states.kml)")

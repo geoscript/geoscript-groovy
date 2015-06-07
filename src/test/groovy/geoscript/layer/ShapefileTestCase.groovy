@@ -29,8 +29,6 @@ class ShapefileTestCase {
         assertNotNull(shp)
         assertEquals file, shp.file
 
-        println("Number of Features: ${shp.count()}")
-        println("Bounds: ${shp.bounds()}")
         assertEquals 49, shp.count()
         assertEquals "(-124.73142200000001,24.955967,-66.969849,49.371735,EPSG:4326)", shp.bounds().toString()
     }

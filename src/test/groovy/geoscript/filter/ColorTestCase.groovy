@@ -272,7 +272,6 @@ class ColorTestCase {
         def colors = Color.interpolate(new Color("white"), new Color("red"))
         def image = Color.drawToImage(colors)
         File file = folder.newFile("colors.png")
-        println file
         javax.imageio.ImageIO.write(image, "png", file)
     }
 

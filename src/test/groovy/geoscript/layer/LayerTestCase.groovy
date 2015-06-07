@@ -789,7 +789,6 @@ class LayerTestCase {
         Raster raster = shp.getRaster("SAMP_POP", [800,600], shp.bounds, "SAMP_POP")
         assertNotNull raster
         File rasterFile = folder.newFile("states_pop.tif")
-        println rasterFile
         GeoTIFF geotiff = new GeoTIFF(rasterFile)
         geotiff.write(raster)
     }
@@ -802,7 +801,6 @@ class LayerTestCase {
         layer.add(new Feature([new Point(113,-45), "House 3", 14.5], "house3", s))
 
         layer.getCursor([fields: ["name"]]).each { f ->
-            println f
             assertNotNull f["name"]
             assertNull f["price"]
         }
@@ -1463,7 +1461,6 @@ class LayerTestCase {
 
         Memory workspace = new Memory()
         layer.split(layer.schema.get("col"), workspace)
-        println workspace.names
         Layer grid1 = workspace.get("grid_1")
         Layer grid2 = workspace.get("grid_2")
         assertNotNull grid1

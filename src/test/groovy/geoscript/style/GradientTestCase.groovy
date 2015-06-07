@@ -45,7 +45,6 @@ class GradientTestCase {
         map.addLayer(shp)
 
         File imgFile = folder.newFile("states.png")
-        println imgFile
         map.render(imgFile)
     }
 
@@ -63,7 +62,6 @@ class GradientTestCase {
         map.addLayer(layer)
 
         File imgFile = folder.newFile("facilities.png")
-        println imgFile
         map.render(imgFile)
     }
 
@@ -81,7 +79,6 @@ class GradientTestCase {
         assertEquals(5, sym1.parts.size())
 
         File imgFile1 = folder.newFile("states.png")
-        println imgFile1
         shapefile.style = sym1
         map.render(imgFile1)
 
@@ -90,7 +87,6 @@ class GradientTestCase {
         assertEquals(7, sym2.parts.size())
 
         File imgFile2 = folder.newFile("states.png")
-        println imgFile2
         shapefile.style = sym2
         map.render(imgFile2)
     }

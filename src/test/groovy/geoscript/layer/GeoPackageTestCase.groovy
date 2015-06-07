@@ -84,7 +84,6 @@ class GeoPackageTestCase {
         assertNotNull tile.data
 
         // Save Tile and make sure it saved correctly by getting it again
-        println tile.data
         layer.put(tile)
         tile = layer.get(10, 0, 0)
         assertNotNull tile

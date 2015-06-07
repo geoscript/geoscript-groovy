@@ -20,7 +20,6 @@ class NetCDFTestCase {
         NetCDF netcdf = new NetCDF(file)
         assertNotNull(netcdf)
         List names = netcdf.names
-        println names
         assertEquals(2, names.size())
         assertTrue(names.contains("O3"))
         assertTrue(names.contains("NO2"))

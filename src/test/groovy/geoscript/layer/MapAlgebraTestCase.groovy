@@ -28,7 +28,6 @@ class MapAlgebraTestCase {
         Raster output = algebra.calculate("dest = src > 200;", [src: raster], size: [600, 400])
         assertNotNull output
         File file = folder.newFile("greaterthan.tif")
-        println file
         GeoTIFF outTiff = new GeoTIFF(file)
         outTiff.write(output)
         assertTrue file.size() > 0
@@ -52,7 +51,6 @@ class MapAlgebraTestCase {
             destImg = sin(C * d);""", null, outputName: "destImg")
         assertNotNull output
         File file = folder.newFile("waves.tif")
-        println file
         GeoTIFF geotiff = new GeoTIFF(file)
         geotiff.write(output)
         assertTrue file.size() > 0

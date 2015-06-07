@@ -110,7 +110,6 @@ class FunctionTestCase {
         Function.registerFunction("lcase", {str -> str.toLowerCase()})
 
         File imgFile = folder.newFile("states_function.png")
-        println "Rendering map with Functions: ${imgFile}"
         File file = new File(getClass().getClassLoader().getResource("states.shp").toURI())
         def statesShp = new Shapefile(file)
         statesShp.style = (new Fill("#E6E6E6") + new Stroke("#4C4C4C",0.5)) +
@@ -139,7 +138,6 @@ class FunctionTestCase {
         Function f = new Function(p, new Function("parameter", new Expression("features")))
 
         File imgFile = folder.newFile("states_function.png")
-        println "Rendering map with Rendering Function: ${imgFile}"
         File file = new File(getClass().getClassLoader().getResource("states.shp").toURI())
         def statesShp = new Shapefile(file)
 

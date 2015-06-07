@@ -210,7 +210,6 @@ class RasterTestCase {
 
         // Write the reprojected GeoTIFF to a file
         File file1 = folder.newFile("reprojected_raster.tif")
-        println(file1)
         GeoTIFF outTiff = new GeoTIFF(file1)
         outTiff.write(reprojected)
 
@@ -753,7 +752,9 @@ class RasterTestCase {
         ]
         Raster raster = new Raster(data, bounds)
         raster.eachCell(bounds:[0,0,4,4], band: 0,{v, x, y ->
-           println "${v} @ ${x},${y}"
+            assertTrue v >= 0.0
+            assertTrue x >= 0.0
+            assertTrue y >= 0.0
         })
     }
 
@@ -768,7 +769,9 @@ class RasterTestCase {
         ]
         Raster raster = new Raster(data, bounds)
         raster.eachWindow(bounds: [0,0,raster.cols, raster.rows],window: [4,4], key:[0,0], outside: -1, {v, x, y ->
-            println "${v} @ ${x},${y}"
+            assertNotNull v
+            assertNotNull x
+            assertNotNull y
         })
     }
 
@@ -855,7 +858,6 @@ class RasterTestCase {
 
         // BBox
         Bounds bounds = raster.bounds.scale(-2)
-        println bounds
         Raster raster2 = raster.resample(bbox: bounds)
         assertEquals bounds.minX, raster2.bounds.minX, 0.1
         assertEquals bounds.minY, raster2.bounds.minY, 0.1
@@ -876,9 +878,6 @@ class RasterTestCase {
         assertNotNull histogram
         assertEquals 3, histogram.numberOfBands
         (0..<histogram.numberOfBands).each{b ->
-            // println "Band ${b}"
-            // println "   Counts: ${histogram.counts(b)}"
-            // println "   Bins  : ${histogram.bins(b)}"
             assertEquals 256, histogram.counts(b).size()
             assertEquals 256, histogram.bins(b).size()
         }

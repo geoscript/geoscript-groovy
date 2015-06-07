@@ -429,7 +429,6 @@ class BoundsTestCase {
 
         b = new Bounds(80, 87, 120, 110)
         g = b.getGrid(2 as int,2 as int)
-        println g
     }
 
     @Test void getGridCellWidthAndHeight() {

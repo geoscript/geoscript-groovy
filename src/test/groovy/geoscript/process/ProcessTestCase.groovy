@@ -43,7 +43,6 @@ class ProcessTestCase {
     
     @Test void getProcessNames() {
         def names = Process.processNames
-        println names
         assertTrue names.size() > 0
     }
     

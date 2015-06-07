@@ -59,7 +59,6 @@ class WkbReaderTestCase {
         Polygon actual = reader.read(wkb)
         assertEquals expected.wkt, actual.wkt
 
-        println new WkbWriter().writeBytes(expected)
         byte[] bytes = [0, 0, 0, 0, 3, 0, 0, 0, 1, 0, 0, 0, 5, 63, -16, 0, 0, 0, 0, 0, 0, 63, -16, 0, 0, 0, 0, 0, 0, 64, 36, 0, 0, 0, 0, 0, 0, 63, -16, 0, 0, 0, 0, 0, 0, 64, 36, 0, 0, 0, 0, 0, 0, 64, 36, 0, 0, 0, 0, 0, 0, 63, -16, 0, 0, 0, 0, 0, 0, 64, 36, 0, 0, 0, 0, 0, 0, 63, -16, 0, 0, 0, 0, 0, 0, 63, -16, 0, 0, 0, 0, 0, 0] as byte[]
         actual = reader.read(bytes)
         assertEquals expected.wkt, actual.wkt

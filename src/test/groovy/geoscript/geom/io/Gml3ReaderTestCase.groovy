@@ -17,16 +17,12 @@ class Gml3ReaderTestCase {
         String gml = "<gml:Point><gml:pos>111.0 -47.0</gml:pos></gml:Point>"
         Point expected = new Point(111,-47)
         Point actual = reader.read(gml)
-        println("Expected: ${expected.wkt}")
-        println("Actual  : ${actual.wkt}")
         assertEquals expected.wkt, actual.wkt
 
         // With XML Namespace
         gml = "<gml:Point xmlns:gml=\"http://www.opengis.net/gml\"><gml:pos>111.0 -47.0</gml:pos></gml:Point>"
         expected = new Point(111,-47)
         actual = reader.read(gml)
-        println("Expected: ${expected.wkt}")
-        println("Actual  : ${actual.wkt}")
         assertEquals expected.wkt, actual.wkt
     }
 
@@ -37,16 +33,12 @@ class Gml3ReaderTestCase {
         String gml = "<gml:LineString><gml:posList>111.0 -47.0 123.0 -48.0 110.0 -47.0</gml:posList></gml:LineString>"
         LineString expected = new LineString([[111.0, -47],[123.0, -48],[110.0, -47]])
         LineString actual = reader.read(gml)
-        println("Expected: ${expected.wkt}")
-        println("Actual  : ${actual.wkt}")
         assertEquals expected.wkt, actual.wkt
 
         // With XML Namespace
         gml = "<gml:LineString xmlns:gml=\"http://www.opengis.net/gml\"><gml:posList>111.0 -47.0 123.0 -48.0 110.0 -47.0</gml:posList></gml:LineString>"
         expected = new LineString([[111.0, -47],[123.0, -48],[110.0, -47]])
         actual = reader.read(gml)
-        println("Expected: ${expected.wkt}")
-        println("Actual  : ${actual.wkt}")
         assertEquals expected.wkt, actual.wkt
     }
 
@@ -57,16 +49,12 @@ class Gml3ReaderTestCase {
         String gml = "<gml:LinearRing><gml:posList>111.0 -47.0 123.0 -48.0 110.0 -47.0 111.0 -47.0</gml:posList></gml:LinearRing>"
         LinearRing expected = new LinearRing([[111.0, -47],[123.0, -48],[110.0, -47],[111.0, -47]])
         LinearRing actual = reader.read(gml)
-        println("Expected: ${expected.wkt}")
-        println("Actual  : ${actual.wkt}")
         assertEquals expected.wkt, actual.wkt
 
         // With XML Namespace
         gml = "<gml:LinearRing xmlns:gml=\"http://www.opengis.net/gml\"><gml:posList>111.0 -47.0 123.0 -48.0 110.0 -47.0 111.0 -47.0</gml:posList></gml:LinearRing>"
         expected = new LinearRing([[111.0, -47],[123.0, -48],[110.0, -47],[111.0, -47]])
         actual = reader.read(gml)
-        println("Expected: ${expected.wkt}")
-        println("Actual  : ${actual.wkt}")
         assertEquals expected.wkt, actual.wkt
     }
 
@@ -82,8 +70,6 @@ class Gml3ReaderTestCase {
             ]
         )
         Polygon actual = reader.read(gml)
-        println("Expected: ${expected.wkt}")
-        println("Actual  : ${actual.wkt}")
         assertEquals expected.wkt, actual.wkt
 
         // With XML Namespace
@@ -95,8 +81,6 @@ class Gml3ReaderTestCase {
             ]
         )
         actual = reader.read(gml)
-        println("Expected: ${expected.wkt}")
-        println("Actual  : ${actual.wkt}")
         assertEquals expected.wkt, actual.wkt
     }
 
@@ -107,16 +91,12 @@ class Gml3ReaderTestCase {
         String gml = "<gml:MultiPoint><gml:pointMember><gml:Point><gml:pos>111.0 -47.0</gml:pos></gml:Point></gml:pointMember><gml:pointMember><gml:Point><gml:pos>110.0 -46.5</gml:pos></gml:Point></gml:pointMember></gml:MultiPoint>"
         MultiPoint expected = new MultiPoint([111,-47],[110,-46.5])
         MultiPoint actual = reader.read(gml)
-        println("Expected: ${expected.wkt}")
-        println("Actual  : ${actual.wkt}")
         assertEquals expected.wkt, actual.wkt
 
         // With XML Namespace
         gml = "<gml:MultiPoint xmlns:gml=\"http://www.opengis.net/gml\"><gml:pointMember><gml:Point><gml:pos>111.0 -47.0</gml:pos></gml:Point></gml:pointMember><gml:pointMember><gml:Point><gml:pos>110.0 -46.5</gml:pos></gml:Point></gml:pointMember></gml:MultiPoint>"
         expected = new MultiPoint([111,-47],[110,-46.5])
         actual = reader.read(gml)
-        println("Expected: ${expected.wkt}")
-        println("Actual  : ${actual.wkt}")
         assertEquals expected.wkt, actual.wkt
     }
 
@@ -127,32 +107,24 @@ class Gml3ReaderTestCase {
         String gml = """<gml:Curve><gml:segments><gml:LineStringSegment interpolation="linear"><gml:posList>1.0 2.0 3.0 4.0</gml:posList></gml:LineStringSegment><gml:LineStringSegment interpolation="linear"><gml:posList>5.0 6.0 7.0 8.0</gml:posList></gml:LineStringSegment></gml:segments></gml:Curve>"""
         MultiLineString expected = new MultiLineString(new LineString([1,2],[3,4]), new LineString([5,6],[7,8]))
         MultiLineString actual = reader.read(gml)
-        println("Expected: ${expected.wkt}")
-        println("Actual  : ${actual.wkt}")
         assertEquals expected.wkt, actual.wkt
 
         // With XML Namespace as Curve
         gml = """<gml:Curve xmlns:gml=\"http://www.opengis.net/gml\"><gml:segments><gml:LineStringSegment interpolation="linear"><gml:posList>1.0 2.0 3.0 4.0</gml:posList></gml:LineStringSegment><gml:LineStringSegment interpolation="linear"><gml:posList>5.0 6.0 7.0 8.0</gml:posList></gml:LineStringSegment></gml:segments></gml:Curve>"""
         expected = new MultiLineString(new LineString([1,2],[3,4]), new LineString([5,6],[7,8]))
         actual = reader.read(gml)
-        println("Expected: ${expected.wkt}")
-        println("Actual  : ${actual.wkt}")
         assertEquals expected.wkt, actual.wkt
 
         // Without XML Namespace as MultiCurve
         gml = """<gml:MultiCurve><gml:curveMember><gml:LineString><gml:posList>1.0 2.0 3.0 4.0</gml:posList></gml:LineString></gml:curveMember><gml:curveMember><gml:LineString><gml:posList>5.0 6.0 7.0 8.0</gml:posList></gml:LineString></gml:curveMember></gml:MultiCurve>"""
         expected = new MultiLineString(new LineString([1,2],[3,4]), new LineString([5,6],[7,8]))
         actual = reader.read(gml)
-        println("Expected: ${expected.wkt}")
-        println("Actual  : ${actual.wkt}")
         assertEquals expected.wkt, actual.wkt
 
         // Without XML Namespace as MultiCurve
         gml = """<gml:MultiCurve xmlns:gml=\"http://www.opengis.net/gml\"><gml:curveMember><gml:LineString><gml:posList>1.0 2.0 3.0 4.0</gml:posList></gml:LineString></gml:curveMember><gml:curveMember><gml:LineString><gml:posList>5.0 6.0 7.0 8.0</gml:posList></gml:LineString></gml:curveMember></gml:MultiCurve>"""
         expected = new MultiLineString(new LineString([1,2],[3,4]), new LineString([5,6],[7,8]))
         actual = reader.read(gml)
-        println("Expected: ${expected.wkt}")
-        println("Actual  : ${actual.wkt}")
         assertEquals expected.wkt, actual.wkt
     }
 
@@ -163,16 +135,12 @@ class Gml3ReaderTestCase {
         String gml = "<gml:MultiSurface><gml:surfaceMember><gml:Polygon><gml:exterior><gml:LinearRing><gml:posList>1.0 2.0 3.0 4.0 5.0 6.0 1.0 2.0</gml:posList></gml:LinearRing></gml:exterior></gml:Polygon></gml:surfaceMember><gml:surfaceMember><gml:Polygon><gml:exterior><gml:LinearRing><gml:posList>7.0 8.0 9.0 10.0 11.0 12.0 7.0 8.0</gml:posList></gml:LinearRing></gml:exterior></gml:Polygon></gml:surfaceMember></gml:MultiSurface>"
         MultiPolygon expected = new MultiPolygon([[[[1,2],[3,4],[5,6],[1,2]]], [[[7,8],[9,10],[11,12],[7,8]]]])
         MultiPolygon actual = reader.read(gml)
-        println("Expected: ${expected.wkt}")
-        println("Actual  : ${actual.wkt}")
         assertEquals expected.wkt, actual.wkt
 
         // With XML Namespace
         gml = "<gml:MultiSurface xmlns:gml=\"http://www.opengis.net/gml\"><gml:surfaceMember><gml:Polygon><gml:exterior><gml:LinearRing><gml:posList>1.0 2.0 3.0 4.0 5.0 6.0 1.0 2.0</gml:posList></gml:LinearRing></gml:exterior></gml:Polygon></gml:surfaceMember><gml:surfaceMember><gml:Polygon><gml:exterior><gml:LinearRing><gml:posList>7.0 8.0 9.0 10.0 11.0 12.0 7.0 8.0</gml:posList></gml:LinearRing></gml:exterior></gml:Polygon></gml:surfaceMember></gml:MultiSurface>"
         expected = new MultiPolygon([[[[1,2],[3,4],[5,6],[1,2]]], [[[7,8],[9,10],[11,12],[7,8]]]])
         actual = reader.read(gml)
-        println("Expected: ${expected.wkt}")
-        println("Actual  : ${actual.wkt}")
         assertEquals expected.wkt, actual.wkt
     }
 
@@ -183,32 +151,24 @@ class Gml3ReaderTestCase {
         String gml = "<gml:MultiGeometry><gml:geometryMember><gml:Point><gml:pos>100.0 0.0</gml:pos></gml:Point></gml:geometryMember><gml:geometryMember><gml:LineString><gml:posList>101.0 0.0 102.0 1.0</gml:posList></gml:LineString></gml:geometryMember></gml:MultiGeometry>"
         GeometryCollection expected = new GeometryCollection(new Point(100.0, 0.0), new LineString([101.0, 0.0], [102.0,1.0]))
         GeometryCollection actual = reader.read(gml)
-        println("Expected: ${expected.wkt}")
-        println("Actual  : ${actual.wkt}")
         assertEquals expected.wkt, actual.wkt
 
         // With XML Namespace
         gml = "<gml:MultiGeometry xmlns:gml=\"http://www.opengis.net/gml\"><gml:geometryMember><gml:Point><gml:pos>100.0 0.0</gml:pos></gml:Point></gml:geometryMember><gml:geometryMember><gml:LineString><gml:posList>101.0 0.0 102.0 1.0</gml:posList></gml:LineString></gml:geometryMember></gml:MultiGeometry>"
         expected = new GeometryCollection(new Point(100.0, 0.0), new LineString([101.0, 0.0], [102.0,1.0]))
         actual = reader.read(gml)
-        println("Expected: ${expected.wkt}")
-        println("Actual  : ${actual.wkt}")
         assertEquals expected.wkt, actual.wkt
 
         // Without XML Namespace
         gml = "<gml:GeometryCollection><gml:geometryMember><gml:Point><gml:pos>100.0 0.0</gml:pos></gml:Point></gml:geometryMember><gml:geometryMember><gml:LineString><gml:posList>101.0 0.0 102.0 1.0</gml:posList></gml:LineString></gml:geometryMember></gml:GeometryCollection>"
         expected = new GeometryCollection(new Point(100.0, 0.0), new LineString([101.0, 0.0], [102.0,1.0]))
         actual = reader.read(gml)
-        println("Expected: ${expected.wkt}")
-        println("Actual  : ${actual.wkt}")
         assertEquals expected.wkt, actual.wkt
 
         // With XML Namespace
         gml = "<gml:GeometryCollection xmlns:gml=\"http://www.opengis.net/gml\"><gml:geometryMember><gml:Point><gml:pos>100.0 0.0</gml:pos></gml:Point></gml:geometryMember><gml:geometryMember><gml:LineString><gml:posList>101.0 0.0 102.0 1.0</gml:posList></gml:LineString></gml:geometryMember></gml:GeometryCollection>"
         expected = new GeometryCollection(new Point(100.0, 0.0), new LineString([101.0, 0.0], [102.0,1.0]))
         actual = reader.read(gml)
-        println("Expected: ${expected.wkt}")
-        println("Actual  : ${actual.wkt}")
         assertEquals expected.wkt, actual.wkt
     }
 }

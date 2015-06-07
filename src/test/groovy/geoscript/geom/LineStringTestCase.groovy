@@ -24,9 +24,7 @@ class LineStringTestCase {
 
     @Test void plus() {
         def line = new LineString([1,2],[3,4],[5,6])
-        println("Line: ${line.wkt}")
         def multi = line + new LineString([7,8],[9,10],[11,12])
-        println("Multi: ${multi.wkt}")
         assertEquals "MULTILINESTRING ((1 2, 3 4, 5 6), (7 8, 9 10, 11 12))", multi.wkt
 
         def m2 = new MultiLineString([])

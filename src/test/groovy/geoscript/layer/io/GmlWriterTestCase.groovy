@@ -35,7 +35,6 @@ class GmlWriterTestCase {
         // Write the Layer to a GML String
         GmlWriter writer = new GmlWriter()
         String gml = writer.write(layer)
-        println gml
         assertTrue gml.startsWith("<wfs:FeatureCollection")
         assertTrue gml.contains("<gsf:houses")
 

@@ -249,7 +249,6 @@ ak,10501917,?,"Thursday, June 28, 2012 02:30:58 UTC",60.0233,-152.9946,2,2.9,?,"
 """
         CsvReader reader = new CsvReader("geom", CsvReader.Type.GEOJSON)
         Layer layer = reader.read(csv)
-        println layer.features
         assertEquals("csv geom: Point, name: String, price: String", layer.schema.toString())
         assertEquals(2, layer.count)
         layer.eachFeature { f ->
@@ -264,7 +263,6 @@ ak,10501917,?,"Thursday, June 28, 2012 02:30:58 UTC",60.0233,-152.9946,2,2.9,?,"
 """
         CsvReader reader = new CsvReader("geom", CsvReader.Type.GEOJSON)
         Layer layer = reader.read(csv)
-        println layer.features
         assertEquals("csv geom: Point(EPSG:4326), name: String, price: Float", layer.schema.toString())
         assertEquals "EPSG:4326", layer.proj.id
         assertEquals(2, layer.count)
@@ -280,7 +278,6 @@ ak,10501917,?,"Thursday, June 28, 2012 02:30:58 UTC",60.0233,-152.9946,2,2.9,?,"
 """
         CsvReader reader = new CsvReader("geom", CsvReader.Type.WKB)
         Layer layer = reader.read(csv)
-        println layer.features
         assertEquals("csv geom: Point, name: String, price: String", layer.schema.toString())
         assertEquals(2, layer.count)
         layer.eachFeature { f ->
@@ -295,7 +292,6 @@ ak,10501917,?,"Thursday, June 28, 2012 02:30:58 UTC",60.0233,-152.9946,2,2.9,?,"
 """
         CsvReader reader = new CsvReader("geom", CsvReader.Type.WKB)
         Layer layer = reader.read(csv)
-        println layer.features
         assertEquals("csv geom: Point(EPSG:4326), name: String, price: Float", layer.schema.toString())
         assertEquals "EPSG:4326", layer.proj.id
         assertEquals(2, layer.count)

@@ -39,7 +39,6 @@ class DirectoryTestCase {
         assertNotNull(file)
         Directory dir = new Directory(file)
         assertNotNull(dir)
-        println dir.names
         assertEquals 1, dir.names.size()
         assertEquals "[states]", dir.names.toString()
         assertTrue dir.names[0] instanceof String
@@ -50,7 +49,6 @@ class DirectoryTestCase {
         assertNotNull(file)
         Directory dir = new Directory(file)
         assertNotNull(dir)
-        println dir.layers
         assertEquals 1, dir.layers.size()
         assertEquals "[states]", dir.layers.toString()
         assertTrue dir.layers[0] instanceof Layer
@@ -103,7 +101,6 @@ class DirectoryTestCase {
         File file2 = folder.newFolder("countries")
         Directory dir2 = new Directory(file2)
         Layer layer2 = dir2.add(layer1, "countries")
-        println("${layer2.name} ${layer2.format}")
         assertTrue(new File(file2,"countries.shp").exists())
 
         dir2.add(layer1)

@@ -30,15 +30,13 @@ class BandTestCase {
         assertFalse(bands[0].isNoData(-99))
 
         bands.eachWithIndex {band,i ->
-            println("Band ${i}")
-            println("  ${band}")
-            println("  Min Value = ${band.min}")
-            println("  Max Value = ${band.max}")
-            println("  No Data = ${band.noData}")
-            println("  Unit = ${band.unit}")
-            println("  Scale = ${band.scale}")
-            println("  Offset = ${band.offset}")
-            println("  Type = ${band.type}")
+            band.min
+            band.max
+            band.noData
+            band.unit
+            band.scale
+            band.offset
+            band.type
         }
     }
 }
