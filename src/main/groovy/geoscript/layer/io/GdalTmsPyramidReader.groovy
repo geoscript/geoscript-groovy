@@ -30,6 +30,10 @@ class GdalTmsPyramidReader implements PyramidReader {
     TMS readTms(String str) {
         def xml = new XmlParser().parseText(str)
         String url = xml.Service.ServerURL.text()
+        int s = url.indexOf('${z}')
+        if (s > -1) {
+            url = url.substring(0, s)
+        }
         String imageType = xml.Service?.ImageFormat?.text() ?: "png"
         Projection projection = new Projection(xml.Projection.text())
         Bounds bounds = new Bounds(

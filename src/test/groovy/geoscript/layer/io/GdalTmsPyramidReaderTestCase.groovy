@@ -81,7 +81,7 @@ class GdalTmsPyramidReaderTestCase {
 </GDAL_WMS>
 """)
         assertEquals "tms", tms.name
-        assertEquals new URL("http://tiles.org/world/\${z}/\${x}/\${y}"), tms.url
+        assertEquals new URL("http://tiles.org/world/"), tms.url
         assertEquals "png", tms.imageType
         Pyramid pyramid = tms.pyramid
         assertEquals "EPSG:4326", pyramid.proj.id

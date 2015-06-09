@@ -33,8 +33,8 @@ class GdalTmsPyramidWriter implements PyramidWriter {
      * @return A String
      */
     String write(Map options, Pyramid pyramid) {
-        String serverUrl = options.get("serverUrl", '${z}/${x}/${y}')
         String imageFormat = options.get("imageFormat", "png")
+        String serverUrl = options.get("serverUrl", '${z}/${x}/${y}.' + imageFormat)
         StringWriter writer = new StringWriter()
         MarkupBuilder builder = new MarkupBuilder(writer)
         builder.GDAL_WMS {
@@ -63,13 +63,19 @@ class GdalTmsPyramidWriter implements PyramidWriter {
 
     /**
      * Write the TMS tile layer to a String.
+     * @param options The optional named parameters
      * @param tms The TMS tile layer
      * @return An XML String
      */
-    String write(TMS tms) {
-        String base = (tms.url ?: tms.dir).toString()
+    String write(Map options = [:], TMS tms) {
+        String url
+        if (tms.dir) {
+            url = "file://${tms.dir.absolutePath}"
+        } else {
+            url = tms.url
+        }
         write([
-                serverUrl: base + '${z}/${x}/${y}',
+                serverUrl: "${url}/\${z}/\${x}/\${y}.${tms.imageType}",
                 imageFormat: tms.imageType
         ], tms.pyramid)
     }

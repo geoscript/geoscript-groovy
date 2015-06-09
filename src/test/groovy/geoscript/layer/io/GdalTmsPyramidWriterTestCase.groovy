@@ -17,7 +17,7 @@ class GdalTmsPyramidWriterTestCase {
         String xml = new GdalTmsPyramidWriter().write(p)
         String expected = """<GDAL_WMS>
   <Service name='TMS'>
-    <ServerURL>\${z}/\${x}/\${y}</ServerURL>
+    <ServerURL>\${z}/\${x}/\${y}.png</ServerURL>
     <SRS>EPSG:3857</SRS>
     <ImageFormat>png</ImageFormat>
   </Service>
@@ -42,11 +42,11 @@ class GdalTmsPyramidWriterTestCase {
 
     @Test
     void writeTMS() {
-        TMS tms = new TMS("world","png","http://tiles.org/world/",Pyramid.createGlobalGeodeticPyramid())
+        TMS tms = new TMS("world","png","http://tiles.org/world",Pyramid.createGlobalGeodeticPyramid())
         String xml = new GdalTmsPyramidWriter().write(tms)
         String expected = """<GDAL_WMS>
   <Service name='TMS'>
-    <ServerURL>http://tiles.org/world/\${z}/\${x}/\${y}</ServerURL>
+    <ServerURL>http://tiles.org/world/\${z}/\${x}/\${y}.png</ServerURL>
     <SRS>EPSG:4326</SRS>
     <ImageFormat>png</ImageFormat>
   </Service>
