@@ -499,4 +499,20 @@ class BoundsTestCase {
         assertNull(Bounds.fromString("1,2,3"))
         assertNull(Bounds.fromString("1 2 3"))
     }
+
+    @Test void getCorners() {
+        Bounds b = new Bounds(1,2,7,8)
+        List corners = b.corners
+        assertEquals 1, corners[0].x, 0.1
+        assertEquals 2, corners[0].y, 0.1
+
+        assertEquals 1, corners[1].x, 0.1
+        assertEquals 8, corners[1].y, 0.1
+
+        assertEquals 7, corners[2].x, 0.1
+        assertEquals 8, corners[2].y, 0.1
+
+        assertEquals 7, corners[3].x, 0.1
+        assertEquals 2, corners[3].y, 0.1
+    }
 }

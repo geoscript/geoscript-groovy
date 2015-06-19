@@ -266,7 +266,21 @@ class Bounds {
     Polygon getPolygon() {
         new Polygon([minX, minY], [minX, maxY], [maxX, maxY], [maxX, minY], [minX, minY])
     }
-    
+
+    /**
+     * Get the corners of the Bounds as a List of Points.  The ordering is:
+     * [minX,minY],[minX, maxY],[maxX,maxY],[maxX,minY]
+     * @return A List of Points
+     */
+    List getCorners() {
+        [
+                new Point(minX, minY),
+                new Point(minX, maxY),
+                new Point(maxX, maxY),
+                new Point(maxX, minY)
+        ]
+    }
+
     /**
      * Partitions the bounding box into a set of smaller bounding boxes.
      * @param res The resolution to tile at and should be in range 0-1.
