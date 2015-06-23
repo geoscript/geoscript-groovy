@@ -234,7 +234,7 @@ class Filter {
     /**
      * Create a Spatial Filter that contains the given Geometry
      * @param fieldName The geometry field name (defaults to the_geom)
-     * @param geoemtry The Geometry
+     * @param geometry The Geometry
      * @return A Filter
      */
     static Filter contains(String fieldName = "the_geom", Geometry geometry) {

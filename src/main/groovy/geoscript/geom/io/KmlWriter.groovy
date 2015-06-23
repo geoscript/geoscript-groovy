@@ -94,7 +94,7 @@ class KmlWriter implements Writer {
                 }
             }
         } else if (geom instanceof GeometryCollection) {
-            builder."${ns}MultiGeoemtry" {
+            builder."${ns}MultiGeometry" {
                 geom.geometries.each {
                     write builder, it, namespace: namespace
                 }

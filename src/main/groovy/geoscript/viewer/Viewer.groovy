@@ -299,7 +299,7 @@ class Viewer {
 
     /**
      * Create a JFreeChart from a Geometry (or List of Geometries) using the
-     * GeoTools GeoemtryDataset
+     * GeoTools Geometry Dataset
      * @param options A Map of options or named parameters
      * <ul>
      *    <li>size = The width and height ([500,500])</li>

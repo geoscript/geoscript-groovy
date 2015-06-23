@@ -169,7 +169,7 @@ class Plot {
 
     /**
      * Create a JFreeChart from a Geometry (or List of Geometries) using the
-     * GeoTools GeoemtryDataset
+     * GeoTools Geometry Dataset
      * @param geom A Geometry (or List of Geometries)
      * @return The JFreeChart
      */

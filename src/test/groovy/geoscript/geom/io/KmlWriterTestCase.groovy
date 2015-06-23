@@ -116,35 +116,35 @@ class KmlWriterTestCase {
             mkp.declareNamespace([kml: "http://www.opengis.net/kml/2.2"])
             writer.write b, new MultiPoint([111,-47],[110,-46.5])
         } as String
-        expected = "<MultiGeoemtry xmlns:kml='http://www.opengis.net/kml/2.2'><Point><coordinates>111.0,-47.0</coordinates></Point><Point><coordinates>110.0,-46.5</coordinates></Point></MultiGeoemtry>"
+        expected = "<MultiGeometry xmlns:kml='http://www.opengis.net/kml/2.2'><Point><coordinates>111.0,-47.0</coordinates></Point><Point><coordinates>110.0,-46.5</coordinates></Point></MultiGeometry>"
         assertEquals expected, actual
         // MultiPoint with namespace
         actual = builder.bind { b ->
             mkp.declareNamespace([kml: "http://www.opengis.net/kml/2.2"])
             writer.write b, new MultiPoint([111,-47],[110,-46.5]), namespace: "kml"
         } as String
-        expected = "<kml:MultiGeoemtry xmlns:kml='http://www.opengis.net/kml/2.2'><kml:Point><kml:coordinates>111.0,-47.0</kml:coordinates></kml:Point><kml:Point><kml:coordinates>110.0,-46.5</kml:coordinates></kml:Point></kml:MultiGeoemtry>"
+        expected = "<kml:MultiGeometry xmlns:kml='http://www.opengis.net/kml/2.2'><kml:Point><kml:coordinates>111.0,-47.0</kml:coordinates></kml:Point><kml:Point><kml:coordinates>110.0,-46.5</kml:coordinates></kml:Point></kml:MultiGeometry>"
         assertEquals expected, actual
         // MultiLineString
         actual = builder.bind { b ->
             mkp.declareNamespace([kml: "http://www.opengis.net/kml/2.2"])
             writer.write b, new MultiLineString(new LineString([1,2],[3,4]), new LineString([5,6],[7,8]))
         } as String
-        expected = "<MultiGeoemtry xmlns:kml='http://www.opengis.net/kml/2.2'><LineString><coordinates>1.0,2.0 3.0,4.0</coordinates></LineString><LineString><coordinates>5.0,6.0 7.0,8.0</coordinates></LineString></MultiGeoemtry>"
+        expected = "<MultiGeometry xmlns:kml='http://www.opengis.net/kml/2.2'><LineString><coordinates>1.0,2.0 3.0,4.0</coordinates></LineString><LineString><coordinates>5.0,6.0 7.0,8.0</coordinates></LineString></MultiGeometry>"
         assertEquals expected, actual
         // MultiPolygon
         actual = builder.bind { b ->
             mkp.declareNamespace([kml: "http://www.opengis.net/kml/2.2"])
             writer.write b, new MultiPolygon([[[[1,2],[3,4],[5,6],[1,2]]], [[[7,8],[9,10],[11,12],[7,8]]]])
         } as String
-        expected = "<MultiGeoemtry xmlns:kml='http://www.opengis.net/kml/2.2'><Polygon><outerBoundaryIs><LinearRing><coordinates>1.0,2.0 3.0,4.0 5.0,6.0 1.0,2.0</coordinates></LinearRing></outerBoundaryIs></Polygon><Polygon><outerBoundaryIs><LinearRing><coordinates>7.0,8.0 9.0,10.0 11.0,12.0 7.0,8.0</coordinates></LinearRing></outerBoundaryIs></Polygon></MultiGeoemtry>"
+        expected = "<MultiGeometry xmlns:kml='http://www.opengis.net/kml/2.2'><Polygon><outerBoundaryIs><LinearRing><coordinates>1.0,2.0 3.0,4.0 5.0,6.0 1.0,2.0</coordinates></LinearRing></outerBoundaryIs></Polygon><Polygon><outerBoundaryIs><LinearRing><coordinates>7.0,8.0 9.0,10.0 11.0,12.0 7.0,8.0</coordinates></LinearRing></outerBoundaryIs></Polygon></MultiGeometry>"
         assertEquals expected, actual
         // GeometryCollection
         actual = builder.bind { b ->
             mkp.declareNamespace([kml: "http://www.opengis.net/kml/2.2"])
             writer.write b, new GeometryCollection(new Point(100.0, 0.0), new LineString([101.0, 0.0], [102.0,1.0]))
         } as String
-        expected = "<MultiGeoemtry xmlns:kml='http://www.opengis.net/kml/2.2'><Point><coordinates>100.0,0.0</coordinates></Point><LineString><coordinates>101.0,0.0 102.0,1.0</coordinates></LineString></MultiGeoemtry>"
+        expected = "<MultiGeometry xmlns:kml='http://www.opengis.net/kml/2.2'><Point><coordinates>100.0,0.0</coordinates></Point><LineString><coordinates>101.0,0.0 102.0,1.0</coordinates></LineString></MultiGeometry>"
         assertEquals expected, actual
     }
 }
