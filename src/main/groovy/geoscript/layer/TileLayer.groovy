@@ -6,9 +6,6 @@ import geoscript.proj.Projection
 import geoscript.workspace.Memory
 import geoscript.workspace.Workspace
 
-import java.awt.Graphics2D
-import java.awt.image.BufferedImage
-
 /**
  * A TileLayer
  * @author Jared Erickson

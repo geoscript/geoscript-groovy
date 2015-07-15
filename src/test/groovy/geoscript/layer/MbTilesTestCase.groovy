@@ -1,20 +1,12 @@
 package geoscript.layer
 
-import geoscript.AssertUtil
 import geoscript.geom.Bounds
 import geoscript.proj.Projection
 import org.geotools.image.test.ImageAssert
 import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.TemporaryFolder
-
-import static junit.framework.Assert.*
-import static org.junit.Assert.assertNotNull
-import static org.junit.Assert.assertNotNull
-import static org.junit.Assert.assertNotNull
-import static org.junit.Assert.assertNotNull
-import static org.junit.Assert.assertNotNull
-import static org.junit.Assert.assertNull
+import static org.junit.Assert.*
 
 /**
  * The MBTiles Unit Test

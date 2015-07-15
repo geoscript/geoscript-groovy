@@ -6,7 +6,6 @@ import org.geotools.image.test.ImageAssert
 import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.TemporaryFolder
-
 import static org.junit.Assert.*
 import static geoscript.AssertUtil.assertBoundsEquals
 
