@@ -117,6 +117,16 @@ abstract class TileLayer<T extends Tile> implements Closeable {
     }
 
     /**
+     * Delete all of the Tiles in the TileCursor
+     * @param tiles The TileCursor
+     */
+    void delete(TileCursor<T> tiles) {
+        tiles.each {T tile ->
+            delete(tile)
+        }
+    }
+
+    /**
      * Get Tile coordinates (minX, minY, maxX, maxY) for the given Bounds and Grid
      * @param b The Bounds
      * @param g The Grid

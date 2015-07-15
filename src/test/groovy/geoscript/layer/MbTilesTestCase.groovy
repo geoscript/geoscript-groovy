@@ -9,6 +9,12 @@ import org.junit.Test
 import org.junit.rules.TemporaryFolder
 
 import static junit.framework.Assert.*
+import static org.junit.Assert.assertNotNull
+import static org.junit.Assert.assertNotNull
+import static org.junit.Assert.assertNotNull
+import static org.junit.Assert.assertNotNull
+import static org.junit.Assert.assertNotNull
+import static org.junit.Assert.assertNull
 
 /**
  * The MBTiles Unit Test
@@ -79,6 +85,32 @@ class MBTilesTestCase {
         layer.close()
     }
 
+    @Test
+    void deleteTiles() {
+        // Since we are modifying the mbtiles file copy it to a temp file
+        File file = new File(getClass().getClassLoader().getResource("states.mbtiles").toURI())
+        File newFile = folder.newFile("states_temp2.mbtiles")
+        newFile.withOutputStream { out ->
+            file.withInputStream { inp ->
+                out << inp
+            }
+        }
+        MBTiles layer = new MBTiles(newFile)
+        layer.tiles(4).each { Tile tile ->
+            assertNotNull tile
+            assertNotNull tile.data
+        }
+        layer.delete(layer.tiles(4))
+        layer.tiles(4).each { Tile tile ->
+            assertNotNull tile
+            assertNull tile.data
+        }
+        layer.tiles(3).each { Tile tile ->
+            assertNotNull tile
+            assertNotNull tile.data
+        }
+        layer.close()
+    }
 
     @Test
     void put() {

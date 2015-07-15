@@ -116,6 +116,33 @@ class GeoPackageTestCase {
     }
 
     @Test
+    void deleteTiles() {
+        // Since we are modifying the geopackage file copy it to a temp file
+        File file = new File(getClass().getClassLoader().getResource("states.gpkg").toURI())
+        File newFile = folder.newFile("states_temp2.gpkg")
+        newFile.withOutputStream { out ->
+            file.withInputStream { inp ->
+                out << inp
+            }
+        }
+        GeoPackage layer = new GeoPackage(newFile, "states")
+        layer.tiles(4).each { Tile tile ->
+            assertNotNull tile
+            assertNotNull tile.data
+        }
+        layer.delete(layer.tiles(4))
+        layer.tiles(4).each { Tile tile ->
+            assertNotNull tile
+            assertNull tile.data
+        }
+        layer.tiles(3).each { Tile tile ->
+            assertNotNull tile
+            assertNotNull tile.data
+        }
+        layer.close()
+    }
+
+    @Test
     void tilesByZoomLevel() {
         File file = new File(getClass().getClassLoader().getResource("states.gpkg").toURI())
         GeoPackage layer = new GeoPackage(file, "states")

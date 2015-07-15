@@ -148,4 +148,29 @@ class TMSTestCase {
         assertNull t.data
     }
 
+    @Test
+    void deleteTiles() {
+        Shapefile shp = new Shapefile(new File(getClass().getClassLoader().getResource("states.shp").toURI()))
+        shp.style = new Fill("wheat") + new Stroke("navy", 0.1)
+        File file = folder.newFolder("cache")
+        TMS tms = new TMS("States", "png", file, Pyramid.createGlobalMercatorPyramid())
+        TileRenderer renderer = new ImageTileRenderer(tms, shp)
+        TileGenerator generator = new TileGenerator()
+        generator.generate(tms, renderer, 0, 2)
+        tms.tiles(1).each { Tile tile ->
+            assertNotNull tile
+            assertNotNull tile.data
+        }
+        tms.delete(tms.tiles(1))
+        tms.tiles(1).each { Tile tile ->
+            assertNotNull tile
+            assertNull tile.data
+        }
+        tms.tiles(2).each { Tile tile ->
+            assertNotNull tile
+            assertNotNull tile.data
+        }
+        tms.close()
+    }
+
 }

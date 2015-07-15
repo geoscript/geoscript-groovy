@@ -159,6 +159,16 @@ class GeoPackage extends ImageTileLayer {
     }
 
     /**
+     * Delete all Tiles in the TileCursor
+     * @param tiles The TileCursor
+     */
+    @Override
+    void delete(TileCursor<ImageTile> tiles) {
+        getSql().execute("DELETE FROM ${this.tileEntry.tableName} WHERE zoom_level = ? AND tile_column >= ? AND tile_column <= ? " +
+                "AND tile_row >= ? AND tile_row <= ?", [tiles.z, tiles.minX, tiles.maxX, tiles.minY, tiles.maxY])
+    }
+
+    /**
      * Create the Groovy Sql connection lazily
      * @return The Groovy Sql connection
      */

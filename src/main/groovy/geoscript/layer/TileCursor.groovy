@@ -248,13 +248,10 @@ class TileCursor<T extends Tile> implements Iterator {
      * @return The validated value
      */
     private Boolean validate(long num, List values, String name) {
-        
         Boolean found = (values.find{it==num} != null)
-        if(!found)
-        {
+        if(!found) {
             LOGGER.warning("${name} with value ${num} is not found in the given list ${values}!")
         }
-
         found
     }
 
