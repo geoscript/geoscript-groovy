@@ -1,6 +1,7 @@
 import geoscript.geom.*
 import geoscript.feature.*
 import geoscript.layer.Layer
+import geoscript.layer.io.GeoJSONReader
 import geoscript.workspace.*
 import groovy.json.JsonSlurper
 
@@ -122,6 +123,54 @@ class MapQuestGeocoder implements Geocoder {
 
 }
 
+class PeliasGeocoder implements Geocoder {
+
+    private final String baseUrl
+
+    PeliasGeocoder() {
+        this("http://pelias.mapzen.com")
+    }
+
+    PeliasGeocoder(String baseUrl) {
+        this.baseUrl = baseUrl
+    }
+
+    Layer geocode(Map options = [:], String value) {
+        // Optional params
+        Point pt = options.get("point")
+        Integer zoom = options.get("zoom")
+        Integer size = options.get("size",10)
+        Bounds bounds = options.get("bounds")
+        List layers = options.get("layers")
+        boolean details = options.get("details", true)
+        // Build the URL
+        String urlStr = "${baseUrl}/search?input=${java.net.URLEncoder.encode(value)}"
+        if (pt) {
+            urlStr += "&lon=${pt.x}&lat=${pt.y}"
+        }
+        if (zoom) {
+            urlStr += "&zoom=${zoom}"
+        }
+        if (size) {
+            urlStr += "&size=${size}"
+        }
+        if (layers) {
+            urlStr += "&layers=${layers.join(',')}"
+        }
+        if (bounds) {
+            urlStr += "&bbox=${bounds.minX},${bounds.maxY},${bounds.maxX},${bounds.minY}"
+        }
+        if (details) {
+            urlStr += "&details=${details}"
+        }
+        URL url = new URL(urlStr)
+        // Make the request and parse the results
+        String response = url.text
+        GeoJSONReader reader = new GeoJSONReader()
+        reader.read(response)
+    }
+
+}
 
 class NominatimReverseGeocoder implements ReverseGeocoder {
 
@@ -214,12 +263,50 @@ class MapQuestReverseGeocoder implements ReverseGeocoder {
 
 }
 
+class PeliasReverseGeocoder implements ReverseGeocoder {
+
+    private final String baseUrl
+
+    PeliasReverseGeocoder() {
+        this("http://pelias.mapzen.com")
+    }
+
+    PeliasReverseGeocoder(String baseUrl) {
+        this.baseUrl = baseUrl
+    }
+
+    Layer reverseGeocode(Map options = [:], Point pt) {
+        // Optional params
+        Integer zoom = options.get("zoom")
+        List layers = options.get("layers")
+        boolean details = options.get("details", true)
+        // Build the URL
+        String urlStr = "${baseUrl}/reverse?lon=${pt.x}&lat=${pt.y}"
+        if (zoom) {
+            urlStr += "&zoom=${zoom}"
+        }
+        if (layers) {
+            urlStr += "&layers=${layers.join(',')}"
+        }
+        if (details) {
+            urlStr += "&details=${details}"
+        }
+        URL url = new URL(urlStr)
+        // Make the request and parse the results
+        String response = url.text
+        GeoJSONReader reader = new GeoJSONReader()
+        reader.read(response)
+    }
+
+}
+
 Geocoder geocoder = new NominatimGeocoder()
 Layer result = geocoder.geocode("Seattle, WA")
 println "Nominatim Geocoder found ${result.count} results:"
 result.eachFeature { Feature f ->
     println f
 }
+println ""
 
 geocoder = new MapQuestGeocoder("Fmjtd%7Cluu821utng%2C80%3Do5-94b50r")
 result = geocoder.geocode("950 Fawcett Tacoma WA")
@@ -227,6 +314,15 @@ println "MapQuest Geocoder found ${result.count} results:"
 result.eachFeature { Feature f ->
     println f
 }
+println ""
+
+geocoder = new PeliasGeocoder()
+result = geocoder.geocode("950 South Fawcett Ave Tacoma WA")
+println "Pelias Geocoder found ${result.count} results:"
+result.eachFeature { Feature f ->
+    println f
+}
+println ""
 
 ReverseGeocoder reverseGeocoder = new NominatimReverseGeocoder()
 result = reverseGeocoder.reverseGeocode(new Point(-122.384515,47.575863))
@@ -234,6 +330,7 @@ println "Nominatim ReverseGeocoder Found ${result.count} results:"
 result.eachFeature { Feature f ->
     println f
 }
+println ""
 
 reverseGeocoder = new MapQuestReverseGeocoder("Fmjtd%7Cluu821utng%2C80%3Do5-94b50r")
 result = reverseGeocoder.reverseGeocode(new Point(-122.384515,47.575863))
@@ -241,5 +338,13 @@ println "MapQuest ReverseGeocoder Found ${result.count} results:"
 result.eachFeature { Feature f ->
     println f
 }
+println ""
 
+reverseGeocoder = new PeliasReverseGeocoder()
+result = reverseGeocoder.reverseGeocode(new Point(-122.384515,47.575863))
+println "Pelias ReverseGeocoder Found ${result.count} results:"
+result.eachFeature { Feature f ->
+    println f
+}
+println ""
 
