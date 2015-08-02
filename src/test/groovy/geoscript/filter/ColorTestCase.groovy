@@ -163,6 +163,16 @@ class ColorTestCase {
         colors = Color.getPaletteColors("greens", 5)
         colors.each{c -> assertTrue c instanceof Color}
         assertTrue(colors.size() == 5)
+
+        // Custom
+        colors = Color.getPaletteColors("YellowToRedHeatMap")
+        colors.each{c -> assertTrue c instanceof Color}
+        assertTrue(colors.size() == 8)
+
+        // Custom with number
+        colors = Color.getPaletteColors("BoldLandUse", 4)
+        colors.each{c -> assertTrue c instanceof Color}
+        assertTrue(colors.size() == 4)
     }
 
     @Test void getHex() {

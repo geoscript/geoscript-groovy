@@ -372,10 +372,22 @@ class Color extends Expression {
      * @return A List of Palette names
      */
     static List getPaletteNames(String type = "all") {
+        // Get Color Brewer names
         loadColorBrewer()
-        colorBrewer.getPalettes(getPaletteType(type)).collect{palette ->
+        List names = colorBrewer.getPalettes(getPaletteType(type)).collect{palette ->
             palette.name
         }
+        // Add custom color palettes
+        names.addAll(Color.colorPalettes.collect { String paletteType, Map palettes ->
+            if (type.equalsIgnoreCase("all") || type.equalsIgnoreCase(paletteType)) {
+                palettes.collect { String name, List colors ->
+                    name
+                }
+            } else {
+                []
+            }
+        }.flatten())
+        names
     }
 
     /**
@@ -407,9 +419,51 @@ class Color extends Expression {
                 count = palette.maxColors
             }
             colors.addAll(palette.getColors(Math.min(palette.maxColors, count)).toList().collect{c -> new Color(c)})
+        } else {
+            // Find the palette type that contains the palette name
+            Map.Entry<String, Map> colorPalette = Color.colorPalettes.find { String paletteType, Map palettes ->
+                palettes.keySet().find { String n ->
+                    n.equalsIgnoreCase(name)
+                }
+            }
+            if (colorPalette) {
+                // Found it, so grab the Colors
+                List colorList = colorPalette.getValue().get(name)
+                if (count == -1) {
+                    count = colorList.size()
+                }
+                colors = colorList.collect { new Color(it) }.subList(0, Math.min(colorList.size(), count))
+            }
         }
         colors
     }
+
+    /**
+     * Custom built in color palettes.
+     * Based on the wonderful color palettes from the GeoTrellis project: http://geotrellis.io/documentation/0.9.0/geotrellis/rendering/
+     */
+    private static Map colorPalettes = [
+            diverging: [
+                    BlueToOrange: ["#2586AB","#4EA3C8","#7FB8D4","#ADD8EA","#C8E1E7","#EDECEA","#F0E7BB","#F5CF7D","#F9B737","#E68F2D","#D76B27"],
+                    GreenToOrange: ["#118C8C","#429D91","#61AF96","#75C59B","#A2CF9F","#C5DAA3","#E6E5A7","#E3D28F","#E0C078","#DDAD62","#D29953","#CA8746","#C2773B"],
+                    BlueToRed: ["#2791C3","#5DA1CA","#83B2D1","#A8C5D1","#CCDBE0","#E9D3C1","#DCAD92","#D08B6C","#C66E4B","#BD4E2E"],
+                    GreenToRedOrange: ["#569543", "#9EBD4D", "#BBCA7A", "#D9E2B2", "#E4E7C4", "#E6D6BE", "#E3C193", "#DFAC6C", "#DB9842", "#B96230"]
+            ],
+            sequential: [
+                    Sunset: ["#FFFFFF","#FBEDD1","#F7E0A9","#EFD299","#E8C58B","#E0B97E","#F2924D","#C97877","#946196","#2AB7D6","#474040"],
+                    Green: ["#E8EDDB","#DCE8D4","#BEDBAD","#A0CF88","#81C561","#4BAF48","#1CA049","#3A6D35"],
+                    YellowToRedHeatMap: ["#F7DA22","#ECBE1D","#E77124","#D54927","#CF3A27","#A33936","#7F182A","#68101A"],
+                    BlueToYellowToRedHeatMap: ["#2A2E7F","#3D5AA9","#4698D3","#39C6F0","#76C9B3","#A8D050","#F6EB14","#FCB017","#F16022","#EE2C24","#7D1416"],
+                    DarkRedToYellowWhiteHeatMap: ["#68101A","#7F182A","#A33936","#CF3A27","#D54927","#E77124","#ECBE1D","#F7DA22","#F6EDB1","#FFFFFF"],
+                    LightPurpleToDarkPurpleHeatMap: ["#A52278","#993086","#8C3C97","#6D328A","#4E2B81","#3B264B","#180B11","#FFFFFF"],
+                    BoldLandUse: ["#B29CC3","#4F8EBB","#8F9238","#C18437","#B5D6B1","#D378A6","#D4563C","#F9BE47"],
+                    MutedTerrain: ["#CEE1E8","#7CBCB5","#82B36D","#94C279","#D1DE8D","#EDECC3","#CCAFB4","#C99884"]
+            ],
+            qualitative: [
+                    BoldLandUse: ["#B29CC3","#4F8EBB","#8F9238","#C18437","#B5D6B1","#D378A6","#D4563C","#F9BE47"],
+                    MutedTerrain: ["#CEE1E8","#7CBCB5","#82B36D","#94C279","#D1DE8D","#EDECC3","#CCAFB4","#C99884"]
+            ]
+    ]
 
     /**
      * CSS Color names
