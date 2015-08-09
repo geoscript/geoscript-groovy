@@ -211,4 +211,128 @@ abstract class TileLayer<T extends Tile> implements Closeable {
         }
     }
 
+    /**
+     * Get a TileLayer from a string of connection parameters.
+     * <ul>
+     *     <li> MBTiles = 'states.mbtiles' </li>
+     *     <li> MBTiles = 'type=mbtiles file=states.mbtiles' </li>
+     *     <li> GeoPackage = 'states.gpkg' </li>
+     *     <li> GeoPackage = 'type=geopackage file=states.gpkg' </li>
+     *     <li> TMS = 'type=tms file=C:\Tiles\states format=jpeg' </li>
+     *     <li> OSM = 'type=osm url=http://a.tile.openstreetmap.org' </li>
+     *     <li> UTFGrid = 'type=utfgrid file=/Users/me/tiles/states' </li>
+     *     <li> VectorTiles = 'type=vectortiles file=/Users/me/tiles/states format=mvt pyramid=GlobalMercator' </li>
+     *     <li> VectorTiles = 'type=vectortiles url=http://vectortiles.org format=pbf pyramid=GlobalGeodetic' </li>
+     * </ul>
+     * @param paramsStr The connection parameter string
+     * @return A TileLayer or null
+     */
+    static TileLayer getTileLayer(String paramsStr) {
+        Map params = [:]
+        // MBTiles File
+        if (paramsStr.endsWith(".mbtiles") && !paramsStr.contains("type=")) {
+            params["type"] = "mbtiles"
+            params["file"] = new File(paramsStr)
+        }
+        // GeoPackage File
+        else if (paramsStr.endsWith(".gpkg") && !paramsStr.contains("type=")) {
+            params["type"] = "geopackage"
+            params["file"] = new File(paramsStr)
+        }
+        else {
+            paramsStr.split("[ ]+(?=([^\']*\'[^\']*\')*[^\']*\$)").each {
+                def parts = it.split("=")
+                def key = parts[0].trim()
+                if ((key.startsWith("'") && key.endsWith("'")) ||
+                        (key.startsWith("\"") && key.endsWith("\""))) {
+                    key = key.substring(1, key.length() - 1)
+                }
+                def value = parts[1].trim()
+                if ((value.startsWith("'") && value.endsWith("'")) ||
+                        (value.startsWith("\"") && value.endsWith("\""))) {
+                    value = value.substring(1, value.length() - 1)
+                }
+                params.put(key, value)
+            }
+        }
+        getTileLayer(params)
+    }
+
+    /**
+     * Get a TileLayer from a connection parameter Map.
+     * @param params A Map of connection parameters.
+     * <ul>
+     *     <li> MBTiles = [type: 'mbtiles', file: 'states.mbtiles'] </li>
+     *     <li> GeoPackage = '[type: 'geopackage', file: 'states.gpkg'] </li>
+     *     <li> TMS = [type: 'tms', file: 'C:\Tiles\states format:jpeg'] </li>
+     *     <li> OSM = [type: 'osm', url: 'http://a.tile.openstreetmap.org'] </li>
+     *     <li> UTFGrid = [type: 'utfgrid', file: '/Users/me/tiles/states'] </li>
+     *     <li> VectorTiles = [type: 'vectortiles', file: '/Users/me/tiles/states format:mvt pyramid:GlobalMercator'] </li>
+     *     <li> VectorTiles = [type: 'vectortiles', url: 'http://vectortiles.org format:pbf pyramid:GlobalGeodetic'] </li>
+     * </ul>
+     * @return A TileLayer or null
+     */
+    static TileLayer getTileLayer(Map params) {
+        String type = params.get("type","").toString()
+        // MBTiles
+        if (type.equalsIgnoreCase("mbtiles")) {
+            File file = params.get("file") instanceof File ? params.get("file") as File : new File(params.get("file"))
+            if (!file.exists()) {
+                String name = file.name.replaceAll(".mbtiles","")
+                new MBTiles(file, params.get("name", name), params.get("description", name))
+            } else {
+                new MBTiles(file)
+            }
+        }
+        // GeoPackage
+        else if (type.equalsIgnoreCase("geopackage")) {
+            File file = params.get("file") instanceof File ? params.get("file") as File : new File(params.get("file"))
+            String name = params.get("name", file.name.replaceAll(".gpkg",""))
+            if (!file.exists()) {
+                Object p = params.get("pyramid", Pyramid.createGlobalMercatorPyramid())
+                Pyramid pyramid = p instanceof Pyramid ? p as Pyramid : Pyramid.fromString(p as String)
+                new GeoPackage(file, name, pyramid)
+            } else {
+                new GeoPackage(file, name)
+            }
+        }
+        // TMS
+        else if (type.equalsIgnoreCase("tms")) {
+            Object fileOrUrl = params.get("file", params.get("url"))
+            String name = params.get("name", fileOrUrl instanceof File ? (fileOrUrl as File).name : fileOrUrl)
+            String imageType = params.get("format", "png")
+            Object p = params.get("pyramid", Pyramid.createGlobalMercatorPyramid())
+            Pyramid pyramid = p instanceof Pyramid ? p as Pyramid : Pyramid.fromString(p as String)
+            new TMS(name, imageType, fileOrUrl, pyramid)
+        }
+        // VectorTiles
+        else if (type.equalsIgnoreCase("vectortiles")) {
+            String name = params.get("name")
+            Object p = params.get("pyramid", Pyramid.createGlobalMercatorPyramid())
+            Pyramid pyramid = p instanceof Pyramid ? p as Pyramid : Pyramid.fromString(p as String)
+            String format = params.get("format", "pbf")
+            if (params.containsKey("file")) {
+                File file = params["file"] instanceof File ? params["file"] as File : new File(params["file"])
+                new VectorTiles(name, file, pyramid, format)
+            } else {
+                URL url = params["url"] instanceof URL ? params["url"] as URL : new URL(params["url"])
+                new VectorTiles(name, url, pyramid, format)
+            }
+        }
+        // OSM
+        else if (type.equalsIgnoreCase("osm")) {
+            String name = params.get("name")
+            List baseUrls = [params.get("url")]
+            new OSM(name, baseUrls)
+        }
+        // UTFGrid
+        else if (type.equalsIgnoreCase("utfgrid")) {
+            File file = params.get("file") instanceof File ? params.get("file") as File : new File(params.get("file"))
+            new UTFGrid(file)
+        }
+        else {
+            null
+        }
+    }
+
 }
