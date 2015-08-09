@@ -70,7 +70,7 @@ class GeoPackage extends ImageTileLayer {
         tileEntry.tableName = layerName
         tileEntry.bounds = pyramid.bounds.env
         tileEntry.srid = pyramid.proj.epsg
-        tileEntry.tileMatriciegs = pyramid.grids.collect { Grid g ->
+        tileEntry.tileMatricies = pyramid.grids.collect { Grid g ->
             new TileMatrix(g.z as Integer,
                     g.width as Integer, g.height as Integer,
                     pyramid.tileWidth as Integer, pyramid.tileHeight as Integer,
