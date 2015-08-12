@@ -221,8 +221,8 @@ abstract class TileLayer<T extends Tile> implements Closeable {
      *     <li> TMS = 'type=tms file=C:\Tiles\states format=jpeg' </li>
      *     <li> OSM = 'type=osm url=http://a.tile.openstreetmap.org' </li>
      *     <li> UTFGrid = 'type=utfgrid file=/Users/me/tiles/states' </li>
-     *     <li> VectorTiles = 'type=vectortiles file=/Users/me/tiles/states format=mvt pyramid=GlobalMercator' </li>
-     *     <li> VectorTiles = 'type=vectortiles url=http://vectortiles.org format=pbf pyramid=GlobalGeodetic' </li>
+     *     <li> VectorTiles = 'type=vectortiles name=states file=/Users/me/tiles/states format=mvt pyramid=GlobalMercator' </li>
+     *     <li> VectorTiles = 'type=vectortiles name=states url=http://vectortiles.org format=pbf pyramid=GlobalGeodetic' </li>
      * </ul>
      * @param paramsStr The connection parameter string
      * @return A TileLayer or null
@@ -267,8 +267,8 @@ abstract class TileLayer<T extends Tile> implements Closeable {
      *     <li> TMS = [type: 'tms', file: 'C:\Tiles\states format:jpeg'] </li>
      *     <li> OSM = [type: 'osm', url: 'http://a.tile.openstreetmap.org'] </li>
      *     <li> UTFGrid = [type: 'utfgrid', file: '/Users/me/tiles/states'] </li>
-     *     <li> VectorTiles = [type: 'vectortiles', file: '/Users/me/tiles/states format:mvt pyramid:GlobalMercator'] </li>
-     *     <li> VectorTiles = [type: 'vectortiles', url: 'http://vectortiles.org format:pbf pyramid:GlobalGeodetic'] </li>
+     *     <li> VectorTiles = [type: 'vectortiles', name: 'states', file: '/Users/me/tiles/states format:mvt pyramid:GlobalMercator'] </li>
+     *     <li> VectorTiles = [type: 'vectortiles', name: 'states', url: 'http://vectortiles.org format:pbf pyramid:GlobalGeodetic'] </li>
      * </ul>
      * @return A TileLayer or null
      */
@@ -299,7 +299,7 @@ abstract class TileLayer<T extends Tile> implements Closeable {
         // TMS
         else if (type.equalsIgnoreCase("tms")) {
             Object fileOrUrl = params.get("file", params.get("url"))
-            String name = params.get("name", fileOrUrl instanceof File ? (fileOrUrl as File).name : fileOrUrl)
+            String name = params.get("name", fileOrUrl instanceof File ? (fileOrUrl as File).name : "tms")
             String imageType = params.get("format", "png")
             Object p = params.get("pyramid", Pyramid.createGlobalMercatorPyramid())
             Pyramid pyramid = p instanceof Pyramid ? p as Pyramid : Pyramid.fromString(p as String)
@@ -307,7 +307,7 @@ abstract class TileLayer<T extends Tile> implements Closeable {
         }
         // VectorTiles
         else if (type.equalsIgnoreCase("vectortiles")) {
-            String name = params.get("name")
+            String name = params.get("name", "vectortiles")
             Object p = params.get("pyramid", Pyramid.createGlobalMercatorPyramid())
             Pyramid pyramid = p instanceof Pyramid ? p as Pyramid : Pyramid.fromString(p as String)
             String format = params.get("format", "pbf")

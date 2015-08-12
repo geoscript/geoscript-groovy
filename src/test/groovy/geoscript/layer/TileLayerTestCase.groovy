@@ -348,6 +348,9 @@ class TileLayerTestCase {
         assertEquals("pbf", (tileLayer as VectorTiles).type)
         assertEquals("http://vectortiles.org", (tileLayer as VectorTiles).url.toString())
         assertEquals(Pyramid.createGlobalGeodeticPyramid(), (tileLayer as VectorTiles).pyramid)
+        // Null
+        tileLayer = TileLayer.getTileLayer("type=asdfasd")
+        assertNull(tileLayer)
     }
 
     @Test
