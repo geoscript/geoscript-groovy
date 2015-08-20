@@ -43,6 +43,11 @@ import org.geotools.referencing.crs.DefaultGeographicCRS
 class Map {
 
     /**
+     * The List of Layers
+     */
+    List layers = []
+
+    /**
      * The width of the Map
      */
     int width = 600
@@ -81,11 +86,6 @@ class Map {
      * The LabelCache
      */
     private LabelCache labelCache = new LabelCacheImpl()
-
-    /**
-     * The List of Layers
-     */
-    private List layers = []
 
     /**
      * The Projection
