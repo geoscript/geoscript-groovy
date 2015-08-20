@@ -335,4 +335,77 @@ abstract class TileLayer<T extends Tile> implements Closeable {
         }
     }
 
+    /**
+     * Get a default TileRenderer for the given TileLayer.
+     * @param options The optional named parameters:
+     * <ul>
+     *     <li> fields = Some TileRenderers can be customized with a List of Fields.</li>
+     * </ul>
+     * @param tileLayer The TileLayer
+     * @param layer The Layer
+     * @return A TileRenderer or null
+     */
+    static TileRenderer getTileRenderer(Map options = [:], TileLayer tileLayer, Layer layer) {
+        getTileRenderer(options, tileLayer, [layer])
+    }
+
+    /**
+     * Get a default TileRenderer for the given TileLayer.
+     * @param options The optional named parameters:
+     * <ul>
+     *     <li> fields = Some TileRenderers can be customized with a List of Fields.</li>
+     * </ul>
+     * @param tileLayer The TileLayer
+     * @param layers The List of Layers (some TileRenderers can only render one Layer at a time)
+     * @return A TileRenderer or null
+     */
+    static TileRenderer getTileRenderer(Map options = [:], TileLayer tileLayer, List<Layer> layers) {
+        TileRenderer tileRenderer = null
+        if (tileLayer instanceof MBTiles) {
+            tileRenderer = new ImageTileRenderer(tileLayer, layers)
+        } else if (tileLayer instanceof GeoPackage) {
+            tileRenderer = new ImageTileRenderer(tileLayer, layers)
+        } else if (tileLayer instanceof TMS) {
+            tileRenderer = new ImageTileRenderer(tileLayer, layers)
+        } else if (tileLayer instanceof UTFGrid) {
+            Layer layer = layers[0]
+            List fields = options.fields ?
+                    options.fields.collect { it instanceof Field ? it : layer.schema.get(it) } : layer.schema.fields
+            tileRenderer = new UTFGridTileRenderer(tileLayer, layer, fields)
+        } else if (tileLayer instanceof VectorTiles) {
+            VectorTiles vectorTiles = tileLayer as VectorTiles
+            if (vectorTiles.type.equalsIgnoreCase("pbf")) {
+                Map<String, List> fields = options.get("fields", [:])
+                if (fields.isEmpty()) {
+                    layers.each { Layer layer ->
+                        fields[(layer.name)] = layer.schema.fields
+                    }
+                }
+                tileRenderer = new PbfVectorTileRenderer(layers, fields)
+            } else {
+                geoscript.layer.io.Writer layerWriter
+                if (vectorTiles.type.equalsIgnoreCase("mvt")) {
+                    layerWriter = new geoscript.layer.io.MvtWriter()
+                } else if (vectorTiles.type.toLowerCase() in ["json", "geojson"]) {
+                    layerWriter = new geoscript.layer.io.GeoJSONWriter()
+                } else if (vectorTiles.type.equalsIgnoreCase("csv")) {
+                    layerWriter = new geoscript.layer.io.CsvWriter()
+                } else if (vectorTiles.type.equalsIgnoreCase("georss")) {
+                    layerWriter = new geoscript.layer.io.GeoRSSWriter()
+                } else if (vectorTiles.type.equalsIgnoreCase("gml")) {
+                    layerWriter = new geoscript.layer.io.GmlWriter()
+                } else if (vectorTiles.type.equalsIgnoreCase("gpx")) {
+                    layerWriter = new geoscript.layer.io.GpxWriter()
+                } else if (vectorTiles.type.equalsIgnoreCase("kml")) {
+                    layerWriter = new geoscript.layer.io.KmlWriter()
+                }
+                Layer layer = layers[0]
+                List<Field> fields = options.fields ?
+                        options.fields.collect { it instanceof Field ? it : layer.schema.get(it) } : layer.schema.fields
+                tileRenderer = new VectorTileRenderer(layerWriter, layer, fields)
+            }
+        }
+        tileRenderer
+    }
+
 }

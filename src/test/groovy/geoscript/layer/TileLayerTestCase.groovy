@@ -400,4 +400,64 @@ class TileLayerTestCase {
         assertEquals("http://vectortiles.org", (tileLayer as VectorTiles).url.toString())
         assertEquals(Pyramid.createGlobalGeodeticPyramid(), (tileLayer as VectorTiles).pyramid)
     }
+
+    @Test void getTileRenderer() {
+        TileRenderer tileRenderer
+        TileLayer tileLayer
+        File file
+        Layer layer = new Shapefile(new File(getClass().getClassLoader().getResource("states.mbtiles").toURI()))
+        // MBTiles
+        file = folder.newFile('test.mbtiles')
+        file.delete()
+        tileLayer = TileLayer.getTileLayer("type=mbtiles file=${file.absolutePath}")
+        tileRenderer = TileLayer.getTileRenderer(tileLayer, layer)
+        assertNotNull(tileRenderer)
+        assertTrue(tileRenderer instanceof ImageTileRenderer)
+        // GeoPackage params
+        file = folder.newFile('test.gpkg')
+        file.delete()
+        tileLayer = TileLayer.getTileLayer("type=geopackage file=${file.absolutePath}")
+        tileRenderer = TileLayer.getTileRenderer(tileLayer, layer)
+        assertNotNull(tileRenderer)
+        assertTrue(tileRenderer instanceof ImageTileRenderer)
+        // GeoPackage file
+        file = folder.newFile('test.gpkg')
+        file.delete()
+        tileLayer = TileLayer.getTileLayer(file.absolutePath)
+        tileRenderer = TileLayer.getTileRenderer(tileLayer, layer)
+        assertNotNull(tileRenderer)
+        assertTrue(tileRenderer instanceof ImageTileRenderer)
+        // TMS
+        file = folder.newFolder("tms")
+        tileLayer = TileLayer.getTileLayer("type=tms file=${file.absolutePath} format=jpeg")
+        tileRenderer = TileLayer.getTileRenderer(tileLayer, layer)
+        assertNotNull(tileRenderer)
+        assertTrue(tileRenderer instanceof ImageTileRenderer)
+        // OSM
+        tileLayer = TileLayer.getTileLayer("type=osm url=http://a.tile.openstreetmap.org")
+        tileRenderer = TileLayer.getTileRenderer(tileLayer, layer)
+        assertNull(tileRenderer)
+        // UTFGrid
+        file = folder.newFolder("utfgrid")
+        tileLayer = TileLayer.getTileLayer("type=utfgrid file=${file.absolutePath}")
+        tileRenderer = TileLayer.getTileRenderer(tileLayer, layer)
+        assertNotNull(tileRenderer)
+        assertTrue(tileRenderer instanceof UTFGridTileRenderer)
+        // VectorTiles Directory
+        file = folder.newFolder("vectortiles")
+        tileLayer = TileLayer.getTileLayer("type=vectortiles file=${file.absolutePath} format=mvt pyramid=GlobalMercator")
+        tileRenderer = TileLayer.getTileRenderer(tileLayer, layer)
+        assertNotNull(tileRenderer)
+        assertTrue(tileRenderer instanceof VectorTileRenderer)
+        // VectorTiles URL
+        tileLayer = TileLayer.getTileLayer("type=vectortiles url=http://vectortiles.org format=pbf pyramid=GlobalGeodetic")
+        tileRenderer = TileLayer.getTileRenderer(tileLayer, layer)
+        assertNotNull(tileRenderer)
+        assertTrue(tileRenderer instanceof PbfVectorTileRenderer)
+        // Null
+        tileLayer = TileLayer.getTileLayer("type=asdfasd")
+        tileRenderer = TileLayer.getTileRenderer(tileLayer, layer)
+        assertNull(tileRenderer)
+    }
+
 }
