@@ -21,7 +21,7 @@ wfs.layers.each{layer ->
 }
 
 // Get a Layer and inspect some properties
-def layer = wfs.get("topp:states")
+def layer = wfs.get("topp_states")
 println("Layer: ${layer.name}")
 println("   Format: ${layer.format}")
 println("   Projection: ${layer.proj}")
