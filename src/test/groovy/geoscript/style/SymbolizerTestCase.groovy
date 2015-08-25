@@ -1,5 +1,6 @@
 package geoscript.style
 
+import geoscript.feature.Field
 import geoscript.style.io.SLDWriter
 import org.junit.Rule
 import org.junit.Test
@@ -368,4 +369,37 @@ class SymbolizerTestCase {
                 "<sld:VendorOption name=\"composite-base\">true</sld:VendorOption></sld:FeatureTypeStyle>")
     }
 
+    @Test
+    void sortBy() {
+        String NEW_LINE = System.getProperty("line.separator")
+        SLDWriter writer = new SLDWriter(format: false)
+        // Single Layer Z-Ordering
+        Symbolizer sym = new Fill("wheat").sortBy(["CATEGORY A", "NAME D"])
+        assertTrue writer.write(sym).trim().replaceAll(NEW_LINE, "")
+                .contains("<sld:VendorOption name=\"sortBy\">CATEGORY A,NAME D</sld:VendorOption>")
+        sym = new Fill("wheat").sortBy([new Field("CATEGORY","String"), new Field("NAME","String")])
+        assertTrue writer.write(sym).trim().replaceAll(NEW_LINE, "")
+                .contains("<sld:VendorOption name=\"sortBy\">CATEGORY,NAME</sld:VendorOption>")
+        sym = new Fill("wheat").sortBy([[field: "CATEGORY", direction: "A"], [field: "NAME", direction: "D"]])
+        assertTrue writer.write(sym).trim().replaceAll(NEW_LINE, "")
+                .contains("<sld:VendorOption name=\"sortBy\">CATEGORY A,NAME D</sld:VendorOption>")
+        sym = new Fill("wheat").sortBy([
+                [field: new Field("CATEGORY","String"), direction: "A"],
+                [field: new Field("NAME","String"), direction: "D"]]
+        )
+        assertTrue writer.write(sym).trim().replaceAll(NEW_LINE, "")
+                .contains("<sld:VendorOption name=\"sortBy\">CATEGORY A,NAME D</sld:VendorOption>")
+        // Cross Layer Z-Ordering
+        sym = new Fill("wheat").sortBy("Group", ["CATEGORY A", "NAME D"])
+        assertTrue writer.write(sym).trim().replaceAll(NEW_LINE, "")
+                .contains("<sld:VendorOption name=\"sortByGroup\">Group</sld:VendorOption><sld:VendorOption name=\"sortBy\">CATEGORY A,NAME D</sld:VendorOption>")
+        sym = new Fill("wheat").sortBy("Group", [new Field("CATEGORY","String"), new Field("NAME","String")])
+        assertTrue writer.write(sym).trim().replaceAll(NEW_LINE, "")
+                .contains("<sld:VendorOption name=\"sortByGroup\">Group</sld:VendorOption><sld:VendorOption name=\"sortBy\">CATEGORY,NAME</sld:VendorOption>")
+        sym = new Fill("wheat").sortBy("Group", [[field: "CATEGORY", direction: "A"], [field: "NAME", direction: "D"]])
+        assertTrue writer.write(sym).trim().replaceAll(NEW_LINE, "")
+                .contains("<sld:VendorOption name=\"sortByGroup\">Group</sld:VendorOption><sld:VendorOption name=\"sortBy\">CATEGORY A,NAME D</sld:VendorOption>")
+    }
+
 }
+

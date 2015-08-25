@@ -1,5 +1,6 @@
 package geoscript.style
 
+import geoscript.feature.Field
 import geoscript.filter.Filter
 import geoscript.style.io.SLDWriter
 import org.geotools.styling.Style as GtStyle
@@ -159,6 +160,38 @@ class Symbolizer implements Style, Cloneable {
             this.styleOptions["composite-base"] = "true"
         }
         this
+    }
+
+    /**
+     * Set single layer z-ordering
+     * @param fields The List of Fields.  The items in the List an be a Field, a Map with field and direction (A or D)
+     * keys, or just String with field name and direction.
+     * @return
+     */
+    Symbolizer sortBy(List fields) {
+        this.styleOptions["sortBy"] = fields.collect { Object fld ->
+            if (fld instanceof Field) {
+                fld.name
+            } else if (fld instanceof java.util.Map) {
+                String name = fld.field instanceof Field ? fld.field.name : fld.field
+                "${name} ${fld.direction}"
+            } else {
+                fld
+            }
+        }.join(",")
+        this
+    }
+
+    /**
+     * Set cross layer z-ordering
+     * @param group The group name
+     * @param fields The List of Fields.  The items in the List an be a Field, a Map with field and direction (A or D)
+     * keys, or just String with field name and direction.
+     * @return This Symbolizer
+     */
+    Symbolizer sortBy(String group, List fields) {
+        this.styleOptions["sortByGroup"] = group
+        sortBy(fields)
     }
 
     /**
