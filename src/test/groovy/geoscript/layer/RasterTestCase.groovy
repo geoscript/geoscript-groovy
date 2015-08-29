@@ -693,9 +693,9 @@ class RasterTestCase {
         assertTrue(raster.contains(new Point(8,8)))
         assertTrue(raster.contains(new Point(7.1,14)))
         assertTrue(raster.contains(new Point(16,12)))
-        assertFalse(raster.contains(new Point(7,14)))
+        assertTrue(raster.contains(new Point(7,14)))
         assertFalse(raster.contains(new Point(6,14)))
-        assertFalse(raster.contains(new Point(10,15)))
+        assertTrue(raster.contains(new Point(10,15)))
         assertFalse(raster.contains(new Point(10,21)))
     }
 
