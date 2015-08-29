@@ -41,8 +41,8 @@ class HatchTestCase {
         assertEquals "shape://times", graphic.graphicalSymbols()[0].wellKnownName.value
         assertEquals "#f5deb3", graphic.graphicalSymbols()[0].stroke.color.value
         assertEquals 1.2, graphic.graphicalSymbols()[0].stroke.width.value, 0.1
-        assertEquals 5, graphic.graphicalSymbols()[0].stroke.dashArray[0], 0.1
-        assertEquals 2, graphic.graphicalSymbols()[0].stroke.dashArray[1], 0.1
+        assertEquals 5, graphic.graphicalSymbols()[0].stroke.dashArray()[0].value, 0.1
+        assertEquals 2, graphic.graphicalSymbols()[0].stroke.dashArray()[1].value, 0.1
         assertEquals "square", graphic.graphicalSymbols()[0].stroke.lineCap.value
         assertEquals "bevel", graphic.graphicalSymbols()[0].stroke.lineJoin.value
         assertEquals "bevel", graphic.graphicalSymbols()[0].stroke.lineJoin.value
@@ -64,8 +64,8 @@ class HatchTestCase {
         assertEquals "shape://times", graphic.graphicalSymbols()[0].wellKnownName.value
         assertEquals "#f5deb3", graphic.graphicalSymbols()[0].stroke.color.value
         assertEquals 1.2, graphic.graphicalSymbols()[0].stroke.width.value, 0.1
-        assertEquals 5, graphic.graphicalSymbols()[0].stroke.dashArray[0], 0.1
-        assertEquals 2, graphic.graphicalSymbols()[0].stroke.dashArray[1], 0.1
+        assertEquals 5, graphic.graphicalSymbols()[0].stroke.dashArray().get(0).value, 0.1
+        assertEquals 2, graphic.graphicalSymbols()[0].stroke.dashArray().get(1).value, 0.1
         assertEquals "square", graphic.graphicalSymbols()[0].stroke.lineCap.value
         assertEquals "bevel", graphic.graphicalSymbols()[0].stroke.lineJoin.value
         assertEquals "bevel", graphic.graphicalSymbols()[0].stroke.lineJoin.value

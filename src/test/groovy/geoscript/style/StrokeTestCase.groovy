@@ -46,8 +46,8 @@ class StrokeTestCase {
         gtStroke = stroke.createStroke()
         assertEquals "#f5deb3", gtStroke.color.value
         assertEquals 1.2, gtStroke.width.value, 0.1
-        assertEquals 5, gtStroke.dashArray[0], 0.1
-        assertEquals 2, gtStroke.dashArray[1], 0.1
+        assertEquals 5, gtStroke.dashArray().get(0).value, 0.1
+        assertEquals 2, gtStroke.dashArray().get(1).value, 0.1
         assertEquals "square", gtStroke.lineCap.value
         assertEquals "bevel", gtStroke.lineJoin.value
 

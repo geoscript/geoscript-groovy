@@ -195,13 +195,13 @@ class Stroke extends Symbolizer {
         if (dash) {
             if (dash instanceof List) {
                 if (dash[0] instanceof List) {
-                    stroke.dashArray = dash[0]
+                    stroke.dashArray = dash[0].collect { it instanceof Expression ? it.expr : new Expression(it).expr } as List
                     stroke.dashOffset = new Expression(dash[1]).expr
                 } else {
-                    stroke.dashArray = dash
+                    stroke.dashArray = dash.collect { it instanceof Expression ? it.expr : new Expression(it).expr } as List
                 }
             } else {
-                stroke.dashArray = dash.split(",")
+                stroke.dashArray = dash.split(",").collect { it instanceof Expression ? it.expr : new Expression(it).expr } as List
             }
         }
         if (cap && cap.value != null) stroke.lineCap = cap.expr
