@@ -232,7 +232,7 @@ class ProcessTestCase {
         assertEquals 49, count
     }
 
-    @Test void rasterAddProcess() {
+    /*@Test void rasterAddProcess() {
         Bounds bounds = new Bounds(0, 0, 7, 5, "EPSG:4326")
         List data1 = [
                 [0,0,0,0,0,0,0],
@@ -260,7 +260,7 @@ class ProcessTestCase {
         assertEquals 3, raster3.eval(new Point(1.5,1.5))[0], 0.1
         assertEquals 5, raster3.eval(new Point(2.5,2.5))[0], 0.1
         assertEquals 7, raster3.eval(new Point(3.5,2.5))[0], 0.1
-    }
+    }*/
 
     @Test void rasterToPointsProcess() {
         Bounds bounds = new Bounds(0, 0, 7, 5, "EPSG:4326")
