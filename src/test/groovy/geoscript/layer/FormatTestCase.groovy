@@ -1,5 +1,6 @@
 package geoscript.layer
 
+import geoscript.geom.Geometry
 import org.junit.Test
 import static org.junit.Assert.*
 
@@ -24,12 +25,25 @@ class FormatTestCase {
         assertNotNull(format.stream)
         assertTrue(format instanceof NetCDF)
 
-        // New file
+        // New png file
         file = new File("doesnotexist.png")
         format = Format.getFormat(file)
         assertNotNull(format)
         assertNotNull(format.stream)
         assertTrue(format instanceof WorldImage)
+
+        // New tif File
+        file = new File("doesnotexist.tif")
+        format = Format.getFormat(file)
+        assertNotNull(format)
+        assertNotNull(format.stream)
+        assertTrue(format instanceof GeoTIFF)
+
+        // New tif File name
+        format = Format.getFormat("doesnotexist.tif")
+        assertNotNull(format)
+        assertNotNull(format.stream)
+        assertTrue(format instanceof GeoTIFF)
 
         // Not a Raster form a new file
         file = new File("states.shp")

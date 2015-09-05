@@ -230,6 +230,27 @@ class Format {
      * @return A Format
      */
     static Format getFormat(Object input) {
+        // Support file names and string urls
+        if (input instanceof String) {
+            String str = input as String
+            boolean isFileOrUrl = ['tif','png','jpg','jpeg','gif','arx','sid','asc','nc'].find { String ext ->
+                str.endsWith(ext)
+            }
+            if (isFileOrUrl) {
+                boolean isUrl = false
+                try {
+                    URL url = new URL(str)
+                    isUrl = true
+                } catch(MalformedURLException ex) {
+                    // Do nothing, just means that it must be a file
+                }
+                if (isUrl) {
+                    input = new URL(str)
+                } else {
+                    input = new File(str)
+                }
+            }
+        }
         if(input instanceof File) {
             File file = input as File
             if (file.exists()) {
@@ -280,7 +301,7 @@ class Format {
             AbstractGridFormat format = GridFormatFinder.findFormat(input);
             if (format == null || format instanceof UnknownFormat) {
                 return null
-            }else{
+            } else {
                 return new Format(format, input)
             }
         }
