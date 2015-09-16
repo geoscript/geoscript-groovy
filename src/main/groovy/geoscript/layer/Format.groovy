@@ -198,6 +198,15 @@ class Format {
     }
 
     /**
+     * Whether the Format has a Raster by the given name
+     * @param name The Raster name
+     * @return Whether the Format has a Raster by the given name
+     */
+    boolean has(String name) {
+        getNames().contains(name)
+    }
+
+    /**
      * Get metadata
      * @param name The optional Raster name
      * @return A Map of metadata
