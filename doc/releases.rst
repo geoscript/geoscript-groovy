@@ -3,6 +3,147 @@
 GeoScript Groovy Releases
 =========================
 
+1.6.0 (in progress)
+-------------------
+
+    The 1.6.0 release of GeoScript is build on Groovy 2.4.4, GeoTools 14.0, and the Java Topology Suite 1.13.
+
+    Significant new features include support for Geobuf, a OGR Workspace, and improvements to the Tile module.
+
+    **GeoHash**
+
+    GeoHash support was ported from the excellent node-geohash module.  It supports encoded and decoding Points and Bounds.::
+
+        GeoHash geohash = new GeoHash()
+        geohash.encode(new Point(112.5584, 37.8324))
+        >>> "ww8p1r4t8"
+
+        geohash.encodeLong(new Point(112.5584, 37.8324))
+        >>> 4064984913515641
+
+        Bounds bounds = geohash.decodeBounds("ww8p1r4t8")
+        >>> "(112.55836486816406,37.83236503601074,112.5584077835083,37.83240795135498)"
+
+    **Geobuf**
+
+    Geobuf is an emerging new format from MapBox.  GeoScript support for Geobuf includes a Workspace and Geometry, Feature, and Layer
+    readers and writers::
+
+        File directory = new File("data")
+        Geobuf geobuf = new Geobuf(directory)
+
+        // Create an in memory Layer
+        Memory memory = new Memory()
+        Layer memoryLayer = memory.create('locations',[new Field("geom", "Point"), new Field("name", "String")])
+        memoryLayer.add([new Point(1,1), "Seattle"])
+        memoryLayer.add([new Point(2,2), "Portland"])
+        memoryLayer.add([new Point(3,3), "Tacoma"])
+
+        // And add it to Geobuf
+        geobuf.add(memoryLayer)
+
+        GeobufWriter writer = new GeobufWriter()
+        Schema schema = new Schema("houses", [new Field("geom","Point"), new Field("name","string"), new Field("price","float")])
+        Feature feature = new Feature([new Point(111,-47), "House", 12.5], "house1", schema)
+        String hex = writer.write(feature)
+        >>> "0a046e616d650a057072696365100218062a1f0a0c08001a0880e7ed69ffa6e92c6a070a05486f7573656a060a0431322e35"
+
+    **Workspace**
+
+    In addition to the new Geobuf Workspace, a OGR Workspace was also added.  This requires the GDAL/OGR native library
+    to be installed with Java/JNI support.::
+
+        File shpFile = new File("states.shp")
+        Layer shpLayer = new Shapefile(shpFile)
+
+        File file = new File("states.sqlite")
+        OGR ogr = new OGR("SQLite", file.absolutePath)
+        Layer layer = ogr.create(shpLayer.cursor, options: [
+            "SPATIALITE=YES"
+        ])
+
+    WFS support upgraded to the new WFS-NG library.  Major thanks to Scottie and Neils who helped trouble shoot.
+
+    **Geometry**
+
+    The Geometry module some small improvements. A LineString.close() method creates a LinearRing.  The GeometryCollection.narrow() method
+    returns the most specific geometry type possible.  If all geometries are Points, narrow will return a MultiPoint.  Finally,
+    The Bounds.getCorners() returns a list of the 4 corners as Points.
+
+    **Layer**
+
+    The major improvement to the Layer module is the wrapping of the GeoTools gt-grid module in a Graticule class that makes creating
+    graticule based vector grids extremely easy.::
+
+        Layer layer = Graticule.createSquares(new Bounds(110.0, -45.0, 160.0, -5.0, "EPSG:4326"), 10, -1)
+
+        File dir = new File("squares")
+        Workspace workspace = new Directory(dir)
+        Layer layer = Graticule.createSquares(new Bounds(110.0, -45.0, 160.0, -5.0, "EPSG:4326"), 10, 1,
+            workspace: workspace, layer: "squares")
+
+        Schema schema = new Schema("hexagon", [
+            new Field("geom", "Polygon"),
+            new Field("color", "java.awt.Color")
+        ])
+        Bounds b = new Bounds(0,0,100,100)
+        Layer layer = Graticule.createHexagons(b, 5.0, -1.0, "flat", schema: schema, setAttributes: { GridElement e, Map attributes ->
+            int green = (255 * e.center.x / b.width)  as int
+            int blue  = (255 * e.center.y / b.height) as int
+            attributes["color"] = new Color(0, green, blue)
+        })
+
+    **Raster**
+
+    The Raster module saw some minor improvements. A Format.has(String name) checks to see if a Raster by that name exists.
+    A few more Raster functions were added: log, exp, and absolute.  Finally, this version adds support for file names and
+    String urls when loading Rasters using the Format.getFormat() method.
+
+    **Tile**
+
+    The Tile module continued to improve with help from gpotts.
+
+        * gpotts fixed a bug that assumed all Tile Grids started at 0
+
+        * You can now delete tiles from a TileLayer::
+
+            GeoPackage layer = new GeoPackage(newFile, "states")
+            Tile tile = layer.get(4, 2, 3)
+            layer.delete(tile)
+
+        * The TileGenerator has an option to only generate missing tiles::
+
+            TileGenerator generator = new TileGenerator()
+            generator.generate(mbtiles, renderer, 0, 2, missingOnly: true)
+
+        * TileLayer can now be loaded from a connection parameter string (which is very useful for command line apps)::
+
+            TileLayer tileLayer = TileLayer.getTileLayer("type=mbtiles file=states.mbtiles")
+
+            TileLayer tileLayer = TileLayer.getTileLayer("type=tms file=/Users/geoscript/tiles format=jpeg")
+
+            TileLayer tileLayer = TileLayer.getTileLayer("type=vectortiles file=vectortilesdir format=mvt pyramid=GlobalMercator")
+
+        * The TileLayer.getTileRenderer() static method returns a default TileRenderer for the given TileLayer.
+
+        * PBF Vector Tiles now check for empty sub fields.
+
+        * MVT support was rewritten to avoid creating huge empty byte buffers, support for dates was added, and the reader and write can round trip.
+
+        * Pyramid readers and writers were added.  Formats include gdal tms mini driver xml fiels, xml, and json.
+
+        * The Grid class now has min and max methods.
+
+        * Pyramid support now supports geodetic, mercator, and global geodetic as well known names and Pyramid hash a static createGlobalGeodeticPyramid() method.
+
+    **Color**
+
+    The Color module includes support for custom palettes in addition to color brewer.
+
+    **Map**
+
+    The Map and rendering modules inherits awesome improvements from GeoTools including dash an an expression and single and multiple layer z ordering.
+
 1.5.0
 -----
 
