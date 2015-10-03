@@ -6,14 +6,14 @@ Quick Start
 Install Java
 ------------
 
-A Java Runtime Environment (JRE), version greater than *1.5*, is required to run Groovy and GeoScript. Chances are your system already has a JRE installed on it. A quick way to test is to execute the following from the command line::
+A Java Runtime Environment (JRE), version greater than *1.7*, is required to run Groovy and GeoScript. Chances are your system already has a JRE installed on it. A quick way to test is to execute the following from the command line::
 
    % java -version
-   java version "1.5.0_20"
+   java version "1.7.0"
    Java(TM) 2 Runtime Environment, Standard Edition (build 1.5.0_20-b02-315)
-   Java HotSpot(TM) Client VM (build 1.5.0_20-141, mixed mode, sharing)
+   Java HotSpot(TM) Client VM (build 1.7, mixed mode, sharing)
 
-If the command is not found or the Java version is less than 1.5 you must install a new JRE. Otherwise you can continue to the :ref:`next step <install_groovy>`.
+If the command is not found or the Java version is less than 1.6 you must install a new JRE. Otherwise you can continue to the :ref:`next step <install_groovy>`.
 
 A JRE can be downloaded from `Sun Microsystems <http://java.sun.com/javase/downloads/index.jsp>`_.
 
@@ -24,7 +24,7 @@ A JRE can be downloaded from `Sun Microsystems <http://java.sun.com/javase/downl
 Install Groovy
 --------------
 
-Groovy version greater than *1.7* is required for GeoScript. The current version can be downloaded from http://groovy.codehaus.org/.
+Groovy version *2.4.5* is required for GeoScript. The current version can be downloaded from http://groovy.codehaus.org/.
 
 Install GeoScript
 -----------------
@@ -33,11 +33,11 @@ Install GeoScript
 
 #. Unpack the GeoScript tarball::
 
-     unzip geoscript-groovy-1.4.0.zip
+     unzip geoscript-groovy-1.6.0.zip
 
-#. Add the geoscript-groovy-1.4.0\bin directory to your path::
+#. Add the geoscript-groovy-1.6.0\bin directory to your path::
 
-     export PATH=geoscript-groovy-1.4.0\bin:$PATH
+     export PATH=geoscript-groovy-1.6.0\bin:$PATH
 
 That's it. GeoScript Groovy should now be installed on the system. To verify the install execute the :command:`geoscript-groovysh` command::
 

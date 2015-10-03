@@ -5,7 +5,7 @@
     <groupId>org.geoscript</groupId>
     <artifactId>geoscript-groovy</artifactId>
     <packaging>jar</packaging>
-    <version>1.6-SNAPSHOT</version>
+    <version>1.6.0</version>
     <repositories>
         <repository>
             <id>boundless</id>
@@ -280,7 +280,7 @@
         <dependency>
             <groupId>org.codehaus.groovy</groupId>
             <artifactId>groovy-all</artifactId>
-            <version>2.4.4</version>
+            <version>2.4.5</version>
         </dependency>
         <dependency>
             <groupId>net.sf.opencsv</groupId>
@@ -443,7 +443,7 @@
         </plugins>
     </reporting>
     <properties>
-        <gt.version>14-SNAPSHOT</gt.version>
+        <gt.version>14.0</gt.version>
     </properties>
     <name>geoscript groovy</name>
     <description>A groovy implementation of geoscript.</description>
