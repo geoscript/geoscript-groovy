@@ -1,6 +1,7 @@
 package geoscript.style
 
 import geoscript.filter.Expression
+import org.opengis.filter.expression.Expression as GtExpression
 import org.geotools.styling.Rule
 import org.geotools.styling.Stroke as GtStroke
 import org.geotools.styling.LineSymbolizer
@@ -195,13 +196,16 @@ class Stroke extends Symbolizer {
         if (dash) {
             if (dash instanceof List) {
                 if (dash[0] instanceof List) {
-                    stroke.dashArray = dash[0].collect { it instanceof Expression ? it.expr : new Expression(it).expr } as List
+                    List<GtExpression> dashArrays = dash[0].collect { it instanceof Expression ? it.expr : new Expression(it).expr } as List<GtExpression>
+                    stroke.setDashArray(dashArrays)
                     stroke.dashOffset = new Expression(dash[1]).expr
                 } else {
-                    stroke.dashArray = dash.collect { it instanceof Expression ? it.expr : new Expression(it).expr } as List
+                    List<GtExpression> dashArrays = dash.collect { it instanceof Expression ? it.expr : new Expression(it).expr } as List<GtExpression>
+                    stroke.setDashArray(dashArrays)
                 }
             } else {
-                stroke.dashArray = dash.split(",").collect { it instanceof Expression ? it.expr : new Expression(it).expr } as List
+                List<GtExpression> dashArrays = dash.split(",").collect { it instanceof Expression ? it.expr : new Expression(it).expr } as List<GtExpression>
+                stroke.setDashArray(dashArrays)
             }
         }
         if (cap && cap.value != null) stroke.lineCap = cap.expr
