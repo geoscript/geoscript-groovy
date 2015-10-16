@@ -572,4 +572,11 @@ class GeometryTestCase {
         assertEquals 2, Geometry.fromWKT("POLYGON ((90 90, 90 110, 110 110, 110 90, 90 90))").dimension
     }
 
+    @Test void offset() {
+        Geometry g = Geometry.fromWKT("LINESTRING (0 5, 5 5)").offset(2)
+        assertEquals "LINESTRING (0 7, 5 7)", g.wkt
+        g = Geometry.fromWKT("LINESTRING (0 5, 5 5)").offset(-2)
+        assertEquals "LINESTRING (0 3, 5 3)", g.wkt
+    }
+
 }

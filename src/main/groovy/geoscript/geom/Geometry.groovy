@@ -15,6 +15,7 @@ import geoscript.geom.io.*
 import com.vividsolutions.jts.geom.PrecisionModel
 import com.vividsolutions.jts.precision.GeometryPrecisionReducer
 import org.geotools.geometry.jts.CurvedGeometries
+import org.geotools.geometry.jts.OffsetCurveBuilder
 
 /**
  * The base class for other Geometries.
@@ -233,6 +234,18 @@ class Geometry {
      */
     Point getInteriorPoint() {
         wrap(this.g.getInteriorPoint()) as Point
+    }
+
+    /**
+     * Create a new Geometry where all LineStrings are offset by the given distance.  Positive distances
+     * will offset to the right.  Negative distance will offset to the left.
+     * @param distance The offset distance
+     * @param quadrantSegments The number of quadrant segements which defaults to 8
+     * @return The offset Geometry
+     */
+    Geometry offset(double distance, int quadrantSegments = 8) {
+        OffsetCurveBuilder builder = new OffsetCurveBuilder(distance, quadrantSegments)
+        Geometry.wrap(builder.offset(this.g))
     }
 
     /**
