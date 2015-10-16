@@ -64,6 +64,11 @@ class Stroke extends Symbolizer {
     Shape shape
 
     /**
+     * The perpendicular offset
+     */
+    Expression perpendicularOffset
+
+    /**
      * Create a new Stroke.
      * <p><blockquote><pre>
      * def stroke = new Stroke("#ff0000", 0.25, [5,2], "round", "bevel")
@@ -141,6 +146,15 @@ class Stroke extends Symbolizer {
     }
 
     /**
+     * Set the perpendicular offset
+     * @param offset The offset
+     * @return This Stroke
+     */
+    void setPerpendicularOffset(def offset) {
+        this.perpendicularOffset = new Expression(offset)
+    }
+
+    /**
      * Add a Hatch pattern to this Stroke
      * @param name The pattern name
      * @param stroke The Stroke
@@ -163,6 +177,16 @@ class Stroke extends Symbolizer {
     }
 
     /**
+     * Set the perpendicular offset
+     * @param offset The offset
+     * @return This Stroke
+     */
+    Stroke perpendicularOffset(def offset) {
+        this.perpendicularOffset = new Expression(offset)
+        this
+    }
+
+    /**
      * Prepare the GeoTools Rule by applying this Symbolizer
      * @param rule The GeoTools Rule
      */
@@ -181,9 +205,13 @@ class Stroke extends Symbolizer {
     @Override
     protected void apply(GtSymbolizer sym) {
         super.apply(sym)
-        sym.stroke = createStroke()
+        LineSymbolizer lineSymbolizer = sym as LineSymbolizer
+        lineSymbolizer.stroke = createStroke()
+        if (perpendicularOffset) {
+            lineSymbolizer.perpendicularOffset = perpendicularOffset.expr
+        }
         if (shape) {
-            shape.apply(sym);
+            shape.apply(lineSymbolizer);
         }
     }
 

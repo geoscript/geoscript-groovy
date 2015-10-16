@@ -74,14 +74,21 @@ class StrokeTestCase {
         assertEquals 2, stroke.dash[0]
         assertEquals 3, stroke.dash[1]
         assertEquals "Stroke(color = #f5deb3, width = 1.2)", stroke.toString()
+
+        // Create a Stroke with an offset
+        stroke = new Stroke(color: "blue", width: 1.5, perpendicularOffset: 2.5)
+        assertEquals "#0000ff", stroke.color.value
+        assertEquals 1.5, stroke.width.value, 0.1
+        assertEquals 2.5, stroke.perpendicularOffset.value, 0.1
     }
 
     @Test void apply() {
-        Stroke stroke = new Stroke("navy")
+        Stroke stroke = new Stroke("navy").perpendicularOffset(15.4)
         def sym = Symbolizer.styleFactory.createLineSymbolizer()
         stroke.apply(sym)
         assertEquals "#000080", sym.stroke.color.value
         assertEquals 1.0, sym.stroke.width.value, 0.1
+        assertEquals 15.4, sym.perpendicularOffset.value, 0.1
     }
 
     @Test void prepare() {

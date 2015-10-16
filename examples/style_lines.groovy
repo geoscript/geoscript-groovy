@@ -78,3 +78,8 @@ createImage(shp, new Stroke("#333333", 5, null, "round").zindex(0) +
         new Stroke("#6699FF", 3, null, "round").zindex(1) +
         new Label(new Expression("\u2192")).linear().font(new Font("normal", "bold", 12, "Lucida Sans")).halo(new Fill("#FFFFFF", 0.85), 1).fill(new Fill("#AAAAAA")).maxDisplacement(100).forceLeftToRight(false),
         new File("line_arrow.png"))
+
+// Simple Line with offset
+createImage(shp, new Stroke("#000000", 3).zindex(0) +
+        new Stroke("#ff0000", 1).perpendicularOffset(3).zindex(1),
+        new File("line_offset.png"))
