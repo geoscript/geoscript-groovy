@@ -2,7 +2,9 @@ package geoscript.layer
 
 import geoscript.geom.Bounds
 import geoscript.proj.Projection
+import org.geotools.data.ows.HTTPClient
 import org.geotools.data.ows.Layer as GtLayer
+import org.geotools.data.ows.SimpleHttpClient
 import org.geotools.data.ows.StyleImpl
 import org.geotools.data.ows.WMSCapabilities
 import org.geotools.data.wms.WebMapServer
@@ -54,19 +56,36 @@ class WMS {
 
     /**
      * Create a new WMS object with a get capabilities URL
+     * @param options Optional named parameters:
+     * <ul>
+     *     <li> user = The user name for password protected urls</li>
+     *     <li> password = The password for password protected urls</li>
+     * </ul>
      * @param url The get capabilities URL
      */
-    WMS(String url) {
-        this(new URL(url))
+    WMS(Map options = [:], String url) {
+        this(options, new URL(url))
     }
 
     /**
      * Create a new WMS object with a get capabilities URL
+     * @param options Optional named parameters:
+     * <ul>
+     *     <li> user = The user name for password protected urls</li>
+     *     <li> password = The password for password protected urls</li>
+     * </ul>
      * @param url The get capabilities URL
      */
-    WMS(URL url) {
+    WMS(Map options = [:], URL url) {
         this.url = url
-        wms = new WebMapServer(url)
+        if (options.containsKey("user") && options.containsKey("password")) {
+            HTTPClient client = new SimpleHttpClient()
+            client.user = options.user
+            client.password = options.password
+            wms = new WebMapServer(url, client)
+        } else {
+            wms = new WebMapServer(url)
+        }
         capabilities = wms.capabilities
     }
 
