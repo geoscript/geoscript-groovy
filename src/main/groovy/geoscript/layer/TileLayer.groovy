@@ -277,7 +277,7 @@ abstract class TileLayer<T extends Tile> implements Closeable {
         // MBTiles
         if (type.equalsIgnoreCase("mbtiles")) {
             File file = params.get("file") instanceof File ? params.get("file") as File : new File(params.get("file"))
-            if (!file.exists()) {
+            if (!file.exists() || file.length() == 0 || (params.get("name") && params.get("description"))) {
                 String name = file.name.replaceAll(".mbtiles","")
                 new MBTiles(file, params.get("name", name), params.get("description", name))
             } else {
@@ -288,7 +288,7 @@ abstract class TileLayer<T extends Tile> implements Closeable {
         else if (type.equalsIgnoreCase("geopackage")) {
             File file = params.get("file") instanceof File ? params.get("file") as File : new File(params.get("file"))
             String name = params.get("name", file.name.replaceAll(".gpkg",""))
-            if (!file.exists()) {
+            if (!file.exists() || file.length() == 0 || params.get("pyramid")) {
                 Object p = params.get("pyramid", Pyramid.createGlobalMercatorPyramid())
                 Pyramid pyramid = p instanceof Pyramid ? p as Pyramid : Pyramid.fromString(p as String)
                 new GeoPackage(file, name, pyramid)

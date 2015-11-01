@@ -355,13 +355,24 @@ class TileLayerTestCase {
 
     @Test
     void getTileLayerFromParams() {
-        // MBTiles
+        // MBTiles (file doesn't exist)
         File file = folder.newFile('test.mbtiles')
         file.delete()
         TileLayer tileLayer = TileLayer.getTileLayer([type: 'mbtiles', file: file])
         assertNotNull(tileLayer)
         assertTrue(tileLayer instanceof MBTiles)
-        // GeoPackage
+        // MBTiles (empty file)
+        file = folder.newFile('test.mbtiles')
+        tileLayer = TileLayer.getTileLayer([type: 'mbtiles', file: file])
+        assertNotNull(tileLayer)
+        assertTrue(tileLayer instanceof MBTiles)
+        // GeoPackage (file doesn't exist)
+        file = folder.newFile('test.gpkg')
+        file.delete()
+        tileLayer = TileLayer.getTileLayer([type: 'geopackage', file: file])
+        assertNotNull(tileLayer)
+        assertTrue(tileLayer instanceof GeoPackage)
+        // GeoPackage (empty file)
         file = folder.newFile('test.gpkg')
         file.delete()
         tileLayer = TileLayer.getTileLayer([type: 'geopackage', file: file])

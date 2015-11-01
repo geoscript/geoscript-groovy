@@ -63,6 +63,7 @@ class GeoPackage extends ImageTileLayer {
         this.name = layerName
         this.pyramid = pyramid
         this.pyramid.origin = Pyramid.Origin.TOP_LEFT
+        this.proj = pyramid.proj
         this.bounds = pyramid.bounds
         this.geopkg = new org.geotools.geopkg.GeoPackage(file)
         this.geopkg.init()

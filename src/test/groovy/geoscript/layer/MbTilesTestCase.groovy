@@ -2,6 +2,7 @@ package geoscript.layer
 
 import geoscript.geom.Bounds
 import geoscript.proj.Projection
+import groovy.sql.Sql
 import org.geotools.image.test.ImageAssert
 import org.junit.Rule
 import org.junit.Test
@@ -21,6 +22,33 @@ class MBTilesTestCase {
     void create() {
         File file = new File(getClass().getClassLoader().getResource("states.mbtiles").toURI())
         MBTiles layer = new MBTiles(file)
+        Bounds b = new Bounds(-179.99, -85.0511, 179.99, 85.0511, "EPSG:4326").reproject("EPSG:3857")
+        assertEquals "states", layer.name
+        assertEquals new Projection("EPSG:3857"), layer.proj
+        assertEquals b, layer.bounds
+        Pyramid pyramid = layer.pyramid
+        assertEquals "EPSG:3857", pyramid.proj.id
+        assertEquals b, pyramid.bounds
+        assertEquals 256, pyramid.tileWidth
+        assertEquals 256, pyramid.tileHeight
+        assertEquals Pyramid.Origin.BOTTOM_LEFT, pyramid.origin
+        assertEquals 20, pyramid.grids.size()
+        pyramid.grids.eachWithIndex { Grid g, int z ->
+            assertEquals z, g.z
+            int n = Math.pow(2, z)
+            assertEquals n, g.width
+            assertEquals n, g.height
+            assertEquals 156412.0 / n, g.xResolution, 0.01
+            assertEquals 156412.0 / n, g.yResolution, 0.01
+        }
+        layer.close()
+    }
+
+    @Test
+    void createNew() {
+        File file = folder.newFile("states.mbtiles")
+        file.delete()
+        MBTiles layer = new MBTiles(file, "states", "The united states")
         Bounds b = new Bounds(-179.99, -85.0511, 179.99, 85.0511, "EPSG:4326").reproject("EPSG:3857")
         assertEquals "states", layer.name
         assertEquals new Projection("EPSG:3857"), layer.proj

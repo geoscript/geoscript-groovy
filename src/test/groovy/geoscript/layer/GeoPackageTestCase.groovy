@@ -45,6 +45,33 @@ class GeoPackageTestCase {
     }
 
     @Test
+    void createNew() {
+        File file = folder.newFile("states.gpkg")
+        file.delete()
+        GeoPackage layer = new GeoPackage(file, "states", Pyramid.createGlobalMercatorPyramid())
+        Bounds b = new Bounds(-2.00363951478813E7, -2.00374712051371E7, 2.00363951478813E7, 2.00374712051371E7, "EPSG:3857")
+        assertEquals "states", layer.name
+        assertEquals new Projection("EPSG:3857"), layer.proj
+        assertBoundsEquals b, layer.bounds, 0.0001
+        Pyramid pyramid = layer.pyramid
+        assertEquals "EPSG:3857", pyramid.proj.id
+        assertBoundsEquals b, pyramid.bounds, 0.0001
+        assertEquals 256, pyramid.tileWidth
+        assertEquals 256, pyramid.tileHeight
+        assertEquals Pyramid.Origin.TOP_LEFT, pyramid.origin
+        assertEquals 20, pyramid.grids.size()
+        pyramid.grids.eachWithIndex { Grid g, int z ->
+            assertEquals z, g.z
+            int n = Math.pow(2, z)
+            assertEquals n, g.width
+            assertEquals n, g.height
+            assertEquals 156412.0 / n, g.xResolution, 0.01
+            assertEquals 156412.0 / n, g.yResolution, 0.01
+        }
+        layer.close()
+    }
+
+    @Test
     void get() {
         File file = new File(getClass().getClassLoader().getResource("states.gpkg").toURI())
         GeoPackage layer = new GeoPackage(file, "states")
