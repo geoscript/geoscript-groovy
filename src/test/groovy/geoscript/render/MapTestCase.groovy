@@ -123,8 +123,8 @@ class MapTestCase {
         shp.style = new Stroke("#ff0000", 2.0)
 
         Map map = new Map()
-        map.addLayer(shp)
         map.addTileLayer(layer)
+        map.addLayer(shp)
         def image = map.renderToImage()
         assertNotNull(image)
 

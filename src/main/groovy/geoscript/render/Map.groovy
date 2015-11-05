@@ -13,6 +13,8 @@ import geoscript.layer.TileLayer
 import org.geotools.map.FeatureLayer
 import org.geotools.map.GridCoverageLayer
 import org.geotools.map.WMSLayer
+import org.geotools.referencing.operation.projection.ProjectionException
+import org.geotools.util.logging.Logging
 
 import java.awt.Graphics2D
 import java.awt.Rectangle
@@ -27,6 +29,9 @@ import org.geotools.renderer.lite.RendererUtilities
 import org.geotools.renderer.lite.StreamingRenderer
 
 import org.geotools.referencing.crs.DefaultGeographicCRS
+
+import java.util.logging.Level
+import java.util.logging.Logger
 
 /**
  * The GeoScript Map for rendering {@link geoscript.layer.Layer Layers}.
@@ -91,6 +96,11 @@ class Map {
      * The Projection
      */
     private Projection projection
+
+    /**
+     * The Logger
+     */
+    private static final Logger LOGGER = Logging.getLogger("geoscript.render.Map");
 
     /**
      * A lookup Map of Renderers by type
@@ -327,36 +337,6 @@ class Map {
      * Set up for rendering (add layers, configure bounds and projection)
      */
     protected void setUpRendering() {
-        // Add Layers
-        layers.each { layer ->
-            GtLayer mapLayer
-            if (layer instanceof Layer) {
-                mapLayer = new FeatureLayer(layer.fs, layer.style.gtStyle)
-            } else if (layer instanceof Raster) {
-                mapLayer = new GridCoverageLayer(layer.coverage, layer.style.gtStyle)
-            } else if (layer instanceof ImageTileLayer) {
-                ImageTileLayer tileLayer = layer as ImageTileLayer
-                def raster = tileLayer.getRaster(this.bounds.reproject(tileLayer.proj), this.width, this.height)
-                mapLayer = new GridCoverageLayer(raster.coverage, new RasterSymbolizer().gtStyle)
-            } else if (layer instanceof VectorTiles) {
-                VectorTiles vectorTiles = layer as VectorTiles
-                vectorTiles.getLayers(vectorTiles.tiles(this.bounds.reproject(vectorTiles.proj), this.width, this.height)).each { Layer lyr ->
-                    content.addLayer(new FeatureLayer(lyr.fs, lyr.style.gtStyle))
-                }
-            } else if (layer instanceof geoscript.layer.WMSLayer) {
-                def wmsLayer = layer as geoscript.layer.WMSLayer
-                def gtWmsLayer = new WMSLayer(wmsLayer.wms.wms, wmsLayer.layers[0].layer)
-                (1..<wmsLayer.layers.size()).each{i ->
-                    gtWmsLayer.addLayer(wmsLayer.layers[i].layer)
-                }
-                mapLayer = gtWmsLayer
-            } else if (layer instanceof GtLayer) {
-                mapLayer = layer
-            }
-            if (mapLayer) {
-                content.addLayer(mapLayer)
-            }
-        }
         // Set Bounds and Projections
         def b = getBounds()
         // If bounds is not set build it from all layers
@@ -365,7 +345,11 @@ class Map {
                 if (b == null || b.empty) {
                     b = lyr.bounds
                 } else {
-                    b.expand(lyr.bounds)
+                    try {
+                        b.expand(lyr.bounds)
+                    } catch(ProjectionException e) {
+                        LOGGER.log(Level.WARNING, "Error expanding bounds ${b} with ${lyr.bounds}!")
+                    }
                 }
             }
         }
@@ -399,6 +383,36 @@ class Map {
             b = new Bounds(b.minX, b.minY, b.maxX, b.maxY, p)
         }
         setBounds(b)
+        // Add Layers
+        layers.each { layer ->
+            GtLayer mapLayer
+            if (layer instanceof Layer) {
+                mapLayer = new FeatureLayer(layer.fs, layer.style.gtStyle)
+            } else if (layer instanceof Raster) {
+                mapLayer = new GridCoverageLayer(layer.coverage, layer.style.gtStyle)
+            } else if (layer instanceof ImageTileLayer) {
+                ImageTileLayer tileLayer = layer as ImageTileLayer
+                def raster = tileLayer.getRaster(this.bounds.reproject(tileLayer.proj), this.width, this.height)
+                mapLayer = new GridCoverageLayer(raster.coverage, new RasterSymbolizer().gtStyle)
+            } else if (layer instanceof VectorTiles) {
+                VectorTiles vectorTiles = layer as VectorTiles
+                vectorTiles.getLayers(vectorTiles.tiles(this.bounds.reproject(vectorTiles.proj), this.width, this.height)).each { Layer lyr ->
+                    content.addLayer(new FeatureLayer(lyr.fs, lyr.style.gtStyle))
+                }
+            } else if (layer instanceof geoscript.layer.WMSLayer) {
+                def wmsLayer = layer as geoscript.layer.WMSLayer
+                def gtWmsLayer = new WMSLayer(wmsLayer.wms.wms, wmsLayer.layers[0].layer)
+                (1..<wmsLayer.layers.size()).each{i ->
+                    gtWmsLayer.addLayer(wmsLayer.layers[i].layer)
+                }
+                mapLayer = gtWmsLayer
+            } else if (layer instanceof GtLayer) {
+                mapLayer = layer
+            }
+            if (mapLayer) {
+                content.addLayer(mapLayer)
+            }
+        }
         // Set width and height
         content.viewport.setScreenArea(new Rectangle(width, height))
     }
