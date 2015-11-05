@@ -323,11 +323,34 @@ class TileLayerTestCase {
         assertTrue(tileLayer instanceof TMS)
         assertEquals(file.absolutePath, (tileLayer as TMS).dir.absolutePath)
         assertEquals("jpeg", (tileLayer as TMS).imageType)
-        // OSM
+        // OSM with URL
         tileLayer = TileLayer.getTileLayer("type=osm url=http://a.tile.openstreetmap.org")
         assertNotNull(tileLayer)
         assertTrue(tileLayer instanceof OSM)
         assertTrue((tileLayer as OSM).baseUrls.contains("http://a.tile.openstreetmap.org"))
+        assertFalse((tileLayer as OSM).baseUrls.contains("http://b.tile.openstreetmap.org"))
+        assertFalse((tileLayer as OSM).baseUrls.contains("http://c.tile.openstreetmap.org"))
+        // OSM with URLs
+        tileLayer = TileLayer.getTileLayer("type=osm urls=http://a.tile.openstreetmap.org,http://c.tile.openstreetmap.org")
+        assertNotNull(tileLayer)
+        assertTrue(tileLayer instanceof OSM)
+        assertTrue((tileLayer as OSM).baseUrls.contains("http://a.tile.openstreetmap.org"))
+        assertFalse((tileLayer as OSM).baseUrls.contains("http://b.tile.openstreetmap.org"))
+        assertTrue((tileLayer as OSM).baseUrls.contains("http://c.tile.openstreetmap.org"))
+        // OSM with no URLs
+        tileLayer = TileLayer.getTileLayer("type=osm")
+        assertNotNull(tileLayer)
+        assertTrue(tileLayer instanceof OSM)
+        assertTrue((tileLayer as OSM).baseUrls.contains("http://a.tile.openstreetmap.org"))
+        assertTrue((tileLayer as OSM).baseUrls.contains("http://b.tile.openstreetmap.org"))
+        assertTrue((tileLayer as OSM).baseUrls.contains("http://c.tile.openstreetmap.org"))
+        // OSM
+        tileLayer = TileLayer.getTileLayer("osm")
+        assertNotNull(tileLayer)
+        assertTrue(tileLayer instanceof OSM)
+        assertTrue((tileLayer as OSM).baseUrls.contains("http://a.tile.openstreetmap.org"))
+        assertTrue((tileLayer as OSM).baseUrls.contains("http://b.tile.openstreetmap.org"))
+        assertTrue((tileLayer as OSM).baseUrls.contains("http://c.tile.openstreetmap.org"))
         // UTFGrid
         file = folder.newFolder("utfgrid")
         tileLayer = TileLayer.getTileLayer("type=utfgrid file=${file.absolutePath}")

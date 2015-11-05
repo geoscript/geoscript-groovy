@@ -239,6 +239,10 @@ abstract class TileLayer<T extends Tile> implements Closeable {
             params["type"] = "geopackage"
             params["file"] = new File(paramsStr)
         }
+        // OSM
+        else if (paramsStr.equalsIgnoreCase("osm")) {
+            params["type"] = "osm"
+        }
         else {
             paramsStr.split("[ ]+(?=([^\']*\'[^\']*\')*[^\']*\$)").each {
                 def parts = it.split("=")
@@ -322,8 +326,17 @@ abstract class TileLayer<T extends Tile> implements Closeable {
         // OSM
         else if (type.equalsIgnoreCase("osm")) {
             String name = params.get("name")
-            List baseUrls = [params.get("url")]
-            new OSM(name, baseUrls)
+            if (params.get("url")) {
+                List baseUrls = [params.get("url")]
+                new OSM(name, baseUrls)
+            }
+            else if (params.get("urls")) {
+                List baseUrls = params.get("urls").split(",")
+                new OSM(name, baseUrls)
+            }
+            else {
+                new OSM()
+            }
         }
         // UTFGrid
         else if (type.equalsIgnoreCase("utfgrid")) {
