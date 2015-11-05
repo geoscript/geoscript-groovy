@@ -200,7 +200,17 @@ class Bounds {
      * @return The modified Bounds
      */
     Bounds expand(Bounds other) {
-        env.expandToInclude(other.env)
+        ReferencedEnvelope otherEnv
+        if (this.proj.equals(other.proj)) {
+            otherEnv = other.env
+        } else {
+            otherEnv = other.reproject(this.proj).env
+        }
+        if (otherEnv.contains(this.env)) {
+            this.env = otherEnv
+        } else if (!this.env.contains(otherEnv)) {
+            env.expandToInclude(otherEnv)
+        }
         this
     }
 
@@ -436,6 +446,7 @@ class Bounds {
         double maxY = this.maxY + deltaY / 2D
         new Bounds(minX, minY, maxX, maxY, this.proj)
     }
+
 
     /**
      * Get a value from this Bounds at the given index (minX = 0, minY = 1,
