@@ -11,7 +11,8 @@ import com.vividsolutions.jts.operation.buffer.BufferParameters
 import com.vividsolutions.jts.operation.buffer.BufferOp
 import com.vividsolutions.jts.awt.FontGlyphReader
 import com.vividsolutions.jts.operation.overlay.snap.GeometrySnapper
-import geoscript.geom.io.*
+import geoscript.geom.io.Reader
+import geoscript.geom.io.Readers
 import com.vividsolutions.jts.geom.PrecisionModel
 import com.vividsolutions.jts.precision.GeometryPrecisionReducer
 import org.geotools.geometry.jts.CurvedGeometries
@@ -762,86 +763,6 @@ class Geometry {
     }
 
     /**
-     * Get the WKT of the Geometry
-     * @return The WKT of this Geometry
-     */
-    String getWkt() {
-        new WktWriter().write(this)
-    }
-    
-    /**
-     * Get the WKB of the Geometry
-     * @return The WKB hex string of this Geometry
-     */
-    String getWkb() {
-        new WkbWriter().write(this)
-    }
-
-     /**
-     * Get the WKB of the Geometry
-     * @return The WKB byte array of this Geometry
-     */
-    byte[] getWkbBytes() {
-        new WkbWriter().writeBytes(this)
-    }
-
-    /**
-     * Get a KML String for this Geometry
-     * @return The KML String
-     */
-    String getKml() {
-        new KmlWriter().write(this)
-    }
-
-    /**
-     * Get a GeoJSON String for this Geometry
-     * @return The GeoJSON String
-     */
-    String getGeoJSON() {
-        new GeoJSONWriter().write(this)
-    }
-
-    /**
-     * Get a GML 2 String for this Geometry
-     * @return The GML 2 String
-     */
-    String getGml2() {
-        new Gml2Writer().write(this)
-    }
-
-    /**
-     * Get a GML 3 String for this Geometry
-     * @return The GML 3 String
-     */
-    String getGml3() {
-        new Gml3Writer().write(this)
-    }
-
-    /**
-     * Get a GPX String for this Geometry
-     * @return The GPX String
-     */
-    String getGpx() {
-        new GpxWriter().write(this)
-    }
-
-    /**
-     * Get a Geobuf hex string for this Geometry
-     * @return The Geobuf hex string
-     */
-    String getGeobuf() {
-        new GeobufWriter().write(this)
-    }
-
-    /**
-     * Get a Geobuf byte array for this Geometry
-     * @return The Geobuf byte array
-     */
-    byte[] getGeobufBytes() {
-        new GeobufWriter().writeBytes(this)
-    }
-
-    /**
      * The string representation
      * @return The string representation
      */
@@ -972,96 +893,6 @@ class Geometry {
     }
 	
     /**
-     * Get a Geometry from WKT
-     * @param wkt A WKT String
-     * @return A Geometry
-     */
-    static Geometry fromWKT(String wkt) {
-        new WktReader().read(wkt)
-    }
-
-    /**
-     * Get a Geometry from WKB byte array
-     * @param wkb The WKB byte array
-     * @return A Geometry
-     */
-    static Geometry fromWKB(byte[] wkb) {
-        new WkbReader().read(wkb)
-    }
-
-    /**
-     * Get a Geometry from WKB hex string
-     * @param wkb The WKB hex string
-     * @return A Geometry
-     */
-    static Geometry fromWKB(String wkb) {
-        new WkbReader().read(wkb)
-    }
-
-    /**
-     * Get a Geometry from a KML String
-     * @param kml A KML String
-     * @return A Geometry
-     */
-    static Geometry fromKml(String kml) {
-        new KmlReader().read(kml)
-    }
-
-    /**
-     * Get a Geometry from a GeoJSON String
-     * @param geoJSON A GeoJSON String
-     * @return A Geometry
-     */
-    static Geometry fromGeoJSON(String geoJSON) {
-        new GeoJSONReader().read(geoJSON)
-    }
-
-    /**
-     * Get a Geometry from a GML2 String
-     * @param gml2 A GML2 String
-     * @return A Geometry
-     */
-    static Geometry fromGML2(String gml2) {
-        new Gml2Reader().read(gml2)
-    }
-
-    /**
-     * Get a Geometry from a GML3 String
-     * @param gml3 A GML3 String
-     * @return A Geometry
-     */
-    static Geometry fromGML3(String gml3) {
-        new Gml3Reader().read(gml3)
-    }
-
-    /**
-     * Get a Geometry from a GPX String
-     * @param gpx A GPX String
-     * @return A Geometry
-     */
-    static Geometry fromGpx(String gpx) {
-        new GpxReader().read(gpx)
-    }
-
-    /**
-     * Get a Geometry from a Geobuf Hex String
-     * @param geobuf A Geobuf Hex String
-     * @return A Geometry
-     */
-    static Geometry fromGeobuf(String geobuf) {
-        new GeobufReader().read(geobuf)
-    }
-
-    /**
-     * Get a Geometry from a Geobuf byte array
-     * @param geobuf A Geobuf byte array
-     * @return A Geometry
-     */
-    static Geometry fromGeobuf(byte[] geobuf) {
-        new GeobufReader().read(geobuf)
-    }
-
-    /**
      * Get a Geometry from a String with an unknown format.
      * @param str The String
      * @return A Geometry or null if the String can't be parsed
@@ -1072,17 +903,7 @@ class Geometry {
             return null
         }
         str = str.trim()
-        List readers = [
-            new WktReader(),
-            new GeoJSONReader(),
-            new GeoRSSReader(),
-            new Gml2Reader(),
-            new Gml3Reader(),
-            new KmlReader(),
-            new WkbReader(),
-            new GpxReader(),
-            new GeobufReader()
-        ]
+        List<Reader> readers = Readers.list()
         Geometry geom = null
         for(def reader in readers ) {
             try {

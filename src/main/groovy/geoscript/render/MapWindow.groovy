@@ -22,7 +22,7 @@ import org.geotools.swing.action.*
  * </pre></blockquote></p>
  * @author Jared Erickson
  */
-class MapWindow {
+class MapWindow implements Displayer {
 
     /**
      * Open a complex GUI for viewing a Map
@@ -102,4 +102,20 @@ class MapWindow {
             mapPane.mapContent = map.content
         }
     }
+
+    /**
+     * Creae a MapWindow
+     */
+    MapWindow() {
+    }
+
+    /**
+     * Display the Map in a GUI
+     * @param map The Map
+     */
+    @Override
+    void display(Map map) {
+        new MapWindow(map)
+    }
+
 }

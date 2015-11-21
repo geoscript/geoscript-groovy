@@ -78,4 +78,23 @@ class MySQL extends Database {
         params.put("dbtype", "mysql")
         f.createDataStore(params)
     }
+
+    /**
+     * The MySQL WorkspaceFactory
+     */
+    static class Factory extends WorkspaceFactory<MySQL> {
+
+        @Override
+        MySQL create(DataStore dataStore) {
+            MySQL mysql = null
+            if (dataStore instanceof org.geotools.jdbc.JDBCDataStore) {
+                def jdbcds = dataStore as org.geotools.jdbc.JDBCDataStore
+                if (jdbcds.dataStoreFactory instanceof org.geotools.data.mysql.MySQLDataStoreFactory ||
+                    jdbcds.dataStoreFactory instanceof org.geotools.data.mysql.MySQLJNDIDataStoreFactory) {
+                    mysql = new MySQL(dataStore)
+                }
+            }
+            mysql
+        }
+    }
 }

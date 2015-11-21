@@ -170,6 +170,15 @@ class FeatureTestCase {
         assertEquals """{"type":"Feature","geometry":{"type":"Point","coordinates":[111,-47]},"properties":{"name":"House","price":12.5},"id":"house1"}""", f1.geoJSON
     }
 
+    @Test void fromGeoJSON() {
+        Feature f = Feature.fromGeoJSON("""{"type":"Feature","geometry":{"type":"Point","coordinates":[111,-47]},"properties":{"name":"House","price":12.5},"id":"house1"}""")
+        assertNotNull f
+        assertEquals(111, f.geom.x, 0.1)
+        assertEquals(-47, f.geom.y, 0.1)
+        assertEquals("House", f["name"])
+        assertEquals(12.5, f["price"], 0.1)
+    }
+
     @Test void getGeoRSS() {
         Schema s1 = new Schema("houses", [new Field("geom","Point"), new Field("name","string"), new Field("price","float")])
         Feature f1 = new Feature([new Point(111,-47), "House", 12.5], "house1", s1)
@@ -179,6 +188,21 @@ class FeatureTestCase {
                 "<updated>12/7/2013</updated>" +
                 "<georss:point>-47.0 111.0</georss:point>" +
                 "</entry>", f1.getGeoRSS(feedType: "atom", geometryType: "simple", itemDate: "12/7/2013"), removeXmlNS: true
+    }
+
+    @Test void fromGeoRSS() {
+        Feature f = Feature.fromGeoRSS("<entry xmlns:georss='http://www.georss.org/georss' xmlns='http://www.w3.org/2005/Atom'>" +
+                "<title>house1</title>" +
+                "<summary>[geom:POINT (111 -47), name:House, price:12.5]</summary>" +
+                "<updated>12/7/2013</updated>" +
+                "<georss:point>-47.0 111.0</georss:point>" +
+                "</entry>")
+        assertNotNull f
+        assertEquals(111, f.geom.x, 0.1)
+        assertEquals(-47, f.geom.y, 0.1)
+        assertEquals("[geom:POINT (111 -47), name:House, price:12.5]", f["summary"])
+        assertEquals("12/7/2013", f["updated"])
+        assertEquals("house1", f["title"])
     }
 
     @Test void getGml() {
@@ -199,6 +223,27 @@ class FeatureTestCase {
 """, f1.gml, removeXmlNS: true
     }
 
+    @Test void fromGml() {
+        Feature f = Feature.fromGml("""<gsf:houses xmlns:gsf="http://geoscript.org/feature" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:gml="http://www.opengis.net/gml" fid="house1">
+<gml:name>House</gml:name>
+<gsf:geom>
+<gml:Point>
+<gml:coord>
+<gml:X>111.0</gml:X>
+<gml:Y>-47.0</gml:Y>
+</gml:coord>
+</gml:Point>
+</gsf:geom>
+<gsf:price>12.5</gsf:price>
+</gsf:houses>
+""")
+        assertNotNull f
+        assertEquals(111, f.geom.x, 0.1)
+        assertEquals(-47, f.geom.y, 0.1)
+        assertEquals("House", f["name"])
+        assertEquals(12.5, f["price"] as double, 0.1)
+    }
+
     @Test void getKml() {
         Schema s1 = new Schema("houses", [new Field("geom","Point"), new Field("name","string"), new Field("price","float")])
         Feature f1 = new Feature([new Point(111,-47), "House", 12.5], "house1", s1)
@@ -211,12 +256,36 @@ class FeatureTestCase {
 """, f1.kml, removeXmlNS: true
     }
 
+    @Test void fromKml() {
+        Feature f = Feature.fromKml("""<kml:Placemark xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:kml="http://earth.google.com/kml/2.1" id="house1">
+<kml:name>House</kml:name>
+<kml:Point>
+<kml:coordinates>111.0,-47.0</kml:coordinates>
+</kml:Point>
+</kml:Placemark>
+""")
+        assertNotNull f
+        assertEquals(111, f.geom.x, 0.1)
+        assertEquals(-47, f.geom.y, 0.1)
+        assertEquals("House", f["name"])
+    }
+
     @Test void getGpx() {
         Schema s1 = new Schema("houses", [new Field("geom","Point"), new Field("name","string"), new Field("price","float")])
         Feature f1 = new Feature([new Point(111,-47), "House", 12.5], "house1", s1)
         AssertUtil.assertStringsEqual "<wpt lat='-47.0' lon='111.0' xmlns='http://www.topografix.com/GPX/1/1'>" +
                 "<name>House</name><desc>House costs \$12.5</desc></wpt>",
                 f1.getGpx(name: new Property("name"), description: {Feature f -> "${f['name']} costs \$${f['price']}"})
+    }
+
+    @Test void fromGpx() {
+        Feature f = Feature.fromGpx("<wpt lat='-47.0' lon='111.0' xmlns='http://www.topografix.com/GPX/1/1'>" +
+                "<name>House</name><desc>House costs \$12.5</desc></wpt>")
+        assertNotNull f
+        assertEquals(111, f.geom.x, 0.1)
+        assertEquals(-47, f.geom.y, 0.1)
+        assertEquals("House", f["name"])
+        assertEquals("House costs \$12.5", f["desc"])
     }
 
     @Test void getGeobuf() {
@@ -227,6 +296,16 @@ class FeatureTestCase {
         assertArrayEquals([10, 4, 110, 97, 109, 101, 10, 5, 112, 114, 105, 99, 101, 16, 2, 24, 6, 42, 31, 10, 12, 8, 0,
                            26, 8, -128, -25, -19, 105, -1, -90, -23, 44, 106, 7, 10, 5, 72, 111, 117, 115, 101, 106, 6,
                            10, 4, 49, 50, 46, 53] as byte[], feature.geobufBytes)
+    }
+
+    @Test void fromGeobuf() {
+        Feature f = Feature.fromGeobuf("0a046e616d650a057072696365100218062a1f0a0c08001a" +
+                "0880e7ed69ffa6e92c6a070a05486f7573656a060a0431322e35")
+        assertNotNull f
+        assertEquals(111, f.geom.x, 0.1)
+        assertEquals(-47, f.geom.y, 0.1)
+        assertEquals("House", f["name"])
+        assertEquals(12.5, f["price"] as double, 0.1)
     }
 }
 

@@ -1,5 +1,6 @@
 package geoscript.layer
 
+import org.geotools.coverage.grid.io.AbstractGridFormat
 import org.geotools.coverageio.gdal.mrsid.MrSIDFormat
 
 /**
@@ -14,5 +15,29 @@ class MrSID extends Format {
      */
     MrSID(def stream) {
         super(new MrSIDFormat(), stream)
+    }
+
+    /**
+     * The MrSID FormatFactory
+     */
+    static class Factory extends FormatFactory<MrSID> {
+
+        @Override
+        protected List<String> getFileExtensions() {
+            ["sid"]
+        }
+
+        @Override
+        protected Format createFromFormat(AbstractGridFormat gridFormat, Object source) {
+            if (gridFormat instanceof MrSIDFormat) {
+                new MrSID(source)
+            }
+        }
+
+        @Override
+        protected Format createFromFile(File file) {
+            new MrSID(file)
+        }
+
     }
 }

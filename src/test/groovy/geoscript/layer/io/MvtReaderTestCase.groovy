@@ -3,9 +3,6 @@ package geoscript.layer.io
 import geoscript.layer.Layer
 import org.apache.commons.codec.binary.Base64
 import org.junit.Test
-
-import static org.junit.Assert.assertEquals
-import static org.junit.Assert.assertEquals
 import static org.junit.Assert.assertEquals
 
 /**

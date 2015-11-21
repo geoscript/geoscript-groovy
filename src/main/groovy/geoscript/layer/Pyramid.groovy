@@ -1,12 +1,8 @@
 package geoscript.layer
 
 import geoscript.geom.Bounds
-import geoscript.layer.io.CsvPyramidReader
-import geoscript.layer.io.CsvPyramidWriter
-import geoscript.layer.io.JsonPyramidReader
-import geoscript.layer.io.JsonPyramidWriter
-import geoscript.layer.io.XmlPyramidReader
-import geoscript.layer.io.XmlPyramidWriter
+import geoscript.layer.io.PyramidReader
+import geoscript.layer.io.PyramidReaders
 import geoscript.proj.Projection
 import groovy.transform.EqualsAndHashCode
 import groovy.transform.ToString
@@ -152,30 +148,6 @@ class Pyramid {
     }
 
     /**
-     * Get this Pyramid as a CSV String
-     * @return A CSV String
-     */
-    String getCsv() {
-        new CsvPyramidWriter().write(this)
-    }
-
-    /**
-     * Get this Pyramid as a XML String
-     * @return A XML String
-     */
-    String getXml() {
-        new XmlPyramidWriter().write(this)
-    }
-
-    /**
-     * Get this JSON as a JSON String
-     * @return A CSV String
-     */
-    String getJson() {
-        new JsonPyramidWriter().write(this)
-    }
-
-    /**
      * Create a Pyramid from a String.  The String can be a well known name (GlobalMercator or GlobalMercatorBottomLeft),
      * a JSON String or File, an XML String or File, or a CSV String or File
      * @param str A Pyramid String or File
@@ -189,52 +161,21 @@ class Pyramid {
             Pyramid.createGlobalMercatorPyramid(origin: Pyramid.Origin.BOTTOM_LEFT)
         } else if (str.equalsIgnoreCase("GlobalGeodetic") || str.equalsIgnoreCase("geodetic")) {
             Pyramid.createGlobalGeodeticPyramid()
-        }
-        // JSON
-        else if (str.startsWith("{")) {
-            fromJson(str)
-        } else if (str.endsWith(".json")) {
-            fromJson(new File(str).text)
-        }
-        // XML
-        else if (str.startsWith("<")) {
-            fromXml(str)
-        } else if (str.endsWith(".xml")) {
-            fromXml(new File(str).text)
-        }
-        // Text
-        else if (str.endsWith(".txt") || str.endsWith(".csv")) {
-            fromCsv(new File(str).text)
         } else {
-            fromCsv(str)
+            File file = new File(str)
+            if (file.exists()){
+                str = file.text
+            }
+            Pyramid pyramid = null
+            for (PyramidReader reader : PyramidReaders.list()) {
+                try {
+                    pyramid = reader.read(str)
+                } catch(Exception ex){
+                    // Just try the next reader
+                }
+            }
+            pyramid
         }
-    }
-
-    /**
-     * Create a Pyramid from a CSV String
-     * @param csv The CSV String
-     * @return A Pyramid
-     */
-    static Pyramid fromCsv(String csv) {
-        new CsvPyramidReader().read(csv)
-    }
-
-    /**
-     * Create a Pyramid from an XML String
-     * @param xml The XML String
-     * @return A Pyramid
-     */
-    static Pyramid fromXml(String xml) {
-        new XmlPyramidReader().read(xml)
-    }
-
-    /**
-     * Create a Pyramid from a JSON String
-     * @param json The JSON String
-     * @return A Pyramid
-     */
-    static Pyramid fromJson(String json) {
-        new JsonPyramidReader().read(json)
     }
 
     /**

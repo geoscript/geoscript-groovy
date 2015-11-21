@@ -1,5 +1,6 @@
 package geoscript.workspace
 
+import org.geotools.data.DataStore
 import org.geotools.data.wfs.WFSDataStore
 import org.geotools.data.wfs.WFSDataStoreFactory
 
@@ -85,5 +86,32 @@ class WFS extends Workspace {
         params.put("WFSDataStoreFactory:TRY_GZIP", options.get("tryGzip",true))
         params.put("WFSDataStoreFactory:LENIENT", options.get("lenient",true))
         return params
+    }
+
+    /**
+     * The WFS WorkspaceFactory
+     */
+    static class Factory extends WorkspaceFactory<WFS> {
+
+        @Override
+        Map getParametersFromString(String str) {
+            Map params = [:]
+            if (str.toLowerCase().startsWith("http") && str.toLowerCase().contains("service=wfs") &&
+                str.toLowerCase().contains("request=getcapabilities")) {
+                params.put("WFSDataStoreFactory:GET_CAPABILITIES_URL", str)
+            } else {
+                params = super.getParametersFromString(str)
+            }
+            params
+        }
+
+        @Override
+        WFS create(DataStore dataStore) {
+            WFS wfs = null
+            if (dataStore instanceof org.geotools.data.wfs.WFSDataStore) {
+                wfs = new WFS(dataStore)
+            }
+            wfs
+        }
     }
 }

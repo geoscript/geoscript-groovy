@@ -184,4 +184,47 @@ class MBTiles extends ImageTileLayer {
         this.tiles.close()
         if (sql) sql.close()
     }
+
+    /**
+     * The MBTiles TileLayerFactory
+     */
+    static class Factory extends TileLayerFactory<MBTiles> {
+
+        @Override
+        MBTiles create(String paramsStr) {
+            Map params = [:]
+            if (paramsStr.endsWith(".mbtiles") && !paramsStr.contains("type=")) {
+                params["type"] = "mbtiles"
+                params["file"] = new File(paramsStr)
+                create(params)
+            } else {
+                super.create(paramsStr)
+            }
+        }
+
+        @Override
+        MBTiles create(Map params) {
+            String type = params.get("type","").toString()
+            if (type.equalsIgnoreCase("mbtiles")) {
+                File file = params.get("file") instanceof File ? params.get("file") as File : new File(params.get("file"))
+                if (!file.exists() || file.length() == 0 || (params.get("name") && params.get("description"))) {
+                    String name = file.name.replaceAll(".mbtiles","")
+                    new MBTiles(file, params.get("name", name), params.get("description", name))
+                } else {
+                    new MBTiles(file)
+                }
+            } else {
+                null
+            }
+        }
+
+        @Override
+        TileRenderer getTileRenderer(Map options, TileLayer tileLayer, List<Layer> layers) {
+            if (tileLayer instanceof MBTiles) {
+                new ImageTileRenderer(tileLayer, layers)
+            } else {
+                null
+            }
+        }
+    }
 }

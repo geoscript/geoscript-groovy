@@ -185,4 +185,50 @@ class GeoPackage extends ImageTileLayer {
         this.geopkg.close()
         if (sql) sql.close()
     }
+
+    /**
+     * The GeoPackage TileLayerFactory
+     */
+    static class Factory extends TileLayerFactory<GeoPackage> {
+
+        @Override
+        GeoPackage create(String paramsStr) {
+            Map params = [:]
+            if (paramsStr.endsWith(".gpkg") && !paramsStr.contains("type=")) {
+                params["type"] = "geopackage"
+                params["file"] = new File(paramsStr)
+                create(params)
+            } else {
+                super.create(paramsStr)
+            }
+        }
+
+        @Override
+        GeoPackage create(Map params) {
+            String type = params.get("type","").toString()
+            if (type.equalsIgnoreCase("geopackage")) {
+                File file = params.get("file") instanceof File ? params.get("file") as File : new File(params.get("file"))
+                String name = params.get("name", file.name.replaceAll(".gpkg",""))
+                if (!file.exists() || file.length() == 0 || params.get("pyramid")) {
+                    Object p = params.get("pyramid", Pyramid.createGlobalMercatorPyramid())
+                    Pyramid pyramid = p instanceof Pyramid ? p as Pyramid : Pyramid.fromString(p as String)
+                    new GeoPackage(file, name, pyramid)
+                } else {
+                    new GeoPackage(file, name)
+                }
+            } else {
+                null
+            }
+        }
+
+        @Override
+        TileRenderer getTileRenderer(Map options, TileLayer tileLayer, List<Layer> layers) {
+            if (tileLayer instanceof GeoPackage) {
+                new ImageTileRenderer(tileLayer, layers)
+            } else {
+                null
+            }
+        }
+    }
+
 }

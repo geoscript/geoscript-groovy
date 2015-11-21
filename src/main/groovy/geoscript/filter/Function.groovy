@@ -88,6 +88,7 @@ class Function extends Expression {
      * @param process The GeoScript Process
      * @param functions A variable List of Functions
      */
+    @Deprecated()
     Function(geoscript.process.Process process, Function... functions) {
         this(createProcessFunction(process, functions))
     }

@@ -257,6 +257,10 @@ class WorkspaceTestCase {
         assertTrue(mem instanceof Memory)
     }
 
+    @Test(expected=IllegalArgumentException) void badWorkspaceString() {
+        Workspace w = Workspace.getWorkspace("BAD_INPUT")
+    }
+
     @Test void withWorkspace() {
         Workspace.withWorkspace(["dbtype": "h2", "database": folder.newFile("roads.db").absolutePath]) { Workspace w ->
             assertNotNull w

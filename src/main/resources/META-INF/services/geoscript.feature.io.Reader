@@ -1,0 +1,6 @@
+geoscript.feature.io.GeobufReader
+geoscript.feature.io.GeoJSONReader
+geoscript.feature.io.GeoRSSReader
+geoscript.feature.io.GmlReader
+geoscript.feature.io.GpxReader
+geoscript.feature.io.KmlReader

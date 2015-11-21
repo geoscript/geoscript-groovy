@@ -1,5 +1,6 @@
 package geoscript.layer
 
+import org.geotools.coverage.grid.io.AbstractGridFormat
 import org.geotools.gce.imagemosaic.ImageMosaicFormat
 
 /**
@@ -14,5 +15,17 @@ class Mosaic extends Format {
      */
     Mosaic(def stream) {
         super(new ImageMosaicFormat(), stream)
+    }
+
+    /**
+     * The Mosaic FormatFactory
+     */
+    static class Factory extends FormatFactory<Mosaic> {
+        @Override
+        protected Format createFromFormat(AbstractGridFormat gridFormat, Object source) {
+            if (gridFormat instanceof ImageMosaicFormat) {
+                new Mosaic(source)
+            }
+        }
     }
 }

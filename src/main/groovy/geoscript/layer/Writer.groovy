@@ -1,14 +1,10 @@
 package geoscript.layer
 
 import geoscript.feature.Feature
-import geoscript.workspace.Directory
-import geoscript.workspace.Memory
-import org.geotools.data.DataUtilities
 import org.geotools.data.DefaultTransaction
 import org.geotools.data.FeatureStore
 import org.geotools.data.Transaction
 import org.geotools.data.collection.ListFeatureCollection
-import org.geotools.feature.DefaultFeatureCollection
 
 /**
  * The Writer allows for adding batches of Features to a Layer
@@ -97,10 +93,9 @@ class Writer {
      * @return A transaction type (null, auto | autocommit, default)
      */
     private String getDefaultTransactionType(Layer layer) {
-        if (layer instanceof Shapefile || layer.workspace instanceof Directory
-                || layer.fs instanceof org.geotools.data.directory.DirectoryFeatureStore) {
+        if (layer.workspace.format.equals("Directory")) {
             "null"
-        } else if (layer.workspace instanceof Memory || layer.workspace instanceof geoscript.workspace.Property) {
+        } else if (layer.workspace.format.equals("Memory") || layer.workspace.format.equals("Property")) {
             "autocommit"
         } else {
             "default"
@@ -128,7 +123,7 @@ class Writer {
         features.add(feature.f)
         // If there are more features in the cache than the batch
         // size, write it
-        if (!(layer.workspace instanceof geoscript.workspace.OGR) && features.size() >= batch) {
+        if (!(layer.workspace.format.equals("OGR")) && features.size() >= batch) {
             // Write to the store
             store.addFeatures(features)
             // Commit and transaction
@@ -145,7 +140,7 @@ class Writer {
     void close() {
         // Make sure to add any left over cached features
         if (!features.isEmpty()) {
-            if (layer.workspace instanceof geoscript.workspace.OGR) {
+            if (layer.workspace.format.equals("OGR")) {
                 layer.write(new Cursor(features))
             } else {
                 store.addFeatures(features)

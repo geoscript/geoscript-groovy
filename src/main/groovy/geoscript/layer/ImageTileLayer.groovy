@@ -1,6 +1,8 @@
 package geoscript.layer
 
 import geoscript.geom.Bounds
+import geoscript.style.RasterSymbolizer
+import org.geotools.map.GridCoverageLayer
 
 import java.awt.Graphics2D
 import java.awt.image.BufferedImage
@@ -9,7 +11,7 @@ import java.awt.image.BufferedImage
  * A TileLayer that is made up of ImageTiles.
  * @author Jared Erickson
  */
-abstract class ImageTileLayer extends TileLayer<ImageTile> {
+abstract class ImageTileLayer extends TileLayer<ImageTile> implements Renderable {
 
     /**
      * Get a Raster using Tiles from the TileCursor.
@@ -62,5 +64,11 @@ abstract class ImageTileLayer extends TileLayer<ImageTile> {
         } else {
             new Raster(new BufferedImage(w,h,BufferedImage.TYPE_INT_ARGB), b)
         }
+    }
+
+    @Override
+    List<org.geotools.map.Layer> getMapLayers(Bounds bounds, List size) {
+        def raster = this.getRaster(bounds.reproject(this.proj), size[0], size[1])
+        [new GridCoverageLayer(raster.coverage, new RasterSymbolizer().gtStyle)]
     }
 }

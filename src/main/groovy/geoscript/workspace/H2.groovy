@@ -124,6 +124,38 @@ class H2 extends Database {
         }
         h2f.createDataStore(params)
     }
+
+    /**
+     * The H2 WorkspaceFactory
+     */
+    static class Factory extends WorkspaceFactory<H2> {
+
+        @Override
+        Map getParametersFromString(String str) {
+            Map params = [:]
+            if (!str.contains("=") && str.endsWith(".db")) {
+                params.put("dbtype", "h2")
+                params.put("database", new File(str).absolutePath)
+            } else {
+                params = super.getParametersFromString(str)
+            }
+            params
+        }
+
+        @Override
+        H2 create(DataStore dataStore) {
+            H2 h2 = null
+            if (dataStore instanceof org.geotools.jdbc.JDBCDataStore) {
+                def jdbcds = dataStore as org.geotools.jdbc.JDBCDataStore
+                if (jdbcds.dataStoreFactory instanceof org.geotools.data.h2.H2DataStoreFactory ||
+                    jdbcds.dataStoreFactory instanceof org.geotools.data.h2.H2JNDIDataStoreFactory) {
+                    h2 = new H2(dataStore)
+                }
+            }
+            h2
+        }
+    }
+
 }
 
 

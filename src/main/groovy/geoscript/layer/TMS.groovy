@@ -144,4 +144,33 @@ class TMS extends ImageTileLayer {
         // Do nothing
     }
 
+    /**
+     * The TMS TileLayerFactory
+     */
+    static class Factory extends TileLayerFactory<TMS> {
+
+        @Override
+        TMS create(Map params) {
+            String type = params.get("type","").toString()
+            if (type.equalsIgnoreCase("tms")) {
+                Object fileOrUrl = params.get("file", params.get("url"))
+                String name = params.get("name", fileOrUrl instanceof File ? (fileOrUrl as File).name : "tms")
+                String imageType = params.get("format", "png")
+                Object p = params.get("pyramid", Pyramid.createGlobalMercatorPyramid())
+                Pyramid pyramid = p instanceof Pyramid ? p as Pyramid : Pyramid.fromString(p as String)
+                new TMS(name, imageType, fileOrUrl, pyramid)
+            } else {
+                null
+            }
+        }
+
+        @Override
+        TileRenderer getTileRenderer(Map options, TileLayer tileLayer, List<Layer> layers) {
+            if (tileLayer instanceof TMS) {
+                new ImageTileRenderer(tileLayer, layers)
+            } else {
+                null
+            }
+        }
+    }
 }

@@ -2,17 +2,11 @@ package geoscript.render
 
 import geoscript.filter.Color
 import geoscript.geom.Bounds
-import geoscript.layer.ImageTileLayer
 import geoscript.layer.Layer
-import geoscript.layer.VectorTiles
-import geoscript.layer.WMS
+import geoscript.layer.Renderable
 import geoscript.proj.Projection
 import geoscript.layer.Raster
-import geoscript.style.RasterSymbolizer
 import geoscript.layer.TileLayer
-import org.geotools.map.FeatureLayer
-import org.geotools.map.GridCoverageLayer
-import org.geotools.map.WMSLayer
 import org.geotools.referencing.operation.projection.ProjectionException
 import org.geotools.util.logging.Logging
 
@@ -105,16 +99,7 @@ class Map {
     /**
      * A lookup Map of Renderers by type
      */
-    private java.util.Map renderers = [
-        "jpeg": new Image("jpeg"),
-        "jpg": new Image("jpeg"),
-        "png": new Image("png"),
-        "gif": new Image("gif"),
-        "pdf": new Pdf(),
-        "svg": new Svg(),
-        "base64":  new Base64(),
-        "ascii" : new ASCII()
-    ]
+    private java.util.Map renderers = [:]
 
     /**
      * Create a new Map
@@ -126,13 +111,20 @@ class Map {
         hints.add(new RenderingHints(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON))
         renderer.setJava2DHints(hints)
         renderer.setRendererHints([
-            (StreamingRenderer.LABEL_CACHE_KEY): labelCache,
-            (StreamingRenderer.SCALE_COMPUTATION_METHOD_KEY): StreamingRenderer.SCALE_ACCURATE,
-            (StreamingRenderer.LINE_WIDTH_OPTIMIZATION_KEY): Boolean.FALSE,
-            (StreamingRenderer.ADVANCED_PROJECTION_HANDLING_KEY): true,
-            (StreamingRenderer.CONTINUOUS_MAP_WRAPPING): true
+                (StreamingRenderer.LABEL_CACHE_KEY): labelCache,
+                (StreamingRenderer.SCALE_COMPUTATION_METHOD_KEY): StreamingRenderer.SCALE_ACCURATE,
+                (StreamingRenderer.LINE_WIDTH_OPTIMIZATION_KEY): Boolean.FALSE,
+                (StreamingRenderer.ADVANCED_PROJECTION_HANDLING_KEY): true,
+                (StreamingRenderer.CONTINUOUS_MAP_WRAPPING): true
         ])
         renderer.setMapContent(content)
+        Renderers.list().each { Renderer renderer ->
+            String name = renderer.class.simpleName.toLowerCase()
+            renderers[name] = renderer
+            if (name.equals("jpeg")) {
+                renderers["jpg"] = renderer
+            }
+        }
     }
 
     /**
@@ -177,19 +169,19 @@ class Map {
     }
 
     /**
-     * Add a WMS Layer
-     * @param wms The WMS Layer
-     */
-    void addWMSLayer(WMS wms) {
-        layers.add(wms)
-    }
-
-    /**
      * Add a TileLayer
      * @param layer The TileLayer
      */
     void addTileLayer(TileLayer layer) {
         layers.add(layer)
+    }
+
+    /**
+     * Add a Renderable Map Layer
+     * @param renderable The Renderable Map Layer
+     */
+    void addLayer(Renderable renderable) {
+        layers.add(renderable)
     }
 
     /**
@@ -293,7 +285,7 @@ class Map {
     /**
      * Render the Map to a BufferedImage for the given Bounds
      * @return A BufferedImage
-     */ 
+     */
     BufferedImage renderToImage() {
         // Look up the Renderer by type
         def r = renderers[type]
@@ -330,7 +322,7 @@ class Map {
      * Display the Map in an interactive GUI
      */
     void display() {
-        new MapWindow(this)
+        Displayers.find("mapwindow")?.display(this)
     }
 
     /**
@@ -385,32 +377,13 @@ class Map {
         setBounds(b)
         // Add Layers
         layers.each { layer ->
-            GtLayer mapLayer
-            if (layer instanceof Layer) {
-                mapLayer = new FeatureLayer(layer.fs, layer.style.gtStyle)
-            } else if (layer instanceof Raster) {
-                mapLayer = new GridCoverageLayer(layer.coverage, layer.style.gtStyle)
-            } else if (layer instanceof ImageTileLayer) {
-                ImageTileLayer tileLayer = layer as ImageTileLayer
-                def raster = tileLayer.getRaster(this.bounds.reproject(tileLayer.proj), this.width, this.height)
-                mapLayer = new GridCoverageLayer(raster.coverage, new RasterSymbolizer().gtStyle)
-            } else if (layer instanceof VectorTiles) {
-                VectorTiles vectorTiles = layer as VectorTiles
-                vectorTiles.getLayers(vectorTiles.tiles(this.bounds.reproject(vectorTiles.proj), this.width, this.height)).each { Layer lyr ->
-                    content.addLayer(new FeatureLayer(lyr.fs, lyr.style.gtStyle))
+            if (layer instanceof Renderable) {
+                (layer as Renderable).getMapLayers(this.bounds, [this.width, this.height]).each { def renderable ->
+                    content.addLayer(renderable)
                 }
-            } else if (layer instanceof geoscript.layer.WMSLayer) {
-                def wmsLayer = layer as geoscript.layer.WMSLayer
-                def gtWmsLayer = new WMSLayer(wmsLayer.wms.wms, wmsLayer.layers[0].layer)
-                (1..<wmsLayer.layers.size()).each{i ->
-                    gtWmsLayer.addLayer(wmsLayer.layers[i].layer)
-                }
-                mapLayer = gtWmsLayer
-            } else if (layer instanceof GtLayer) {
-                mapLayer = layer
             }
-            if (mapLayer) {
-                content.addLayer(mapLayer)
+            else if (layer instanceof GtLayer) {
+                content.addLayer(layer)
             }
         }
         // Set width and height

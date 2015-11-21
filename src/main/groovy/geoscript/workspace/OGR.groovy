@@ -3,6 +3,7 @@ package geoscript.workspace
 import geoscript.feature.Schema
 import geoscript.layer.Cursor
 import geoscript.layer.Layer
+import org.geotools.data.DataStore
 import org.geotools.data.ogr.OGRDataStore
 import org.geotools.data.ogr.OGRDataStoreFactory
 import org.geotools.data.ogr.jni.JniOGRDataStoreFactory
@@ -272,6 +273,21 @@ class OGR extends Workspace {
             this.fs = layer.fs
             this.name = layer.name
             this.schema = layer.schema
+        }
+    }
+
+    /**
+     * The OGR WorkspaceFactory
+     */
+    static class Factory extends WorkspaceFactory<OGR> {
+
+        @Override
+        OGR create(DataStore dataStore) {
+            OGR ogr = null
+            if (dataStore instanceof org.geotools.data.ogr.OGRDataStore) {
+                ogr = new OGR(dataStore)
+            }
+            ogr
         }
     }
 }

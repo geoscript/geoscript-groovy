@@ -1,7 +1,7 @@
 package geoscript.layer
 
+import org.geotools.coverage.grid.io.AbstractGridFormat
 import org.geotools.gce.image.WorldImageFormat
-import org.opengis.parameter.GeneralParameterValue
 
 /**
  * A Format that can read and write WorldImage Rasters.  The WorldImage Format
@@ -31,5 +31,28 @@ class WorldImage extends Format {
         }
         options.put(WorldImageFormat.FORMAT.getName().toString(), format)
         super.write(options, raster)
+    }
+
+    /**
+     * The WorldImage FormatFactory
+     */
+    static class Factory extends FormatFactory<WorldImage> {
+
+        @Override
+        protected List<String> getFileExtensions() {
+            ["png", "jpg", "jpeg", "gif"]
+        }
+
+        @Override
+        protected Format createFromFormat(AbstractGridFormat gridFormat, Object source) {
+            if (gridFormat instanceof WorldImageFormat) {
+                new WorldImage(source)
+            }
+        }
+
+        @Override
+        protected Format createFromFile(File file) {
+            new WorldImage(file)
+        }
     }
 }

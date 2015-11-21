@@ -81,4 +81,37 @@ class Property extends Workspace {
     String toString() {
         return "Property[${new File(ds.info.source.path).absolutePath}]"
     }
+
+    /**
+     * The Property WorkspaceFactory
+     */
+    static class Factory extends WorkspaceFactory<Property> {
+
+        @Override
+        Map getParametersFromString(String str) {
+            Map params = [:]
+            if (!str.contains("=") && str.endsWith(".properties")) {
+                String dir
+                File f = new File(str)
+                if (f.exists()) {
+                    dir = f.absoluteFile.parentFile.absolutePath
+                } else {
+                    dir = f.absolutePath.substring(0,f.absolutePath.lastIndexOf(File.separator))
+                }
+                params.put("directory", dir)
+            } else {
+                params = super.getParametersFromString(str)
+            }
+            params
+        }
+
+        @Override
+        Property create(DataStore dataStore) {
+            Property property = null
+            if (dataStore instanceof org.geotools.data.property.PropertyDataStore) {
+                property = new Property(dataStore)
+            }
+            property
+        }
+    }
 }

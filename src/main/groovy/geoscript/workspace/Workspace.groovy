@@ -1,12 +1,12 @@
 package geoscript.workspace
 
+import geoscript.GeoScript
 import geoscript.feature.Feature
 import geoscript.feature.Field
 import geoscript.feature.Schema
 import geoscript.layer.Cursor
 import geoscript.layer.Layer
 import org.geotools.data.DataStore
-import org.geotools.data.DataUtilities
 import org.geotools.feature.FeatureCollection
 import org.geotools.data.collection.ListFeatureCollection
 import org.geotools.data.DataStoreFinder
@@ -213,82 +213,16 @@ class Workspace {
      */
     private static Map getParametersFromString(String str) {
         Map params = [:]
-        if (str.equalsIgnoreCase("memory")) {
-            params["type"] = "memory"
-        }
-        else if (str.indexOf("=") == -1 || str.toLowerCase().startsWith("http")) {
-            // Directory (Shapefile)
-            if (str.endsWith(".shp")) {
-                if (str.startsWith("file:/")) {
-                    params.put("url", DataUtilities.fileToURL(DataUtilities.urlToFile(new URL(str)).getAbsoluteFile().getParentFile()))
-                } else {
-                    params.put("url", DataUtilities.fileToURL(new File(str).getAbsoluteFile().getParentFile()))
-                }
-            }
-            // Properties
-            else if (str.endsWith(".properties")) {
-                String dir
-                File f = new File(str)
-                if (f.exists()) {
-                    dir = f.absoluteFile.parentFile.absolutePath
-                } else {
-                    dir = f.absolutePath.substring(0,f.absolutePath.lastIndexOf(File.separator))
-                }
-                params.put("directory", dir)
-            }
-            // GeoPackage
-            else if (str.endsWith(".gpkg")) {
-                params.put("dbtype", "geopkg")
-                params.put("database", new File(str).absolutePath)
-            }
-            // SpatiaLite
-            else if (str.endsWith(".sqlite") || str.endsWith(".spatialite")) {
-                params.put("dbtype", "spatialite")
-                params.put("database", new File(str).absolutePath)
-            }
-            // H2
-            else if (str.endsWith(".db")) {
-                params.put("dbtype", "h2")
-                params.put("database", new File(str).absolutePath)
-            }
-            // Geobuf
-            else if (str.endsWith(".pbf")) {
-                params.put("file", new File(str).absolutePath)
-            }
-            // WFS
-            else if (str.toLowerCase().startsWith("http") && str.toLowerCase().contains("service=wfs")
-                    && str.toLowerCase().contains("request=getcapabilities")) {
-                params.put("WFSDataStoreFactory:GET_CAPABILITIES_URL", str)
-            }
-            // Directory
-            else if (new File(str).isDirectory()) {
-                params.put("url", new File(str).toURL())
-            }
-            // Unknown
-            else {
-                throw new IllegalArgumentException("Unknown Workspace parameter string: ${str}")
+        for (WorkspaceFactory workspaceFactory : WorkspaceFactories.list()) {
+            params = workspaceFactory.getParametersFromString(str)
+            if (!params.isEmpty()) {
+                break
             }
         }
-        else {
-            str.split("[ ]+(?=([^\']*\'[^\']*\')*[^\']*\$)").each {
-                def parts = it.split("=")
-                def key = parts[0].trim()
-                if ((key.startsWith("'") && key.endsWith("'")) ||
-                        (key.startsWith("\"") && key.endsWith("\""))) {
-                    key = key.substring(1, key.length() - 1)
-                }
-                def value = parts[1].trim()
-                if ((value.startsWith("'") && value.endsWith("'")) ||
-                        (value.startsWith("\"") && value.endsWith("\""))) {
-                    value = value.substring(1, value.length() - 1)
-                }
-                if (key.equalsIgnoreCase("url")) {
-                    value = new File(value).absoluteFile.toURL()
-                }
-                params.put(key, value)
-            }
+        if (params.isEmpty()) {
+            throw new IllegalArgumentException("Unknown Workspace parameter string: ${str}")
         }
-        return params
+        params
     }
 
     /**
@@ -323,22 +257,72 @@ class Workspace {
      * @return A Workspace or null
      */
     static Workspace getWorkspace(String paramString) {
-        getWorkspace(getParametersFromString(paramString))
+        Workspace w = null
+        // Look in WorkspaceFactories first
+        for (WorkspaceFactory workspaceFactory : WorkspaceFactories.list()) {
+            w = workspaceFactory.create(paramString)
+            if (w != null) {
+                break
+            }
+        }
+        // Then try unregistered GeoTools DataStores
+        if (w == null) {
+            w = getWorkspace(getParameters(paramString))
+        }
+        if (w == null) {
+            throw new IllegalArgumentException("Unknown Workspace parameter string: ${paramString}")
+        }
+        w
     }
 
     /**
-     * Get a Workspace from a connection paramater Map
+     * Get a connection map from a connection string
+     * @param str The connection string
+     * @return A connection map
+     */
+    static Map getParameters(String str) {
+        Map params = [:]
+        str.split("[ ]+(?=([^\']*\'[^\']*\')*[^\']*\$)").each {
+            def parts = it.split("=")
+            if (parts.size() > 1) {
+                def key = parts[0].trim()
+                if ((key.startsWith("'") && key.endsWith("'")) ||
+                        (key.startsWith("\"") && key.endsWith("\""))) {
+                    key = key.substring(1, key.length() - 1)
+                }
+                def value = parts[1].trim()
+                if ((value.startsWith("'") && value.endsWith("'")) ||
+                        (value.startsWith("\"") && value.endsWith("\""))) {
+                    value = value.substring(1, value.length() - 1)
+                }
+                if (key.equalsIgnoreCase("url")) {
+                    value = new File(value).absoluteFile.toURL()
+                }
+                params.put(key, value)
+            }
+        }
+        params
+    }
+
+    /**
+     * Get a Workspace from a connection parameter Map
      * @param params The Map of connection parameters
      * @return A Workspace or null
      */
     static Workspace getWorkspace(Map params) {
-        DataStore ds
-        if (params.type && params.type.equalsIgnoreCase("memory")) {
-            ds = new org.geotools.data.memory.MemoryDataStore()
-        } else {
-            ds =  DataStoreFinder.getDataStore(params)
+        Workspace w = null
+        // Look in WorkspaceFactories first
+        for (WorkspaceFactory workspaceFactory : WorkspaceFactories.list()) {
+            w = workspaceFactory.create(params)
+            if (w != null) {
+                break
+            }
         }
-        wrap(ds)
+        // Then try unregistered GeoTools DataStores
+        if (!w) {
+            w = wrap(DataStoreFinder.getDataStore(params))
+        }
+        w
     }
 
     /**
@@ -383,53 +367,18 @@ class Workspace {
     static Workspace wrap(DataStore ds) {
         if (ds == null) {
             null
-        }
-        else if (ds instanceof org.geotools.data.directory.DirectoryDataStore ||
-                ds instanceof org.geotools.data.shapefile.ShapefileDataStore) {
-            new Directory(ds)
-        }
-        else if (ds instanceof org.geotools.data.memory.MemoryDataStore) {
-            new Memory(ds)
-        }
-        else if (ds instanceof org.geotools.data.property.PropertyDataStore) {
-            new Property(ds)
-        }
-        else if (ds instanceof org.geotools.data.wfs.WFSDataStore) {
-            new WFS(ds)
-        }
-        else if (ds instanceof org.geotools.data.geobuf.GeobufDirectoryDataStore) {
-            new Geobuf(ds)
-        }
-        else if (ds instanceof org.geotools.data.ogr.OGRDataStore) {
-            new OGR(ds)
-        }
-        else if (ds instanceof org.geotools.jdbc.JDBCDataStore) {
-            def jdbcds = ds as org.geotools.jdbc.JDBCDataStore
-            if (jdbcds.dataStoreFactory instanceof org.geotools.geopkg.GeoPkgDataStoreFactory) {
-                new GeoPackage(ds)
+        } else {
+            Workspace w
+            for (WorkspaceFactory workspaceFactory : WorkspaceFactories.list()) {
+                w = workspaceFactory.create(ds)
+                if (w != null) {
+                    break
+                }
             }
-            else if (jdbcds.dataStoreFactory instanceof org.geotools.data.h2.H2DataStoreFactory ||
-                    jdbcds.dataStoreFactory instanceof org.geotools.data.h2.H2JNDIDataStoreFactory) {
-                new H2(ds)
+            if (!w) {
+                w = new Workspace(ds)
             }
-            else if (jdbcds.dataStoreFactory instanceof org.geotools.data.mysql.MySQLDataStoreFactory ||
-                    jdbcds.dataStoreFactory instanceof org.geotools.data.mysql.MySQLJNDIDataStoreFactory) {
-                new MySQL(ds)
-            }
-            else if (jdbcds.dataStoreFactory instanceof org.geotools.data.postgis.PostgisNGDataStoreFactory ||
-                    jdbcds.dataStoreFactory instanceof org.geotools.data.postgis.PostgisNGJNDIDataStoreFactory) {
-                new PostGIS(ds)
-            }
-            else if (jdbcds.dataStoreFactory instanceof org.geotools.data.spatialite.SpatiaLiteDataStoreFactory ||
-                    jdbcds.dataStoreFactory instanceof org.geotools.data.spatialite.SpatiaLiteJNDIDataStoreFactory) {
-                new SpatiaLite(ds)
-            }
-            else (ds instanceof org.geotools.jdbc.JDBCDataStore) {
-                    new Database(ds)
-            }
-        }
-        else {
-            new Workspace(ds)
+            w
         }
     }
 

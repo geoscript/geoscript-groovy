@@ -1,5 +1,6 @@
 package geoscript.layer
 
+import org.geotools.coverage.grid.io.AbstractGridFormat
 import org.geotools.gce.geotiff.GeoTiffFormat
 
 /**
@@ -17,5 +18,29 @@ class GeoTIFF extends Format {
      */
     GeoTIFF(def stream) {
         super(new GeoTiffFormat(), stream)
+    }
+
+    /**
+     * The GeoTIFF FormatFactory
+     */
+    static class Factory extends FormatFactory<GeoTIFF> {
+
+        @Override
+        protected List<String> getFileExtensions() {
+            ["tif"]
+        }
+
+        @Override
+        protected Format createFromFormat(AbstractGridFormat gridFormat, Object source) {
+            if (gridFormat instanceof GeoTiffFormat) {
+                new GeoTIFF(source)
+            }
+        }
+
+        @Override
+        protected Format createFromFile(File file) {
+            new GeoTIFF(file)
+        }
+
     }
 }

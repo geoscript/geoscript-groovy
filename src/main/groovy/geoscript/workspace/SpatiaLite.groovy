@@ -57,4 +57,35 @@ class SpatiaLite extends Database {
         SpatiaLiteDataStoreFactory f = new SpatiaLiteDataStoreFactory()
         f.createDataStore(params)
     }
+
+    /**
+     * The SpatiaLite WorkspaceFactory
+     */
+    static class Factory extends WorkspaceFactory<SpatiaLite> {
+
+        @Override
+        Map getParametersFromString(String str) {
+            Map params = [:]
+            if (!str.contains("=") && (str.endsWith(".sqlite") || str.endsWith(".spatialite"))) {
+                params.put("dbtype", "spatialite")
+                params.put("database", new File(str).absolutePath)
+            } else {
+                params = super.getParametersFromString(str)
+            }
+            params
+        }
+
+        @Override
+        SpatiaLite create(DataStore dataStore) {
+            SpatiaLite spatialite = null
+            if (dataStore instanceof org.geotools.jdbc.JDBCDataStore) {
+                def jdbcds = dataStore as org.geotools.jdbc.JDBCDataStore
+                if (jdbcds.dataStoreFactory instanceof org.geotools.data.spatialite.SpatiaLiteDataStoreFactory ||
+                    jdbcds.dataStoreFactory instanceof org.geotools.data.spatialite.SpatiaLiteJNDIDataStoreFactory) {
+                    spatialite = new SpatiaLite(dataStore)
+                }
+            }
+            spatialite
+        }
+    }
 }

@@ -2,8 +2,12 @@ package geoscript.layer
 
 import geoscript.proj.Projection
 import org.apache.commons.io.input.ReaderInputStream
+import org.geotools.coverage.grid.io.AbstractGridFormat
+import org.geotools.coverage.grid.io.GridFormatFinder
 import org.geotools.factory.GeoTools
 import org.geotools.factory.Hints
+import org.geotools.gce.arcgrid.ArcGridFormat
+import org.geotools.gce.geotiff.GeoTiffFormat
 
 import java.nio.charset.Charset
 
@@ -93,5 +97,29 @@ class ArcGrid extends Format {
         arcGrid.write(raster, GRASS: format.equalsIgnoreCase("grass") ? true : false)
         out.close()
         out.toString()
+    }
+
+    /**
+     * The ArcGrid FormatFactory
+     */
+    static class Factory extends FormatFactory<ArcGrid> {
+
+        @Override
+        protected List<String> getFileExtensions() {
+            ["asc"]
+        }
+
+        @Override
+        protected Format createFromFormat(AbstractGridFormat gridFormat, Object source) {
+            if (gridFormat instanceof ArcGridFormat) {
+                new ArcGrid(source)
+            }
+        }
+
+        @Override
+        protected Format createFromFile(File file) {
+            new ArcGrid(file)
+        }
+
     }
 }

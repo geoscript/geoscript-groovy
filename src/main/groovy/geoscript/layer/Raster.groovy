@@ -14,7 +14,9 @@ import org.geotools.coverage.grid.GridEnvelope2D
 import org.geotools.coverage.grid.GridGeometry2D
 import org.geotools.coverage.processing.CoverageProcessor
 import org.geotools.coverage.processing.OperationJAI
+import org.geotools.coverage.processing.Operations
 import org.geotools.geometry.DirectPosition2D
+import org.geotools.map.GridCoverageLayer
 import org.geotools.process.raster.AffineProcess
 import org.geotools.process.raster.BandMergeProcess
 import org.geotools.process.raster.BandSelectProcess
@@ -23,9 +25,9 @@ import org.geotools.process.raster.PolygonExtractionProcess
 import org.geotools.process.raster.RasterAsPointCollectionProcess
 import org.geotools.process.raster.RasterZonalStatistics
 import org.geotools.process.raster.MarchingSquaresVectorizer.ImageLoadingType
+import org.geotools.process.raster.StyleCoverage
 import geoscript.workspace.Memory
 import geoscript.feature.Schema
-import org.geotools.process.raster.StyleCoverage
 import org.geotools.util.Converters
 import org.geotools.util.NumberRange
 import org.jaitools.imageutils.iterator.AbstractSimpleIterator
@@ -34,7 +36,7 @@ import org.jaitools.imageutils.iterator.WindowIterator
 import org.jaitools.numeric.Range
 import org.geotools.coverage.grid.GridCoverageFactory
 import org.opengis.coverage.grid.GridCoverage
-import org.geotools.coverage.processing.Operations
+
 
 import javax.media.jai.Interpolation
 import javax.media.jai.RasterFactory
@@ -52,7 +54,7 @@ import java.awt.image.WritableRaster
  * A Raster
  * @author Jared Erickson
  */
-class Raster {
+class Raster implements Renderable {
 
     /**
      * A GeoScript Raster wraps a GeoTools GridCoverage2D
@@ -127,7 +129,11 @@ class Raster {
         this.style = new RasterSymbolizer()
     }
 
-    /**
+    @Override
+    List getMapLayers(Bounds bounds, List size) {
+        [new GridCoverageLayer(this.coverage, this.style.gtStyle)]
+    }
+/**
      * Get the Projection
      * @return The Projection
      */

@@ -1,5 +1,6 @@
 package geoscript.layer
 
+import org.geotools.coverage.grid.io.AbstractGridFormat
 import org.geotools.gce.gtopo30.GTopo30Format
 
 /**
@@ -14,5 +15,17 @@ class GTopo30 extends Format {
      */
     GTopo30 (def stream) {
         super(new GTopo30Format(), stream)
+    }
+
+    /**
+     * The GTopo30 FormatFactory
+     */
+    static class Factory extends FormatFactory<GTopo30> {
+        @Override
+        protected Format createFromFormat(AbstractGridFormat gridFormat, Object source) {
+            if (gridFormat instanceof GTopo30Format) {
+                new GTopo30(source)
+            }
+        }
     }
 }

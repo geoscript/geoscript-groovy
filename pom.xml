@@ -411,9 +411,9 @@
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>codenarc-maven-plugin</artifactId>
-                <version>0.17-1</version>
+                <version>0.22-1</version>
             </plugin>
-            <!-- Unit test covoerage: mvn cobertura:cobertura -->
+            <!-- Test coverage: mvn cobertura:cobertura -->
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>cobertura-maven-plugin</artifactId>
@@ -429,11 +429,12 @@
         </extensions>
     </build>
     <reporting>
+        <!-- mvn site -->
         <plugins>
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>codenarc-maven-plugin</artifactId>
-                <version>0.18-1</version>
+                <version>0.22-1</version>
             </plugin>
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>

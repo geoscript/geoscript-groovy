@@ -1,0 +1,6 @@
+geoscript.feature.io.GeobufWriter
+geoscript.feature.io.GeoJSONWriter
+geoscript.feature.io.GeoRSSWriter
+geoscript.feature.io.GmlWriter
+geoscript.feature.io.GpxWriter
+geoscript.feature.io.KmlWriter

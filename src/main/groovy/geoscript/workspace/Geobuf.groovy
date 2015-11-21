@@ -66,4 +66,30 @@ class Geobuf extends Workspace {
         GeobufDataStoreFactory factory = new GeobufDataStoreFactory()
         factory.createDataStore(params)
     }
+
+    /**
+     * The Geobuf WorkspaceFactory
+     */
+    static class Factory extends WorkspaceFactory<Geobuf> {
+
+        @Override
+        Map getParametersFromString(String str) {
+            Map params = [:]
+            if (!str.contains("=") && str.endsWith(".pbf")) {
+                params.put("file", new File(str).absolutePath)
+            } else {
+                params = super.getParametersFromString(str)
+            }
+            params
+        }
+
+        @Override
+        Geobuf create(DataStore dataStore) {
+            if (dataStore != null && dataStore instanceof org.geotools.data.geobuf.GeobufDirectoryDataStore) {
+                new Geobuf(dataStore)
+            } else {
+                null
+            }
+        }
+    }
 }

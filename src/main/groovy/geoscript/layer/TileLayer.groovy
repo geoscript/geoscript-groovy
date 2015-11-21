@@ -228,38 +228,14 @@ abstract class TileLayer<T extends Tile> implements Closeable {
      * @return A TileLayer or null
      */
     static TileLayer getTileLayer(String paramsStr) {
-        Map params = [:]
-        // MBTiles File
-        if (paramsStr.endsWith(".mbtiles") && !paramsStr.contains("type=")) {
-            params["type"] = "mbtiles"
-            params["file"] = new File(paramsStr)
-        }
-        // GeoPackage File
-        else if (paramsStr.endsWith(".gpkg") && !paramsStr.contains("type=")) {
-            params["type"] = "geopackage"
-            params["file"] = new File(paramsStr)
-        }
-        // OSM
-        else if (paramsStr.equalsIgnoreCase("osm")) {
-            params["type"] = "osm"
-        }
-        else {
-            paramsStr.split("[ ]+(?=([^\']*\'[^\']*\')*[^\']*\$)").each {
-                def parts = it.split("=")
-                def key = parts[0].trim()
-                if ((key.startsWith("'") && key.endsWith("'")) ||
-                        (key.startsWith("\"") && key.endsWith("\""))) {
-                    key = key.substring(1, key.length() - 1)
-                }
-                def value = parts[1].trim()
-                if ((value.startsWith("'") && value.endsWith("'")) ||
-                        (value.startsWith("\"") && value.endsWith("\""))) {
-                    value = value.substring(1, value.length() - 1)
-                }
-                params.put(key, value)
+        TileLayer tileLayer = null
+        for(TileLayerFactory tileLayerFactory : TileLayerFactories.list()) {
+            tileLayer = tileLayerFactory.create(paramsStr)
+            if (tileLayer != null) {
+                break
             }
         }
-        getTileLayer(params)
+        tileLayer
     }
 
     /**
@@ -277,75 +253,14 @@ abstract class TileLayer<T extends Tile> implements Closeable {
      * @return A TileLayer or null
      */
     static TileLayer getTileLayer(Map params) {
-        String type = params.get("type","").toString()
-        // MBTiles
-        if (type.equalsIgnoreCase("mbtiles")) {
-            File file = params.get("file") instanceof File ? params.get("file") as File : new File(params.get("file"))
-            if (!file.exists() || file.length() == 0 || (params.get("name") && params.get("description"))) {
-                String name = file.name.replaceAll(".mbtiles","")
-                new MBTiles(file, params.get("name", name), params.get("description", name))
-            } else {
-                new MBTiles(file)
+        TileLayer tileLayer = null
+        for(TileLayerFactory tileLayerFactory : TileLayerFactories.list()) {
+            tileLayer = tileLayerFactory.create(params)
+            if (tileLayer != null) {
+                break
             }
         }
-        // GeoPackage
-        else if (type.equalsIgnoreCase("geopackage")) {
-            File file = params.get("file") instanceof File ? params.get("file") as File : new File(params.get("file"))
-            String name = params.get("name", file.name.replaceAll(".gpkg",""))
-            if (!file.exists() || file.length() == 0 || params.get("pyramid")) {
-                Object p = params.get("pyramid", Pyramid.createGlobalMercatorPyramid())
-                Pyramid pyramid = p instanceof Pyramid ? p as Pyramid : Pyramid.fromString(p as String)
-                new GeoPackage(file, name, pyramid)
-            } else {
-                new GeoPackage(file, name)
-            }
-        }
-        // TMS
-        else if (type.equalsIgnoreCase("tms")) {
-            Object fileOrUrl = params.get("file", params.get("url"))
-            String name = params.get("name", fileOrUrl instanceof File ? (fileOrUrl as File).name : "tms")
-            String imageType = params.get("format", "png")
-            Object p = params.get("pyramid", Pyramid.createGlobalMercatorPyramid())
-            Pyramid pyramid = p instanceof Pyramid ? p as Pyramid : Pyramid.fromString(p as String)
-            new TMS(name, imageType, fileOrUrl, pyramid)
-        }
-        // VectorTiles
-        else if (type.equalsIgnoreCase("vectortiles")) {
-            String name = params.get("name", "vectortiles")
-            Object p = params.get("pyramid", Pyramid.createGlobalMercatorPyramid())
-            Pyramid pyramid = p instanceof Pyramid ? p as Pyramid : Pyramid.fromString(p as String)
-            String format = params.get("format", "pbf")
-            if (params.containsKey("file")) {
-                File file = params["file"] instanceof File ? params["file"] as File : new File(params["file"])
-                new VectorTiles(name, file, pyramid, format)
-            } else {
-                URL url = params["url"] instanceof URL ? params["url"] as URL : new URL(params["url"])
-                new VectorTiles(name, url, pyramid, format)
-            }
-        }
-        // OSM
-        else if (type.equalsIgnoreCase("osm")) {
-            String name = params.get("name")
-            if (params.get("url")) {
-                List baseUrls = [params.get("url")]
-                new OSM(name, baseUrls)
-            }
-            else if (params.get("urls")) {
-                List baseUrls = params.get("urls").split(",")
-                new OSM(name, baseUrls)
-            }
-            else {
-                new OSM()
-            }
-        }
-        // UTFGrid
-        else if (type.equalsIgnoreCase("utfgrid")) {
-            File file = params.get("file") instanceof File ? params.get("file") as File : new File(params.get("file"))
-            new UTFGrid(file)
-        }
-        else {
-            null
-        }
+        tileLayer
     }
 
     /**
@@ -374,48 +289,10 @@ abstract class TileLayer<T extends Tile> implements Closeable {
      */
     static TileRenderer getTileRenderer(Map options = [:], TileLayer tileLayer, List<Layer> layers) {
         TileRenderer tileRenderer = null
-        if (tileLayer instanceof MBTiles) {
-            tileRenderer = new ImageTileRenderer(tileLayer, layers)
-        } else if (tileLayer instanceof GeoPackage) {
-            tileRenderer = new ImageTileRenderer(tileLayer, layers)
-        } else if (tileLayer instanceof TMS) {
-            tileRenderer = new ImageTileRenderer(tileLayer, layers)
-        } else if (tileLayer instanceof UTFGrid) {
-            Layer layer = layers[0]
-            List fields = options.fields ?
-                    options.fields.collect { it instanceof Field ? it : layer.schema.get(it) } : layer.schema.fields
-            tileRenderer = new UTFGridTileRenderer(tileLayer, layer, fields)
-        } else if (tileLayer instanceof VectorTiles) {
-            VectorTiles vectorTiles = tileLayer as VectorTiles
-            if (vectorTiles.type.equalsIgnoreCase("pbf")) {
-                Map<String, List> fields = options.get("fields", [:])
-                if (fields.isEmpty()) {
-                    layers.each { Layer layer ->
-                        fields[(layer.name)] = layer.schema.fields
-                    }
-                }
-                tileRenderer = new PbfVectorTileRenderer(layers, fields)
-            } else {
-                geoscript.layer.io.Writer layerWriter
-                if (vectorTiles.type.equalsIgnoreCase("mvt")) {
-                    layerWriter = new geoscript.layer.io.MvtWriter()
-                } else if (vectorTiles.type.toLowerCase() in ["json", "geojson"]) {
-                    layerWriter = new geoscript.layer.io.GeoJSONWriter()
-                } else if (vectorTiles.type.equalsIgnoreCase("csv")) {
-                    layerWriter = new geoscript.layer.io.CsvWriter()
-                } else if (vectorTiles.type.equalsIgnoreCase("georss")) {
-                    layerWriter = new geoscript.layer.io.GeoRSSWriter()
-                } else if (vectorTiles.type.equalsIgnoreCase("gml")) {
-                    layerWriter = new geoscript.layer.io.GmlWriter()
-                } else if (vectorTiles.type.equalsIgnoreCase("gpx")) {
-                    layerWriter = new geoscript.layer.io.GpxWriter()
-                } else if (vectorTiles.type.equalsIgnoreCase("kml")) {
-                    layerWriter = new geoscript.layer.io.KmlWriter()
-                }
-                Layer layer = layers[0]
-                List<Field> fields = options.fields ?
-                        options.fields.collect { it instanceof Field ? it : layer.schema.get(it) } : layer.schema.fields
-                tileRenderer = new VectorTileRenderer(layerWriter, layer, fields)
+        for(TileLayerFactory tileLayerFactory : TileLayerFactories.list()) {
+            tileRenderer = tileLayerFactory.getTileRenderer(options, tileLayer, layers)
+            if (tileRenderer != null) {
+                break
             }
         }
         tileRenderer

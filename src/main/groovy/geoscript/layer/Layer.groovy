@@ -1,20 +1,19 @@
 package geoscript.layer
 
 import geoscript.feature.Schema
+import geoscript.feature.Field
 import geoscript.filter.Expression
 import geoscript.geom.*
 import geoscript.index.Quadtree
 import geoscript.index.STRtree
 import geoscript.index.SpatialIndex
-import geoscript.layer.io.GeobufWriter
 import geoscript.proj.Projection
-import geoscript.feature.*
-import geoscript.workspace.*
+import geoscript.feature.Feature
+import geoscript.workspace.Workspace
+import geoscript.workspace.Memory
 import geoscript.filter.Filter
 import geoscript.style.Style
 import geoscript.style.Symbolizer
-import groovy.xml.StreamingMarkupBuilder
-import groovy.xml.XmlUtil
 import org.geotools.data.FeatureSource
 import org.geotools.data.Query
 import org.geotools.data.Transaction
@@ -26,6 +25,7 @@ import org.geotools.factory.Hints
 import org.geotools.feature.DefaultFeatureCollection
 import org.geotools.feature.FeatureCollection
 import org.geotools.feature.FeatureIterator
+import org.geotools.map.FeatureLayer
 import org.geotools.process.vector.VectorToRasterProcess
 import org.opengis.filter.sort.SortOrder
 import org.opengis.feature.simple.SimpleFeatureType
@@ -34,8 +34,6 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem
 import org.opengis.feature.type.AttributeDescriptor
 import com.vividsolutions.jts.geom.Envelope
 import org.opengis.filter.FilterFactory2
-import geoscript.layer.io.GmlWriter
-import geoscript.layer.io.GeoJSONWriter
 import org.geotools.data.collection.ListFeatureCollection
 
 import java.awt.Dimension
@@ -56,7 +54,7 @@ import java.awt.Dimension
  * </pre></blockquote></p>
  * @author Jared Erickson
  */
-class Layer {
+class Layer implements Renderable {
 
     /**
      * The name
@@ -245,35 +243,30 @@ class Layer {
      */
     protected void setDefaultSymbolizer(String geometryType) {
         if(!this.style) {
-            if (this instanceof Shapefile || this.format.equalsIgnoreCase("Directory")
-                    || this.fs instanceof org.geotools.data.directory.DirectoryFeatureStore) {
-                def dir
-                def fileName
-                if (this instanceof Shapefile) {
-                    def shp = this as Shapefile
-                    fileName = shp.file.name.substring(0, shp.file.name.lastIndexOf(".shp"))
-                    dir = shp.file.parentFile
-                } else {
-                    dir = this.workspace.ds.info.source.path
-                    fileName = this.name
-                }
+              if (this.workspace.format.equalsIgnoreCase("Directory")) {
+                def dir = this.workspace.ds.info.source.path
+                def fileName = this.name
                 // Check for SLD
-                def f = new File(dir,"${fileName}.sld")
-                if (f.exists()) {
-                    try {
-                        def reader = new geoscript.style.io.SLDReader()
-                        this.style = reader.read(f)
-                    } catch(Exception ignore) {
+                if (geoscript.style.io.Readers.find("sld")) {
+                    File f = new File(dir, "${fileName}.sld")
+                    if (f.exists()) {
+                        try {
+                            def reader = geoscript.style.io.Readers.find("sld")
+                            this.style = reader.read(f)
+                        } catch (Exception ignore) {
+                        }
                     }
                 }
                 // Check for CSS but only if the style is still falsey
                 if (!this.style) {
-                    f = new File(dir,"${fileName}.css")
-                    if (f.exists()) {
-                        try {
-                            def reader = new geoscript.style.io.CSSReader()
-                            this.style = reader.read(f)
-                        } catch (Exception ignore) {
+                    if (geoscript.style.io.Readers.find("css")) {
+                        File f = new File(dir, "${fileName}.css")
+                        if (f.exists()) {
+                            try {
+                                def reader = geoscript.style.io.Readers.find("css")
+                                this.style = reader.read(f)
+                            } catch (Exception ignore) {
+                            }
                         }
                     }
                 }
@@ -1273,7 +1266,7 @@ class Layer {
         Map schemaAndFields = this.schema.addSchema(otherLayer.schema, outLayerName,
             postfixAll: options.get("postfixAll",false),
             includeDuplicates: options.get("includeDuplicates",true),
-            maxFieldNameLength: outWorkspace instanceof Directory ? 10 : -1)
+            maxFieldNameLength: outWorkspace.format.equals("Directory") ? 10 : -1)
         Layer outLayer = outWorkspace.create(schemaAndFields.schema)
 
         this.eachFeature{ f ->
@@ -1437,169 +1430,20 @@ class Layer {
     }
 
     /**
-     * Write the Layer as GML to an Outputstream
-     * @param out The OutputStream (defaults to System.out)
-     */
-    void toGML(OutputStream out = System.out) {
-        GmlWriter gmlWriter = new GmlWriter()
-        gmlWriter.write(this, out)
-    }
-
-    /**
-     * Write the Layer as GML to a File
-     * @param file The File
-     */
-    void toGMLFile(File file) {
-        GmlWriter gmlWriter = new GmlWriter()
-        gmlWriter.write(this, file)
-    }
-
-    /**
-     * Write the Layer as GML to a String
-     * @param out A GML String
-     */
-    String toGMLString() {
-        GmlWriter gmlWriter = new GmlWriter()
-        gmlWriter.write(this)
-    }
-
-    /**
-     * Write the Layer as GeoJSON to an OutputStream
-     * @param out The OutputStream (defaults to System.out)
-     */
-    void toJSON(OutputStream out = System.out) {
-        GeoJSONWriter geoJSONWriter = new GeoJSONWriter()
-        geoJSONWriter.write(this, out)
-    }
-
-    /**
-     * Write the Layer as GeoJSON to a File
-     * @param file The File
-     */
-    void toJSONFile(File file) {
-        GeoJSONWriter geoJSONWriter = new GeoJSONWriter()
-        geoJSONWriter.write(this, file)
-    }
-
-    /**
-     * Write the Layer as GeoJSON to a String
-     * @param out A GeoJSON String
-     */
-    String toJSONString() {
-        GeoJSONWriter geoJSONWriter = new GeoJSONWriter()
-        geoJSONWriter.write(this)
-    }
-
-    /**
-     * Write the Layer as Geobuf to an OutputStream
-     * @param out The OutputStream (defaults to System.out)
-     */
-    void toGeobuf(OutputStream out = System.out) {
-        GeobufWriter writer = new GeobufWriter()
-        writer.write(this, out)
-    }
-
-    /**
-     * Write the Layer as Geobuf to a File
-     * @param file The File
-     */
-    void toGeobufFile(File file) {
-        GeobufWriter writer = new GeobufWriter()
-        writer.write(this, file)
-    }
-
-    /**
-     * Write the Layer as Geobuf to a String
-     * @param out A Geobuf Hex String
-     */
-    String toGeobufString() {
-        GeobufWriter writer = new GeobufWriter()
-        writer.write(this)
-    }
-
-    /**
-     * Write the Layer as Geobuf to a byte array
-     * @param out A Geobuf byte array
-     */
-    byte[] toGeobufBytes() {
-        GeobufWriter writer = new GeobufWriter()
-        writer.writeBytes(this)
-    }
-
-    /**
-     * Write the Layer as KML to an OutputStream.
-     * @param out The OutputStream (defaults to System.out)
-     * @param nameClosure A Closure that takes a Feature and returns a value
-     * used as the Placemark's name.  Default to the Feature's ID
-     * @param descriptionClosure A Closure that takes a Feature and returns a value
-     * used as the Placemark's description. Defaults to null which means no description
-     * is created
-     */
-    void toKML(OutputStream out = System.out, Closure nameClosure = {f -> f.id}, Closure descriptionClosure = null) {
-        def xml
-        def markupBuilder = new StreamingMarkupBuilder()
-        def featureWriter = new geoscript.feature.io.KmlWriter()
-        xml = markupBuilder.bind { builder ->
-            mkp.xmlDeclaration()
-            mkp.declareNamespace([kml: "http://www.opengis.net/kml/2.2"])
-            kml.kml {
-                kml.Document {
-                    kml.Folder {
-                        kml.name name
-                        kml.Schema ("kml:name": name, "kml:id": name) {
-                            schema.fields.each {fld ->
-                                if (!fld.isGeometry()) {
-                                    kml.SimpleField("kml:name": fld.name, "kml:type": fld.typ)
-                                }
-                            }
-                        }
-                        eachFeature {f ->
-                            featureWriter.write builder, f, namespace: "kml", name: nameClosure, description: descriptionClosure
-                        }
-                    }
-                }
-            }
-        }
-
-        XmlUtil.serialize(xml, out)
-    }
-
-    /**
-     * Write the Layer as KML to a String.
-     * @param nameClosure A Closure that takes a Feature and returns a value
-     * used as the Placemark's name.  Default to the Feature's ID
-     * @param descriptionClosure A Closure that takes a Feature and returns a value
-     * used as the Placemark's description. Defaults to null which means no description
-     * is created
-     */
-    String toKMLString(Closure nameClosure = {f -> f.id}, Closure descriptionClosure = null) {
-        ByteArrayOutputStream out = new ByteArrayOutputStream()
-        toKML(out, nameClosure, descriptionClosure)
-        out.toString()
-    }
-
-    /**
-     * Write the Layer as KML to a File.
-     * @param file The File we are writing
-     * @param nameClosure A Closure that takes a Feature and returns a value
-     * used as the Placemark's name.  Default to the Feature's ID
-     * @param descriptionClosure A Closure that takes a Feature and returns a value
-     * used as the Placemark's description. Defaults to null which means no description
-     * is created
-     */
-    void toKMLFile(File file, Closure nameClosure = {f -> f.id}, Closure descriptionClosure = null) {
-        FileOutputStream out = new FileOutputStream(file)
-        toKML(out, nameClosure, descriptionClosure)
-        out.close()
-    }
-
-    /**
      * Generate a new name
      * @return A new Layer name
      */
     static String newname() {
         id += 1
         "layer_${id}".toString()
+    }
+
+    /**
+     * Get the map layers
+     * @return
+     */
+    List getMapLayers(Bounds bounds, List size) {
+        [new FeatureLayer(this.fs, this.style.gtStyle)]
     }
 
     /**
@@ -1674,7 +1518,7 @@ class Layer {
         Map schemaAndFields = this.schema.addSchema(layer2.schema, outLayerName as String,
                 postfixAll: options.get("postfixAll",false),
                 includeDuplicates: options.get("includeDuplicates",true),
-                maxFieldNameLength: workspace instanceof Directory ? 10 : -1)
+                maxFieldNameLength: workspace.format.equals("Directory") ? 10 : -1)
         Layer outLayer = workspace.create(schemaAndFields.schema)
 
         // Add all Features from the first Layer into spatial index
@@ -1764,7 +1608,7 @@ class Layer {
         Map schemaAndFields = this.schema.addSchema(layer2.schema, outLayerName as String,
                 postfixAll: options.get("postfixAll",false),
                 includeDuplicates: options.get("includeDuplicates",true),
-                maxFieldNameLength: workspace instanceof Directory ? 10 : -1)
+                maxFieldNameLength: workspace.format.equals("Directory") ? 10 : -1)
         Layer outLayer = workspace.create(schemaAndFields.schema)
 
         // Add all Features from the first Layer into spatial index
@@ -1892,7 +1736,7 @@ class Layer {
         Map schemaAndFields = this.schema.addSchema(layer2.schema, outLayerName as String,
                 postfixAll: options.get("postfixAll",false),
                 includeDuplicates: options.get("includeDuplicates",true),
-                maxFieldNameLength: workspace instanceof Directory ? 10 : -1)
+                maxFieldNameLength: workspace.format.equals("Directory") ? 10 : -1)
         Layer outLayer = workspace.create(schemaAndFields.schema)
 
         // Add all Features from the first Layer into spatial index
@@ -2038,7 +1882,7 @@ class Layer {
         Map schemaAndFields = this.schema.addSchema(layer2.schema, outLayerName as String,
                 postfixAll: options.get("postfixAll",false),
                 includeDuplicates: options.get("includeDuplicates",true),
-                maxFieldNameLength: workspace instanceof Directory ? 10 : -1)
+                maxFieldNameLength: workspace.format.equals("Directory") ? 10 : -1)
         Layer outLayer = workspace.create(schemaAndFields.schema)
 
         // Add each Feature from the first Layer to a spatial index

@@ -1,11 +1,27 @@
 package geoscript.layer
 
 import geoscript.feature.Feature
-import geoscript.layer.io.*
+import geoscript.feature.Field
+import geoscript.geom.Bounds
+import geoscript.layer.io.CsvWriter
+import geoscript.layer.io.GeoJSONWriter
+import geoscript.layer.io.GeoRSSReader
+import geoscript.layer.io.GeoRSSWriter
+import geoscript.layer.io.GmlReader
+import geoscript.layer.io.CsvReader
+import geoscript.layer.io.GeoJSONReader
+import geoscript.layer.io.GmlWriter
+import geoscript.layer.io.GpxReader
+import geoscript.layer.io.GpxWriter
+import geoscript.layer.io.KmlReader
+import geoscript.layer.io.KmlWriter
+import geoscript.layer.io.MvtReader
+import geoscript.layer.io.MvtWriter
 import geoscript.proj.Projection
 import geoscript.style.Style
 import geoscript.workspace.Memory
 import geoscript.workspace.Workspace
+import org.geotools.map.FeatureLayer
 import org.geotools.util.logging.Logging
 
 import java.util.logging.Level
@@ -15,7 +31,7 @@ import java.util.logging.Logger
  * A TileLayer for VectorTiles
  * @author Jared Erickson
  */
-class VectorTiles extends TileLayer<Tile> {
+class VectorTiles extends TileLayer<Tile> implements Renderable {
 
     /**
      * The File directory
@@ -259,5 +275,79 @@ class VectorTiles extends TileLayer<Tile> {
             }
         }
         layers.values().collect { it }
+    }
+
+    /**
+     * The VectorTiles TileLayerFactory
+     */
+    static class Factory extends TileLayerFactory<VectorTiles> {
+
+        @Override
+        VectorTiles create(Map params) {
+            String type = params.get("type","").toString()
+            if (type.equalsIgnoreCase("vectortiles")) {
+                String name = params.get("name", "vectortiles")
+                Object p = params.get("pyramid", Pyramid.createGlobalMercatorPyramid())
+                Pyramid pyramid = p instanceof Pyramid ? p as Pyramid : Pyramid.fromString(p as String)
+                String format = params.get("format", "pbf")
+                if (params.containsKey("file")) {
+                    File file = params["file"] instanceof File ? params["file"] as File : new File(params["file"])
+                    new VectorTiles(name, file, pyramid, format)
+                } else {
+                    URL url = params["url"] instanceof URL ? params["url"] as URL : new URL(params["url"])
+                    new VectorTiles(name, url, pyramid, format)
+                }
+            } else {
+                null
+            }
+        }
+
+        @Override
+        TileRenderer getTileRenderer(Map options, TileLayer tileLayer, List<Layer> layers) {
+            if (tileLayer instanceof VectorTiles) {
+                VectorTiles vectorTiles = tileLayer as VectorTiles
+                if (vectorTiles.type.equalsIgnoreCase("pbf")) {
+                    Map<String, List> fields = options.get("fields", [:])
+                    if (fields.isEmpty()) {
+                        layers.each { Layer layer ->
+                            fields[(layer.name)] = layer.schema.fields
+                        }
+                    }
+                    new PbfVectorTileRenderer(layers, fields)
+                } else {
+                    geoscript.layer.io.Writer layerWriter
+                    if (vectorTiles.type.equalsIgnoreCase("mvt")) {
+                        layerWriter = new MvtWriter()
+                    } else if (vectorTiles.type.toLowerCase() in ["json", "geojson"]) {
+                        layerWriter = new GeoJSONWriter()
+                    } else if (vectorTiles.type.equalsIgnoreCase("csv")) {
+                        layerWriter = new CsvWriter()
+                    } else if (vectorTiles.type.equalsIgnoreCase("georss")) {
+                        layerWriter = new GeoRSSWriter()
+                    } else if (vectorTiles.type.equalsIgnoreCase("gml")) {
+                        layerWriter = new GmlWriter()
+                    } else if (vectorTiles.type.equalsIgnoreCase("gpx")) {
+                        layerWriter = new GpxWriter()
+                    } else if (vectorTiles.type.equalsIgnoreCase("kml")) {
+                        layerWriter = new KmlWriter()
+                    }
+                    Layer layer = layers[0]
+                    List<Field> fields = options.fields ?
+                            options.fields.collect {
+                                it instanceof Field ? it : layer.schema.get(it)
+                            } : layer.schema.fields
+                    new VectorTileRenderer(layerWriter, layer, fields)
+                }
+            } else {
+                null
+            }
+        }
+    }
+
+    @Override
+    List<org.geotools.map.Layer> getMapLayers(Bounds bounds, List size) {
+        this.getLayers(this.tiles(bounds.reproject(this.proj), size[0], size[1])).collect { Layer lyr ->
+            new FeatureLayer(lyr.fs, lyr.style.gtStyle)
+        }
     }
 }

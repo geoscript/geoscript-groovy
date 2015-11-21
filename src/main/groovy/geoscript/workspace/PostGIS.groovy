@@ -129,4 +129,23 @@ class PostGIS extends Database {
             options.get("user",System.getProperty("user.name")), options.get("password",null)
         )
     }
+
+    /**
+     * The PostGIS WorkspaceFactory
+     */
+    static class Factory extends WorkspaceFactory<PostGIS> {
+
+        @Override
+        PostGIS create(DataStore dataStore) {
+            PostGIS postgis = null
+            if (dataStore instanceof org.geotools.jdbc.JDBCDataStore) {
+                def jdbcds = dataStore as org.geotools.jdbc.JDBCDataStore
+                if (jdbcds.dataStoreFactory instanceof org.geotools.data.postgis.PostgisNGDataStoreFactory ||
+                    jdbcds.dataStoreFactory instanceof org.geotools.data.postgis.PostgisNGJNDIDataStoreFactory) {
+                    postgis = new PostGIS(dataStore)
+                }
+            }
+            postgis
+        }
+    }
 }

@@ -1,5 +1,6 @@
 package geoscript.workspace
 
+import org.geotools.data.DataStore
 import org.geotools.data.memory.MemoryDataStore
 
 /**
@@ -36,5 +37,40 @@ class Memory extends Workspace {
      */
     String getFormat() {
         return "Memory"
+    }
+
+    /**
+     * The Memory WorkspaceFactory
+     */
+    static class Factory extends WorkspaceFactory<Memory> {
+
+        @Override
+        Map getParametersFromString(String str) {
+            Map params = [:]
+            if (str.equalsIgnoreCase("memory")) {
+                params["type"] = "memory"
+            } else {
+                params = super.getParametersFromString(str)
+            }
+            params
+        }
+
+        @Override
+        Memory create(Map params) {
+            if (params.type && params.type.equalsIgnoreCase("memory")) {
+                create(new org.geotools.data.memory.MemoryDataStore())
+            } else {
+                super.create(params)
+            }
+        }
+
+        @Override
+        Memory create(DataStore dataStore) {
+            Memory mem = null
+            if (dataStore instanceof org.geotools.data.memory.MemoryDataStore) {
+                mem = new Memory(dataStore)
+            }
+            mem
+        }
     }
 }

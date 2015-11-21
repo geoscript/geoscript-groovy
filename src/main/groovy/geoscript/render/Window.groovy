@@ -16,7 +16,7 @@ import javax.swing.JFrame
  * </pre></blockquote></p>
  * @author Jared Erickson
  */
-class Window {
+class Window implements Displayer {
 
     /**
      * Open a simple GUI for viewing a Map
@@ -40,7 +40,19 @@ class Window {
             frame.visible = true
         }
     }
+
+    /**
+     * Create a Window
+     */
+    Window() {
+    }
+
+    /**
+     * Display the Map in a GUI
+     * @param map The Map
+     */
+    @Override
+    void display(Map map) {
+        new Window(map)
+    }
 }
-
-
-

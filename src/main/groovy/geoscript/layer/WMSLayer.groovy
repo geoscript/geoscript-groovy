@@ -14,7 +14,7 @@ import geoscript.proj.Projection
  * </pre></blockquote></p>
  * @author Jared Erickson
  */
-class WMSLayer {
+class WMSLayer implements Renderable {
 
     /**
      * The WMS connection to a remote server
@@ -96,5 +96,14 @@ class WMSLayer {
      */
     String toString() {
         "WMS @ ${wms} with ${wmsLayers.join(",")}"
+    }
+
+    @Override
+    List<org.geotools.map.Layer> getMapLayers(Bounds bounds, List size) {
+        def gtWmsLayer = new org.geotools.map.WMSLayer(wms.wms, layers[0].layer)
+        (1..<this.layers.size()).each{i ->
+            gtWmsLayer.addLayer(this.layers[i].layer)
+        }
+        [gtWmsLayer]
     }
 }

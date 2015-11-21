@@ -5,24 +5,14 @@ import geoscript.proj.Projection
 import org.geotools.coverage.grid.GridEnvelope2D
 import org.geotools.coverage.grid.GridGeometry2D
 import org.geotools.coverage.grid.io.AbstractGridFormat
-import org.geotools.coverage.grid.io.GridFormatFinder
-import org.geotools.coverage.grid.io.UnknownFormat
-import org.geotools.coverage.io.netcdf.NetCDFFormat
-import org.geotools.coverageio.gdal.mrsid.MrSIDFormat
 import org.geotools.factory.GeoTools
 import org.geotools.factory.Hints
-import org.geotools.gce.arcgrid.ArcGridFormat
-import org.geotools.gce.geotiff.GeoTiffFormat
-import org.geotools.gce.grassraster.format.GrassCoverageFormat
-import org.geotools.gce.gtopo30.GTopo30Format
-import org.geotools.gce.image.WorldImageFormat
-import org.geotools.gce.imagemosaic.ImageMosaicFormat
-import org.geotools.gce.imagepyramid.ImagePyramidFormat
 import org.opengis.coverage.grid.GridCoverageReader
 import org.opengis.parameter.GeneralParameterValue
 import org.opengis.parameter.ParameterValueGroup
 
-import java.awt.Rectangle
+import java.awt.*
+import java.util.List
 
 /**
  * A Raster Format can read and write Rasters
@@ -239,80 +229,13 @@ class Format {
      * @return A Format
      */
     static Format getFormat(Object input) {
-        // Support file names and string urls
-        if (input instanceof String) {
-            String str = input as String
-            boolean isFileOrUrl = ['tif','png','jpg','jpeg','gif','arx','sid','asc','nc'].find { String ext ->
-                str.endsWith(ext)
-            }
-            if (isFileOrUrl) {
-                boolean isUrl = false
-                try {
-                    URL url = new URL(str)
-                    isUrl = true
-                } catch(MalformedURLException ex) {
-                    // Do nothing, just means that it must be a file
-                }
-                if (isUrl) {
-                    input = new URL(str)
-                } else {
-                    input = new File(str)
-                }
+        Format format = null
+        for (FormatFactory formatFactory : FormatFactories.list()) {
+            format = formatFactory.create(input)
+            if (format != null) {
+                break
             }
         }
-        if(input instanceof File) {
-            File file = input as File
-            if (file.exists()) {
-                AbstractGridFormat format = GridFormatFinder.findFormat(file);
-                if (format == null || format instanceof UnknownFormat) {
-                    return null
-                }
-                if (format instanceof GeoTiffFormat) {
-                    return new GeoTIFF(file)
-                } else if (format instanceof ArcGridFormat) {
-                    return new ArcGrid(file)
-                } else if (format instanceof GrassCoverageFormat) {
-                    return new Grass(file)
-                } else if (format instanceof GTopo30Format) {
-                    return new GTopo30(file)
-                } else if (format instanceof ImagePyramidFormat) {
-                    return new ImagePyramid(file)
-                } else if (format instanceof ImageMosaicFormat) {
-                    return new Mosaic(file)
-                } else if (format instanceof MrSIDFormat) {
-                    return new MrSID(file)
-                } else if (format instanceof WorldImageFormat) {
-                    return new WorldImage(file)
-                } else if (format instanceof NetCDFFormat) {
-                    return new NetCDF(file)
-                } else {
-                    return new Format(format, file)
-                }
-            } else {
-                String ext = file.name.substring(file.name.lastIndexOf(".") + 1).toLowerCase()
-                if (ext in ["tif"]) {
-                    return new GeoTIFF(file)
-                } else if (ext in ["png", "jpg", "jpeg", "gif"]) {
-                    return new WorldImage(file)
-                } else if (ext in ["arx"]) {
-                    return new Grass(file)
-                } else if (ext in ["sid"]) {
-                    return new MrSID(file)
-                } else if (ext in ["asc"]) {
-                    return new ArcGrid(file)
-                } else if (ext in ["nc"]) {
-                    return new NetCDF(file)
-                } else {
-                    return null
-                }
-            }
-        }  else {
-            AbstractGridFormat format = GridFormatFinder.findFormat(input);
-            if (format == null || format instanceof UnknownFormat) {
-                return null
-            } else {
-                return new Format(format, input)
-            }
-        }
+        format
     }
 }

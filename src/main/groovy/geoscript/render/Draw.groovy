@@ -2,6 +2,7 @@ package geoscript.render
 
 import geoscript.feature.Feature
 import geoscript.geom.Geometry
+import geoscript.geom.Point
 import geoscript.layer.Layer
 import geoscript.layer.Raster
 import geoscript.style.Symbolizer
@@ -112,7 +113,7 @@ class Draw {
         def out = options.get("out", null)
         // Display in a Window
         if (out == null) {
-            new Window(map)
+            Displayers.find(options.get("displayer","window"))?.display(map)
         }
         // Draw to an OutputStream
         else if (out instanceof OutputStream) {
@@ -150,7 +151,7 @@ class Draw {
         def out = options.get("out", null)
         // Display in a Window
         if (out == null) {
-            new Window(map)
+            Displayers.find(options.get("displayer","window"))?.display(map)
         }
         // Draw to an OutputStream
         else if (out instanceof OutputStream) {

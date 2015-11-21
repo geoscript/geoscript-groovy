@@ -60,4 +60,33 @@ class GeoPackage extends Database {
         factory.createDataStore(params)
     }
 
+    /**
+     * The GeoPackage WorkspaceFactory
+     */
+    static class Factory extends WorkspaceFactory<GeoPackage> {
+
+        @Override
+        Map getParametersFromString(String str) {
+            Map params = [:]
+            if (!str.contains("=") && str.endsWith(".gpkg")) {
+                params.put("dbtype", "geopkg")
+                params.put("database", new File(str).absolutePath)
+            } else {
+                params = super.getParametersFromString(str)
+            }
+            params
+        }
+
+        @Override
+        GeoPackage create(DataStore dataStore) {
+            GeoPackage geopackage = null
+            if (dataStore instanceof org.geotools.jdbc.JDBCDataStore) {
+                def jdbcds = dataStore as org.geotools.jdbc.JDBCDataStore
+                if (jdbcds.dataStoreFactory instanceof org.geotools.geopkg.GeoPkgDataStoreFactory) {
+                    geopackage = new GeoPackage(dataStore)
+                }
+            }
+            geopackage
+        }
+    }
 }

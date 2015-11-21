@@ -111,7 +111,8 @@ class OSM extends ImageTileLayer {
     void delete(ImageTile t) {
         throw new IllegalArgumentException("OSM is ready only!")
     }
-        /**
+
+    /**
      * Close the TileLayer
      */
     @Override
@@ -119,4 +120,46 @@ class OSM extends ImageTileLayer {
         // Do nothing
     }
 
+    /**
+     * The OSM TileLayerFactory
+     */
+    static class Factory extends TileLayerFactory<OSM> {
+
+        @Override
+        OSM create(String paramsStr) {
+            Map params = [:]
+            if (paramsStr.equalsIgnoreCase("osm")) {
+                params["type"] = "osm"
+                create(params)
+            } else {
+                super.create(paramsStr)
+            }
+        }
+
+        @Override
+        OSM create(Map params) {
+            String type = params.get("type","").toString()
+            if (type.equalsIgnoreCase("osm")) {
+                String name = params.get("name")
+                if (params.get("url")) {
+                    List baseUrls = [params.get("url")]
+                    new OSM(name, baseUrls)
+                }
+                else if (params.get("urls")) {
+                    List baseUrls = params.get("urls").split(",")
+                    new OSM(name, baseUrls)
+                }
+                else {
+                    new OSM()
+                }
+            } else {
+                null
+            }
+        }
+
+        @Override
+        TileRenderer getTileRenderer(Map options, TileLayer tileLayer, List<Layer> layers) {
+            null
+        }
+    }
 }

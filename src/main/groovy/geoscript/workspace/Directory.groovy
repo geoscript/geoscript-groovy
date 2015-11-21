@@ -1,9 +1,12 @@
 package geoscript.workspace
 
 import geoscript.layer.Layer
+import org.geotools.data.DataStore
+import org.geotools.data.DataUtilities
 import org.geotools.data.directory.DirectoryDataStore
 import org.geotools.data.shapefile.ShapefileDataStore
 import org.geotools.data.shapefile.ShapefileDataStoreFactory
+import org.geotools.data.shapefile.files.ShpFileType
 
 /**
  * A Directory Workspace can contain one or more Shapefiles.
@@ -70,11 +73,57 @@ class Directory extends Workspace {
     }
 
     /**
+     * Get the File or Directory
+     * @return The File or Directory
+     */
+    File getFile() {
+        if (ds instanceof ShapefileDataStore) {
+            new File(ds.shpFiles.get(ShpFileType.SHP))
+        } else {
+            new File(ds.info.source.path)
+        }
+    }
+
+    /**
      * The string representation
      * @return The string representation
      */
     String toString() {
-        return "Directory[${new File(ds.info.source.path).absolutePath}]"
+        "Directory[${getFile().absolutePath}]"
+    }
+
+    /**
+     * The Directory WorkspaceFactory
+     */
+    static class Factory extends WorkspaceFactory<Directory> {
+
+        @Override
+        Map getParametersFromString(String str) {
+            Map params = [:]
+            if (!str.contains("=") && str.endsWith(".shp")) {
+                if (str.startsWith("file:/")) {
+                    params.put("url", DataUtilities.fileToURL(DataUtilities.urlToFile(new URL(str)).getAbsoluteFile().getParentFile()))
+                } else {
+                    params.put("url", DataUtilities.fileToURL(new File(str).getAbsoluteFile().getParentFile()))
+                }
+            } else if (!str.contains("=") && new File(str).isDirectory()) {
+                params.put("url", new File(str).toURL())
+            } else {
+                params = super.getParametersFromString(str)
+            }
+            params
+        }
+
+        @Override
+        Directory create(DataStore dataStore) {
+            if (dataStore != null && (
+                    dataStore instanceof org.geotools.data.directory.DirectoryDataStore ||
+                    dataStore instanceof org.geotools.data.shapefile.ShapefileDataStore)) {
+                new Directory(dataStore)
+            } else {
+                null
+            }
+        }
     }
 
 }

@@ -135,7 +135,7 @@ class GeoScriptTestCase {
     @Test void fileAsShapefile() {
         use(GeoScript) {
             File file = new File(getClass().getClassLoader().getResource("states.shp").toURI())
-            Shapefile shp = file as Shapefile
+            Layer shp = file as Layer
             assertEquals 49, shp.count
         }
     }
@@ -143,7 +143,7 @@ class GeoScriptTestCase {
     @Test void fileAsProperty() {
         use(GeoScript) {
             File file = new File(getClass().getClassLoader().getResource("points.properties").toURI())
-            Property prop = file as Property
+            Layer prop = file as Layer
             assertEquals 4, prop.count
         }
     }
@@ -223,7 +223,7 @@ class GeoScriptTestCase {
             String str = "url='${url}' 'create spatial index'=true".toString()
             Workspace w = str as Workspace
             assertNotNull(w)
-            assertEquals("org.geotools.data.shapefile.ShapefileDataStore", w.format)
+            assertEquals("Directory", w.format)
         }
     }
 
@@ -232,7 +232,7 @@ class GeoScriptTestCase {
             URL url = getClass().getClassLoader().getResource("states.shp")
             Workspace w = ["url": url] as Workspace
             assertNotNull(w)
-            assertEquals("org.geotools.data.shapefile.ShapefileDataStore", w.format)
+            assertEquals("Directory", w.format)
         }
     }
 

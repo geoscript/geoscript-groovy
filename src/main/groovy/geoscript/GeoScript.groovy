@@ -6,20 +6,17 @@ import geoscript.filter.Expression
 import geoscript.filter.Filter
 import geoscript.geom.*
 import geoscript.layer.Cursor
-import geoscript.layer.Shapefile
+import geoscript.layer.io.Readers
 import geoscript.process.Process
 import geoscript.proj.Geodetic
-import geoscript.layer.Property
 import geoscript.layer.Format
 import geoscript.layer.Raster
 import org.codehaus.groovy.runtime.DefaultGroovyMethods
-import geoscript.layer.io.CsvReader
 import geoscript.layer.Layer
-import geoscript.layer.io.GeoJSONReader
 import geoscript.filter.Color
 import geoscript.proj.Projection
-import geoscript.workspace.PostGIS
 import geoscript.workspace.Workspace
+import org.geotools.data.DataUtilities
 
 import java.util.zip.ZipEntry
 import java.util.zip.ZipFile
@@ -89,20 +86,20 @@ class GeoScript {
      */
     static Object asType(File file, Class type) {
         // Shapefile shp = file as Shapefile
-        if (type == Shapefile && file.name.endsWith(".shp")) {
-            return new Shapefile(file)
+        if (type == Layer && file.name.endsWith(".shp")) {
+            return Workspace.getWorkspace(file.absolutePath).get(file.name)
         }
         // Property prop = file as Property
-        else if (type == Property && file.name.endsWith(".properties")) {
-            return new Property(file)
+        else if (type == Layer && file.name.endsWith(".properties")) {
+            return Workspace.getWorkspace(file.absolutePath).get(file.name)
         }
         // Layer layer = csvFile as Layer
-        else if (type == Layer && file.name.endsWith(".csv")) {
-            return new CsvReader().read(file)
+        else if (type == Layer && file.name.endsWith(".csv") && Readers.find("csv")) {
+            return Readers.find("csv").read(file)
         }
         // Layer layer = jsonFile as Layer
-        else if (type == Layer && file.name.endsWith(".json")) {
-            return new GeoJSONReader().read(file)
+        else if (type == Layer && file.name.endsWith(".json") && Readers.find("geojson")) {
+            return Readers.find("geojson").read(file)
         }
         DefaultGroovyMethods.asType(file, type)
     }
@@ -128,7 +125,7 @@ class GeoScript {
         }
         // Workspace w = "url='states.shp' 'create spatial index'=true" as Workspace
         else if (type == Workspace) {
-            return new Workspace(str)
+            return Workspace.getWorkspace(str)
         }
         // Expression expr = "max(2,4)" as Expression
         else if (type == Expression) {
@@ -148,13 +145,9 @@ class GeoScript {
      * @return A GeoScript Workspace
      */
     static Object asType(Map map, Class type) {
-        // PostGIS p = [name: 'naturalearth', host: 'localhost', port: 5432] as PostGIS
-        if (type == PostGIS) {
-            return new PostGIS(map, map.get("name"))
-        }
         // Workspace w = ['url': 'states.shp', 'create spatial index': true] as Workspace
-        else if (type == Workspace) {
-            return new Workspace(map)
+        if (type == Workspace) {
+            return Workspace.getWorkspace(map)
         }
         DefaultGroovyMethods.asType(map, type)
     }
@@ -326,5 +319,4 @@ class GeoScript {
         }
         dir
     }
-
 }

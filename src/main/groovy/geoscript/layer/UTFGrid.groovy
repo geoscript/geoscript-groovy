@@ -1,5 +1,6 @@
 package geoscript.layer
 
+import geoscript.feature.Field
 import geoscript.geom.Bounds
 import geoscript.proj.Projection
 
@@ -71,4 +72,32 @@ class UTFGrid extends TileLayer<Tile> {
         // Do Nothing!
     }
 
+    /**
+     * The UTFGrid TileLayerFactory
+     */
+    static class Factory extends TileLayerFactory<UTFGrid> {
+
+        @Override
+        UTFGrid create(Map params) {
+            String type = params.get("type","").toString()
+            if (type.equalsIgnoreCase("utfgrid")) {
+                File file = params.get("file") instanceof File ? params.get("file") as File : new File(params.get("file"))
+                new UTFGrid(file)
+            } else {
+                null
+            }
+        }
+
+        @Override
+        TileRenderer getTileRenderer(Map options, TileLayer tileLayer, List<Layer> layers) {
+            if (tileLayer instanceof UTFGrid) {
+                Layer layer = layers[0]
+                List fields = options.fields ?
+                        options.fields.collect { it instanceof Field ? it : layer.schema.get(it) } : layer.schema.fields
+                new UTFGridTileRenderer(tileLayer, layer, fields)
+            } else {
+                null
+            }
+        }
+    }
 }
