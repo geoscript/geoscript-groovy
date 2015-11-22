@@ -5,6 +5,8 @@ import geoscript.proj.Projection
 import org.geotools.coverage.grid.GridEnvelope2D
 import org.geotools.coverage.grid.GridGeometry2D
 import org.geotools.coverage.grid.io.AbstractGridFormat
+import org.geotools.coverage.grid.io.GridFormatFinder
+import org.geotools.coverage.grid.io.UnknownFormat
 import org.geotools.factory.GeoTools
 import org.geotools.factory.Hints
 import org.opengis.coverage.grid.GridCoverageReader
@@ -230,10 +232,23 @@ class Format {
      */
     static Format getFormat(Object input) {
         Format format = null
+        // Try with FormatFactories
         for (FormatFactory formatFactory : FormatFactories.list()) {
             format = formatFactory.create(input)
             if (format != null) {
                 break
+            }
+        }
+        // Then try with GeoTools GridFormatFinder
+        if (!format) {
+            AbstractGridFormat gridFormat = null
+            try {
+                gridFormat = GridFormatFinder.findFormat(input)
+            } catch(Exception ex) {
+                // Move on
+            }
+            if (gridFormat && !(gridFormat instanceof UnknownFormat)) {
+                format = new Format(gridFormat, input)
             }
         }
         format
