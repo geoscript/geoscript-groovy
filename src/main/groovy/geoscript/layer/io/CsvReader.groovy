@@ -131,17 +131,17 @@ class CsvReader implements Reader {
         this.type = type
         this.usingSingleColumn = true
         if (type == Type.WKB) {
-            this.geomReader = new WkbReader()
+            this.geomReader = geoscript.geom.io.Readers.find("wkb")
         } else if (type == Type.GEOJSON) {
-            this.geomReader = new GeoJSONReader()
+            this.geomReader = geoscript.geom.io.Readers.find("geojson")
         } else if (type == Type.KML) {
-            this.geomReader = new KmlReader()
+            this.geomReader = geoscript.geom.io.Readers.find("kml")
         } else if (type == Type.GML2) {
-            this.geomReader = new Gml2Reader()
+            this.geomReader = geoscript.geom.io.Readers.find("gml2")
         } else if (type == Type.GML3) {
-            this.geomReader = new Gml3Reader()
+            this.geomReader = geoscript.geom.io.Readers.find("gml3")
         } else /*if (type == Type.WKT)*/ {
-            this.geomReader = new WktReader()
+            this.geomReader = geoscript.geom.io.Readers.find("wkt")
         }
     }
 

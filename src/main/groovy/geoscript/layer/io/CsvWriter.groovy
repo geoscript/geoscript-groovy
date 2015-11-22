@@ -97,17 +97,17 @@ class CsvWriter implements Writer {
         this.quote = options.get("quote", "\"")
         this.encodeFieldType = options.get("encodeFieldType", !this.isXY(this.type))
         if (this.type == Type.WKB) {
-            this.geomWriter = new WkbWriter()
+            this.geomWriter = geoscript.geom.io.Writers.find("wkb")
         } else if (this.type == Type.GEOJSON) {
-            this.geomWriter = new GeoJSONWriter()
+            this.geomWriter = geoscript.geom.io.Writers.find("geojson")
         } else if (this.type == Type.KML) {
-            this.geomWriter = new KmlWriter()
+            this.geomWriter = geoscript.geom.io.Writers.find("kml")
         } else if (type == Type.GML2) {
-            this.geomWriter = new Gml2Writer()
+            this.geomWriter = geoscript.geom.io.Writers.find("gml2")
         } else if (type == Type.GML3) {
-            this.geomWriter = new Gml3Writer()
+            this.geomWriter = geoscript.geom.io.Writers.find("gml3")
         } else /*if (this.type == Type.WKT)*/ {
-            this.geomWriter = new WktWriter()
+            this.geomWriter = geoscript.geom.io.Writers.find("wkt")
         }
     }
 
