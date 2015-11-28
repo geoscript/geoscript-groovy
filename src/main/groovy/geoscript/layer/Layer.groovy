@@ -243,8 +243,20 @@ class Layer implements Renderable {
      */
     protected void setDefaultSymbolizer(String geometryType) {
         if(!this.style) {
-              if (this.workspace.format.equalsIgnoreCase("Directory")) {
-                def dir = this.workspace.ds.info.source.path
+            File file
+            if (this.workspace.format.equalsIgnoreCase("Directory")) {
+                file = this.workspace.file
+            } else if (this.workspace.format.equalsIgnoreCase("org.geotools.data.shapefile.ShapefileDataStore")) {
+                file = Eval.me("workspace", this.workspace, "new File(workspace.ds.shpFiles.get(org.geotools.data.shapefile.files.ShpFileType.SHP))")
+            } else if (this.workspace.format.equalsIgnoreCase("org.geotools.data.directory.DirectoryDataStore")) {
+                file = new File(this.workspace.ds.info.source.path)
+            } else if (this.workspace.format.equalsIgnoreCase("Property")) {
+                file = this.workspace.file
+            } else if (this.workspace.format.equalsIgnoreCase("org.geotools.data.property.PropertyDataStore")) {
+                file = new File(this.workspace.ds.info.source.path)
+            }
+            if (file) {
+                File dir = file.isDirectory() ? file : file.parentFile
                 def fileName = this.name
                 // Check for SLD
                 if (geoscript.style.io.Readers.find("sld")) {
