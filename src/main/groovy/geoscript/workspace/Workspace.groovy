@@ -45,7 +45,7 @@ class Workspace {
      * @param params The Map of parameters
      */
     Workspace(Map params) {
-        this(DataStoreFinder.getDataStore(params))
+        this(Workspace.getWorkspace(params).ds)
     }
 
     /**
@@ -218,6 +218,9 @@ class Workspace {
             if (!params.isEmpty()) {
                 break
             }
+        }
+        if (params.isEmpty()) {
+            params.putAll(getParameters(str))
         }
         if (params.isEmpty()) {
             throw new IllegalArgumentException("Unknown Workspace parameter string: ${str}")
