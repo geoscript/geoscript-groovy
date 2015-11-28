@@ -3,20 +3,10 @@ package geoscript.layer
 import geoscript.feature.Feature
 import geoscript.feature.Field
 import geoscript.geom.Bounds
-import geoscript.layer.io.CsvWriter
-import geoscript.layer.io.GeoJSONWriter
-import geoscript.layer.io.GeoRSSReader
-import geoscript.layer.io.GeoRSSWriter
-import geoscript.layer.io.GmlReader
-import geoscript.layer.io.CsvReader
-import geoscript.layer.io.GeoJSONReader
-import geoscript.layer.io.GmlWriter
-import geoscript.layer.io.GpxReader
-import geoscript.layer.io.GpxWriter
-import geoscript.layer.io.KmlReader
-import geoscript.layer.io.KmlWriter
-import geoscript.layer.io.MvtReader
-import geoscript.layer.io.MvtWriter
+import geoscript.layer.io.Reader
+import geoscript.layer.io.Writer
+import geoscript.layer.io.Readers
+import geoscript.layer.io.Writers
 import geoscript.proj.Projection
 import geoscript.style.Style
 import geoscript.workspace.Memory
@@ -56,7 +46,7 @@ class VectorTiles extends TileLayer<Tile> implements Renderable {
     /**
      * The Layer Reader
      */
-    geoscript.layer.io.Reader reader
+    Reader reader
 
     /**
      * Either a Style or a Map of Styles by Layer name
@@ -119,24 +109,11 @@ class VectorTiles extends TileLayer<Tile> implements Renderable {
         this.style = options.get("style")
     }
 
-    private geoscript.layer.io.Reader getReaderForType(String type) {
-        if (type.equalsIgnoreCase("geojson") || type.equalsIgnoreCase("json")) {
-            new GeoJSONReader()
-        } else if (type.equalsIgnoreCase("csv")) {
-            new CsvReader()
-        } else if (type.equalsIgnoreCase("georss")) {
-            new GeoRSSReader()
-        } else if (type.equalsIgnoreCase("gml")) {
-            new GmlReader()
-        } else if (type.equalsIgnoreCase("gpx")) {
-            new GpxReader()
-        } else if (type.equalsIgnoreCase("kml")) {
-            new KmlReader()
-        } else if (type.equalsIgnoreCase("mvt")) {
-            new MvtReader()
-        } else {
-            null
+    private Reader getReaderForType(String type) {
+        if (type.equalsIgnoreCase("json")) {
+            type = "geojson"
         }
+        Readers.find(type)
     }
 
     /**
@@ -315,22 +292,11 @@ class VectorTiles extends TileLayer<Tile> implements Renderable {
                     }
                     new PbfVectorTileRenderer(layers, fields)
                 } else {
-                    geoscript.layer.io.Writer layerWriter
-                    if (vectorTiles.type.equalsIgnoreCase("mvt")) {
-                        layerWriter = new MvtWriter()
-                    } else if (vectorTiles.type.toLowerCase() in ["json", "geojson"]) {
-                        layerWriter = new GeoJSONWriter()
-                    } else if (vectorTiles.type.equalsIgnoreCase("csv")) {
-                        layerWriter = new CsvWriter()
-                    } else if (vectorTiles.type.equalsIgnoreCase("georss")) {
-                        layerWriter = new GeoRSSWriter()
-                    } else if (vectorTiles.type.equalsIgnoreCase("gml")) {
-                        layerWriter = new GmlWriter()
-                    } else if (vectorTiles.type.equalsIgnoreCase("gpx")) {
-                        layerWriter = new GpxWriter()
-                    } else if (vectorTiles.type.equalsIgnoreCase("kml")) {
-                        layerWriter = new KmlWriter()
+                    String type = vectorTiles.type
+                    if (type.equalsIgnoreCase("json")) {
+                        type = "geojson"
                     }
+                    Writer layerWriter = Writers.find(type)
                     Layer layer = layers[0]
                     List<Field> fields = options.fields ?
                             options.fields.collect {
