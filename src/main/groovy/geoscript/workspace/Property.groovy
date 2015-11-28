@@ -74,12 +74,20 @@ class Property extends Workspace {
     }
 
     /**
+     * Get the File
+     * @return The File
+     */
+    File getFile() {
+        new File(ds.info.source.path)
+    }
+
+    /**
      * Get the string representation
      * @return The string representation
      */
     @Override
     String toString() {
-        return "Property[${new File(ds.info.source.path).absolutePath}]"
+        return "Property[${getFile().absolutePath}]"
     }
 
     /**
