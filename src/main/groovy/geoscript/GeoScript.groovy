@@ -290,16 +290,18 @@ class GeoScript {
         }
     }
 
+    /**
+     * Zip a List of Files
+     * @param files The List of Files
+     * @param zipFile The Zip File
+     * @return The Zip File
+     */
     static File zip(List<File> files, File zipFile) {
         ZipOutputStream out = new ZipOutputStream(new FileOutputStream(zipFile))
         try {
             files.each { File file ->
                 if (file.exists()) {
-                    out.putNextEntry(new ZipEntry(file.name))
-                    file.withInputStream { InputStream inputStream ->
-                        out << inputStream
-                    }
-                    out.closeEntry()
+                    zipIt(file, file, out)
                 }
             }
         } finally {
@@ -308,11 +310,44 @@ class GeoScript {
         zipFile
     }
 
+    /**
+     * Recursively add files and directories to the zip file
+     * @param root The File root used to calculate relatives paths
+     * @param file The File being zipped
+     * @param out The ZipOutputStream
+     */
+    private static void zipIt(File root, File file, ZipOutputStream out) {
+        if (file.isDirectory()) {
+            file.listFiles().each { File f ->
+                zipIt(root, f, out)
+            }
+        } else {
+            String path = root.toURI().relativize(file.toURI()).path
+            if (!path) {
+                path = file.name
+            }
+            out.putNextEntry(new ZipEntry(path))
+            file.withInputStream { InputStream inputStream ->
+                out << inputStream
+            }
+            out.closeEntry()
+        }
+    }
+
+    /**
+     * Unzip the Zip File into a Directory
+     * @param zipFile The Zip File
+     * @param dir The output Directory
+     * @return The output Directory
+     */
     static File unzip(File zipFile, File dir = zipFile.parentFile) {
         if (!dir.exists()) dir.mkdir()
         ZipFile zip = new ZipFile(zipFile)
         zip.entries().each { ZipEntry entry ->
             File f = new File(dir, entry.name)
+            if (!f.parentFile.exists()) {
+                f.parentFile.mkdirs()
+            }
             f.withOutputStream { OutputStream out ->
                 out << zip.getInputStream(entry)
             }
