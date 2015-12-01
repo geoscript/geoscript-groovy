@@ -4,6 +4,7 @@ import geoscript.GeoScript
 import geoscript.workspace.Directory
 import org.geotools.data.DataUtilities
 import org.geotools.data.shapefile.files.ShpFileType
+import org.geotools.data.shapefile.ShapefileDumper
 
 /**
  * A Shapefile Layer.
@@ -72,6 +73,45 @@ class Shapefile extends Layer {
         File shpFile = dir.listFiles().find{ File f -> f.name.endsWith(name)}
         shpFile != null ? new Shapefile(shpFile) : null
     }
+
+    /**
+     * Dump the Layer which may contain more than one Geometry type into a Directory of Shapefiles
+     * @param options The optional named parameters:
+     * <ul>
+     *     <li> maxShapeSize = The maximum shp size </li>
+     *     <li> maxDbfSize = The maximum dbf size </li>
+     * </ul>
+     * @param dir The File where the Shapefiles will be written
+     * @param layer The Layer to turn into Shapefiles
+     * @return A Directory Workspace
+     */
+    static Directory dump(Map options = [:], File dir, Layer layer) {
+        dump(options, dir, layer.cursor)
+    }
+
+    /**
+     * Dump the Cursor which may contain more than one Geometry type into a Directory of Shapefiles
+     * @param options The optional named parameters:
+     * <ul>
+     *     <li> maxShapeSize = The maximum shp size </li>
+     *     <li> maxDbfSize = The maximum dbf size </li>
+     * </ul>
+     * @param dir The File where the Shapefiles will be written
+     * @param cursor The Cursor to turn into Shapefiles
+     * @return A Directory Workspace
+     */
+    static Directory dump(Map options = [:], File dir, Cursor cursor) {
+        ShapefileDumper dumper = new ShapefileDumper(dir)
+        if (options.maxShapeSize) {
+            dumper.maxShapeSize = options.maxShapeSize
+        }
+        if (options.maxDbfSize) {
+            dumper.maxDbfSize = options.maxDbfSize
+        }
+        dumper.dump(cursor.col)
+        new Directory(dir)
+    }
+
 
     /**
      * Create a Shapefile Layer form a File

@@ -3,6 +3,8 @@ package geoscript.layer
 import geoscript.feature.Feature
 import geoscript.feature.Field
 import geoscript.feature.Schema
+import geoscript.geom.Bounds
+import geoscript.geom.Geometry
 import geoscript.geom.Point
 import geoscript.workspace.Directory
 import geoscript.workspace.Workspace
@@ -98,6 +100,25 @@ class ShapefileTestCase {
         Shapefile shp2 = Shapefile.unzip(zipFile)
         assertNotNull shp2
         assertEquals 49, shp2.count
+    }
+
+    @Test void dump() {
+        File dir = folder.newFolder("points")
+        dir.mkdir()
+        Layer layer = new Layer()
+        Geometry geom = new Bounds(0,0,90,90).geometry
+        Geometry.createRandomPoints(geom, 10).points.each { Point pt ->
+            layer.add([geom: pt])
+        }
+        Geometry.createRandomPoints(geom, 10).points.each { Point pt ->
+            layer.add([geom: pt.buffer(10)])
+        }
+        Directory workspace = Shapefile.dump(dir, layer)
+        assertTrue workspace.names.size() == 2
+        Layer pointLayer = workspace.layers.find { it.name.endsWith("Point") }
+        assertEquals 10, pointLayer.count
+        Layer polygonLayer = workspace.layers.find { it.name.endsWith("Polygon") }
+        assertEquals 10, polygonLayer.count
     }
 }
 
