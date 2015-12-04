@@ -8,11 +8,6 @@ import geoscript.geom.Point
 import geoscript.proj.DecimalDegrees
 import geoscript.geom.Geometry
 import geoscript.geom.io.WktReader
-import geoscript.geom.io.WkbReader
-import geoscript.geom.io.GeoJSONReader
-import geoscript.geom.io.KmlReader
-import geoscript.geom.io.Gml2Reader
-import geoscript.geom.io.Gml3Reader
 import geoscript.proj.Projection
 import geoscript.workspace.Memory
 import geoscript.workspace.Workspace
@@ -250,31 +245,39 @@ class CsvReader implements Reader {
                         def v = values[i]
                         def colType = "String"
                         def proj = null
+                        // Get the type from the header
                         if (c.contains(":")) {
                             String[] parts = c.split(":")
                             c = parts[0]
                             colType = parts[1]
+                            if (isGeometry(colType) && !isTypeXY(type)) {
+                                column = c
+                                isGeom = true
+                            }
                             if (parts.length > 2) {
                                 String projStr = parts[2..parts.length-1].join(":")
                                 proj = new Projection(projStr)
                             }
                         }
-                        // The user specified a column but it isn't WKT it's XY
-                        if (column && c.equalsIgnoreCase(column) && isTypeXY(type)) {
-                            colType = "Point"
-                        }
-                        // The user either specified a column
-                        else if((column && c.equalsIgnoreCase(column))) {
-                            isGeom = true
-                            column = c
-                            Geometry g = geomReader.read(v)
-                            colType = g.getGeometryType()
-                        }
-                        // The users didn't specify a column but the value looks like WKT
-                        else if (!column && isWKT(v)) {
-                            isGeom = true
-                            column = c
-                            colType = getGeometryTypeFromWKT(v)
+                        // Otherwise guess the type
+                        else {
+                            // The user specified a column but it isn't WKT it's XY
+                            if (column && c.equalsIgnoreCase(column) && isTypeXY(type)) {
+                                colType = "Point"
+                            }
+                            // The user either specified a column
+                            else if ((column && c.equalsIgnoreCase(column))) {
+                                isGeom = true
+                                column = c
+                                Geometry g = geomReader.read(v)
+                                colType = g.getGeometryType()
+                            }
+                            // The users didn't specify a column but the value looks like WKT
+                            else if (!column && isWKT(v)) {
+                                isGeom = true
+                                column = c
+                                colType = getGeometryTypeFromWKT(v)
+                            }
                         }
                         fields.add(new Field(c.trim(), colType.trim(), proj))
                     }
