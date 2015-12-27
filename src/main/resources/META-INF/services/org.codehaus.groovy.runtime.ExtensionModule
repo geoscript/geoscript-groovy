@@ -1,4 +1,0 @@
-moduleName = geoscript-groovy-module
-moduleVersion = 1.0
-extensionClasses = geoscript.geom.io.GeometryExtensionModule, geoscript.feature.io.FeatureExtensionModule, geoscript.layer.io.LayerExtensionModule, geoscript.layer.io.PyramidExtensionModule, geoscript.layer.WMSMapExtensionModule
-staticExtensionClasses = geoscript.geom.io.StaticGeometryExtensionModule, geoscript.feature.io.StaticFeatureExtensionModule, geoscript.plot.ViewerExtensionModule, geoscript.layer.io.StaticPyramidExtensionModule

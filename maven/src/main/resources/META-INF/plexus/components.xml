@@ -1,0 +1,17 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<component-set>
+    <components>
+        <component>
+            <role>org.apache.maven.plugin.assembly.filter.ContainerDescriptorHandler</role>
+            <role-hint>metainf-service-excluding-groovy-extension-modules-handler</role-hint>
+            <implementation>org.geoscript.maven.MetaInfServicesExcludeGroovyExtensionModuleHandler</implementation>
+            <instantiation-strategy>per-lookup</instantiation-strategy>
+        </component>
+        <component>
+            <role>org.apache.maven.plugin.assembly.filter.ContainerDescriptorHandler</role>
+            <role-hint>groovy-extension-module-handler</role-hint>
+            <implementation>org.geoscript.maven.GroovyExtensionModuleHandler</implementation>
+            <instantiation-strategy>per-lookup</instantiation-strategy>
+        </component>
+    </components>
+</component-set>

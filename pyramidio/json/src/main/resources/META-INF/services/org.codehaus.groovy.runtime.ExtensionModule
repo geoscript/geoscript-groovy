@@ -1,0 +1,4 @@
+moduleName = geoscript-groovy-pyramidio-json-module
+moduleVersion = 1.0
+extensionClasses = geoscript.layer.io.JsonPyramidExtensionModule
+staticExtensionClasses = geoscript.layer.io.JsonPyramidStaticExtensionModule

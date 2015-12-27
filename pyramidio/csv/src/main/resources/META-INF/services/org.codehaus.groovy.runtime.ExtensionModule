@@ -1,0 +1,4 @@
+moduleName = geoscript-groovy-pyramidio-csv-module
+moduleVersion = 1.0
+extensionClasses = geoscript.layer.io.CsvPyramidExtensionModule
+staticExtensionClasses = geoscript.layer.io.CsvPyramidStaticExtensionModule

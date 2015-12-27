@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
+   http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>org.geoscript</groupId>
+        <artifactId>geoscript-groovy-workspace</artifactId>
+        <version>2.0-SNAPSHOT</version>
+    </parent>
+    <groupId>org.geoscript</groupId>
+    <artifactId>geoscript-groovy-workspace-geopackage</artifactId>
+    <packaging>jar</packaging>
+    <version>2.0-SNAPSHOT</version>
+    <name>GeoScript Groovy Workspace GeoPackage</name>
+    <dependencies>
+        <dependency>
+            <groupId>org.geoscript</groupId>
+            <artifactId>geoscript-groovy-workspace-database</artifactId>
+            <version>${geoscript.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.geotools</groupId>
+            <artifactId>gt-geopkg</artifactId>
+            <version>${geotools.version}</version>
+        </dependency>
+        <!-- Test -->
+        <dependency>
+            <groupId>org.geoscript</groupId>
+            <artifactId>geoscript-groovy-workspace-directory</artifactId>
+            <version>${geoscript.version}</version>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+</project>

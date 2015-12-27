@@ -1,9 +1,0 @@
-geoscript.layer.ArcGrid$Factory
-geoscript.layer.GeoTIFF$Factory
-geoscript.layer.Grass$Factory
-geoscript.layer.GTopo30$Factory
-geoscript.layer.ImagePyramid$Factory
-geoscript.layer.Mosaic$Factory
-geoscript.layer.MrSID$Factory
-geoscript.layer.NetCDF$Factory
-geoscript.layer.WorldImage$Factory

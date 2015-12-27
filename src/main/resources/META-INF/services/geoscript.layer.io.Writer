@@ -1,8 +1,0 @@
-geoscript.layer.io.CsvWriter
-geoscript.layer.io.GeobufWriter
-geoscript.layer.io.GeoJSONWriter
-geoscript.layer.io.GeoRSSWriter
-geoscript.layer.io.GmlWriter
-geoscript.layer.io.GpxWriter
-geoscript.layer.io.KmlWriter
-geoscript.layer.io.MvtWriter

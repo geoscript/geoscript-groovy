@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
+   http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>org.geoscript</groupId>
+        <artifactId>geoscript-groovy-parent</artifactId>
+        <version>2.0-SNAPSHOT</version>
+    </parent>
+    <groupId>org.geoscript</groupId>
+    <artifactId>geoscript-groovy-raster</artifactId>
+    <packaging>pom</packaging>
+    <version>2.0-SNAPSHOT</version>
+    <name>GeoScript Groovy Raster</name>
+    <modules>
+        <module>arcgrid</module>
+        <module>geotiff</module>
+        <module>grass</module>
+        <module>gtopo30</module>
+        <module>imagepyramid</module>
+        <module>mosaic</module>
+        <module>mrsid</module>
+        <module>netcdf</module>
+        <module>worldimage</module>
+        <module>mapalgebra</module>
+    </modules>
+</project>

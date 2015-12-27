@@ -1,8 +1,0 @@
-geoscript.layer.io.CsvReader
-geoscript.layer.io.GeobufReader
-geoscript.layer.io.GeoJSONReader
-geoscript.layer.io.GeoRSSReader
-geoscript.layer.io.GmlReader
-geoscript.layer.io.GpxReader
-geoscript.layer.io.KmlReader
-geoscript.layer.io.MvtReader

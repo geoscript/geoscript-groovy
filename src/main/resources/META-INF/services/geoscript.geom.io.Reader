@@ -1,9 +1,0 @@
-geoscript.geom.io.GeobufReader
-geoscript.geom.io.GeoJSONReader
-geoscript.geom.io.GeoRSSReader
-geoscript.geom.io.Gml2Reader
-geoscript.geom.io.Gml3Reader
-geoscript.geom.io.GpxReader
-geoscript.geom.io.KmlReader
-geoscript.geom.io.WkbReader
-geoscript.geom.io.WktReader

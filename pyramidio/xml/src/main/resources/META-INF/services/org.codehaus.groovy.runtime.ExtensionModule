@@ -1,0 +1,4 @@
+moduleName = geoscript-groovy-pyramidio-xml-module
+moduleVersion = 1.0
+extensionClasses = geoscript.layer.io.XmlPyramidExtensionModule
+staticExtensionClasses = geoscript.layer.io.XmlPyramidStaticExtensionModule

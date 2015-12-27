@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
+   http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>org.geoscript</groupId>
+        <artifactId>geoscript-groovy-parent</artifactId>
+        <version>2.0-SNAPSHOT</version>
+    </parent>
+    <groupId>org.geoscript</groupId>
+    <artifactId>geoscript-groovy-tile</artifactId>
+    <packaging>pom</packaging>
+    <version>2.0-SNAPSHOT</version>
+    <name>GeoScript Groovy Tile</name>
+    <modules>
+        <module>geopackage</module>
+        <module>mbtiles</module>
+        <module>osm</module>
+        <module>tms</module>
+        <module>utf</module>
+        <module>vectortiles</module>
+    </modules>
+</project>

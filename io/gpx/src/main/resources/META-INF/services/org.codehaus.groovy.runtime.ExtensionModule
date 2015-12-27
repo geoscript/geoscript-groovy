@@ -1,0 +1,4 @@
+moduleName = geoscript-groovy-io-gpx-module
+moduleVersion = 1.0
+extensionClasses = geoscript.geom.io.GpxGeometryExtensionModule, geoscript.feature.io.GpxFeatureExtensionModule, geoscript.layer.io.GpxLayerExtensionModule
+staticExtensionClasses = geoscript.geom.io.GpxStaticGeometryExtensionModule, geoscript.feature.io.GpxStaticFeatureExtensionModule

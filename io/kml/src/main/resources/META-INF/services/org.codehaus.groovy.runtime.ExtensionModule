@@ -1,0 +1,4 @@
+moduleName = geoscript-groovy-io-kml-module
+moduleVersion = 1.0
+extensionClasses = geoscript.geom.io.KmlGeometryExtensionModule, geoscript.feature.io.KmlFeatureExtensionModule, geoscript.layer.io.KmlLayerExtensionModule
+staticExtensionClasses = geoscript.geom.io.KmlStaticGeometryExtensionModule, geoscript.feature.io.KmlStaticFeatureExtensionModule

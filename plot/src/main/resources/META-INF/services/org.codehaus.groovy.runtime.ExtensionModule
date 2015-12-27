@@ -1,0 +1,3 @@
+moduleName = plot-module
+moduleVersion = 1.0
+staticExtensionClasses = geoscript.plot.ViewerExtensionModule

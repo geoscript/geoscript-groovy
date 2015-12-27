@@ -1,0 +1,3 @@
+moduleName = geoscript-groovy-wms-map-module
+moduleVersion = 1.0
+extensionClasses = geoscript.layer.WMSMapExtensionModule

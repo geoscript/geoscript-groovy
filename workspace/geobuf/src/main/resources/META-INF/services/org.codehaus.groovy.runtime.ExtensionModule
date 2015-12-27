@@ -1,0 +1,4 @@
+moduleName = geoscript-groovy-geobuf-module
+moduleVersion = 1.0
+extensionClasses = geoscript.geom.io.GeobufGeometryExtensionModule, geoscript.feature.io.GeobufFeatureExtensionModule, geoscript.layer.io.GeobufLayerExtensionModule
+staticExtensionClasses = geoscript.geom.io.GeobufStaticGeometryExtensionModule, geoscript.feature.io.GeobufStaticFeatureExtensionModule

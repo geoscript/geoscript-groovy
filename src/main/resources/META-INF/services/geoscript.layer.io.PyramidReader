@@ -1,4 +1,0 @@
-geoscript.layer.io.CsvPyramidReader
-geoscript.layer.io.GdalTmsPyramidReader
-geoscript.layer.io.JsonPyramidReader
-geoscript.layer.io.XmlPyramidReader

@@ -1,0 +1,4 @@
+moduleName = geoscript-groovy-io-gml-module
+moduleVersion = 1.0
+extensionClasses = geoscript.geom.io.GmlGeometryExtensionModule, geoscript.feature.io.GmlFeatureExtensionModule, geoscript.layer.io.GmlLayerExtensionModule
+staticExtensionClasses = geoscript.geom.io.GmlStaticGeometryExtensionModule, geoscript.feature.io.GmlStaticFeatureExtensionModule

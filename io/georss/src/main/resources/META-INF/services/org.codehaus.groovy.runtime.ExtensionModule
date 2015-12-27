@@ -1,0 +1,4 @@
+moduleName = geoscript-groovy-io-georss-module
+moduleVersion = 1.0
+extensionClasses = geoscript.geom.io.GeoRSSGeometryExtensionModule, geoscript.feature.io.GeoRSSFeatureExtensionModule, geoscript.layer.io.GeoRSSLayerExtensionModule
+staticExtensionClasses = geoscript.geom.io.GeoRSSStaticGeometryExtensionModule, geoscript.feature.io.GeoRSSStaticFeatureExtensionModule

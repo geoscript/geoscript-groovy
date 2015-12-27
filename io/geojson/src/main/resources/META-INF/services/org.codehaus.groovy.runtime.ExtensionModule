@@ -1,0 +1,4 @@
+moduleName = geoscript-groovy-io-geojson-module
+moduleVersion = 1.0
+extensionClasses = geoscript.geom.io.GeoJSONGeometryExtensionModule, geoscript.feature.io.GeoJSONFeatureExtensionModule, geoscript.layer.io.GeoJSONLayerExtensionModule
+staticExtensionClasses = geoscript.geom.io.GeoJSONStaticGeometryExtensionModule, geoscript.feature.io.GeoJSONStaticFeatureExtensionModule
