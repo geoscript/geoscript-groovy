@@ -1,5 +1,6 @@
 package geoscript.style.io
 
+import geoscript.AssertUtil
 import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.TemporaryFolder
@@ -15,11 +16,10 @@ class SLDWriterTestCase {
 
     @Rule
     public TemporaryFolder folder = new TemporaryFolder()
-    
+
     private String NEW_LINE = System.getProperty("line.separator")
 
-    private String expectedSld = """<?xml version="1.0" encoding="UTF-8"?>
-<sld:StyledLayerDescriptor xmlns="http://www.opengis.net/sld" xmlns:sld="http://www.opengis.net/sld" xmlns:ogc="http://www.opengis.net/ogc" xmlns:gml="http://www.opengis.net/gml" version="1.0.0">
+    private String expectedSld = """<?xml version="1.0" encoding="UTF-8"?><sld:StyledLayerDescriptor xmlns="http://www.opengis.net/sld" xmlns:sld="http://www.opengis.net/sld" xmlns:ogc="http://www.opengis.net/ogc" xmlns:gml="http://www.opengis.net/gml" version="1.0.0">
   <sld:UserLayer>
     <sld:LayerFeatureConstraints>
       <sld:FeatureTypeConstraint/>
@@ -43,17 +43,17 @@ class SLDWriterTestCase {
       </sld:FeatureTypeStyle>
     </sld:UserStyle>
   </sld:UserLayer>
-</sld:StyledLayerDescriptor>""".trim().replaceAll("\n","")
+</sld:StyledLayerDescriptor>"""
 
     @Test void writeToOutputStream() {
         Symbolizer sym = new Fill("wheat") + new Stroke("brown")
         SLDWriter writer = new SLDWriter();
         ByteArrayOutputStream out = new ByteArrayOutputStream()
         writer.write(sym, out)
-        String sld = out.toString().trim().replaceAll(NEW_LINE,"")
+        String sld = out.toString().trim()
         assertNotNull sld
         assertTrue sld.length() > 0
-        assertEquals expectedSld, sld
+        AssertUtil.assertStringsEqual expectedSld, sld, removeXmlNS: true, trim: true
     }
 
     @Test void writeToFile() {
@@ -61,18 +61,18 @@ class SLDWriterTestCase {
         SLDWriter writer = new SLDWriter();
         File file = folder.newFile("simple.sld")
         writer.write(sym, file)
-        String sld = file.text.trim().replaceAll(NEW_LINE,"")
+        String sld = file.text.trim()
         assertNotNull sld
         assertTrue sld.length() > 0
-        assertEquals expectedSld, sld
+        AssertUtil.assertStringsEqual expectedSld, sld, removeXmlNS: true, trim: true
     }
 
     @Test void writeToString() {
         Symbolizer sym = new Fill("wheat") + new Stroke("brown")
         SLDWriter writer = new SLDWriter();
-        String sld = writer.write(sym).trim().replaceAll(NEW_LINE,"")
+        String sld = writer.write(sym).trim()
         assertNotNull sld
         assertTrue sld.length() > 0
-        assertEquals expectedSld, sld
+        AssertUtil.assertStringsEqual expectedSld, sld, removeXmlNS: true, trim: true
     }
 }

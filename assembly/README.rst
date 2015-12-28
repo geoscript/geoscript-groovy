@@ -452,6 +452,7 @@ Now that GeoScript Groovy is modular, it is easier to use in regular Groovy Scri
 management system.::
 
     @GrabResolver(name='boundless', root='http://repo.boundlessgeo.com/main/')
+    @GrabExclude('org.codehaus.groovy:groovy-all')
     @Grab('org.geoscript:geoscript-groovy-core:2.0-SNAPSHOT')
     @Grab('org.geoscript:geoscript-groovy-io-geojson:2.0-SNAPSHOT')
     import geoscript.geom.Point

@@ -1,5 +1,6 @@
 package geoscript.style
 
+import geoscript.AssertUtil
 import geoscript.feature.Field
 import geoscript.style.io.SLDWriter
 import org.junit.Rule
@@ -75,7 +76,7 @@ class SymbolizerTestCase {
         assertEquals 200, sym.scale[1], 0.1
 
     }
-    
+
     @Test void plus() {
         def composite = new Fill("red") + new Stroke("#ffffff")
         assertTrue composite instanceof Composite
@@ -301,8 +302,7 @@ class SymbolizerTestCase {
 
         String NEW_LINE = System.getProperty("line.separator")
 
-        String expectedSld = """<?xml version="1.0" encoding="UTF-8"?>
-<sld:StyledLayerDescriptor xmlns="http://www.opengis.net/sld" xmlns:sld="http://www.opengis.net/sld" xmlns:ogc="http://www.opengis.net/ogc" xmlns:gml="http://www.opengis.net/gml" version="1.0.0">
+        String expectedSld = """<?xml version="1.0" encoding="UTF-8"?><sld:StyledLayerDescriptor xmlns="http://www.opengis.net/sld" xmlns:sld="http://www.opengis.net/sld" xmlns:ogc="http://www.opengis.net/ogc" xmlns:gml="http://www.opengis.net/gml" version="1.0.0">
   <sld:UserLayer>
     <sld:LayerFeatureConstraints>
       <sld:FeatureTypeConstraint/>
@@ -326,28 +326,28 @@ class SymbolizerTestCase {
       </sld:FeatureTypeStyle>
     </sld:UserStyle>
   </sld:UserLayer>
-</sld:StyledLayerDescriptor>""".trim().replaceAll("\n","")
+</sld:StyledLayerDescriptor>""".trim()
 
         Symbolizer sym = new Fill("wheat") + new Stroke("brown")
 
         ByteArrayOutputStream out = new ByteArrayOutputStream()
         sym.asSLD(out)
-        String sld = out.toString().trim().replaceAll(NEW_LINE,"")
+        String sld = out.toString().trim()
         assertNotNull sld
         assertTrue sld.length() > 0
-        assertEquals expectedSld, sld
+        AssertUtil.assertStringsEqual expectedSld, sld, removeXmlNS: true, trim: true
 
         File file = folder.newFile("simple.sld")
         sym.asSLD(file)
-        sld = file.text.trim().replaceAll(NEW_LINE,"")
+        sld = file.text.trim()
         assertNotNull sld
         assertTrue sld.length() > 0
-        assertEquals expectedSld, sld
+        AssertUtil.assertStringsEqual expectedSld, sld, removeXmlNS: true, trim: true
 
-        sld = sym.sld.trim().replaceAll(NEW_LINE,"")
+        sld = sym.sld.trim()
         assertNotNull sld
         assertTrue sld.length() > 0
-        assertEquals expectedSld, sld
+        AssertUtil.assertStringsEqual expectedSld, sld, removeXmlNS: true, trim: true
     }
 
     @Test

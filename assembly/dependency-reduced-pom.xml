@@ -113,13 +113,13 @@
     <dependency>
       <groupId>org.geotools</groupId>
       <artifactId>gt-main</artifactId>
-      <version>15-20151217.022527-91</version>
+      <version>15-20151222.223204-98</version>
       <scope>compile</scope>
     </dependency>
     <dependency>
       <groupId>org.geotools</groupId>
       <artifactId>gt-api</artifactId>
-      <version>15-20151217.022459-91</version>
+      <version>15-20151222.223139-98</version>
       <scope>compile</scope>
     </dependency>
     <dependency>
@@ -143,13 +143,13 @@
     <dependency>
       <groupId>org.geotools</groupId>
       <artifactId>gt-epsg-hsql</artifactId>
-      <version>15-20151217.022506-91</version>
+      <version>15-20151222.223143-98</version>
       <scope>compile</scope>
     </dependency>
     <dependency>
       <groupId>org.geotools</groupId>
       <artifactId>gt-referencing</artifactId>
-      <version>15-20151217.022455-91</version>
+      <version>15-20151222.223134-98</version>
       <scope>compile</scope>
     </dependency>
     <dependency>
@@ -167,13 +167,13 @@
     <dependency>
       <groupId>org.geotools</groupId>
       <artifactId>gt-metadata</artifactId>
-      <version>15-20151217.022451-91</version>
+      <version>15-20151222.223130-98</version>
       <scope>compile</scope>
     </dependency>
     <dependency>
       <groupId>org.geotools</groupId>
       <artifactId>gt-opengis</artifactId>
-      <version>15-20151217.022439-91</version>
+      <version>15-20151222.223119-98</version>
       <scope>compile</scope>
     </dependency>
     <dependency>
@@ -197,13 +197,13 @@
     <dependency>
       <groupId>org.geotools</groupId>
       <artifactId>gt-render</artifactId>
-      <version>15-20151217.022632-91</version>
+      <version>15-20151222.223308-98</version>
       <scope>compile</scope>
     </dependency>
     <dependency>
       <groupId>org.geotools</groupId>
       <artifactId>gt-coverage</artifactId>
-      <version>15-20151217.022608-91</version>
+      <version>15-20151222.223244-98</version>
       <scope>compile</scope>
     </dependency>
     <dependency>
@@ -389,13 +389,13 @@
     <dependency>
       <groupId>org.geotools</groupId>
       <artifactId>gt-cql</artifactId>
-      <version>15-20151217.022557-91</version>
+      <version>15-20151222.223231-98</version>
       <scope>compile</scope>
     </dependency>
     <dependency>
       <groupId>org.geotools</groupId>
       <artifactId>gt-data</artifactId>
-      <version>15-20151217.022559-91</version>
+      <version>15-20151222.223235-98</version>
       <scope>compile</scope>
     </dependency>
     <dependency>
@@ -407,19 +407,19 @@
     <dependency>
       <groupId>org.geotools.xsd</groupId>
       <artifactId>gt-xsd-filter</artifactId>
-      <version>15-20151217.022624-91</version>
+      <version>15-20151222.223259-98</version>
       <scope>compile</scope>
     </dependency>
     <dependency>
       <groupId>org.geotools.xsd</groupId>
       <artifactId>gt-xsd-core</artifactId>
-      <version>15-20151217.022537-91</version>
+      <version>15-20151222.223216-98</version>
       <scope>compile</scope>
     </dependency>
     <dependency>
       <groupId>org.geotools</groupId>
       <artifactId>gt-graph</artifactId>
-      <version>15-20151217.022533-91</version>
+      <version>15-20151222.223212-98</version>
       <scope>compile</scope>
     </dependency>
     <dependency>
@@ -455,25 +455,25 @@
     <dependency>
       <groupId>org.geotools.xsd</groupId>
       <artifactId>gt-xsd-gml2</artifactId>
-      <version>15-20151217.022616-91</version>
+      <version>15-20151222.223252-98</version>
       <scope>compile</scope>
     </dependency>
     <dependency>
       <groupId>org.geotools.xsd</groupId>
       <artifactId>gt-xsd-gml3</artifactId>
-      <version>15-20151217.022619-91</version>
+      <version>15-20151222.223255-98</version>
       <scope>compile</scope>
     </dependency>
     <dependency>
       <groupId>org.geotools</groupId>
       <artifactId>gt-brewer</artifactId>
-      <version>15-20151217.022920-89</version>
+      <version>15-20151222.223556-96</version>
       <scope>compile</scope>
     </dependency>
     <dependency>
       <groupId>org.geotools</groupId>
       <artifactId>gt-process</artifactId>
-      <version>15-20151217.022948-89</version>
+      <version>15-20151222.223623-96</version>
       <scope>compile</scope>
     </dependency>
     <dependency>
@@ -485,19 +485,19 @@
     <dependency>
       <groupId>org.geotools</groupId>
       <artifactId>gt-process-feature</artifactId>
-      <version>15-20151217.023051-89</version>
+      <version>15-20151222.223722-96</version>
       <scope>compile</scope>
     </dependency>
     <dependency>
       <groupId>org.geotools</groupId>
       <artifactId>gt-process-geometry</artifactId>
-      <version>15-20151217.023037-89</version>
+      <version>15-20151222.223710-96</version>
       <scope>compile</scope>
     </dependency>
     <dependency>
       <groupId>org.geotools</groupId>
       <artifactId>gt-process-raster</artifactId>
-      <version>15-20151217.023043-89</version>
+      <version>15-20151222.223716-96</version>
       <scope>compile</scope>
     </dependency>
     <dependency>
@@ -539,61 +539,61 @@
     <dependency>
       <groupId>org.geotools</groupId>
       <artifactId>gt-transform</artifactId>
-      <version>15-20151217.022755-90</version>
+      <version>15-20151222.223437-97</version>
       <scope>compile</scope>
     </dependency>
     <dependency>
       <groupId>org.geotools</groupId>
       <artifactId>gt-grid</artifactId>
-      <version>15-20151217.022922-89</version>
+      <version>15-20151222.223559-96</version>
       <scope>compile</scope>
     </dependency>
     <dependency>
       <groupId>org.geotools</groupId>
       <artifactId>gt-css</artifactId>
-      <version>15-20151217.023100-89</version>
+      <version>15-20151222.223731-96</version>
       <scope>compile</scope>
     </dependency>
     <dependency>
       <groupId>org.parboiled</groupId>
       <artifactId>parboiled-java</artifactId>
-      <version>1.1.6</version>
+      <version>1.1.7</version>
       <scope>compile</scope>
     </dependency>
     <dependency>
       <groupId>org.parboiled</groupId>
       <artifactId>parboiled-core</artifactId>
-      <version>1.1.6</version>
+      <version>1.1.7</version>
       <scope>compile</scope>
     </dependency>
     <dependency>
       <groupId>org.ow2.asm</groupId>
       <artifactId>asm</artifactId>
-      <version>4.1</version>
+      <version>5.0.3</version>
       <scope>compile</scope>
     </dependency>
     <dependency>
       <groupId>org.ow2.asm</groupId>
       <artifactId>asm-tree</artifactId>
-      <version>4.1</version>
+      <version>5.0.3</version>
       <scope>compile</scope>
     </dependency>
     <dependency>
       <groupId>org.ow2.asm</groupId>
       <artifactId>asm-analysis</artifactId>
-      <version>4.1</version>
+      <version>5.0.3</version>
       <scope>compile</scope>
     </dependency>
     <dependency>
       <groupId>org.ow2.asm</groupId>
       <artifactId>asm-util</artifactId>
-      <version>4.1</version>
+      <version>5.0.3</version>
       <scope>compile</scope>
     </dependency>
     <dependency>
       <groupId>org.geotools.xsd</groupId>
       <artifactId>gt-xsd-sld</artifactId>
-      <version>15-20151217.022628-91</version>
+      <version>15-20151222.223302-98</version>
       <scope>compile</scope>
     </dependency>
     <dependency>
@@ -605,7 +605,7 @@
     <dependency>
       <groupId>org.geotools</groupId>
       <artifactId>gt-geojson</artifactId>
-      <version>15-20151217.023012-89</version>
+      <version>15-20151222.223645-96</version>
       <scope>compile</scope>
     </dependency>
     <dependency>
@@ -629,55 +629,55 @@
     <dependency>
       <groupId>org.geotools.xsd</groupId>
       <artifactId>gt-xsd-wfs</artifactId>
-      <version>15-20151217.022655-91</version>
+      <version>15-20151222.223335-98</version>
       <scope>compile</scope>
     </dependency>
     <dependency>
       <groupId>org.geotools.ogc</groupId>
       <artifactId>net.opengis.wfs</artifactId>
-      <version>15-20151217.022647-91</version>
+      <version>15-20151222.223326-98</version>
       <scope>compile</scope>
     </dependency>
     <dependency>
       <groupId>org.geotools.ogc</groupId>
       <artifactId>org.w3.xlink</artifactId>
-      <version>15-20151217.022638-91</version>
+      <version>15-20151222.223317-98</version>
       <scope>compile</scope>
     </dependency>
     <dependency>
       <groupId>org.geotools.ogc</groupId>
       <artifactId>net.opengis.fes</artifactId>
-      <version>15-20151217.022644-91</version>
+      <version>15-20151222.223323-98</version>
       <scope>compile</scope>
     </dependency>
     <dependency>
       <groupId>org.geotools.xsd</groupId>
       <artifactId>gt-xsd-fes</artifactId>
-      <version>15-20151217.022652-91</version>
+      <version>15-20151222.223332-98</version>
       <scope>compile</scope>
     </dependency>
     <dependency>
       <groupId>org.geotools.xsd</groupId>
       <artifactId>gt-xsd-ows</artifactId>
-      <version>15-20151217.022649-91</version>
+      <version>15-20151222.223329-98</version>
       <scope>compile</scope>
     </dependency>
     <dependency>
       <groupId>org.geotools.ogc</groupId>
       <artifactId>net.opengis.ows</artifactId>
-      <version>15-20151217.022641-91</version>
+      <version>15-20151222.223320-98</version>
       <scope>compile</scope>
     </dependency>
     <dependency>
       <groupId>org.geotools.xsd</groupId>
       <artifactId>gt-xsd-kml</artifactId>
-      <version>15-20151217.022930-89</version>
+      <version>15-20151222.223606-96</version>
       <scope>compile</scope>
     </dependency>
     <dependency>
       <groupId>org.geotools</groupId>
       <artifactId>gt-charts</artifactId>
-      <version>15-20151217.022725-91</version>
+      <version>15-20151222.223404-98</version>
       <scope>compile</scope>
     </dependency>
     <dependency>
@@ -701,7 +701,7 @@
     <dependency>
       <groupId>org.geotools</groupId>
       <artifactId>gt-arcgrid</artifactId>
-      <version>15-20151217.022613-91</version>
+      <version>15-20151222.223249-98</version>
       <scope>compile</scope>
     </dependency>
     <dependency>
@@ -713,7 +713,7 @@
     <dependency>
       <groupId>org.geotools</groupId>
       <artifactId>gt-geotiff</artifactId>
-      <version>15-20151217.022611-91</version>
+      <version>15-20151222.223247-98</version>
       <scope>compile</scope>
     </dependency>
     <dependency>
@@ -725,19 +725,19 @@
     <dependency>
       <groupId>org.geotools</groupId>
       <artifactId>gt-grassraster</artifactId>
-      <version>15-20151217.022738-90</version>
+      <version>15-20151222.223418-97</version>
       <scope>compile</scope>
     </dependency>
     <dependency>
       <groupId>org.geotools</groupId>
       <artifactId>gt-gtopo30</artifactId>
-      <version>15-20151217.022741-90</version>
+      <version>15-20151222.223421-97</version>
       <scope>compile</scope>
     </dependency>
     <dependency>
       <groupId>org.geotools</groupId>
       <artifactId>gt-imagepyramid</artifactId>
-      <version>15-20151217.022811-90</version>
+      <version>15-20151222.223452-97</version>
       <scope>compile</scope>
     </dependency>
     <dependency>
@@ -785,7 +785,7 @@
     <dependency>
       <groupId>org.geotools</groupId>
       <artifactId>gt-imagemosaic</artifactId>
-      <version>15-20151217.022806-90</version>
+      <version>15-20151222.223447-97</version>
       <scope>compile</scope>
     </dependency>
     <dependency>
@@ -839,7 +839,7 @@
     <dependency>
       <groupId>org.geotools</groupId>
       <artifactId>gt-imageio-ext-gdal</artifactId>
-      <version>15-20151217.022809-90</version>
+      <version>15-20151222.223450-97</version>
       <scope>compile</scope>
     </dependency>
     <dependency>
@@ -941,7 +941,7 @@
     <dependency>
       <groupId>org.geotools</groupId>
       <artifactId>gt-netcdf</artifactId>
-      <version>15-20151217.022900-90</version>
+      <version>15-20151222.223536-97</version>
       <scope>compile</scope>
       <exclusions>
         <exclusion>
@@ -953,13 +953,13 @@
     <dependency>
       <groupId>org.geotools</groupId>
       <artifactId>gt-coverage-api</artifactId>
-      <version>15-20151217.022850-90</version>
+      <version>15-20151222.223528-97</version>
       <scope>compile</scope>
     </dependency>
     <dependency>
       <groupId>org.geotools.ogc</groupId>
       <artifactId>net.opengis.wcs</artifactId>
-      <version>15-20151217.022708-91</version>
+      <version>15-20151222.223347-98</version>
       <scope>compile</scope>
     </dependency>
     <dependency>
@@ -1079,13 +1079,13 @@
     <dependency>
       <groupId>org.geotools</groupId>
       <artifactId>gt-image</artifactId>
-      <version>15-20151217.022744-90</version>
+      <version>15-20151222.223423-97</version>
       <scope>compile</scope>
     </dependency>
     <dependency>
       <groupId>org.geotools</groupId>
       <artifactId>gt-swing</artifactId>
-      <version>15-20151217.022958-89</version>
+      <version>15-20151222.223632-96</version>
       <scope>compile</scope>
     </dependency>
     <dependency>
@@ -1118,7 +1118,7 @@
     <dependency>
       <groupId>org.geotools</groupId>
       <artifactId>gt-svg</artifactId>
-      <version>15-20151217.022846-90</version>
+      <version>15-20151222.223525-97</version>
       <scope>compile</scope>
     </dependency>
     <dependency>
@@ -1286,7 +1286,7 @@
     <dependency>
       <groupId>org.geotools</groupId>
       <artifactId>gt-geopkg</artifactId>
-      <version>15-20151217.023014-89</version>
+      <version>15-20151222.223647-96</version>
       <scope>compile</scope>
     </dependency>
     <dependency>
@@ -1298,7 +1298,7 @@
     <dependency>
       <groupId>org.geotools</groupId>
       <artifactId>gt-mbtiles</artifactId>
-      <version>15-20151217.023018-89</version>
+      <version>15-20151222.223650-96</version>
       <scope>compile</scope>
     </dependency>
     <dependency>
@@ -1316,13 +1316,13 @@
     <dependency>
       <groupId>org.geotools</groupId>
       <artifactId>gt-wms</artifactId>
-      <version>15-20151217.022928-89</version>
+      <version>15-20151222.223604-96</version>
       <scope>compile</scope>
     </dependency>
     <dependency>
       <groupId>org.geotools</groupId>
       <artifactId>gt-xml</artifactId>
-      <version>15-20151217.022657-91</version>
+      <version>15-20151222.223337-98</version>
       <scope>compile</scope>
     </dependency>
     <dependency>
@@ -1334,7 +1334,7 @@
     <dependency>
       <groupId>org.geotools</groupId>
       <artifactId>gt-jdbc</artifactId>
-      <version>15-20151217.022700-91</version>
+      <version>15-20151222.223340-98</version>
       <scope>compile</scope>
     </dependency>
     <dependency>
@@ -1352,19 +1352,19 @@
     <dependency>
       <groupId>org.geotools</groupId>
       <artifactId>gt-shapefile</artifactId>
-      <version>15-20151217.022605-91</version>
+      <version>15-20151222.223241-98</version>
       <scope>compile</scope>
     </dependency>
     <dependency>
       <groupId>org.geotools</groupId>
       <artifactId>gt-geobuf</artifactId>
-      <version>15-20151217.023057-89</version>
+      <version>15-20151222.223729-96</version>
       <scope>compile</scope>
     </dependency>
     <dependency>
       <groupId>org.geotools.jdbc</groupId>
       <artifactId>gt-jdbc-h2</artifactId>
-      <version>15-20151217.022748-90</version>
+      <version>15-20151222.223427-97</version>
       <scope>compile</scope>
     </dependency>
     <dependency>
@@ -1388,7 +1388,7 @@
     <dependency>
       <groupId>org.geotools.jdbc</groupId>
       <artifactId>gt-jdbc-mysql</artifactId>
-      <version>15-20151217.022819-90</version>
+      <version>15-20151222.223459-97</version>
       <scope>compile</scope>
     </dependency>
     <dependency>
@@ -1406,19 +1406,19 @@
     <dependency>
       <groupId>org.geotools</groupId>
       <artifactId>gt-ogr-jni</artifactId>
-      <version>15-20151217.022840-90</version>
+      <version>15-20151222.223519-97</version>
       <scope>compile</scope>
     </dependency>
     <dependency>
       <groupId>org.geotools</groupId>
       <artifactId>gt-ogr-core</artifactId>
-      <version>15-20151217.022834-90</version>
+      <version>15-20151222.223514-97</version>
       <scope>compile</scope>
     </dependency>
     <dependency>
       <groupId>org.geotools.jdbc</groupId>
       <artifactId>gt-jdbc-postgis</artifactId>
-      <version>15-20151217.022753-90</version>
+      <version>15-20151222.223432-97</version>
       <scope>compile</scope>
     </dependency>
     <dependency>
@@ -1430,13 +1430,13 @@
     <dependency>
       <groupId>org.geotools</groupId>
       <artifactId>gt-property</artifactId>
-      <version>15-20151217.022602-91</version>
+      <version>15-20151222.223238-98</version>
       <scope>compile</scope>
     </dependency>
     <dependency>
       <groupId>org.geotools.jdbc</groupId>
       <artifactId>gt-jdbc-spatialite</artifactId>
-      <version>15-20151217.022825-90</version>
+      <version>15-20151222.223504-97</version>
       <scope>compile</scope>
     </dependency>
     <dependency>
@@ -1448,19 +1448,19 @@
     <dependency>
       <groupId>org.geotools</groupId>
       <artifactId>gt-wfs-ng</artifactId>
-      <version>15-20151217.023020-89</version>
+      <version>15-20151222.223652-96</version>
       <scope>compile</scope>
     </dependency>
     <dependency>
       <groupId>org.geotools</groupId>
       <artifactId>gt-complex</artifactId>
-      <version>15-20151217.022908-89</version>
+      <version>15-20151222.223545-96</version>
       <scope>compile</scope>
     </dependency>
     <dependency>
       <groupId>org.geotools</groupId>
       <artifactId>gt-app-schema-resolver</artifactId>
-      <version>15-20151217.022906-89</version>
+      <version>15-20151222.223543-96</version>
       <scope>compile</scope>
     </dependency>
     <dependency>
