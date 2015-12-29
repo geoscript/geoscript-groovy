@@ -304,7 +304,7 @@
                 <executions>
                     <execution>
                         <id>unpack-sources</id>
-                        <phase>generate-sources</phase>
+                        <phase>package</phase>
                         <goals>
                             <goal>unpack-dependencies</goal>
                         </goals>

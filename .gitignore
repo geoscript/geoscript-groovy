@@ -1,0 +1,14 @@
+.settings/
+.gradle/
+.idea/
+target/
+build/
+examples/sld_cookbook_point/
+examples/sld_cookbook_line/
+examples/sld_cookbook_polygon/
+examples/sld_cookbook_raster/
+*.iml
+.DS_Store
+assembly/dependency-reduced-pom.xml
+assembly/README.rst
+assembly/LICENSE.txt
