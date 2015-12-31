@@ -1,5 +1,6 @@
 package geoscript.style
 
+import geoscript.AssertUtil
 import geoscript.feature.Field
 import geoscript.style.io.SLDWriter
 import org.junit.Rule
@@ -326,28 +327,28 @@ class SymbolizerTestCase {
       </sld:FeatureTypeStyle>
     </sld:UserStyle>
   </sld:UserLayer>
-</sld:StyledLayerDescriptor>""".trim().replaceAll("\n","")
+</sld:StyledLayerDescriptor>"""
 
         Symbolizer sym = new Fill("wheat") + new Stroke("brown")
 
         ByteArrayOutputStream out = new ByteArrayOutputStream()
         sym.asSLD(out)
-        String sld = out.toString().trim().replaceAll(NEW_LINE,"")
+        String sld = out.toString().trim()
         assertNotNull sld
         assertTrue sld.length() > 0
-        assertEquals expectedSld, sld
+        AssertUtil.assertStringsEqual expectedSld, sld, removeXmlNS: true, trim: true
 
         File file = folder.newFile("simple.sld")
         sym.asSLD(file)
-        sld = file.text.trim().replaceAll(NEW_LINE,"")
+        sld = file.text.trim()
         assertNotNull sld
         assertTrue sld.length() > 0
-        assertEquals expectedSld, sld
+        AssertUtil.assertStringsEqual expectedSld, sld, removeXmlNS: true, trim: true
 
-        sld = sym.sld.trim().replaceAll(NEW_LINE,"")
+        sld = sym.sld.trim()
         assertNotNull sld
         assertTrue sld.length() > 0
-        assertEquals expectedSld, sld
+        AssertUtil.assertStringsEqual expectedSld, sld, removeXmlNS: true, trim: true
     }
 
     @Test

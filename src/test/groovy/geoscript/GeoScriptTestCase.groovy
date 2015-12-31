@@ -5,7 +5,6 @@ import geoscript.feature.Schema
 import geoscript.filter.Expression
 import geoscript.geom.Point
 import geoscript.layer.Cursor
-import geoscript.layer.Property
 import geoscript.proj.Geodetic
 import geoscript.layer.Format
 import geoscript.layer.GeoTIFF
@@ -18,7 +17,6 @@ import org.junit.rules.TemporaryFolder
 import static org.junit.Assert.*
 
 import geoscript.geom.*
-import geoscript.layer.Shapefile
 import geoscript.layer.Layer
 import geoscript.filter.Color
 import geoscript.proj.Projection

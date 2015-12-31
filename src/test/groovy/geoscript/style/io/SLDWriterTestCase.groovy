@@ -1,5 +1,6 @@
 package geoscript.style.io
 
+import geoscript.AssertUtil
 import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.TemporaryFolder
@@ -43,17 +44,17 @@ class SLDWriterTestCase {
       </sld:FeatureTypeStyle>
     </sld:UserStyle>
   </sld:UserLayer>
-</sld:StyledLayerDescriptor>""".trim().replaceAll("\n","")
+</sld:StyledLayerDescriptor>"""
 
     @Test void writeToOutputStream() {
         Symbolizer sym = new Fill("wheat") + new Stroke("brown")
         SLDWriter writer = new SLDWriter();
         ByteArrayOutputStream out = new ByteArrayOutputStream()
         writer.write(sym, out)
-        String sld = out.toString().trim().replaceAll(NEW_LINE,"")
+        String sld = out.toString().trim()
         assertNotNull sld
         assertTrue sld.length() > 0
-        assertEquals expectedSld, sld
+        AssertUtil.assertStringsEqual expectedSld, sld, removeXmlNS: true, trim: true
     }
 
     @Test void writeToFile() {
@@ -61,18 +62,18 @@ class SLDWriterTestCase {
         SLDWriter writer = new SLDWriter();
         File file = folder.newFile("simple.sld")
         writer.write(sym, file)
-        String sld = file.text.trim().replaceAll(NEW_LINE,"")
+        String sld = file.text.trim()
         assertNotNull sld
         assertTrue sld.length() > 0
-        assertEquals expectedSld, sld
+        AssertUtil.assertStringsEqual expectedSld, sld, removeXmlNS: true, trim: true
     }
 
     @Test void writeToString() {
         Symbolizer sym = new Fill("wheat") + new Stroke("brown")
         SLDWriter writer = new SLDWriter();
-        String sld = writer.write(sym).trim().replaceAll(NEW_LINE,"")
+        String sld = writer.write(sym).trim()
         assertNotNull sld
         assertTrue sld.length() > 0
-        assertEquals expectedSld, sld
+        AssertUtil.assertStringsEqual expectedSld, sld, removeXmlNS: true, trim: true
     }
 }
