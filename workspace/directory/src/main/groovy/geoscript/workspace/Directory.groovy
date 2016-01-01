@@ -85,6 +85,16 @@ class Directory extends Workspace {
     }
 
     /**
+     * Remove a Layer by name from this Workspace
+     * @param name The Layer name
+     */
+    @Override
+    void remove(String name) {
+        ds.removeSchema(name)
+        ds.cache.refreshCacheContents()
+    }
+
+    /**
      * The string representation
      * @return The string representation
      */

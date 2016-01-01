@@ -58,6 +58,18 @@ class Geobuf extends Workspace {
         return "Geobuf"
     }
 
+    /**
+     * Remove a Layer by name from this Workspace
+     * @param name The Layer name
+     */
+    @Override
+    void remove(String name) {
+        File file = new File(directory, name.endsWith(".pbf") ? name : "${name}.pbf")
+        if (file.exists()) {
+            file.delete()
+        }
+    }
+
     private static DataStore createDataStore(File directory, int precision, int dimension) {
         Map params = new java.util.HashMap()
         params.put("file", directory.absolutePath)

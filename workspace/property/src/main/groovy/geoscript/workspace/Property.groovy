@@ -82,6 +82,18 @@ class Property extends Workspace {
     }
 
     /**
+     * Remove a Layer by name from this Workspace
+     * @param name The Layer name
+     */
+    @Override
+    void remove(String name) {
+        File file = new File(this.getFile(), name.endsWith(".properties") ? name : "${name}.properties")
+        if (file.exists()) {
+            file.delete()
+        }
+    }
+
+    /**
      * Get the string representation
      * @return The string representation
      */

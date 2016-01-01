@@ -34,5 +34,21 @@ class MemoryTestCase {
         Memory m = new Memory()
         assertEquals "Memory", m.format
     }
+
+    @Test void remove() {
+        Workspace workspace = new Memory()
+        workspace.create("points",[new Field("geom","Point","EPSG:4326")])
+        workspace.create("lines",[new Field("geom","LineString","EPSG:4326")])
+        workspace.create("polygons",[new Field("geom","Polygon","EPSG:4326")])
+        assertTrue workspace.has("points")
+        assertTrue workspace.has("lines")
+        assertTrue workspace.has("polygons")
+        workspace.remove("points")
+        workspace.remove(workspace.get("lines"))
+        workspace.remove(workspace.get("polygons"))
+        assertFalse workspace.has("points")
+        assertFalse workspace.has("lines")
+        assertFalse workspace.has("polygons")
+    }
 }
 
