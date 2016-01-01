@@ -111,6 +111,22 @@ class Workspace {
     }
 
     /**
+     * Remove a Layer by name from this Workspace
+     * @param name The Layer name
+     */
+    void remove(String name) {
+        ds.removeSchema(name)
+    }
+
+    /**
+     * Remove a Layer by name from this Workspace
+     * @param name The Layer name
+     */
+    void remove(Layer layer) {
+        remove(layer.name)
+    }
+
+    /**
      * Create a Layer with a List of Fields
      * @param name The new Layer name
      * @param fields A List of Fields (defaults to a "geom", "Geometry" Field)

@@ -41,4 +41,20 @@ class GeobufTestCase {
         assertEquals 3, memoryLayer.count
     }
 
+    @Test void remove() {
+        File directory = temporaryFolder.newFolder("geobufs")
+        Workspace workspace = new Geobuf(directory)
+        workspace.create("points",[new Field("geom","Point","EPSG:4326")])
+        workspace.create("lines",[new Field("geom","LineString","EPSG:4326")])
+        workspace.create("polygons",[new Field("geom","Polygon","EPSG:4326")])
+        assertTrue workspace.has("points")
+        assertTrue workspace.has("lines")
+        assertTrue workspace.has("polygons")
+        workspace.remove("points")
+        workspace.remove(workspace.get("lines"))
+        workspace.remove(workspace.get("polygons"))
+        assertFalse workspace.has("points")
+        assertFalse workspace.has("lines")
+        assertFalse workspace.has("polygons")
+    }
 }

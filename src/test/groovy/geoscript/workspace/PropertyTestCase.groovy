@@ -77,4 +77,21 @@ class PropertyTestCase {
         assertEquals statesLayer.count, propLayer.count
     }
 
+    @Test void remove() {
+        File directory = folder.newFolder("layers")
+        Workspace workspace = new Property(directory)
+        workspace.create("points",[new Field("geom","Point","EPSG:4326")])
+        workspace.create("lines",[new Field("geom","LineString","EPSG:4326")])
+        workspace.create("polygons",[new Field("geom","Polygon","EPSG:4326")])
+        assertTrue workspace.has("points")
+        assertTrue workspace.has("lines")
+        assertTrue workspace.has("polygons")
+        workspace.remove("points")
+        workspace.remove(workspace.get("lines"))
+        workspace.remove(workspace.get("polygons"))
+        assertFalse workspace.has("points")
+        assertFalse workspace.has("lines")
+        assertFalse workspace.has("polygons")
+    }
+
 }
