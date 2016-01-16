@@ -7,3 +7,4 @@ geoscript.geom.io.GpxReader
 geoscript.geom.io.KmlReader
 geoscript.geom.io.WkbReader
 geoscript.geom.io.WktReader
+geoscript.geom.io.GooglePolylineEncoder
