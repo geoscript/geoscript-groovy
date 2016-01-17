@@ -1,2 +1,3 @@
 geoscript.geom.io.WkbWriter
 geoscript.geom.io.WktWriter
+geoscript.geom.io.GooglePolylineEncoder

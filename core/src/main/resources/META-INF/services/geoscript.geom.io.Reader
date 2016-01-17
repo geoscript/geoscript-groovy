@@ -1,2 +1,3 @@
 geoscript.geom.io.WkbReader
 geoscript.geom.io.WktReader
+geoscript.geom.io.GooglePolylineEncoder
