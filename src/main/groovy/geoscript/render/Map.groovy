@@ -371,6 +371,7 @@ class Map {
             // CartesianAuthorityFactory.GENERIC_2D
             if (p == null || p.crs == null) {
                 p = new Projection(DefaultGeographicCRS.WGS84)
+                setProj(p)
             }
             b = new Bounds(b.minX, b.minY, b.maxX, b.maxY, p)
         }
