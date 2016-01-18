@@ -906,11 +906,16 @@ class Geometry {
         List<Reader> readers = Readers.list()
         Geometry geom = null
         for(def reader in readers ) {
-            try {
-                geom = reader.read(str)
-            } catch(Exception ex) { /* Reading failed, try next reader */ }
-            if (geom) {
-                break
+            // Don't include the GooglePolylineEncoder because it tries to decode
+            // too many strings that it shouldn't
+            if (!reader.class.simpleName.equalsIgnoreCase("GooglePolylineEncoder")) {
+                try {
+                    geom = reader.read(str)
+                } catch (Exception ex) { /* Reading failed, try next reader */
+                }
+                if (geom) {
+                    break
+                }
             }
         }
         if (!geom) {

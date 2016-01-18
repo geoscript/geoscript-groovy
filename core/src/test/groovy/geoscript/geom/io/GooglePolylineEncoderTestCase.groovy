@@ -48,8 +48,4 @@ class GooglePolylineEncoderTestCase {
         assertNotNull Readers.find("GooglePolylineEncoder")
     }
 
-    @Test void geometryFromString() {
-        Geometry geometry = Geometry.fromString("_p~iF~ps|U_ulLnnqC_mqNvxq`@")
-        assertEquals "LINESTRING (-120.2 38.5, -120.95 40.7, -126.453 43.252)", geometry.wkt
-    }
 }
