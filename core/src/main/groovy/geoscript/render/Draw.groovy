@@ -1,8 +1,9 @@
 package geoscript.render
 
 import geoscript.feature.Feature
+import geoscript.feature.Field
+import geoscript.feature.Schema
 import geoscript.geom.Geometry
-import geoscript.geom.Point
 import geoscript.layer.Layer
 import geoscript.layer.Raster
 import geoscript.style.Symbolizer
@@ -58,7 +59,7 @@ class Draw {
      */
     static void draw(java.util.Map options = [:], List<Geometry> geometries) {
         Memory memory = new Memory()
-        Layer layer = memory.create("feature")
+        Layer layer = memory.create("feature", [new Field("geom", "Geometry", options.get("proj","EPSG:4326"))])
         layer.style = options.get("style", Symbolizer.getDefault(geometries[0].geometryType))
         geometries.each {g -> layer.add([g])}
         draw(options, layer)
@@ -80,7 +81,11 @@ class Draw {
      */
     static void draw(java.util.Map options = [:], Feature feature) {
         Memory memory = new Memory()
-        Layer layer = memory.create(feature.schema)
+        Schema schema = feature.schema
+        if (!schema.proj) {
+            schema = schema.reproject(options.get("proj", "EPSG:4326"))
+        }
+        Layer layer = memory.create(schema)
         layer.style = options.get("style", Symbolizer.getDefault(feature.geom.geometryType))
         layer.add(feature)
         draw(options, layer)
@@ -101,6 +106,9 @@ class Draw {
      */
     static void draw(java.util.Map options = [:], Layer layer) {
         List size = options.get("size",[500,500])
+        if (layer.proj) {
+            layer.proj = options.get("proj", "EPSG:4326")
+        }
         Map map = new Map(
                 layers: [layer],
                 bounds: options.get("bounds", layer.bounds.scale(1.1)),
@@ -199,7 +207,7 @@ class Draw {
      */
     static BufferedImage drawToImage(java.util.Map options = [:], List geometries) {
         Memory memory = new Memory()
-        Layer layer = memory.create("feature")
+        Layer layer = memory.create("feature", [new Field("geom", "Geometry", options.get("proj","EPSG:4326"))])
         layer.style = options.get("style", Symbolizer.getDefault(geometries[0].geometryType))
         geometries.each {g -> layer.add([g])}
         drawToImage(options, layer)
@@ -221,7 +229,11 @@ class Draw {
      */
     static BufferedImage drawToImage(java.util.Map options = [:], Feature feature) {
         Memory memory = new Memory()
-        Layer layer = memory.create(feature.schema)
+        Schema schema = feature.schema
+        if (!schema.proj) {
+            schema = schema.reproject(options.get("proj", "EPSG:4326"))
+        }
+        Layer layer = memory.create(schema)
         layer.style = options.get("style", Symbolizer.getDefault(feature.geom.geometryType))
         layer.add(feature)
         drawToImage(options, layer)
@@ -244,6 +256,9 @@ class Draw {
      */
     static BufferedImage drawToImage(java.util.Map options = [:], Layer layer) {
         List size = options.get("size",[500,500])
+        if (layer.proj) {
+            layer.proj = options.get("proj", "EPSG:4326")
+        }
         Map map = new Map(
                 layers: [layer],
                 bounds: options.get("bounds", layer.bounds.scale(1.1)),
