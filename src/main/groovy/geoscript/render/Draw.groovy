@@ -4,9 +4,14 @@ import geoscript.feature.Feature
 import geoscript.feature.Field
 import geoscript.feature.Schema
 import geoscript.geom.Geometry
+import geoscript.geom.Point
 import geoscript.layer.Layer
 import geoscript.layer.Raster
+import geoscript.style.Fill
+import geoscript.style.Shape
+import geoscript.style.Stroke
 import geoscript.style.Symbolizer
+import geoscript.style.Transform
 import geoscript.workspace.Memory
 import java.awt.image.BufferedImage
 
@@ -60,7 +65,8 @@ class Draw {
     static void draw(java.util.Map options = [:], List<Geometry> geometries) {
         Memory memory = new Memory()
         Layer layer = memory.create("feature", [new Field("geom", "Geometry", options.get("proj","EPSG:4326"))])
-        layer.style = options.get("style", Symbolizer.getDefault(geometries[0].geometryType))
+        layer.style = options.get("style", Symbolizer.getDefault(geometries[0].geometryType).zindex(1) +
+                (new Shape("#f2f2f2").stroke("#8c8c8c", 0.1) + new Transform("vertices(geom)")).zindex(2))
         geometries.each {g -> layer.add([g])}
         draw(options, layer)
     }
@@ -208,7 +214,8 @@ class Draw {
     static BufferedImage drawToImage(java.util.Map options = [:], List geometries) {
         Memory memory = new Memory()
         Layer layer = memory.create("feature", [new Field("geom", "Geometry", options.get("proj","EPSG:4326"))])
-        layer.style = options.get("style", Symbolizer.getDefault(geometries[0].geometryType))
+        layer.style = options.get("style", Symbolizer.getDefault(geometries[0].geometryType).zindex(1) +
+                (new Shape("#f2f2f2").stroke("#8c8c8c", 0.1) + new Transform("vertices(geom)")).zindex(2))
         geometries.each {g -> layer.add([g])}
         drawToImage(options, layer)
     }

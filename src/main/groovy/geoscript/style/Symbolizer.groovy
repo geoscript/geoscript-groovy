@@ -389,7 +389,7 @@ class Symbolizer implements Style, Cloneable {
      * @param geometryType The geometry type
      * @return A Symbolizer
      */
-    static Symbolizer getDefault(String geometryType, def color = Color.getRandomPastel()) {
+    static Symbolizer getDefault(String geometryType, def color = new Color("#f2f2f2")) {
         if (!geometryType) {
             geometryType = "geometry"
         }
