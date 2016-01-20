@@ -47,7 +47,7 @@ class Symbolizer implements Style, Cloneable {
 
     /**
      * A Map of Symbolizer options
-     */ 
+     */
     Map options = [:]
 
     /**
@@ -116,7 +116,7 @@ class Symbolizer implements Style, Cloneable {
         scale = new Scale(minMax.get("min",-1), minMax.get("max",-1))
         this
     }
-    
+
     /**
      * Apply a z-index.  Symbolizers with higher z-index are drawn on
      * the top of those with smaller z-index
@@ -389,7 +389,7 @@ class Symbolizer implements Style, Cloneable {
      * @param geometryType The geometry type
      * @return A Symbolizer
      */
-    static Symbolizer getDefault(String geometryType, def color = Color.getRandomPastel()) {
+    static Symbolizer getDefault(String geometryType, def color = new Color("#f2f2f2")) {
         if (!geometryType) {
             geometryType = "geometry"
         }
@@ -399,18 +399,18 @@ class Symbolizer implements Style, Cloneable {
         if (geometryType.toLowerCase().endsWith("point")) {
             sym = new Shape(baseColor)
         }
-        else if (geometryType.toLowerCase().endsWith("linestring") 
-            || geometryType.toLowerCase().endsWith("linearring")
-            || geometryType.toLowerCase().endsWith("curve")) {
-            sym = new Stroke(baseColor)
+        else if (geometryType.toLowerCase().endsWith("linestring")
+                || geometryType.toLowerCase().endsWith("linearring")
+                || geometryType.toLowerCase().endsWith("curve")) {
+                sym = new Stroke(baseColor)
         }
         else if (geometryType.toLowerCase().endsWith("polygon")) {
             sym = new Fill(baseColor) + new Stroke(darkerColor)
         }
         else {
             sym = new Shape(baseColor) +
-            new Fill(baseColor) +
-            new Stroke(darkerColor)
+                  new Fill(baseColor) +
+                  new Stroke(darkerColor)
         }
         sym
     }
