@@ -397,20 +397,20 @@ class Symbolizer implements Style, Cloneable {
         Color baseColor = new Color(color)
         Color darkerColor = baseColor.darker()
         if (geometryType.toLowerCase().endsWith("point")) {
-            sym = new Shape(baseColor)
+            sym = new Shape(baseColor).stroke(darkerColor, 0.1)
         }
         else if (geometryType.toLowerCase().endsWith("linestring") 
             || geometryType.toLowerCase().endsWith("linearring")
             || geometryType.toLowerCase().endsWith("curve")) {
-            sym = new Stroke(baseColor)
+            sym = new Stroke(baseColor, 0.5)
         }
         else if (geometryType.toLowerCase().endsWith("polygon")) {
-            sym = new Fill(baseColor) + new Stroke(darkerColor)
+            sym = new Fill(baseColor) + new Stroke(darkerColor, 0.5)
         }
         else {
-            sym = new Shape(baseColor) +
+            sym = new Shape(baseColor, 0.1) +
             new Fill(baseColor) +
-            new Stroke(darkerColor)
+            new Stroke(darkerColor, 0.2)
         }
         sym
     }
@@ -496,7 +496,3 @@ class Symbolizer implements Style, Cloneable {
     }
 
 }
-
-
-
-
