@@ -390,14 +390,33 @@ class Symbolizer implements Style, Cloneable {
      * @return A Symbolizer
      */
     static Symbolizer getDefault(String geometryType, def color = new Color("#f2f2f2")) {
+        getDefault([color: color], geometryType)
+    }
+
+    /**
+     * Get a default Symbolizer for the given geometry type.
+     * @param options Optional named parameters:
+     * <ul>
+     *     <li>color = The Color (#f2f2f2)</li>
+     *     <li>opacity = The opacity (1.0)</li>
+     *     <li>size = The shape size (6)</li>
+     *     <li>type = The shape type (circle)</li>
+     * @param geometryType The geometry type
+     * @return A Symbolizer
+     */
+    static Symbolizer getDefault(Map options, String geometryType) {
         if (!geometryType) {
             geometryType = "geometry"
         }
+        Object color = options.get("color", new Color("#f2f2f2"))
+        double opacity = options.get("opacity", 1.0)
+        int size = options.get("size", 6)
+        String type = options.get("type","circle")
         def sym;
         Color baseColor = new Color(color)
         Color darkerColor = baseColor.darker()
         if (geometryType.toLowerCase().endsWith("point")) {
-            sym = new Shape(baseColor).stroke(darkerColor, 0.1)
+            sym = new Shape(baseColor, size, type, opacity).stroke(darkerColor, 0.1)
         }
         else if (geometryType.toLowerCase().endsWith("linestring") 
             || geometryType.toLowerCase().endsWith("linearring")
@@ -405,11 +424,11 @@ class Symbolizer implements Style, Cloneable {
             sym = new Stroke(baseColor, 0.5)
         }
         else if (geometryType.toLowerCase().endsWith("polygon")) {
-            sym = new Fill(baseColor) + new Stroke(darkerColor, 0.5)
+            sym = new Fill(baseColor, opacity) + new Stroke(darkerColor, 0.5)
         }
         else {
-            sym = new Shape(baseColor, 0.1) +
-            new Fill(baseColor) +
+            sym = new Shape(baseColor, size, type, opacity).stroke(darkerColor, 0.1) +
+            new Fill(baseColor, opacity) +
             new Stroke(darkerColor, 0.2)
         }
         sym

@@ -2,6 +2,7 @@ package geoscript.style
 
 import geoscript.AssertUtil
 import geoscript.feature.Field
+import geoscript.filter.Color
 import geoscript.style.io.SLDWriter
 import org.junit.Rule
 import org.junit.Test
@@ -113,6 +114,12 @@ class SymbolizerTestCase {
         assertTrue geomSym.parts[0].parts[0] instanceof Shape
         assertTrue geomSym.parts[0].parts[1] instanceof Fill
         assertTrue geomSym.parts[1] instanceof Stroke
+
+        def polygonSym2 = Symbolizer.getDefault("polygon", color: "wheat", opacity: 0.75)
+        assertTrue polygonSym2 instanceof Composite
+        assertEquals 2, polygonSym2.parts.size()
+        assertEquals 0.75, polygonSym2.parts[0].opacity.value, 0.1
+        assertEquals "#f5deb3", polygonSym2.parts[0].color.value
     }
 
     @Test void buildString() {
