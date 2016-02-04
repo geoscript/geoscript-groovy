@@ -12,6 +12,7 @@
     <description>A Groovy implementation of Geoscript.</description>
     <url>http://geoscript.org/</url>
     <modules>
+        <module>geom</module>
         <module>core</module>
         <module>graticule</module>
         <module>io</module>

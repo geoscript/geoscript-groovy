@@ -142,6 +142,16 @@ Uber Library
 
     geoscript-groovy
 
+Geometry Library
+----------------
+
+* **GeoScript Groovy Geometry**:
+
+    The geometry, projection, and spatial index modules.
+
+    geoscript-groovy-geom
+
+
 Core Library
 ------------
 

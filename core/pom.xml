@@ -17,14 +17,9 @@
     <dependencies>
         <!-- Main Dependencies -->
         <dependency>
-            <groupId>org.geotools</groupId>
-            <artifactId>gt-main</artifactId>
-            <version>${geotools.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.geotools</groupId>
-            <artifactId>gt-epsg-hsql</artifactId>
-            <version>${geotools.version}</version>
+            <groupId>org.geoscript</groupId>
+            <artifactId>geoscript-groovy-geom</artifactId>
+            <version>${geoscript.version}</version>
         </dependency>
         <dependency>
             <groupId>org.geotools</groupId>
