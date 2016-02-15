@@ -17,6 +17,10 @@ import java.util.Properties;
 import java.util.jar.JarEntry;
 import java.util.jar.JarOutputStream;
 
+/**
+ * A Maven Shade Transformer that correctly groups together multiple Groovy Extension Modules.
+ * This transformer must be used with the ServiceResourceExcludingGroovyExtensionModuleTransformer.
+ */
 public class GroovyExtensionModuleTransformer implements ResourceTransformer {
 
     private String path = "META-INF/services/org.codehaus.groovy.runtime.ExtensionModule";
@@ -53,29 +57,20 @@ public class GroovyExtensionModuleTransformer implements ResourceTransformer {
         this.moduleVersion = moduleVersion;
     }
 
-    //@Override
     public boolean canTransformResource(String resource) {
-        //System.out.println(resource);
-        if (resource.startsWith(path)) {
-            //System.out.println("   Found!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-        }
         return resource.startsWith(path);
     }
 
-    //@Override
     public void processResource(String s, InputStream inputStream, List<Relocator> list) throws IOException {
-        //System.out.println("processResource: " + s);
         Properties props = new Properties();
         props.load(inputStream);
         List<String> extClasses = Lists.newArrayList(Splitter.on(",").split(props.getProperty("extensionClasses","")));
-        //System.out.println("   " + extClasses);
         for (String clazz : extClasses) {
             if (!extensionClasses.contains(clazz)) {
                 extensionClasses.add(clazz);
             }
         }
         List<String> staticExtClasses = Lists.newArrayList(Splitter.on(",").split(props.getProperty("staticExtensionClasses", "")));
-        //System.out.println("   " + staticExtClasses);
         for (String clazz : staticExtClasses) {
             if (!staticExtensionClasses.contains(clazz)) {
                 staticExtensionClasses.add(clazz);
@@ -83,21 +78,16 @@ public class GroovyExtensionModuleTransformer implements ResourceTransformer {
         }
     }
 
-    //@Override
     public boolean hasTransformedResource() {
-        //System.out.println("hasTransformedResource? " + (!extensionClasses.isEmpty() || !staticExtensionClasses.isEmpty()));
         return !extensionClasses.isEmpty() || !staticExtensionClasses.isEmpty();
     }
 
-    //@Override
     public void modifyOutputStream(JarOutputStream jarOutputStream) throws IOException {
-        //System.out.println("modifyOtputStream!");
         Properties props = new Properties();
         props.setProperty("moduleName", moduleName);
         props.setProperty("moduleVersion", moduleVersion);
         props.setProperty("extensionClasses", Joiner.on(",").join(extensionClasses));
         props.setProperty("staticExtensionClasses", Joiner.on(",").join(staticExtensionClasses));
-        //System.out.println(props.toString());
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         props.store(baos, "");
         baos.close();
