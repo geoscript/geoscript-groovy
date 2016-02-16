@@ -594,7 +594,8 @@ class Layer implements Renderable {
             q.maxFeatures = max
         }
         if (start > -1) {
-            if (fs.queryCapabilities.offsetSupported && !(fs.dataStore instanceof org.geotools.data.memory.MemoryDataStore)) {
+            if (fs.queryCapabilities.offsetSupported
+                    && !(fs.dataStore instanceof org.geotools.data.memory.MemoryDataStore)) {
                 q.startIndex = start
             } else {
                 cursorOptions.start = start

@@ -1,7 +1,6 @@
 package geoscript.layer
 
 import geoscript.feature.Feature
-import org.geotools.data.crs.ReprojectFeatureIterator
 import org.geotools.data.store.ReprojectingFeatureIterator
 import org.geotools.feature.FeatureIterator
 import org.geotools.feature.FeatureTypes
@@ -83,6 +82,11 @@ class Cursor implements Iterator {
        if (options.containsKey("start") && options.containsKey("max")) {
            long start = options.start as long
            long max = options.max as long
+           if (!options.containsKey("sort")
+               && layer
+               && layer.workspace.format in ['Directory', 'org.geotools.data.shapefile.ShapefileDataStore', 'org.geotools.data.directory.DirectoryDataStore']) {
+               this.iter = new SortedFeatureIterator(this.iter, col.schema, [SortBy.NATURAL_ORDER] as SortBy[], Integer.MAX_VALUE)
+           }
            this.iter = new MaxFeaturesIterator<SimpleFeature>(this.iter, start, max)
        }
        if (options.containsKey("sourceProj") && options.containsKey("destProj")) {
