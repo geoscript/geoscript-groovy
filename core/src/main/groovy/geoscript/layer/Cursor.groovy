@@ -1,7 +1,6 @@
 package geoscript.layer
 
 import geoscript.feature.Feature
-import org.geotools.data.crs.ReprojectFeatureIterator
 import org.geotools.data.store.ReprojectingFeatureIterator
 import org.geotools.feature.FeatureIterator
 import org.geotools.feature.FeatureTypes
@@ -76,24 +75,29 @@ class Cursor implements Iterator {
      * Create the FeatureIterator based on the FeatureCollection and options
      */
     protected void createIterator() {
-       this.iter = col.features()
-       if (options.containsKey("sort")) {
-           this.iter = new SortedFeatureIterator(this.iter, col.schema, options.sort as SortBy[], Integer.MAX_VALUE)
-       }
-       if (options.containsKey("start") && options.containsKey("max")) {
-           long start = options.start as long
-           long max = options.max as long
-           this.iter = new MaxFeaturesIterator<SimpleFeature>(this.iter, start, max)
-       }
-       if (options.containsKey("sourceProj") && options.containsKey("destProj")) {
-           this.iter = new ReprojectingFeatureIterator(
-               this.iter,
-               options["sourceProj"].crs,
-               options["destProj"].crs,
-               FeatureTypes.transform(this.col.schema, options["destProj"].crs),
-               new GeometryCoordinateSequenceTransformer()
-           )
-       }
+        this.iter = col.features()
+        if (options.containsKey("sort")) {
+            this.iter = new SortedFeatureIterator(this.iter, col.schema, options.sort as SortBy[], Integer.MAX_VALUE)
+        }
+        if (options.containsKey("start") && options.containsKey("max")) {
+            long start = options.start as long
+            long max = options.max as long
+            if (!options.containsKey("sort")
+                    && layer
+                    && layer.workspace.format in ['Directory', 'org.geotools.data.shapefile.ShapefileDataStore', 'org.geotools.data.directory.DirectoryDataStore']) {
+                this.iter = new SortedFeatureIterator(this.iter, col.schema, [SortBy.NATURAL_ORDER] as SortBy[], Integer.MAX_VALUE)
+            }
+            this.iter = new MaxFeaturesIterator<SimpleFeature>(this.iter, start, max)
+        }
+        if (options.containsKey("sourceProj") && options.containsKey("destProj")) {
+            this.iter = new ReprojectingFeatureIterator(
+                    this.iter,
+                    options["sourceProj"].crs,
+                    options["destProj"].crs,
+                    FeatureTypes.transform(this.col.schema, options["destProj"].crs),
+                    new GeometryCoordinateSequenceTransformer()
+            )
+        }
     }
 
     /**

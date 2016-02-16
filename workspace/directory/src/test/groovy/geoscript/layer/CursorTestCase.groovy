@@ -1,0 +1,88 @@
+package geoscript.layer
+
+import org.junit.Test
+
+import static org.junit.Assert.assertEquals
+import static org.junit.Assert.assertEquals
+import static org.junit.Assert.assertEquals
+import static org.junit.Assert.assertEquals
+import static org.junit.Assert.assertEquals
+import static org.junit.Assert.assertEquals
+import static org.junit.Assert.assertEquals
+import static org.junit.Assert.assertEquals
+import static org.junit.Assert.assertEquals
+import static org.junit.Assert.assertEquals
+import static org.junit.Assert.assertEquals
+import static org.junit.Assert.assertEquals
+import static org.junit.Assert.assertEquals
+import static org.junit.Assert.assertEquals
+import static org.junit.Assert.assertEquals
+import static org.junit.Assert.assertEquals
+import static org.junit.Assert.assertEquals
+import static org.junit.Assert.assertFalse
+import static org.junit.Assert.assertFalse
+import static org.junit.Assert.assertFalse
+import static org.junit.Assert.assertFalse
+import static org.junit.Assert.assertFalse
+import static org.junit.Assert.assertFalse
+import static org.junit.Assert.assertFalse
+import static org.junit.Assert.assertNotNull
+import static org.junit.Assert.assertNotNull
+
+/**
+ * A Cursor Unit Test for Shapefiles.
+ * @author Jared Erickson
+ */
+class CursorTestCase {
+
+    @Test void sortStartAndMaxShapfile() {
+        File file = new File(getClass().getClassLoader().getResource("points.shp").toURI())
+        assertNotNull(file)
+        Layer layer = new Shapefile(file)
+        assertNotNull(layer)
+        // 3 to 4
+        Cursor c = layer.getCursor(sort: ["name DESC"], start: 2, max: 2)
+        assertEquals "point 2", c.next()['name']
+        assertEquals "point 1", c.next()['name']
+        assertFalse c.hasNext()
+        c.close()
+        // 2 to 4
+        c = layer.getCursor(sort: ["name DESC"], start: 1, max: 3)
+        assertEquals "point 3", c.next()['name']
+        assertEquals "point 2", c.next()['name']
+        assertEquals "point 1", c.next()['name']
+        assertFalse c.hasNext()
+        c.close()
+        // 1 to 3
+        c = layer.getCursor(sort: ["name DESC"], start: 0, max: 3)
+        assertEquals "point 4", c.next()['name']
+        assertEquals "point 3", c.next()['name']
+        assertEquals "point 2", c.next()['name']
+        assertFalse c.hasNext()
+        c.close()
+
+        // Paging, No Sorting
+        c = layer.getCursor(start: 0, max: 3)
+        assertEquals "point 1", c.next()['name']
+        assertEquals "point 2", c.next()['name']
+        assertEquals "point 3", c.next()['name']
+        assertFalse c.hasNext()
+        c.close()
+        c = layer.getCursor(start: 1, max: 2)
+        assertEquals "point 2", c.next()['name']
+        assertEquals "point 3", c.next()['name']
+        assertFalse c.hasNext()
+        c.close()
+        c = layer.getCursor(start: 2, max: 2)
+        assertEquals "point 3", c.next()['name']
+        assertEquals "point 4", c.next()['name']
+        assertFalse c.hasNext()
+        c.close()
+        c = layer.getCursor(max: 2)
+        assertEquals "point 1", c.next()['name']
+        assertEquals "point 2", c.next()['name']
+        assertFalse c.hasNext()
+        c.close()
+    }
+
+}

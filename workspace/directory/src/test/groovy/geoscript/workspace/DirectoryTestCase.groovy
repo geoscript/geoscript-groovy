@@ -39,8 +39,8 @@ class DirectoryTestCase {
         assertNotNull(file)
         Directory dir = new Directory(file)
         assertNotNull(dir)
-        assertEquals 1, dir.names.size()
-        assertEquals "[states]", dir.names.toString()
+        assertEquals 2, dir.names.size()
+        assertEquals "[points, states]", dir.names.toString()
         assertTrue dir.names[0] instanceof String
     }
 
@@ -49,8 +49,8 @@ class DirectoryTestCase {
         assertNotNull(file)
         Directory dir = new Directory(file)
         assertNotNull(dir)
-        assertEquals 1, dir.layers.size()
-        assertEquals "[states]", dir.layers.toString()
+        assertEquals 2, dir.names.size()
+        assertEquals "[points, states]", dir.names.toString()
         assertTrue dir.layers[0] instanceof Layer
     }
     
