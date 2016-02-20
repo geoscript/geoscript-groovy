@@ -2,6 +2,7 @@ package geoscript.layer.io
 
 import geoscript.layer.Layer
 import org.geotools.geojson.feature.FeatureJSON
+import org.geotools.geojson.geom.GeometryJSON
 
 /**
  * Write a {@link geoscript.layer.Layer Layer} to a GeoJSON InputStream, File, or String.
@@ -15,38 +16,73 @@ import org.geotools.geojson.feature.FeatureJSON
 class GeoJSONWriter implements Writer {
 
     /**
-     * The GeoTools FeatureJSON reader/writer
-     */
-    private static final FeatureJSON featureJSON = new FeatureJSON()
-
-    /**
      * Write the Layer to the OutputStream
+     * @param options Optional named parameters:
+     * <ol>
+     *     <li> decimals = The number of decimals (defaults to 4) </li>
+     *     <li> encodeFeatureBounds = Whether to encode Feature Bounds (default is false) </li>
+     *     <li> encodeFeatureCollectionBounds = Whether to encode FeatureCollection Bounds (default is false) </li>
+     *     <li> encodeFeatureCollectionCRS = Whether to encode FeatureCollection CRS (default is false) </li>
+     *     <li> encodeFeatureCRS = Whether to encode Feature CRS (default is false) </li>
+     *     <li> encodeNullValues = Whether to encode null values (default is false) </li>
+     * </ol>
      * @param layer The Layer
      * @param out The OutputStream
      */
-    void write(Layer layer, OutputStream out) {
-       featureJSON.writeFeatureCollection(layer.fs.features, out)
+    void write(Map options = [:], Layer layer, OutputStream out) {
+        int numberOfDecimals = options.get("decimals", 4)
+        boolean encodeFeatureBounds = options.get("encodeFeatureBounds", false)
+        boolean encodeFeatureCollectionBounds = options.get("encodeFeatureCollectionBounds", false)
+        boolean encodeFeatureCollectionCRS = options.get("encodeFeatureCollectionCRS", false)
+        boolean encodeFeatureCRS = options.get("encodeFeatureCRS", false)
+        boolean encodeNullValues = options.get("encodeNullValues", false)
+        GeometryJSON geometryJSON = new GeometryJSON(numberOfDecimals)
+        FeatureJSON featureJSON = new FeatureJSON(geometryJSON)
+        featureJSON.encodeFeatureBounds = encodeFeatureBounds
+        featureJSON.encodeFeatureCollectionBounds = encodeFeatureCollectionBounds
+        featureJSON.encodeFeatureCollectionCRS = encodeFeatureCollectionCRS
+        featureJSON.encodeFeatureCRS = encodeFeatureCRS
+        featureJSON.encodeNullValues = encodeNullValues
+        featureJSON.writeFeatureCollection(layer.fs.features, out)
     }
 
     /**
      * Write the Layer to the File
+     * @param options Optional named parameters:
+     * <ol>
+     *     <li> decimals = The number of decimals (defaults to 4) </li>
+     *     <li> encodeFeatureBounds = Whether to encode Feature Bounds (default is false) </li>
+     *     <li> encodeFeatureCollectionBounds = Whether to encode FeatureCollection Bounds (default is false) </li>
+     *     <li> encodeFeatureCollectionCRS = Whether to encode FeatureCollection CRS (default is false) </li>
+     *     <li> encodeFeatureCRS = Whether to encode Feature CRS (default is false) </li>
+     *     <li> encodeNullValues = Whether to encode null values (default is false) </li>
+     * </ol>
      * @param layer The Layer
      * @param file The File
      */
-    void write(Layer layer, File file) {
+    void write(Map options = [:], Layer layer, File file) {
         FileOutputStream out = new FileOutputStream(file)
-        write(layer, out)
+        write(options, layer, out)
         out.close()
     }
 
     /**
      * Write the Layer to a String
+     * @param options Optional named parameters:
+     * <ol>
+     *     <li> decimals = The number of decimals (defaults to 4) </li>
+     *     <li> encodeFeatureBounds = Whether to encode Feature Bounds (default is false) </li>
+     *     <li> encodeFeatureCollectionBounds = Whether to encode FeatureCollection Bounds (default is false) </li>
+     *     <li> encodeFeatureCollectionCRS = Whether to encode FeatureCollection CRS (default is false) </li>
+     *     <li> encodeFeatureCRS = Whether to encode Feature CRS (default is false) </li>
+     *     <li> encodeNullValues = Whether to encode null values (default is false) </li>
+     * </ol>
      * @param layer The Layer
      * @return A String
      */
-    String write(Layer layer) {
+    String write(Map options = [:], Layer layer) {
         ByteArrayOutputStream out = new ByteArrayOutputStream()
-        write(layer, out);
+        write(options, layer, out);
         out.close()
         return out.toString()
     }

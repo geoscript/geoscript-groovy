@@ -16,6 +16,12 @@ class GeoJSONWriterTestCase {
         assertEquals """{"type":"Point","coordinates":[111.1,-47.2]}""", writer.write(p)
     }
 
+    @Test void writePointWithDecimals() {
+        GeoJSONWriter writer = new GeoJSONWriter()
+        Point p = new Point(111.123456,-47.234567)
+        assertEquals """{"type":"Point","coordinates":[111.123456,-47.234567]}""", writer.write(p, decimals: 6)
+    }
+
     @Test void writeLineString() {
         GeoJSONWriter writer = new GeoJSONWriter()
         LineString l = new LineString([[111.0, -47],[123.0, -48],[110.0, -47]])

@@ -47,10 +47,14 @@ class GeometryExtensionModule {
     /**
      * Get a GeoJSON String for this Geometry
      * @param geometry The Geometry
+     * @param options Optional named parameters:
+     * <ol>
+     *     <li> decimals = The number of decimals (defaults to 4) </li>
+     * </ol>
      * @return The GeoJSON String
      */
-    static String getGeoJSON(Geometry geometry) {
-        new GeoJSONWriter().write(geometry)
+    static String getGeoJSON(Geometry geometry, Map options = [:]) {
+        new GeoJSONWriter().write(options, geometry)
     }
 
     /**
