@@ -12,6 +12,15 @@ class FeatureTestCase {
         assertEquals """{"type":"Feature","geometry":{"type":"Point","coordinates":[111,-47]},"properties":{"name":"House","price":12.5},"id":"house1"}""", f1.geoJSON
     }
 
+    @Test void getGeoJSONWithOptions() {
+        Schema schema = new Schema("houses", [new Field("geom","Point", "EPSG:4326"), new Field("name","string"), new Field("price","float")])
+        Feature feature = new Feature([new Point(111.123456,-47.123456), "House", 12.5], "house1", schema)
+        String expected = """{"type":"Feature","crs":{"type":"name","properties":{"name":"EPSG:4326"}},"bbox":[111.123456,-47.123456,111.123456,-47.123456],"geometry":{"type":"Point","coordinates":[111.123456,-47.123456]},"properties":{"name":"House","price":12.5},"id":"house1"}"""
+        String actual = feature.getGeoJSON(decimals: 6, encodeFeatureBounds: true, encodeFeatureCRS: true,
+                encodeFeatureCollectionBounds: true, encodeFeatureCollectionCRS: true)
+        assertEquals expected, actual
+    }
+
     @Test void fromGeoJSON() {
         Feature f = Feature.fromGeoJSON("""{"type":"Feature","geometry":{"type":"Point","coordinates":[111,-47]},"properties":{"name":"House","price":12.5},"id":"house1"}""")
         assertNotNull f

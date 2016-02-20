@@ -16,15 +16,19 @@ import org.geotools.geojson.geom.GeometryJSON
 class GeoJSONWriter implements Writer {
 
     /**
-     * Write the Geometry to a GeoJSON String
+     * Write the Geometry to a GeoJSON String.
+     * @param options Optional named parameters:
+     * <ol>
+     *     <li> decimals = The number of decimals (defaults to 4) </li>
+     * </ol>
      * @param geom The Geometry
      * @return A GeoJSON String
      */
-    String write(Geometry geom) {
-        GeometryJSON geometryJSON = new GeometryJSON()
+    String write(Map options = [:], Geometry geom) {
+        int numberOfDecimals = options.get("decimals", 4)
+        GeometryJSON geometryJSON = new GeometryJSON(numberOfDecimals)
         StringWriter writer = new StringWriter()
         geometryJSON.write(geom.g, writer)
         writer.toString()
     }
 }
-

@@ -1,9 +1,8 @@
 package geoscript.geom.io
 
-import geoscript.geom.*
 import org.junit.Test
-
 import static org.junit.Assert.assertEquals
+import geoscript.geom.*
 
 /**
  * The GeoJSONWriter Unit Test
@@ -15,6 +14,12 @@ class GeoJSONWriterTestCase {
         GeoJSONWriter writer = new GeoJSONWriter()
         Point p = new Point(111.1,-47.2)
         assertEquals """{"type":"Point","coordinates":[111.1,-47.2]}""", writer.write(p)
+    }
+
+    @Test void writePointWithDecimals() {
+        GeoJSONWriter writer = new GeoJSONWriter()
+        Point p = new Point(111.123456,-47.234567)
+        assertEquals """{"type":"Point","coordinates":[111.123456,-47.234567]}""", writer.write(p, decimals: 6)
     }
 
     @Test void writeLineString() {
@@ -32,10 +37,10 @@ class GeoJSONWriterTestCase {
     @Test void writePolygon() {
         GeoJSONWriter writer = new GeoJSONWriter()
         Polygon p = new Polygon(new LinearRing([1,1], [10,1], [10,10], [1,10], [1,1]),
-            [
-                new LinearRing([2,2], [4,2], [4,4], [2,4], [2,2]),
-                new LinearRing([5,5], [6,5], [6,6], [5,6], [5,5])
-            ]
+                [
+                        new LinearRing([2,2], [4,2], [4,4], [2,4], [2,2]),
+                        new LinearRing([5,5], [6,5], [6,6], [5,6], [5,5])
+                ]
         )
         String expected = """{"type":"Polygon","coordinates":[[[1,1],[10,1],[10,10],[1,10],[1,1]],[[2,2],[4,2],[4,4],[2,4],[2,2]],[[5,5],[6,5],[6,6],[5,6],[5,5]]]}"""
         String actual = writer.write(p)
@@ -75,4 +80,3 @@ class GeoJSONWriterTestCase {
     }
 
 }
-
