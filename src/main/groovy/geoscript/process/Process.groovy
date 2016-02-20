@@ -284,7 +284,7 @@ class Process {
         Map parameters
         Map results
         Closure closure
-        boolean supportsProcess = false
+        boolean supportsProgress = false
         boolean available = true
     }
 
