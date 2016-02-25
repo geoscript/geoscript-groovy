@@ -102,6 +102,11 @@ class Map {
     private java.util.Map renderers = [:]
 
     /**
+     * The Default Projection
+     */
+    private Projection DEFAULT_PROJECTION = new Projection(DefaultGeographicCRS.WGS84)
+
+    /**
      * Create a new Map
      */
     Map() {
@@ -336,9 +341,24 @@ class Map {
             layers.each{lyr ->
                 if (b == null || b.empty) {
                     b = lyr.bounds
+                    if (!b.proj) {
+                        b.proj = this.getProj() ?: DEFAULT_PROJECTION
+                    }
                 } else {
+                    Bounds layerBounds = lyr.bounds
+                    // If the Layer Bounds doesn't have a Projection
+                    if (!layerBounds.proj) {
+                        // Just use the current Bounds Projection
+                        if (b && b.proj) {
+                            layerBounds.proj = b.proj
+                        }
+                        // Or Just use a default Projection
+                        else {
+                            layerBounds.proj = this.getProj() ?: DEFAULT_PROJECTION
+                        }
+                    }
                     try {
-                        b.expand(lyr.bounds)
+                        b.expand(layerBounds)
                     } catch(ProjectionException e) {
                         LOGGER.log(Level.WARNING, "Error expanding bounds ${b} with ${lyr.bounds}!")
                     }
@@ -370,7 +390,7 @@ class Map {
             // Should this be EPSG:4326 or
             // CartesianAuthorityFactory.GENERIC_2D
             if (p == null || p.crs == null) {
-                p = new Projection(DefaultGeographicCRS.WGS84)
+                p = new Projection(DEFAULT_PROJECTION)
                 setProj(p)
             }
             b = new Bounds(b.minX, b.minY, b.maxX, b.maxY, p)
