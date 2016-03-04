@@ -35,9 +35,9 @@ Install GeoScript
 
      unzip geoscript-groovy-1.6.0.zip
 
-#. Add the geoscript-groovy-1.6.0\bin directory to your path::
+#. Add the geoscript-groovy-1.6.0/bin directory to your path::
 
-     export PATH=geoscript-groovy-1.6.0\bin:$PATH
+     export PATH=$(cd bin; pwd):$PATH
 
 That's it. GeoScript Groovy should now be installed on the system. To verify the install execute the :command:`geoscript-groovysh` command::
 
