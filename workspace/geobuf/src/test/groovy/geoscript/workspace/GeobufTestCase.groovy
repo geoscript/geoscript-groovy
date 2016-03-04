@@ -57,4 +57,10 @@ class GeobufTestCase {
         assertFalse workspace.has("lines")
         assertFalse workspace.has("polygons")
     }
+
+    @Test void getWorkspace() {
+        Workspace w = Workspace.getWorkspace("layers.pbf")
+        assertNotNull w
+        assertEquals("Geobuf", w.format)
+    }
 }
