@@ -88,7 +88,11 @@ class Geobuf extends Workspace {
         Map getParametersFromString(String str) {
             Map params = [:]
             if (!str.contains("=") && str.endsWith(".pbf")) {
-                params.put("file", new File(str).absolutePath)
+                File file = new File(str).absoluteFile
+                if (!file.isDirectory()) {
+                    file = file.parentFile
+                }
+                params.put("file", file.absolutePath)
             } else {
                 params = super.getParametersFromString(str)
             }
