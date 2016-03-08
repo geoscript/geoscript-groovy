@@ -846,9 +846,9 @@ class Layer implements Renderable {
             else {
                 f = this.schema.feature(o)
             }
-            FeatureCollection fc = new DefaultFeatureCollection()
-            fc.add(f.f)
-            fs.addFeatures(fc)
+            withWriter { Writer w ->
+                w.add(f)
+            }
         }
     }
 
