@@ -35,7 +35,7 @@ BOTTOM_LEFT
 17,131072,131072,1.193328857421875,1.193328857421875
 18,262144,262144,0.5966644287109375,0.5966644287109375
 19,524288,524288,0.29833221435546875,0.29833221435546875
-"""
+""".denormalize()
         Pyramid p = new CsvPyramidReader().read(csv)
         assertEquals Pyramid.createGlobalMercatorPyramid(), p
     }
