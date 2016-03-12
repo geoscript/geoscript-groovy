@@ -45,7 +45,7 @@ Project a Geomemtry::
     import geoscript.proj.Projection
 
     def p1 = new Point(-111.0, 45.7)
-    def p2 = Projection.transform(p, "EPSG:4326", "EPSG:26912")
+    def p2 = Projection.transform(p1, "EPSG:4326", "EPSG:26912")
 
 Read a Shapefile::
 
