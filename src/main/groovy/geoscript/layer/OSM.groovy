@@ -121,6 +121,57 @@ class OSM extends ImageTileLayer {
     }
 
     /**
+     * Get a well known OSM Layer.
+     * @param name The name of the well known OSM Layer (stamen-toner, stamen-toner-lite, stamen-watercolor, mapquest-street,
+     * mapquest-satellite, or osm)
+     * @return An OSM Tile Layer
+     */
+    static OSM getWellKnownOSM(String name) {
+        if (!name) {
+            null
+        } else if (name.equalsIgnoreCase("stamen-toner")) {
+            new OSM("Stamen Toner", [
+                    "http://a.tile.stamen.com/toner",
+                    "http://b.tile.stamen.com/toner",
+                    "http://c.tile.stamen.com/toner",
+                    "http://d.tile.stamen.com/toner"
+            ])
+        } else if (name.equalsIgnoreCase("stamen-toner-lite")) {
+            new OSM("Stamen Toner Lite", [
+                    "http://a.tile.stamen.com/toner-lite",
+                    "http://b.tile.stamen.com/toner-lite",
+                    "http://c.tile.stamen.com/toner-lite",
+                    "http://d.tile.stamen.com/toner-lite"
+            ])
+        } else if (name.equalsIgnoreCase("stamen-watercolor")) {
+            new OSM("Stamen Watercolor", [
+                    "http://a.tile.stamen.com/watercolor",
+                    "http://b.tile.stamen.com/watercolor",
+                    "http://c.tile.stamen.com/watercolor",
+                    "http://d.tile.stamen.com/watercolor"
+            ])
+        } else if (name.equalsIgnoreCase("mapquest-street")) {
+            new OSM("MapQuest Street", [
+                    "http://otile1.mqcdn.com/tiles/1.0.0/map",
+                    "http://otile2.mqcdn.com/tiles/1.0.0/map",
+                    "http://otile3.mqcdn.com/tiles/1.0.0/map",
+                    "http://otile4.mqcdn.com/tiles/1.0.0/map"
+            ])
+        } else if (name.equalsIgnoreCase("mapquest-satellite")) {
+            new OSM("MapQuest Satellite", [
+                    "http://otile1.mqcdn.com/tiles/1.0.0/sat",
+                    "http://otile2.mqcdn.com/tiles/1.0.0/sat",
+                    "http://otile3.mqcdn.com/tiles/1.0.0/sat",
+                    "http://otile4.mqcdn.com/tiles/1.0.0/sat"
+            ])
+        } else if (name.equalsIgnoreCase("osm")) {
+            new OSM()
+        } else {
+            null
+        }
+    }
+
+    /**
      * The OSM TileLayerFactory
      */
     static class Factory extends TileLayerFactory<OSM> {
@@ -128,8 +179,10 @@ class OSM extends ImageTileLayer {
         @Override
         OSM create(String paramsStr) {
             Map params = [:]
-            if (paramsStr.equalsIgnoreCase("osm")) {
+            if (paramsStr in ['stamen-toner', 'stamen-toner-lite', 'stamen-watercolor',
+                              'mapquest-street', 'mapquest-satellite', 'osm']) {
                 params["type"] = "osm"
+                params["name"] = paramsStr
                 create(params)
             } else {
                 super.create(paramsStr)
@@ -140,7 +193,7 @@ class OSM extends ImageTileLayer {
         OSM create(Map params) {
             String type = params.get("type","").toString()
             if (type.equalsIgnoreCase("osm")) {
-                String name = params.get("name")
+                String name = params.get("name", "OSM")
                 if (params.get("url")) {
                     List baseUrls = [params.get("url")]
                     new OSM(name, baseUrls)
@@ -148,6 +201,9 @@ class OSM extends ImageTileLayer {
                 else if (params.get("urls")) {
                     List baseUrls = params.get("urls").split(",")
                     new OSM(name, baseUrls)
+                }
+                else if (OSM.getWellKnownOSM(name)) {
+                    OSM.getWellKnownOSM(name)
                 }
                 else {
                     new OSM()
