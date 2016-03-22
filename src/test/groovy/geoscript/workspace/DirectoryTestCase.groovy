@@ -125,5 +125,25 @@ class DirectoryTestCase {
         assertFalse workspace.has("polygons")
     }
 
+    @Test void getWorkspaceFromString() {
+        File file = new File(getClass().getClassLoader().getResource("states.shp").toURI())
+        Directory dir = Workspace.getWorkspace("type=shapefile file=${file}")
+        assertNotNull dir
+        assertTrue dir.names.contains("states")
+        dir = Workspace.getWorkspace("type=shapefile file=${file.parentFile}")
+        assertNotNull dir
+        assertTrue dir.names.contains("states")
+    }
+
+    @Test void getWorkspaceFromMap() {
+        File file = new File(getClass().getClassLoader().getResource("states.shp").toURI())
+        Directory dir = Workspace.getWorkspace([type: 'shapefile', file:file])
+        assertNotNull dir
+        assertTrue dir.names.contains("states")
+        dir = Workspace.getWorkspace([type: 'shapefile', file:file.parentFile])
+        assertNotNull dir
+        assertTrue dir.names.contains("states")
+    }
+
 }
 
