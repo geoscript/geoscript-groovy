@@ -125,6 +125,17 @@ class Directory extends Workspace {
         }
 
         @Override
+        Directory create(Map params) {
+            String type = params.get('type','').toString()
+            if (type.equalsIgnoreCase('shapefile') && params.containsKey('file')) {
+                File file = params.get('file') instanceof File ? params.get('file') : new File(params.get('file'))
+                super.create([url: DataUtilities.fileToURL(file.absoluteFile)])
+            } else {
+                super.create(params)
+            }
+        }
+
+        @Override
         Directory create(DataStore dataStore) {
             if (dataStore != null && (
                     dataStore instanceof org.geotools.data.directory.DirectoryDataStore ||
