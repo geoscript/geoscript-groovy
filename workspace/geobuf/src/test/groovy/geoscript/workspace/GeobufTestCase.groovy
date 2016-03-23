@@ -63,4 +63,36 @@ class GeobufTestCase {
         assertNotNull w
         assertEquals("Geobuf", w.format)
     }
+
+    @Test void getWorkspaceFromString() {
+        File directory = temporaryFolder.newFolder("geobufs")
+        Workspace workspace = new Geobuf(directory)
+        workspace.create("points",[new Field("geom","Point","EPSG:4326")])
+        workspace.close()
+        Geobuf geobuf = Workspace.getWorkspace("type=geobuf file=${directory}")
+        assertNotNull geobuf
+        assertTrue geobuf.names.contains("points")
+        geobuf = Workspace.getWorkspace("type=geobuf file=${new File(directory, 'points.pbf')}")
+        assertNotNull geobuf
+        assertTrue geobuf.names.contains("points")
+    }
+
+    @Test void getWorkspaceFromMap() {
+        File directory = temporaryFolder.newFolder("geobufs")
+        Workspace workspace = new Geobuf(directory)
+        workspace.create("points",[new Field("geom","Point","EPSG:4326")])
+        workspace.close()
+        Geobuf geobuf = Workspace.getWorkspace([type: 'geobuf', file: directory])
+        assertNotNull geobuf
+        assertTrue geobuf.names.contains("points")
+        geobuf = Workspace.getWorkspace([type: 'geobuf', file: new File(directory, 'points.pbf')])
+        assertNotNull geobuf
+        assertTrue geobuf.names.contains("points")
+        geobuf = Workspace.getWorkspace([type: 'geobuf', file: directory.absolutePath])
+        assertNotNull geobuf
+        assertTrue geobuf.names.contains("points")
+        geobuf = Workspace.getWorkspace([type: 'geobuf', file: new File(directory, 'points.pbf').absolutePath])
+        assertNotNull geobuf
+        assertTrue geobuf.names.contains("points")
+    }
 }

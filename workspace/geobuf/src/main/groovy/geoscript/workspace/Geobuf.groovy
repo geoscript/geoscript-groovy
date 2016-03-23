@@ -100,6 +100,20 @@ class Geobuf extends Workspace {
         }
 
         @Override
+        Geobuf create(Map params) {
+            String type = params.get('type','').toString()
+            if (type.equalsIgnoreCase('geobuf') && params.containsKey('file')) {
+                File file = params.get('file') instanceof File ? params.get('file') : new File(params.get('file'))
+                if (!file.isDirectory()) {
+                    file = file.parentFile
+                }
+                super.create([file: file])
+            } else {
+                super.create(params)
+            }
+        }
+
+        @Override
         Geobuf create(DataStore dataStore) {
             if (dataStore != null && dataStore instanceof org.geotools.data.geobuf.GeobufDirectoryDataStore) {
                 new Geobuf(dataStore)
