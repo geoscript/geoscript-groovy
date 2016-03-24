@@ -1,14 +1,14 @@
 package geoscript.workspace
 
 import geoscript.feature.Feature
+import geoscript.feature.Field
 import geoscript.layer.Layer
 import geoscript.layer.Shapefile
 import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.TemporaryFolder
 
-import static org.junit.Assert.assertEquals
-import static org.junit.Assert.assertNotNull
+import static org.junit.Assert.*
 
 /**
  * The GeoPackage Unit Test
@@ -62,4 +62,29 @@ class GeoPackageTestCase {
         }
     }
 
+    @Test void getWorkspaceFromString() {
+        File file = folder.newFile("geopkg.gpkg")
+        Workspace workspace = new GeoPackage(file)
+        workspace.create("points",[new Field("geom","Point","EPSG:4326")])
+        workspace.close()
+        GeoPackage geopkg = Workspace.getWorkspace("type=geopackage database=${file}")
+        assertNotNull geopkg
+        assertTrue geopkg.names.contains("points")
+        geopkg = Workspace.getWorkspace("type=geopackage file=${file}")
+        assertNotNull geopkg
+        assertTrue geopkg.names.contains("points")
+    }
+
+    @Test void getWorkspaceFromMap() {
+        File file = folder.newFile("geopkg.gpkg")
+        Workspace workspace = new GeoPackage(file)
+        workspace.create("points",[new Field("geom","Point","EPSG:4326")])
+        workspace.close()
+        GeoPackage geopkg = Workspace.getWorkspace([type: 'geopackage', file: file])
+        assertNotNull geopkg
+        assertTrue geopkg.names.contains("points")
+        geopkg = Workspace.getWorkspace([type: 'geopackage', database: file])
+        assertNotNull geopkg
+        assertTrue geopkg.names.contains("points")
+    }
 }
