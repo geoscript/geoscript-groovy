@@ -78,6 +78,20 @@ class GeoPackage extends Database {
         }
 
         @Override
+        GeoPackage create(Map params) {
+            String type = params.get('type','').toString()
+            if (type.equalsIgnoreCase('geopkg') || type.equalsIgnoreCase("geopackage")) {
+                params['dbtype'] = 'geopkg'
+                if (params.containsKey('file')) {
+                    params['database'] = params['file']
+                }
+                super.create(params)
+            } else {
+                super.create(params)
+            }
+        }
+
+        @Override
         GeoPackage create(DataStore dataStore) {
             GeoPackage geopackage = null
             if (dataStore instanceof org.geotools.jdbc.JDBCDataStore) {
