@@ -143,6 +143,22 @@ class H2 extends Database {
         }
 
         @Override
+        H2 create(String type, Map params) {
+            if (type.equalsIgnoreCase('h2')) {
+                params['dbtype'] = 'h2'
+                if (params.containsKey('file')) {
+                    params['database'] = params['file']
+                }
+                if (params['database'] instanceof File) {
+                    params['database'] = (params['database'] as File).absolutePath
+                }
+                super.create(params)
+            } else {
+                null
+            }
+        }
+
+        @Override
         H2 create(DataStore dataStore) {
             H2 h2 = null
             if (dataStore instanceof org.geotools.jdbc.JDBCDataStore) {

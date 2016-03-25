@@ -136,6 +136,16 @@ class PostGIS extends Database {
     static class Factory extends WorkspaceFactory<PostGIS> {
 
         @Override
+        PostGIS create(String type, Map params) {
+            if (type.equalsIgnoreCase('postgis')) {
+                params['dbtype'] = 'postgis'
+                super.create(params)
+            } else {
+                null
+            }
+        }
+
+        @Override
         PostGIS create(DataStore dataStore) {
             PostGIS postgis = null
             if (dataStore instanceof org.geotools.jdbc.JDBCDataStore) {

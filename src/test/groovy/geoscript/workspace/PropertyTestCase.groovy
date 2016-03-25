@@ -94,4 +94,24 @@ class PropertyTestCase {
         assertFalse workspace.has("polygons")
     }
 
+    @Test void getWorkspaceFromString() {
+        File file = new File(getClass().getClassLoader().getResource("points.properties").toURI())
+        Property prop = Workspace.getWorkspace("type=property file=${file}")
+        assertNotNull prop
+        assertTrue prop.names.contains("points")
+        prop = Workspace.getWorkspace("type=property file=${file.parentFile}")
+        assertNotNull prop
+        println prop.names
+        assertTrue prop.names.contains("points")
+    }
+
+    @Test void getWorkspaceFromMap() {
+        File file = new File(getClass().getClassLoader().getResource("points.properties").toURI())
+        Property prop = Workspace.getWorkspace([type: 'property', file:file])
+        assertNotNull prop
+        assertTrue prop.names.contains("points")
+        prop = Workspace.getWorkspace([type: 'property', file:file.parentFile])
+        assertNotNull prop
+        assertTrue prop.names.contains("points")
+    }
 }

@@ -85,6 +85,16 @@ class MySQL extends Database {
     static class Factory extends WorkspaceFactory<MySQL> {
 
         @Override
+        MySQL create(String type, Map params) {
+            if (type.equalsIgnoreCase('mysql')) {
+                params['dbtype'] = 'mysql'
+                super.create(params)
+            } else {
+                null
+            }
+        }
+
+        @Override
         MySQL create(DataStore dataStore) {
             MySQL mysql = null
             if (dataStore instanceof org.geotools.jdbc.JDBCDataStore) {

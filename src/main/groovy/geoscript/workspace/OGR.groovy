@@ -305,6 +305,15 @@ class OGR extends Workspace {
     static class Factory extends WorkspaceFactory<OGR> {
 
         @Override
+        OGR create(String type, Map params) {
+            if (type.equalsIgnoreCase('ogr')) {
+                super.create(["DriverName": params['driver'], "DatasourceName": params['datasource']])
+            } else {
+                null
+            }
+        }
+
+        @Override
         OGR create(DataStore dataStore) {
             OGR ogr = null
             if (dataStore instanceof org.geotools.data.ogr.OGRDataStore) {

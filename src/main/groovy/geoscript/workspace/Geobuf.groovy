@@ -100,8 +100,7 @@ class Geobuf extends Workspace {
         }
 
         @Override
-        Geobuf create(Map params) {
-            String type = params.get('type','').toString()
+        Geobuf create(String type, Map params) {
             if (type.equalsIgnoreCase('geobuf') && params.containsKey('file')) {
                 File file = params.get('file') instanceof File ? params.get('file') : new File(params.get('file'))
                 if (!file.isDirectory()) {
@@ -109,7 +108,7 @@ class Geobuf extends Workspace {
                 }
                 super.create([file: file])
             } else {
-                super.create(params)
+                null
             }
         }
 

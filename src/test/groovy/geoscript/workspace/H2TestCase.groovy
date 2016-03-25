@@ -182,4 +182,30 @@ class H2TestCase {
         h2.close()
     }
 
+    @Test void getWorkspaceFromString() {
+        File file = folder.newFile("h2.db")
+        Workspace workspace = new H2(file)
+        workspace.create("points",[new Field("geom","Point","EPSG:4326")])
+        workspace.close()
+        H2 h2 = Workspace.getWorkspace("type=h2 database=${file}")
+        assertNotNull h2
+        assertTrue h2.names.contains("points")
+        h2 = Workspace.getWorkspace("type=h2 file=${file}")
+        assertNotNull h2
+        assertTrue h2.names.contains("points")
+    }
+
+    @Test void getWorkspaceFromMap() {
+        File file = folder.newFile("h2.db")
+        Workspace workspace = new H2(file)
+        workspace.create("points",[new Field("geom","Point","EPSG:4326")])
+        workspace.close()
+        H2 h2 = Workspace.getWorkspace([type: 'h2', file: file])
+        assertNotNull h2
+        assertTrue h2.names.contains("points")
+        h2 = Workspace.getWorkspace([type: 'h2', database: file])
+        assertNotNull h2
+        assertTrue h2.names.contains("points")
+    }
+    
 }

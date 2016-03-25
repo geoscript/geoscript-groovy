@@ -106,6 +106,16 @@ class WFS extends Workspace {
         }
 
         @Override
+        WFS create(String type, Map params) {
+            if (type.equalsIgnoreCase('wfs')) {
+                Map newParams = WFS.createParams(params.get('url'), params)
+                super.create(newParams)
+            } else {
+                null
+            }
+        }
+
+        @Override
         WFS create(DataStore dataStore) {
             WFS wfs = null
             if (dataStore instanceof org.geotools.data.wfs.WFSDataStore) {
