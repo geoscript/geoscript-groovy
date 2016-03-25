@@ -6,7 +6,6 @@ import geoscript.feature.Schema
 import geoscript.layer.Layer
 import geoscript.layer.Shapefile
 import org.geotools.data.ogr.OGRDataStore
-import org.geotools.data.ogr.OGRDataStoreFactory
 import org.geotools.data.ogr.jni.JniOGRDataStoreFactory
 import org.junit.Rule
 import org.junit.rules.TemporaryFolder
@@ -27,6 +26,8 @@ class OGRTestCase {
         boolean isAvailable = OGR.isAvailable()
         if (!isAvailable) {
             println "OGR is not available!"
+        } else {
+            OGR.setErrorHandler("quiet")
         }
         isAvailable
     }
