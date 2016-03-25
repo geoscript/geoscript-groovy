@@ -29,11 +29,11 @@ class PostGIS extends Database {
      * @param createDatabase Whether to create the database or not 
      * @param createDatabaseParams The database creation parameter string
      */
-    PostGIS(String name, String host, String port, String schema, String user, String password,
-        boolean estimatedExtent = false, boolean createDatabase = false, String createDatabaseParams = "") {
+    PostGIS (String name, String host, String port, String schema, String user, String password,
+             boolean estimatedExtent = false, boolean createDatabase = false, String createDatabaseParams = "") {
         super(createDataStore(name, host, port, schema, user, password, estimatedExtent, createDatabase, createDatabaseParams))
     }
-    
+
     /**
      * Create a new PostGIS with just a database name using defaults for other values.
      * <p><blockquote><pre>
@@ -43,11 +43,11 @@ class PostGIS extends Database {
      * estimatedExtent, createDatabase, and createDatabaseParams)
      * @param name The database name
      */
-    PostGIS(Map options = [:], String name) {
+    PostGIS (Map options = [:], String name) {
         this(name, options.get("host","localhost"), options.get("port","5432"), options.get("schema","public"),
-            options.get("user",System.getProperty("user.name")), options.get("password",null),
-            options.get("estimatedExtent",false) as boolean,
-            options.get("createDatabase", false) as boolean, options.get("createDatabaseParams","")
+                options.get("user",System.getProperty("user.name")), options.get("password",null),
+                options.get("estimatedExtent",false) as boolean,
+                options.get("createDatabase", false) as boolean, options.get("createDatabaseParams","")
         )
     }
 
@@ -72,7 +72,7 @@ class PostGIS extends Database {
      * and whether to estimate the extent or not
      */
     private static DataStore createDataStore(String name, String host, String port, String schema,
-        String user, String password, boolean estimatedExtent, boolean createDatabase, String createDatabaseParams) {
+                                             String user, String password, boolean estimatedExtent, boolean createDatabase, String createDatabaseParams) {
         def f
         Map params = [:]
         if (name.startsWith("java:comp/env/")) {
@@ -101,15 +101,15 @@ class PostGIS extends Database {
      * @param port The port
      * @param user The user name
      * @param password The password
-     */ 
+     */
     static void deleteDatabase(String name, String host, String port, String user, String password) {
         PostgisNGDataStoreFactory f = new PostgisNGDataStoreFactory()
         f.dropDatabase([
-            database: name,
-            host: host,
-            port: port,
-            user: user,
-            password: password
+                database: name,
+                host: host,
+                port: port,
+                user: user,
+                password: password
         ])
     }
 
@@ -123,10 +123,10 @@ class PostGIS extends Database {
      *   <li> password = The password (null by default)</li>
      * </ul>
      * @param name The database name
-     */ 
+     */
     static void deleteDatabase(Map options = [:], String name) {
         deleteDatabase(name, options.get("host","localhost"), options.get("port","5432"),
-            options.get("user",System.getProperty("user.name")), options.get("password",null)
+                options.get("user",System.getProperty("user.name")), options.get("password",null)
         )
     }
 
@@ -136,12 +136,22 @@ class PostGIS extends Database {
     static class Factory extends WorkspaceFactory<PostGIS> {
 
         @Override
+        PostGIS create(String type, Map params) {
+            if (type.equalsIgnoreCase('postgis')) {
+                params['dbtype'] = 'postgis'
+                super.create(params)
+            } else {
+                null
+            }
+        }
+
+        @Override
         PostGIS create(DataStore dataStore) {
             PostGIS postgis = null
             if (dataStore instanceof org.geotools.jdbc.JDBCDataStore) {
                 def jdbcds = dataStore as org.geotools.jdbc.JDBCDataStore
                 if (jdbcds.dataStoreFactory instanceof org.geotools.data.postgis.PostgisNGDataStoreFactory ||
-                    jdbcds.dataStoreFactory instanceof org.geotools.data.postgis.PostgisNGJNDIDataStoreFactory) {
+                        jdbcds.dataStoreFactory instanceof org.geotools.data.postgis.PostgisNGJNDIDataStoreFactory) {
                     postgis = new PostGIS(dataStore)
                 }
             }

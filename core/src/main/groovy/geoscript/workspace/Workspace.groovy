@@ -331,10 +331,21 @@ class Workspace {
     static Workspace getWorkspace(Map params) {
         Workspace w = null
         // Look in WorkspaceFactories first
-        for (WorkspaceFactory workspaceFactory : WorkspaceFactories.list()) {
-            w = workspaceFactory.create(params)
-            if (w != null) {
-                break
+        String type = params.get('type')
+        if (type) {
+            for (WorkspaceFactory workspaceFactory : WorkspaceFactories.list()) {
+                w = workspaceFactory.create(type, params)
+                if (w != null) {
+                    break
+                }
+            }
+        }
+        if (!w) {
+            for (WorkspaceFactory workspaceFactory : WorkspaceFactories.list()) {
+                w = workspaceFactory.create(params)
+                if (w != null) {
+                    break
+                }
             }
         }
         // Then try unregistered GeoTools DataStores

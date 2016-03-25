@@ -97,12 +97,22 @@ class WFS extends Workspace {
         Map getParametersFromString(String str) {
             Map params = [:]
             if (str.toLowerCase().startsWith("http") && str.toLowerCase().contains("service=wfs") &&
-                str.toLowerCase().contains("request=getcapabilities")) {
+                    str.toLowerCase().contains("request=getcapabilities")) {
                 params.put("WFSDataStoreFactory:GET_CAPABILITIES_URL", str)
             } else {
                 params = super.getParametersFromString(str)
             }
             params
+        }
+
+        @Override
+        WFS create(String type, Map params) {
+            if (type.equalsIgnoreCase('wfs')) {
+                Map newParams = WFS.createParams(params.get('url'), params)
+                super.create(newParams)
+            } else {
+                null
+            }
         }
 
         @Override

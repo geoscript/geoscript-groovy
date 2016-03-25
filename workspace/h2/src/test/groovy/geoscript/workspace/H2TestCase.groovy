@@ -1,6 +1,5 @@
 package geoscript.workspace
 
-import geoscript.filter.Filter
 import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.TemporaryFolder
@@ -139,12 +138,12 @@ class H2TestCase {
         Map index = indexes.find{ it.name.equals("geom_idx") }
         assertNotNull(index)
         assertEquals("geom", index.attributes[0])
-        assertFalse(index.unique)        
+        assertFalse(index.unique)
         // Check the name index
         index = indexes.find{ it.name.equals("name_idx") }
         assertNotNull(index)
         assertEquals("name", index.attributes[0])
-        assertTrue(index.unique)        
+        assertTrue(index.unique)
         // Delete the geom index
         h2.deleteIndex("widgets","geom_idx")
         assertNull(h2.getIndexes("widgets").find{it.name.equals("geom_idx")})
@@ -183,108 +182,30 @@ class H2TestCase {
         h2.close()
     }
 
-    @Test void cursorSorting() {
-        File f = new File("target/h2").absoluteFile
-        if (f.exists()) {
-            boolean deleted = f.deleteDir()
-        }
-        H2 h2 = new H2("facilities", "target/h2")
-        Layer layer = h2.create('facilities',[new Field("geom","Point", "EPSG:2927"), new Field("name","string"), new Field("price","float")])
-        layer.add(new Feature(["geom": new Point(111,-47), "name": "A", "price": 10], "house1"))
-        layer.add(new Feature(["geom": new Point(112,-46), "name": "B", "price": 12], "house2"))
-        layer.add(new Feature(["geom": new Point(113,-45), "name": "C", "price": 13], "house3"))
-        layer.add(new Feature(["geom": new Point(113,-45), "name": "D", "price": 14], "house4"))
-        layer.add(new Feature(["geom": new Point(113,-45), "name": "E", "price": 15], "house5"))
-        layer.add(new Feature(["geom": new Point(113,-45), "name": "F", "price": 16], "house6"))
-
-        Cursor c = layer.getCursor(Filter.PASS, [["name","ASC"]])
-        assertEquals "A", c.next()["name"]
-        assertEquals "B", c.next()["name"]
-        assertEquals "C", c.next()["name"]
-        assertEquals "D", c.next()["name"]
-        assertEquals "E", c.next()["name"]
-        assertEquals "F", c.next()["name"]
-        c.close()
-
-        c = layer.getCursor(Filter.PASS, ["name"])
-        assertEquals "A", c.next()["name"]
-        assertEquals "B", c.next()["name"]
-        assertEquals "C", c.next()["name"]
-        assertEquals "D", c.next()["name"]
-        assertEquals "E", c.next()["name"]
-        assertEquals "F", c.next()["name"]
-        c.close()
-
-        c = layer.getCursor(Filter.PASS, [["name","DESC"]])
-        assertEquals "F", c.next()["name"]
-        assertEquals "E", c.next()["name"]
-        assertEquals "D", c.next()["name"]
-        assertEquals "C", c.next()["name"]
-        assertEquals "B", c.next()["name"]
-        assertEquals "A", c.next()["name"]
-        c.close()
-
-        c = layer.getCursor(Filter.PASS, ["name ASC"])
-        assertEquals "A", c.next()["name"]
-        assertEquals "B", c.next()["name"]
-        assertEquals "C", c.next()["name"]
-        assertEquals "D", c.next()["name"]
-        assertEquals "E", c.next()["name"]
-        assertEquals "F", c.next()["name"]
-        c.close()
-
-        // Named Parameters
-        c = layer.getCursor(filter: "price >= 14.0", sort: [["price", "DESC"]])
-        assertTrue c.hasNext()
-        assertEquals "F", c.next()["name"]
-        assertEquals "E", c.next()["name"]
-        assertEquals "D", c.next()["name"]
-        assertFalse c.hasNext()
-        c.close()
-
-        h2.close()
+    @Test void getWorkspaceFromString() {
+        File file = folder.newFile("h2.db")
+        Workspace workspace = new H2(file)
+        workspace.create("points",[new Field("geom","Point","EPSG:4326")])
+        workspace.close()
+        H2 h2 = Workspace.getWorkspace("type=h2 database=${file}")
+        assertNotNull h2
+        assertTrue h2.names.contains("points")
+        h2 = Workspace.getWorkspace("type=h2 file=${file}")
+        assertNotNull h2
+        assertTrue h2.names.contains("points")
     }
 
-    @Test void cursorPaging() {
-        File f = new File("target/h2").absoluteFile
-        if (f.exists()) {
-            boolean deleted = f.deleteDir()
-        }
-        H2 h2 = new H2("facilities", "target/h2")
-        Layer layer = h2.create('facilities',[new Field("geom","Point", "EPSG:2927"), new Field("name","string"), new Field("price","float")])
-        layer.add(new Feature(["geom": new Point(111,-47), "name": "A", "price": 10], "house1"))
-        layer.add(new Feature(["geom": new Point(112,-46), "name": "B", "price": 12], "house2"))
-        layer.add(new Feature(["geom": new Point(113,-45), "name": "C", "price": 13], "house3"))
-        layer.add(new Feature(["geom": new Point(113,-45), "name": "D", "price": 14], "house4"))
-        layer.add(new Feature(["geom": new Point(113,-45), "name": "E", "price": 15], "house5"))
-        layer.add(new Feature(["geom": new Point(113,-45), "name": "F", "price": 16], "house6"))
-
-        Cursor c = layer.getCursor(Filter.PASS, [["name","ASC"]], 2, 0, [])
-        assertEquals "A", c.next()["name"]
-        assertEquals "B", c.next()["name"]
-        assertFalse c.hasNext()
-        c.close()
-
-        c = layer.getCursor(Filter.PASS, [["name","ASC"]], 2, 2, [])
-        assertEquals "C", c.next()["name"]
-        assertEquals "D", c.next()["name"]
-        assertFalse c.hasNext()
-        c.close()
-
-        c = layer.getCursor(Filter.PASS, [["name","ASC"]], 2, 4, [])
-        assertEquals "E", c.next()["name"]
-        assertEquals "F", c.next()["name"]
-        assertFalse c.hasNext()
-        c.close()
-
-        // Named parameters
-        c = layer.getCursor(start: 0, max: 4)
-        assertEquals "A", c.next()["name"]
-        assertEquals "B", c.next()["name"]
-        assertEquals "C", c.next()["name"]
-        assertEquals "D", c.next()["name"]
-        c.close()
-
-        h2.close()
+    @Test void getWorkspaceFromMap() {
+        File file = folder.newFile("h2.db")
+        Workspace workspace = new H2(file)
+        workspace.create("points",[new Field("geom","Point","EPSG:4326")])
+        workspace.close()
+        H2 h2 = Workspace.getWorkspace([type: 'h2', file: file])
+        assertNotNull h2
+        assertTrue h2.names.contains("points")
+        h2 = Workspace.getWorkspace([type: 'h2', database: file])
+        assertNotNull h2
+        assertTrue h2.names.contains("points")
     }
+
 }

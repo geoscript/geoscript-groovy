@@ -1,8 +1,5 @@
 package geoscript.workspace
 
-import geoscript.feature.Feature
-import geoscript.geom.Point
-import geoscript.proj.Projection
 import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.TemporaryFolder
@@ -80,37 +77,6 @@ class PropertyTestCase {
         assertEquals statesLayer.count, propLayer.count
     }
 
-    @Test void reprojectToWorkspace() {
-        // Create Layer in Memory
-        Schema s1 = new Schema("facilities", [new Field("geom","Point", "EPSG:4326"), new Field("name","string"), new Field("price","float")])
-        Layer layer1 = new Layer("facilities", s1)
-        layer1.add(new Feature([new Point(-122.494165, 47.198096), "House", 12.5], "house1", s1))
-
-        // Reproject to a Property Workspace
-        File file = folder.newFile("reproject.properties")
-        Property property = new Property(file.parentFile)
-        Layer layer2 = layer1.reproject(new Projection("EPSG:2927"), property, "facilities_reprojected")
-        assertEquals 1, layer2.count()
-        assertEquals 1144727.44, layer2.features[0].geom.x, 0.01
-        assertEquals 686301.31, layer2.features[0].geom.y, 0.01
-    }
-
-    @Test void reprojectToLayer() {
-        // Create Layer in Memory
-        Schema s1 = new Schema("facilities", [new Field("geom","Point", "EPSG:4326"), new Field("name","string"), new Field("price","float")])
-        Layer layer1 = new Layer("facilities", s1)
-        layer1.add(new Feature([new Point(-122.494165, 47.198096), "House", 12.5], "house1", s1))
-
-        // Reproject to a Property Workspace Layer
-        File file = folder.newFile("reproject.properties")
-        Property property = new Property(file.parentFile)
-        Layer propertyLayer = property.create(layer1.schema.reproject("EPSG:2927","facilities_epsg_2927"))
-        Layer layer2 = layer1.reproject(propertyLayer)
-        assertEquals 1, layer2.count()
-        assertEquals 1144727.44, layer2.features[0].geom.x, 0.01
-        assertEquals 686301.31, layer2.features[0].geom.y, 0.01
-    }
-
     @Test void remove() {
         File directory = folder.newFolder("layers")
         Workspace workspace = new Property(directory)
@@ -126,5 +92,26 @@ class PropertyTestCase {
         assertFalse workspace.has("points")
         assertFalse workspace.has("lines")
         assertFalse workspace.has("polygons")
+    }
+
+    @Test void getWorkspaceFromString() {
+        File file = new File(getClass().getClassLoader().getResource("points.properties").toURI())
+        Property prop = Workspace.getWorkspace("type=property file=${file}")
+        assertNotNull prop
+        assertTrue prop.names.contains("points")
+        prop = Workspace.getWorkspace("type=property file=${file.parentFile}")
+        assertNotNull prop
+        println prop.names
+        assertTrue prop.names.contains("points")
+    }
+
+    @Test void getWorkspaceFromMap() {
+        File file = new File(getClass().getClassLoader().getResource("points.properties").toURI())
+        Property prop = Workspace.getWorkspace([type: 'property', file:file])
+        assertNotNull prop
+        assertTrue prop.names.contains("points")
+        prop = Workspace.getWorkspace([type: 'property', file:file.parentFile])
+        assertNotNull prop
+        assertTrue prop.names.contains("points")
     }
 }

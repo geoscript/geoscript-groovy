@@ -76,12 +76,28 @@ class SpatiaLite extends Database {
         }
 
         @Override
+        SpatiaLite create(String type, Map params) {
+            if (type.equalsIgnoreCase('spatialite')) {
+                params['dbtype'] = 'spatialite'
+                if (params.containsKey('file')) {
+                    params['database'] = params['file']
+                }
+                if (params['database'] instanceof File) {
+                    params['database'] = (params['database'] as File).absolutePath
+                }
+                super.create(params)
+            } else {
+                null
+            }
+        }
+
+        @Override
         SpatiaLite create(DataStore dataStore) {
             SpatiaLite spatialite = null
             if (dataStore instanceof org.geotools.jdbc.JDBCDataStore) {
                 def jdbcds = dataStore as org.geotools.jdbc.JDBCDataStore
                 if (jdbcds.dataStoreFactory instanceof org.geotools.data.spatialite.SpatiaLiteDataStoreFactory ||
-                    jdbcds.dataStoreFactory instanceof org.geotools.data.spatialite.SpatiaLiteJNDIDataStoreFactory) {
+                        jdbcds.dataStoreFactory instanceof org.geotools.data.spatialite.SpatiaLiteJNDIDataStoreFactory) {
                     spatialite = new SpatiaLite(dataStore)
                 }
             }

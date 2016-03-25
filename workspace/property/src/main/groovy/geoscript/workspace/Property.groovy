@@ -126,6 +126,16 @@ class Property extends Workspace {
         }
 
         @Override
+        Property create(String type, Map params) {
+            if (type.equalsIgnoreCase('property') && params.containsKey('file')) {
+                File f = params.get('file') instanceof File ? params.get('file') : new File(params.get('file'))
+                super.create([directory: f.absolutePath])
+            } else {
+                null
+            }
+        }
+
+        @Override
         Property create(DataStore dataStore) {
             Property property = null
             if (dataStore instanceof org.geotools.data.property.PropertyDataStore) {

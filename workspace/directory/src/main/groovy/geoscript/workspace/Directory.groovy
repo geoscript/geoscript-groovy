@@ -125,13 +125,12 @@ class Directory extends Workspace {
         }
 
         @Override
-        Directory create(Map params) {
-            String type = params.get('type','').toString()
+        Directory create(String type, Map params) {
             if (type.equalsIgnoreCase('shapefile') && params.containsKey('file')) {
                 File file = params.get('file') instanceof File ? params.get('file') : new File(params.get('file'))
                 super.create([url: DataUtilities.fileToURL(file.absoluteFile)])
             } else {
-                super.create(params)
+                null
             }
         }
 

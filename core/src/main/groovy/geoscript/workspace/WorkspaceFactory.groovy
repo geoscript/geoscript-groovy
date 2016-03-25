@@ -16,7 +16,11 @@ abstract class WorkspaceFactory<T extends Workspace> {
      */
     T create(String str) {
         Map params = getParametersFromString(str)
-        create(params)
+        if (params.containsKey('type')) {
+            create(params.type, params)
+        } else {
+            create(params)
+        }
     }
 
     /**
@@ -31,6 +35,17 @@ abstract class WorkspaceFactory<T extends Workspace> {
         } else {
             null
         }
+    }
+
+    /**
+     * Create a Workspace from a Map of connection parameters
+     * @param type The workspace type
+     * @param params The connection parameters
+     * @return A Workspace or null
+     */
+    T create(String type, Map params) {
+        params.type = type
+        create(params)
     }
 
     /**

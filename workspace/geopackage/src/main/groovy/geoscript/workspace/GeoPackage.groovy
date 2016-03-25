@@ -78,8 +78,7 @@ class GeoPackage extends Database {
         }
 
         @Override
-        GeoPackage create(Map params) {
-            String type = params.get('type','').toString()
+        GeoPackage create(String type, Map params) {
             if (type.equalsIgnoreCase('geopkg') || type.equalsIgnoreCase("geopackage")) {
                 params['dbtype'] = 'geopkg'
                 if (params.containsKey('file')) {
@@ -87,7 +86,7 @@ class GeoPackage extends Database {
                 }
                 super.create(params)
             } else {
-                super.create(params)
+                null
             }
         }
 
