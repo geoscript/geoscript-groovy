@@ -7,6 +7,7 @@ import org.geotools.data.DataStore
 import org.geotools.data.ogr.OGRDataStore
 import org.geotools.data.ogr.OGRDataStoreFactory
 import org.geotools.data.ogr.jni.JniOGRDataStoreFactory
+import org.gdal.gdal.gdal
 import org.geotools.data.simple.SimpleFeatureCollection
 import org.geotools.data.store.ReTypingFeatureCollection
 import org.geotools.feature.simple.SimpleFeatureTypeBuilder
@@ -88,6 +89,28 @@ class OGR extends Workspace {
      */
     static boolean isAvailable() {
         getOGRDataStoreFactory().isAvailable()
+    }
+
+    /**
+     * Set the OGR/GDAL Error Handler
+     * @param name The error handler name (quiet, logging, or default)
+     */
+    static void setErrorHandler(String name) {
+        if (OGR.isAvailable()) {
+            String errorHandler
+            if (name.equalsIgnoreCase("quiet")) {
+                errorHandler = "CPLQuietErrorHandler"
+            } else if (name.equalsIgnoreCase("logging")) {
+                errorHandler = "CPLLoggingErrorHandler"
+            } else if (name.equalsIgnoreCase("default")) {
+                errorHandler = "CPLDefaultErrorHandler"
+            }
+            try {
+                gdal.PushErrorHandler(errorHandler)
+            } catch(Exception ex) {
+                // Just fail silently
+            }
+        }
     }
 
     /**
