@@ -22,19 +22,34 @@ class Window implements Displayer {
      * Open a simple GUI for viewing a Map
      * @param map The Map
      */
-    Window(Map map) {
+    Window(java.util.Map options = [:], Map map) {
         def swing = new SwingBuilder()
         def frame = swing.frame(title:'Window', size:[map.width, map.height], show:false) {
             borderLayout()
             label(icon:imageIcon(map.renderToImage()), size:[map.width, map.height],constraints: BorderLayout.CENTER)
         }
-        // If we are opening Windows from the GroovyConsole, we can't use EXIT_ON_CLOSE because the GroovyConsole
-        // itself will exit
-        if (java.awt.Frame.frames.find{it.title.contains("GroovyConsole")}) {
-            frame.defaultCloseOperation = JFrame.DISPOSE_ON_CLOSE
+        String close = options.get("close")
+        if (close && close in ["hide", "exit", "dispose"]) {
+            if (close.equalsIgnoreCase("dispose")) {
+                frame.defaultCloseOperation = JFrame.DISPOSE_ON_CLOSE
+            } else if (close.equalsIgnoreCase("exit")) {
+                frame.defaultCloseOperation = JFrame.EXIT_ON_CLOSE
+            } else if (close.equalsIgnoreCase("hide")) {
+                frame.defaultCloseOperation = JFrame.HIDE_ON_CLOSE
+            }
         } else {
-            // The Groovy Shell has a special SecurityManager that doesn't allow EXIT_ON_CLOSE
-            try { frame.defaultCloseOperation = JFrame.EXIT_ON_CLOSE } catch (SecurityException ex) {frame.defaultCloseOperation = JFrame.HIDE_ON_CLOSE}
+            // If we are opening Windows from the GroovyConsole, we can't use EXIT_ON_CLOSE because the GroovyConsole
+            // itself will exit
+            if (java.awt.Frame.frames.find { it.title.contains("GroovyConsole") }) {
+                frame.defaultCloseOperation = JFrame.DISPOSE_ON_CLOSE
+            } else {
+                // The Groovy Shell has a special SecurityManager that doesn't allow EXIT_ON_CLOSE
+                try {
+                    frame.defaultCloseOperation = JFrame.EXIT_ON_CLOSE
+                } catch (SecurityException ex) {
+                    frame.defaultCloseOperation = JFrame.HIDE_ON_CLOSE
+                }
+            }
         }
         swing.edt {
             frame.visible = true
@@ -53,6 +68,10 @@ class Window implements Displayer {
      */
     @Override
     void display(Map map) {
-        new Window(map)
+        new Window([:], map)
+    }
+
+    void display(java.util.Map options, Map map) {
+        new Window(options, map)
     }
 }
