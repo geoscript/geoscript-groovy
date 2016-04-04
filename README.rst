@@ -111,7 +111,7 @@ You can also use GeoScript Groovy as a library. If you use Maven you will need t
         <repository>
             <id>boundless</id>
             <name>Boundless Maven Repository</name>
-            <url>http://repo.boundlessgeo.com/main</url>
+            <url>https://repo.boundlessgeo.com/main</url>
             <snapshots>
                 <enabled>true</enabled>
             </snapshots>
@@ -461,7 +461,7 @@ Using Modules with Groovy Grape
 Now that GeoScript Groovy is modular, it is easier to use in regular Groovy Scripts using Groovy's Grape dependency
 management system.::
 
-    @GrabResolver(name='boundless', root='http://repo.boundlessgeo.com/main/')
+    @GrabResolver(name='boundless', root='https://repo.boundlessgeo.com/main/')
     @GrabExclude('org.codehaus.groovy:groovy-all')
     @Grab('org.geoscript:geoscript-groovy-core:2.0-SNAPSHOT')
     @Grab('org.geoscript:geoscript-groovy-io-geojson:2.0-SNAPSHOT')

@@ -29,24 +29,30 @@ Then edit the build.gradle file.
     mainClassName = "org.geo.App"
 
     repositories {
-        maven {
-           url "http://repo.boundlessgeo.com/main"
-        }
-        maven {
-           url "http://download.osgeo.org/webdav/geotools/"
-        }
-        maven {
-           url "http://maven.geo-solutions.it/"
-        }
-        maven {
-           url "https://artifacts.unidata.ucar.edu/content/repositories/unidata/"
-        }
+    maven {
+       url "https://repo.boundlessgeo.com/main"
+    }
+    maven {
+      url "http://download.osgeo.org/webdav/geotools"
+    }
+    maven {
+      url "http://download.java.net/maven/2"
+    }
+    maven {
+      url "http://maven.geo-solutions.it"
+    }
+    maven {
+      url "https://artifacts.unidata.ucar.edu/content/repositories/unidata"
+    }
+    maven {
+      url "https://github.com/ElectronicChartCentre/ecc-mvn-repo/raw/master/releases"
+    }
         mavenCentral()
     }
 
     dependencies {
        compile "org.codehaus.groovy:groovy-all:2.1.9"
-       compile "org.geoscript:geoscript-groovy:1.4.0"
+       compile "org.geoscript:geoscript-groovy:1.7-SNAPSHOT"
     }
 
     task wrapper(type: Wrapper) {

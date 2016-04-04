@@ -31,7 +31,7 @@ Add geoscript as a dependency in the **pom.xml** file:
         <repository>
             <id>boundless</id>
             <name>Boundless Maven Repository</name>
-            <url>http://repo.boundlessgeo.com/main</url>
+            <url>https://repo.boundlessgeo.com/main</url>
             <snapshots>
                 <enabled>true</enabled>
             </snapshots>
