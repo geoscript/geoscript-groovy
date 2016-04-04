@@ -30,7 +30,7 @@ Then edit the build.gradle file.
 
     repositories {
     maven {
-       url "http://repo.boundlessgeo.com/main"
+       url "https://repo.boundlessgeo.com/main"
     }
     maven {
       url "http://download.osgeo.org/webdav/geotools"
