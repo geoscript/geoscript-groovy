@@ -58,6 +58,11 @@ abstract class ImageTileLayer extends TileLayer<ImageTile> implements Renderable
      * @return A Raster
      */
     Raster getRaster(Bounds b, int w, int h) {
+        // The Bounds and the Pyramid Bounds must match,
+        // reproject if necessary.
+        if (b.proj && !b.proj.equals(this.pyramid.proj)) {
+            b = b.reproject(this.pyramid.proj)
+        }
         TileCursor c = tiles(b,w,h)
         if (!c.empty) {
             getRaster(c).crop(b)
