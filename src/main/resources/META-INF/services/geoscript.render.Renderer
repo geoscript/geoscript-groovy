@@ -1,5 +1,6 @@
 geoscript.render.ASCII
 geoscript.render.Base64
+geoscript.render.GeoTIFF
 geoscript.render.GIF
 geoscript.render.JPEG
 geoscript.render.Pdf
