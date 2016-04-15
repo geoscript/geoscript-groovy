@@ -1,6 +1,10 @@
 package geoscript.style.io
 
 import geoscript.style.Style
+import org.geotools.factory.CommonFactoryFinder
+import org.geotools.styling.StyleFactory
+import org.geotools.styling.StyledLayerDescriptor
+import org.geotools.styling.UserLayer
 import org.geotools.ysld.Ysld
 
 /**
@@ -21,7 +25,7 @@ class YSLDWriter implements Writer {
      */
     @Override
     void write(Style style, OutputStream out) {
-        Ysld.encode(style.gtStyle, out)
+        Ysld.encode(getStyleLayeredDescriptor(style.gtStyle), out)
     }
 
     /**
@@ -31,7 +35,7 @@ class YSLDWriter implements Writer {
      */
     @Override
     void write(Style style, File file) {
-        Ysld.encode(style.gtStyle, file)
+        Ysld.encode(getStyleLayeredDescriptor(style.gtStyle), file)
     }
 
     /**
@@ -42,7 +46,16 @@ class YSLDWriter implements Writer {
     @Override
     String write(Style style) {
         StringWriter out = new StringWriter()
-        Ysld.encode(style.gtStyle, out)
+        Ysld.encode(getStyleLayeredDescriptor(style.gtStyle), out)
         out.toString()
+    }
+
+    private StyledLayerDescriptor getStyleLayeredDescriptor(org.geotools.styling.Style style) {
+        StyleFactory sf = CommonFactoryFinder.getStyleFactory(null)
+        UserLayer userLayer = sf.createUserLayer()
+        userLayer.addUserStyle(style)
+        StyledLayerDescriptor sld = sf.createStyledLayerDescriptor()
+        sld.addStyledLayer(userLayer)
+        sld
     }
 }

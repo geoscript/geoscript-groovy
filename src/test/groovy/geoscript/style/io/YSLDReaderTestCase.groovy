@@ -12,7 +12,7 @@ import static org.junit.Assert.*
 class YSLDReaderTestCase {
 
     @Test void readFromFile() {
-        File file = new File(getClass().getClassLoader().getResource("states.yml").toURI())
+        File file = new File(getClass().getClassLoader().getResource("polygon.yml").toURI())
         assertNotNull(file)
         YSLDReader reader = new YSLDReader()
         Style style = reader.read(file)
@@ -21,7 +21,7 @@ class YSLDReaderTestCase {
     }
 
     @Test void readFromInputStream() {
-        InputStream inputStream = getClass().getClassLoader().getResourceAsStream("states.yml")
+        InputStream inputStream = getClass().getClassLoader().getResourceAsStream("polygon.yml")
         assertNotNull(inputStream)
         YSLDReader reader = new YSLDReader()
         Style style = reader.read(inputStream)
@@ -30,13 +30,9 @@ class YSLDReaderTestCase {
     }
 
     @Test void readFromString() {
-
-        String yaml = """
-yaml
-        """
-
+        File file = new File(getClass().getClassLoader().getResource("polygon.yml").toURI())
         YSLDReader reader = new YSLDReader()
-        Style style = reader.read(yaml)
+        Style style = reader.read(file.text)
         assertNotNull(style)
         assertNotNull(style.gtStyle)
     }

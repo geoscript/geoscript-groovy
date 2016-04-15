@@ -20,7 +20,7 @@ class YSLDReader implements Reader {
      */
     @Override
     Style read(InputStream input) {
-        new YsldStyle(Ysld.parse(input))
+        new YsldStyle(Ysld.parse(input).styledLayers[0].styles[0])
     }
 
     /**
@@ -30,7 +30,7 @@ class YSLDReader implements Reader {
      */
     @Override
     Style read(File file) {
-        new YsldStyle(Ysld.parse(input))
+        new YsldStyle(Ysld.parse(file).styledLayers[0].styles[0])
     }
 
     /**
@@ -40,7 +40,7 @@ class YSLDReader implements Reader {
      */
     @Override
     Style read(String str) {
-        new YsldStyle(Ysld.parse(input))
+        new YsldStyle(Ysld.parse(str).styledLayers[0].styles[0])
     }
 
     /**

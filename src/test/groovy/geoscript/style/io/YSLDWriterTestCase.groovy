@@ -21,8 +21,17 @@ class YSLDWriterTestCase {
     
     private String NEW_LINE = System.getProperty("line.separator")
 
-    private String expectedYaml = """
-yaml
+    private String expectedYaml = """name: Default Styler
+feature-styles:
+- name: name
+  rules:
+  - scale: [min, max]
+    symbolizers:
+    - polygon:
+        fill-color: '#F5DEB3'
+    - line:
+        stroke-color: '#A52A2A'
+        stroke-width: 1
 """
 
     @Test void writeToOutputStream() {
