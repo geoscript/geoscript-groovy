@@ -1,2 +1,3 @@
 geoscript.style.io.SLDWriter
 geoscript.style.io.ColorTableWriter
+geoscript.style.io.YSLDWriter

@@ -1,3 +1,4 @@
 geoscript.style.io.SLDReader
 geoscript.style.io.CSSReader
 geoscript.style.io.ColorTableReader
+geoscript.style.io.YSLDReader
