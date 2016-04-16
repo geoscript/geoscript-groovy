@@ -23,5 +23,6 @@
         <module>kml</module>
         <module>mvt</module>
         <module>css</module>
+        <module>ysld</module>
     </modules>
 </project>
