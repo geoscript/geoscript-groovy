@@ -64,4 +64,10 @@ feature-styles:
         assertTrue yaml.length() > 0
         AssertUtil.assertStringsEqual expectedYaml, yaml, trim: true
     }
+
+    @Test void writer() {
+        Writer writer = Writers.find("ysld")
+        assertNotNull writer
+        assertTrue writer instanceof YSLDWriter
+    }
 }

@@ -37,4 +37,9 @@ class YSLDReaderTestCase {
         assertNotNull(style.gtStyle)
     }
 
+    @Test void reader() {
+        Reader reader = Readers.find("ysld")
+        assertNotNull reader
+        assertTrue reader instanceof YSLDReader
+    }
 }
