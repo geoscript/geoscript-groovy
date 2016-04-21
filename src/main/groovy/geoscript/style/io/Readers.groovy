@@ -1,7 +1,7 @@
 package geoscript.style.io
 
 /**
- * A utility for getting Renderers
+ * A utility for getting Style Readers
  * @author Jared Erickson
  */
 class Readers {
