@@ -1,0 +1,59 @@
+package geoscript.style.io
+
+import geoscript.style.Style
+import org.junit.Rule
+import org.junit.Test
+import org.junit.rules.TemporaryFolder
+
+import static org.junit.Assert.*
+
+/**
+ * The SimpleStyleReader Unit Test
+ * @author Jared Erickson
+ */
+class SimpleStyleReaderTestCase {
+
+    @Rule
+    public TemporaryFolder temporaryFolder = new TemporaryFolder()
+
+    @Test void readFromString() {
+        SimpleStyleReader styleReader = new SimpleStyleReader()
+        Style style = styleReader.read("")
+        assertEquals style.toString(), "Composite (Fill(color = #555555, opacity = 0.6), Stroke(color = #555555, width = 0.5))"
+        style = styleReader.read("fill=navy stroke=yellow shape-type=circle")
+        assertEquals style.toString(), "Composite (Fill(color = #000080, opacity = 0.6), Stroke(color = #ffff00, width = 0.5), Shape(color = #7e7e7e, size = 6, type = circle))"
+        style = styleReader.read("fill=#554466 stroke=255,255,0 shape-type=triangle label=NAME label-size=12")
+        assertEquals style.toString(), "Composite (Fill(color = #554466, opacity = 0.6), Stroke(color = #ffff00, width = 0.5), Shape(color = #7e7e7e, size = 6, type = triangle), Label(property = NAME))"
+    }
+
+    @Test void readFromMap() {
+        SimpleStyleReader styleReader = new SimpleStyleReader()
+        Style style = styleReader.read([fill: 'wheat', 'stroke-width': 1.2])
+        assertEquals style.toString(), "Composite (Fill(color = #f5deb3, opacity = 0.6), Stroke(color = #555555, width = 1.2))"
+    }
+
+    @Test void readFromFile() {
+        SimpleStyleReader styleReader = new SimpleStyleReader()
+        File file = temporaryFolder.newFile("stroke.txt")
+        file.text = "stroke=black stroke-width=0.1 stroke-opacity=0.55 no-fill=true"
+        Style style = styleReader.read(file)
+        assertEquals style.toString(), "Composite (Stroke(color = #000000, width = 0.1))"
+    }
+
+    @Test void readFromInputStream() {
+        SimpleStyleReader styleReader = new SimpleStyleReader()
+        File file = temporaryFolder.newFile("stroke.txt")
+        file.text = "fill=blue fill-opacity=0.55 no-stroke=true"
+        file.withInputStream { InputStream inputStream ->
+            Style style = styleReader.read(inputStream)
+            assertEquals style.toString(), "Composite (Fill(color = #0000ff, opacity = 0.55))"
+        }
+    }
+
+    @Test void readers() {
+        Reader reader = Readers.find("simple")
+        assertNotNull reader
+        assertTrue reader instanceof SimpleStyleReader
+    }
+
+}
