@@ -18,7 +18,7 @@ class SimpleStyleReaderTestCase {
 
     @Test void readFromString() {
         SimpleStyleReader styleReader = new SimpleStyleReader()
-        Style style = styleReader.read("")
+        Style style = styleReader.read("fill=#555555 fill-opacity=0.6 stroke=#555555 stroke-width=0.5")
         assertEquals style.toString(), "Composite (Fill(color = #555555, opacity = 0.6), Stroke(color = #555555, width = 0.5))"
         style = styleReader.read("fill=navy stroke=yellow shape-type=circle")
         assertEquals style.toString(), "Composite (Fill(color = #000080, opacity = 0.6), Stroke(color = #ffff00, width = 0.5), Shape(color = #7e7e7e, size = 6, type = circle))"

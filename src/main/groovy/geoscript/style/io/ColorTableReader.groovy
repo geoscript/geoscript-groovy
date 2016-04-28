@@ -44,8 +44,14 @@ class ColorTableReader implements Reader {
             } else {
                 color = new Color(parts.subList(1,parts.size()).join(",") )
             }
-            values.add([quantity: value, color: color])
+            if (value.isNumber() && color?.value) {
+                values.add([quantity: value, color: color])
+            }
         }
-        new ColorMap(values)
+        if (values.size() > 0) {
+            new ColorMap(values)
+        } else {
+            null
+        }
     }
 }

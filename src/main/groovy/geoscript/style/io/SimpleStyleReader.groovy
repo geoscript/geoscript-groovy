@@ -41,7 +41,12 @@ class SimpleStyleReader implements Reader {
      */
     @Override
     Style read(String str) {
-        read(getMap(str))
+        Map options = getMap(str)
+        if (!options.isEmpty()) {
+            read(options)
+        } else {
+            null
+        }
     }
 
     /**
