@@ -1,6 +1,12 @@
 package geoscript.style.io
 
-import geoscript.style.*
+import geoscript.style.Composite
+import geoscript.style.Fill
+import geoscript.style.Font
+import geoscript.style.Label
+import geoscript.style.Shape
+import geoscript.style.Stroke
+import geoscript.style.Style
 
 /**
  * A Simple StyleReader that can easily create simple Styles using Maps or Strings.
@@ -35,7 +41,12 @@ class SimpleStyleReader implements Reader {
      */
     @Override
     Style read(String str) {
-        read(getMap(str))
+        Map options = getMap(str)
+        if (!options.isEmpty()) {
+            read(options)
+        } else {
+            null
+        }
     }
 
     /**

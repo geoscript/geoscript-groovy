@@ -1,5 +1,7 @@
 package geoscript.style.io
 
+import geoscript.style.Style
+
 /**
  * A utility for getting Renderers
  * @author Jared Erickson
@@ -24,5 +26,25 @@ class Readers {
             String readerName = reader.class.simpleName
             readerName.toLowerCase().startsWith(name.toLowerCase())
         }
+    }
+
+    /**
+     * Read a Style from a String.
+     * @param str The String
+     * @return A Style or null
+     */
+    static Style read(String str) {
+        Style style = null
+        for(Reader reader : list()) {
+            try {
+                style = reader.read(str)
+                if (style) {
+                    break
+                }
+            } catch (Exception ex) {
+                // Just try the next reader
+            }
+        }
+        style
     }
 }

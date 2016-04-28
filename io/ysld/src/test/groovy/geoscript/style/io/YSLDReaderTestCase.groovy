@@ -41,4 +41,21 @@ class YSLDReaderTestCase {
         assertNotNull reader
         assertTrue reader instanceof YSLDReader
     }
+
+    @Test void readerReadYsldString() {
+        Style style = Readers.read("""name: Default Styler
+feature-styles:
+- name: name
+  rules:
+  - scale: [min, max]
+    symbolizers:
+    - polygon:
+        fill-color: '#F5DEB3'
+    - line:
+        stroke-color: '#A52A2A'
+        stroke-width: 1
+""")
+        assertNotNull style
+        assertTrue style instanceof YSLDReader.YsldStyle
+    }
 }
