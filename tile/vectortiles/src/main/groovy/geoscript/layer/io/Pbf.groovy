@@ -11,14 +11,13 @@ import geoscript.geom.Geometry
 import geoscript.layer.Layer
 import geoscript.proj.Projection
 import no.ecc.vectortile.VectorTileDecoder
-import no.ecc.vectortile.VectorTileDecoder.Feature as VTFeature
 import no.ecc.vectortile.VectorTileEncoder
 
 /**
  * A MapBox Vector Tile Reader and Writer
  */
 class Pbf {
-    
+
     /**
      * Read a List of Layers
      * @param options The optional named parameters
@@ -33,34 +32,29 @@ class Pbf {
         Projection proj = options.get("proj", new Projection("EPSG:3857"))
         int tileSize = options.get("tileSize", 256)
         VectorTileDecoder decoder = new VectorTileDecoder()
-        decoder.decode(bytes)
-        List layers = []
-        decoder.layerNames.each { String name ->
-            List<VTFeature> features = decoder.getFeatures(name)
-            if (features.size() > 0) {
-                // Get a List of Fields from the first Feature
+        VectorTileDecoder.FeatureIterable fit = decoder.decode(bytes)
+        Map<String, Layer> layers = [:]
+        fit.iterator().each { VectorTileDecoder.Feature f ->
+            if (!layers.containsKey(f.layerName)) {
                 List<Field> fields = []
-                VTFeature f = features[0]
                 fields.add(new Field("geom", f.geometry.geometryType, proj))
                 f.attributes.each {String key, Object value ->
                     fields.add(new Field(key, value ? value.class.name : "String"))
                 }
                 // Create a Schema and Layer
-                Schema schema = new Schema(name, fields)
-                Layer layer = new Layer(name, schema)
-                // Add Features
-                features.each { VTFeature feature ->
-                    Map attributes = [:]
-                    attributes.put(schema.geom.name, fromPixel(Geometry.wrap(feature.geometry), b, tileSize))
-                    attributes.putAll(feature.attributes)
-                    layer.add(attributes)
-                }
-                layers.add(layer)
+                Schema schema = new Schema(f.layerName, fields)
+                layers.put(f.layerName, new Layer(f.layerName, schema))
             }
+            Layer layer = layers[f.layerName]
+            Schema schema = layer.schema
+            Map attributes = [:]
+            attributes.put(schema.geom.name, fromPixel(Geometry.wrap(f.geometry), b, tileSize))
+            attributes.putAll(f.attributes)
+            layer.add(attributes)
         }
-        layers
+        layers.values() as List
     }
-    
+
     /**
      * Write a List of Layers 
      * @param options The optional named parameters
@@ -98,7 +92,7 @@ class Pbf {
         }
         encoder.encode()
     }
-   
+
     /**
      * Convert a Geometry from pixel coordinates to geographic coordinates
      * @param g The Geometry in pixel coordinates
