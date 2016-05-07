@@ -1,13 +1,11 @@
 package geoscript.layer.io
 
-import au.com.bytecode.opencsv.CSVWriter
 import geoscript.feature.Field
-import geoscript.geom.Geometry
 import geoscript.geom.Point
-import geoscript.geom.io.*
 import geoscript.layer.Layer
-import geoscript.layer.io.Writer
+import com.opencsv.CSVWriter
 import geoscript.proj.DecimalDegrees
+import geoscript.geom.Geometry
 
 /**
  * Write a {@link geoscript.layer.Layer Layer} to a CSV String.
@@ -92,7 +90,7 @@ class CsvWriter implements Writer {
         this.quote = options.get("quote", "\"")
         this.encodeFieldType = options.get("encodeFieldType", !this.isXY(this.type))
         if (this.type == Type.WKB) {
-            this.geomWriter = new WkbWriter()
+            this.geomWriter = geoscript.geom.io.Writers.find("wkb")
         } else if (this.type == Type.GEOJSON) {
             this.geomWriter = geoscript.geom.io.Writers.find("geojson")
         } else if (this.type == Type.KML) {
@@ -102,7 +100,7 @@ class CsvWriter implements Writer {
         } else if (type == Type.GML3) {
             this.geomWriter = geoscript.geom.io.Writers.find("gml3")
         } else /*if (this.type == Type.WKT)*/ {
-            this.geomWriter = new WktWriter()
+            this.geomWriter = geoscript.geom.io.Writers.find("wkt")
         }
     }
 
@@ -137,7 +135,7 @@ class CsvWriter implements Writer {
      * @param out The OutputStream
      */
     void write(Layer layer, OutputStream out) {
-         writeToWriter(layer, new OutputStreamWriter(out))
+        writeToWriter(layer, new OutputStreamWriter(out))
     }
 
     /**
@@ -245,8 +243,8 @@ class CsvWriter implements Writer {
      */
     private boolean isXY(Type type) {
         if (type == Type.XY
-            || type == Type.DMS || type == Type.DMSChar
-            || type == Type.DDM || type == Type.DDMChar) {
+                || type == Type.DMS || type == Type.DMSChar
+                || type == Type.DDM || type == Type.DDMChar) {
             return true
         }
         else {
