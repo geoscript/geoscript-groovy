@@ -1,7 +1,7 @@
 package geoscript.layer.io
 
 import geoscript.layer.Layer
-import au.com.bytecode.opencsv.CSVReader
+import com.opencsv.CSVReader
 import geoscript.feature.Schema
 import geoscript.feature.Field
 import geoscript.geom.Point

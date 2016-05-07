@@ -3,7 +3,7 @@ package geoscript.layer.io
 import geoscript.feature.Field
 import geoscript.geom.Point
 import geoscript.layer.Layer
-import au.com.bytecode.opencsv.CSVWriter
+import com.opencsv.CSVWriter
 import geoscript.proj.DecimalDegrees
 import geoscript.geom.io.WkbWriter
 import geoscript.geom.io.WktWriter
