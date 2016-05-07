@@ -5,14 +5,7 @@ import geoscript.geom.Point
 import geoscript.layer.Layer
 import com.opencsv.CSVWriter
 import geoscript.proj.DecimalDegrees
-import geoscript.geom.io.WkbWriter
-import geoscript.geom.io.WktWriter
 import geoscript.geom.Geometry
-import geoscript.geom.io.GeoJSONWriter
-import geoscript.geom.io.KmlWriter
-import geoscript.geom.io.Gml2Writer
-import geoscript.geom.io.Gml3Writer
-import org.codehaus.groovy.util.StringUtil
 
 /**
  * Write a {@link geoscript.layer.Layer Layer} to a CSV String.

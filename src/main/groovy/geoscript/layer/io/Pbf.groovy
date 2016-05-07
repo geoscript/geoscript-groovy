@@ -12,7 +12,6 @@ import geoscript.layer.Layer
 import geoscript.proj.Projection
 import no.ecc.vectortile.VectorTileDecoder
 import no.ecc.vectortile.VectorTileEncoder
-import no.ecc.vectortile.VectorTileDecoder.Feature as VTFeature
 
 /**
  * A MapBox Vector Tile Reader and Writer
