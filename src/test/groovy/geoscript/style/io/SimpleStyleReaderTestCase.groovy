@@ -18,12 +18,24 @@ class SimpleStyleReaderTestCase {
 
     @Test void readFromString() {
         SimpleStyleReader styleReader = new SimpleStyleReader()
+        // Fill and Stroke
         Style style = styleReader.read("fill=#555555 fill-opacity=0.6 stroke=#555555 stroke-width=0.5")
         assertEquals style.toString(), "Composite (Fill(color = #555555, opacity = 0.6), Stroke(color = #555555, width = 0.5))"
+        // Shape with Fill and Stroke
         style = styleReader.read("fill=navy stroke=yellow shape-type=circle")
         assertEquals style.toString(), "Composite (Fill(color = #000080, opacity = 0.6), Stroke(color = #ffff00, width = 0.5), Shape(color = #7e7e7e, size = 6, type = circle))"
+        // Shape with Fill and Stroke with Label
         style = styleReader.read("fill=#554466 stroke=255,255,0 shape-type=triangle label=NAME label-size=12")
         assertEquals style.toString(), "Composite (Fill(color = #554466, opacity = 0.6), Stroke(color = #ffff00, width = 0.5), Shape(color = #7e7e7e, size = 6, type = triangle), Label(property = NAME))"
+        // Just fill
+        style = styleReader.read("fill=#554466")
+        assertEquals style.toString(), "Composite (Fill(color = #554466, opacity = 0.6))"
+        // Just stroke
+        style = styleReader.read("stroke=#554466")
+        assertEquals style.toString(), "Composite (Stroke(color = #554466, width = 0.5))"
+        // Just shape
+        style = styleReader.read("shape=#554466")
+        assertEquals style.toString(), "Composite (Shape(color = #554466, size = 6, type = circle))"
     }
 
     @Test void readFromMap() {
