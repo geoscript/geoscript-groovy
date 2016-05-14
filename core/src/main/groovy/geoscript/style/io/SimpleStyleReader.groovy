@@ -10,6 +10,10 @@ import geoscript.style.Style
 
 /**
  * A Simple StyleReader that can easily create simple Styles using Maps or Strings.
+ * Fill properties: fill and fill-opacity
+ * Stroke properties: stroke, stroke-width, stroke-opacity
+ * Shape properties: shape, shape-size, shape-type
+ * Label properties: label-size, label-style, label-weight, label-family
  * @author Jared Erickson
  */
 class SimpleStyleReader implements Reader {
@@ -56,14 +60,14 @@ class SimpleStyleReader implements Reader {
      */
     Style read(Map options) {
         List parts = []
-        if (!options.containsKey('no-fill')) {
+        if (['fill','fill-opacity'].any{ options.containsKey(it) }) {
             Fill fill = new Fill(
                     color: options.get('fill', "#555555"),
                     opacity: options.get('fill-opacity', 0.6)
             )
             parts.add(fill)
         }
-        if (!options.containsKey('no-stroke')) {
+        if (['stroke','stroke-width','stroke-opacity'].any{ options.containsKey(it) }) {
             Stroke stroke = new Stroke(
                     color: options.get('stroke', "#555555"),
                     width: options.get('stroke-width', 0.5),
@@ -79,7 +83,7 @@ class SimpleStyleReader implements Reader {
             )
             parts.add(shape)
         }
-        if (options.containsKey('label')) {
+        if (['label-size','label-style','label-weight','label-family'].any{ options.containsKey(it) }) {
             Font font = new Font(
                     size: options.get('label-size',12),
                     style: options.get('label-style', 'normal'),
