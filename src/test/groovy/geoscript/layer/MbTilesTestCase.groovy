@@ -330,4 +330,30 @@ class MBTilesTestCase {
         layer.close()
     }
 
+    @Test
+    void metadata() {
+        File file = new File(getClass().getClassLoader().getResource("states.mbtiles").toURI())
+        MBTiles layer = new MBTiles(file)
+        Map metadata = layer.metadata
+        assertEquals "base_layer", metadata.type
+        assertEquals "states", metadata.name
+        assertEquals "A map of the united states", metadata.description
+        assertEquals "png", metadata.format
+        assertEquals "1.0", metadata.version
+        assertEquals "Created with GeoScript", metadata.attribution
+        assertEquals "-180.0,-85.0511,180.0,85.0511", metadata.bounds
+    }
+
+    @Test
+    void tileCounts() {
+        File file = new File(getClass().getClassLoader().getResource("states.mbtiles").toURI())
+        MBTiles layer = new MBTiles(file)
+        List stats = layer.tileCounts
+        stats.eachWithIndex { Map stat, int index ->
+            assertEquals(index, stat.zoom)
+            assertEquals(Math.pow(4, index), stat.tiles, 0.1)
+            assertEquals(Math.pow(4, index), stat.total, 0.1)
+            assertEquals(1.0, stat.percent, 0.1)
+        }
+    }
 }

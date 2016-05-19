@@ -112,6 +112,44 @@ class MBTiles extends ImageTileLayer {
     }
 
     /**
+     * Get metadata (type, name, description, format, version, attribution, bounds)
+     * @return A Map of metadata
+     */
+    Map<String,String> getMetadata() {
+        MBTilesMetadata metadata = tiles.loadMetaData()
+        [
+                type: metadata.typeStr,
+                name: metadata.name,
+                description: metadata.description,
+                format: metadata.formatStr,
+                version: metadata.version,
+                attribution: metadata.attribution,
+                bounds: metadata.boundsStr
+        ]
+    }
+
+    /**
+     * Get the number of tiles per zoom level.
+     * @return A List of Maps with zoom, tiles, total, and percent keys
+     */
+    List<Map> getTileCounts() {
+        List stats = []
+        getSql().eachRow("select count(*) as num_tiles, zoom_level from tiles group by zoom_level order by zoom_level", { def row ->
+            long zoom = row.zoom_level
+            long numberOfTiles = row.num_tiles
+            long totalNumberOfTiles = this.pyramid.grid(row.zoom_level).size
+            double percent = totalNumberOfTiles / numberOfTiles
+            stats.add([
+                zoom: zoom,
+                tiles: numberOfTiles,
+                total: totalNumberOfTiles,
+                percent: percent
+            ])
+        })
+        stats
+    }
+
+    /**
      * Create a new MBTilesLayer with a new File
      * @param options The optional named parameters
      * <ul>
