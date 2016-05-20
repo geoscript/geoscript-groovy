@@ -331,6 +331,19 @@ class GeoPackageTestCase {
         layer.close()
     }
 
+    @Test
+    void tileCounts() {
+        File file = new File(getClass().getClassLoader().getResource("states.gpkg").toURI())
+        GeoPackage layer = new GeoPackage(file, "states")
+        List stats = layer.tileCounts
+        stats.eachWithIndex { Map stat, int index ->
+            assertEquals(index, stat.zoom)
+            assertEquals(Math.pow(4, index), stat.tiles, 0.1)
+            assertEquals(Math.pow(4, index), stat.total, 0.1)
+            assertEquals(1.0, stat.percent, 0.1)
+        }
+    }
+
     private File getFile(String resource) {
         new File(getClass().getClassLoader().getResource(resource).toURI())
     }

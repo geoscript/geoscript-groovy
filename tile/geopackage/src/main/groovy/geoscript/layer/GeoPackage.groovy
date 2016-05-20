@@ -187,6 +187,28 @@ class GeoPackage extends ImageTileLayer {
     }
 
     /**
+     * Get the number of tiles per zoom level.
+     * @return A List of Maps with zoom, tiles, total, and percent keys
+     */
+    List<Map> getTileCounts() {
+        List stats = []
+        String sqlStr = "select count(*) as num_tiles, zoom_level from ${this.tileEntry.tableName} group by zoom_level order by zoom_level".toString()
+        getSql().eachRow(sqlStr, { def row ->
+            long zoom = row.zoom_level
+            long numberOfTiles = row.num_tiles
+            long totalNumberOfTiles = this.pyramid.grid(row.zoom_level).size
+            double percent = totalNumberOfTiles / numberOfTiles
+            stats.add([
+                    zoom: zoom,
+                    tiles: numberOfTiles,
+                    total: totalNumberOfTiles,
+                    percent: percent
+            ])
+        })
+        stats
+    }
+
+    /**
      * The GeoPackage TileLayerFactory
      */
     static class Factory extends TileLayerFactory<GeoPackage> {
