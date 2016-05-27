@@ -358,4 +358,12 @@ class MBTilesTestCase {
         }
     }
 
+    @Test
+    void minMaxZoom() {
+        File file = new File(getClass().getClassLoader().getResource("states.mbtiles").toURI())
+        MBTiles layer = new MBTiles(file)
+        assertEquals 0, layer.minZoom
+        assertEquals 4, layer.maxZoom
+    }
+
 }
