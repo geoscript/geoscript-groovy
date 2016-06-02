@@ -20,7 +20,7 @@ GeoScript Groovy Releases
 
     **Tile**
 
-    MBTiles got methods to access metdata and minimum and maximum zoom levels.::
+    MBTiles got methods to access metdata and minimum and maximum zoom levels.:
 
         MBTiles layer = new MBTiles(new File("states.mbtiles"))
         println layer.metadata
@@ -28,7 +28,7 @@ GeoScript Groovy Releases
         println layer.maxZoom
 
     GeoPackage and MBTiles both got a new getTileCount() method that returns statistics on the number of tiles present
-    per zoom level.::
+    per zoom level.:
 
         GeoPackage layer = new GeoPackage(new File("states.gpkg"), "states")
         List stats = layer.tileCounts
@@ -36,7 +36,7 @@ GeoScript Groovy Releases
             println "${index}). ${stat.zoom} ${stat.tiles} ${stat.total} ${stat.percent}"
         }
 
-    The Tile module got a new TileLayer called GeneratingTileLayer that can generate Tiles on demand.::
+    The Tile module got a new TileLayer called GeneratingTileLayer that can generate Tiles on demand.:
 
         Layer layer = new Shapefile("states.shp")
         layer.style = new Fill("wheat") + new Stroke("navy", 0.1)
@@ -48,7 +48,7 @@ GeoScript Groovy Releases
     The ImageTileLayer base class now makes sure that the Bounds passed to the getRaster() method
     is in the correct projection.
 
-    Finally, the OSM TileLayer has a static method for creating TileLayers with well known OSM based web serivces.::
+    Finally, the OSM TileLayer has a static method for creating TileLayers with well known OSM based web serivces.:
 
         OSM.getWellKnownOSM("osm")
         OSM.getWellKnownOSM("stamen-toner")
@@ -60,13 +60,13 @@ GeoScript Groovy Releases
 
     **Style**
 
-    The Style module added a YSLD Reader and Writer.::
+    The Style module added a YSLD Reader and Writer.:
 
         Symbolizer sym = new Fill("wheat") + new Stroke("brown")
         YSLDWriter writer = new YSLDWriter()
         String yaml = writer.write(sym)
 
-    The Style module also got a new SimpleStyleReader that can easily create simple styles.::
+    The Style module also got a new SimpleStyleReader that can easily create simple styles.:
 
         SimpleStyleReader styleReader = new SimpleStyleReader()
         // Fill and Stroke
@@ -86,7 +86,7 @@ GeoScript Groovy Releases
 
     **Renderer**
 
-    sbortman added a new GeoTIFF Renderer.::
+    sbortman added a new GeoTIFF Renderer.:
 
         Layer layer = new Shapefile(new File("states.shp"))
         layer.style = new Stroke('black', 0.1) + new Fill('gray', 0.75)
@@ -94,7 +94,7 @@ GeoScript Groovy Releases
         GeoTIFF geotiff = new GeoTIFF()
         def img = geotiff.render(map)
 
-    Users can now configure MapWindow and Window's do when the ui is closed (hide, exit, dispose).::
+    Users can now configure MapWindow and Window's do when the ui is closed (hide, exit, dispose).:
 
         Map map = new Map(layers:[new Shapefile("states.shp")])
         Window window = new Window()
@@ -104,7 +104,7 @@ GeoScript Groovy Releases
 
     **Geometry**
 
-    The Geometry IO package received a Google Polygon Encoder.::
+    The Geometry IO package received a Google Polygon Encoder.:
 
         GooglePolylineEncoder encoder = new GooglePolylineEncoder()
         LineString lineString = new LineString([-120.2, 38.5], [-120.95, 40.7], [-126.453, 43.252])
@@ -112,7 +112,7 @@ GeoScript Groovy Releases
 
     The Bounds expand method is now more robust.
 
-    An offset method was added to the Geometry class.::
+    An offset method was added to the Geometry class.:
 
         Geometry g = Geometry.fromWKT("LINESTRING (0 5, 5 5)").offset(2)
 
