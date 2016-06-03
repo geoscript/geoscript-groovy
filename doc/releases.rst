@@ -5,18 +5,18 @@ GeoScript Groovy Releases
 
 1.7.0
 -----
-    The 1.7.0 release of GeoScript is built on Grooovy 2.4.6, GeoTools 15.0, and the Java Topology Suite 1.13.
-    It also requires Java 8.
+    The 1.7.0 release of GeoScript is built on Grooovy 2.4.6, GeoTools 15.0, and the Java Topology Suite 1.13 and
+    requires Java 8.
 
     This version focused on making GeoScript more modular and extensible.  GeoScript is more extensible by
     providing Service Provider Interface (SPI) end points for Readers, Writer, Formats, TileLayers and Workspaces.
     GeoScript is more modular by using Groovy's Extension Modules to add methods dynamically.
 
     Most of the other features of 1.7 were contributed by the community (thank you sbortman, blackrez, and gnafu)
-    or drive by the development of `geoc <https://github.com/jericks/geoc>`_ (a geospatial commandline application),
+    or driven by the development of `geoc <https://github.com/jericks/geoc>`_ (a geospatial commandline application),
     `geo-shell <https://github.com/jericks/geo-shell>`_ (an interactive shell for geospatial analysis),
     and `MBTilesServer <https://github.com/jericks/MBTilesServer>`_ (a Spring Boot based web app for serving
-    mbtiles maps).
+    MBtiles maps).
 
     **Tile**
 
@@ -128,13 +128,21 @@ GeoScript Groovy Releases
 
     **Workspace**
 
-    Workspaces have much better connection string and maps.
+    Workspaces have much better connection string and maps which are useful for command line applications::
 
-    Users of the OGR Workspace can now use the static setErrorHandler(quiet, logging, or default) method to control OGR's logging.
+        Workspace w = Workspace.getWorkspace("dbtype=postgis database=postgres host=localhost port=5432 user=postgres passwd=postgres")
+
+        Workspace w = Workspace.getWorkspace("database=layers.gpkg dbtype=geopkg user=me passwd=s$cr$t")
+
+    Users of the OGR Workspace can now use the static setErrorHandler(quiet, logging, or default) method to control OGR's logging::
+
+        OGR.setErrorHandler("quiet")
 
     All workspaces now include a Workspace.remove(String name) method that can remove a Layer from the Workspace.
 
-    The Shapefile module inherited a Shapefile.dump(File,Layer) method from GeoTools.
+    The Shapefile module inherited a Shapefile.dump(File,Layer) method from GeoTools::
+
+        Directory workspace = Shapefile.dump(dir, layer)
 
     Shapefile and Property layers can look up side car SLD or CSS files.
 
