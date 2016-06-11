@@ -14,7 +14,7 @@ import org.geotools.geopkg.TileReader
 class GeoPackage extends ImageTileLayer {
 
     /**
-     * The MBTiles File
+     * The GeoPackage File
      */
     private final File file
 
