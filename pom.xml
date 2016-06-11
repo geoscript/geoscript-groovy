@@ -494,6 +494,7 @@
             <id>boundless</id>
             <name>Boundless Snapshot Repository</name>
             <url>https://repo.boundlessgeo.com/snapshot/</url>
+            <uniqueVersion>false</uniqueVersion>
         </snapshotRepository>
     </distributionManagement>
 </project>
