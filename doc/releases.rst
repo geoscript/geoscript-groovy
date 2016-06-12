@@ -3,6 +3,153 @@
 GeoScript Groovy Releases
 =========================
 
+1.7.0
+-----
+    The 1.7.0 release of GeoScript is built on Grooovy 2.4.6, GeoTools 15.0, and the Java Topology Suite 1.13 and
+    requires Java 8.
+
+    This version focused on making GeoScript more modular and extensible.  GeoScript is more extensible by
+    providing Service Provider Interface (SPI) end points for Readers, Writer, Formats, TileLayers and Workspaces.
+    GeoScript is more modular by using Groovy's Extension Modules to add methods dynamically.
+
+    Most of the other features of 1.7 were contributed by the community (thank you sbortman, blackrez, and gnafu)
+    or driven by the development of `geoc <https://github.com/jericks/geoc>`_ (a geospatial commandline application),
+    `geo-shell <https://github.com/jericks/geo-shell>`_ (an interactive shell for geospatial analysis),
+    and `MBTilesServer <https://github.com/jericks/MBTilesServer>`_ (a Spring Boot based web app for serving
+    MBtiles maps).
+
+    **Tile**
+
+    MBTiles got methods to access metdata and minimum and maximum zoom levels::
+
+        MBTiles layer = new MBTiles(new File("states.mbtiles"))
+        println layer.metadata
+        println layer.minZoom
+        println layer.maxZoom
+
+    GeoPackage and MBTiles both got a new getTileCount() method that returns statistics on the number of tiles present
+    per zoom level::
+
+        GeoPackage layer = new GeoPackage(new File("states.gpkg"), "states")
+        List stats = layer.tileCounts
+        stats.eachWithIndex { Map stat, int index ->
+            println "${index}). ${stat.zoom} ${stat.tiles} ${stat.total} ${stat.percent}"
+        }
+
+    The Tile module got a new TileLayer called GeneratingTileLayer that can generate Tiles on demand::
+
+        Layer layer = new Shapefile("states.shp")
+        layer.style = new Fill("wheat") + new Stroke("navy", 0.1)
+        File file = folder.newFile("states.mbtiles")
+        TileLayer tileLayer = new MBTiles(new File("states.mbtiles"), "states", "A map of the united states")
+        ImageTileRenderer tileRenderer = new ImageTileRenderer(tileLayer, layer)
+        GeneratingTileLayer generatingTileLayer = new GeneratingTileLayer(tileLayer, tileRenderer)
+
+    The ImageTileLayer base class now makes sure that the Bounds passed to the getRaster() method
+    is in the correct projection.
+
+    Finally, the OSM TileLayer has a static method for creating TileLayers with well known OSM based web serivces::
+
+        OSM.getWellKnownOSM("osm")
+        OSM.getWellKnownOSM("stamen-toner")
+        OSM.getWellKnownOSM("stamen-toner")
+        OSM.getWellKnownOSM("stamen-toner-lite")
+        OSM.getWellKnownOSM("stamen-watercolor")
+        OSM.getWellKnownOSM("mapquest-street")
+        OSM.getWellKnownOSM("mapquest-satellite")
+
+    **Style**
+
+    The Style module added a YSLD Reader and Writer::
+
+        Symbolizer sym = new Fill("wheat") + new Stroke("brown")
+        YSLDWriter writer = new YSLDWriter()
+        String yaml = writer.write(sym)
+
+    The Style module also got a new SimpleStyleReader that can easily create simple styles::
+
+        SimpleStyleReader styleReader = new SimpleStyleReader()
+        // Fill and Stroke
+        Style style = styleReader.read("fill=#555555 fill-opacity=0.6 stroke=#555555 stroke-width=0.5")
+        // Shape with Fill and Stroke
+        style = styleReader.read("fill=navy stroke=yellow shape-type=circle")
+        // Shape with Fill and Stroke with Label
+        style = styleReader.read("fill=#554466 stroke=255,255,0 shape-type=triangle label=NAME label-size=12")
+        // Just fill
+        style = styleReader.read("fill=#554466")
+        // Just stroke
+        style = styleReader.read("stroke=#554466")
+        // Just shape
+        style = styleReader.read("shape=#554466")
+
+    This version also updated default style and inherited a perpendicular offset for Strokes from the GeoTools project.
+
+    **Renderer**
+
+    sbortman added a new GeoTIFF Renderer::
+
+        Layer layer = new Shapefile(new File("states.shp"))
+        layer.style = new Stroke('black', 0.1) + new Fill('gray', 0.75)
+        Map map = new Map(layers: [layer], backgroundColor: "white")
+        GeoTIFF geotiff = new GeoTIFF()
+        def img = geotiff.render(map)
+
+    Users can now configure MapWindow and Window's do when the ui is closed (hide, exit, dispose)::
+
+        Map map = new Map(layers:[new Shapefile("states.shp")])
+        Window window = new Window()
+        window.display(map, close: 'hide')
+
+    The Map now guards against null projections in Bounds.
+
+    **Geometry**
+
+    The Geometry IO package received a Google Polygon Encoder::
+
+        GooglePolylineEncoder encoder = new GooglePolylineEncoder()
+        LineString lineString = new LineString([-120.2, 38.5], [-120.95, 40.7], [-126.453, 43.252])
+        String str = encoder.write(lineString)
+
+    The Bounds expand method is now more robust.
+
+    An offset method was added to the Geometry class::
+
+        Geometry g = Geometry.fromWKT("LINESTRING (0 5, 5 5)").offset(2)
+
+    **IO**
+
+    Several optional parameters were added to the Feature GeoJSON Writer to control the number of decimals and how
+    to encode feature bounds, feature collection bounds, feature collection crs, feature crs, and whether to encode
+    null values.
+
+    The CSVReader can handle multiple geometry types.
+
+    The GeoScript.zip method now includes nested directories and GeoScript.unzip creates directories if necessary.
+
+    **Workspace**
+
+    Workspaces have much better connection string and maps which are useful for command line applications::
+
+        Workspace w = Workspace.getWorkspace("dbtype=postgis database=postgres host=localhost port=5432 user=postgres passwd=postgres")
+
+        Workspace w = Workspace.getWorkspace("database=layers.gpkg dbtype=geopkg user=me passwd=s$cr$t")
+
+    Users of the OGR Workspace can now use the static setErrorHandler(quiet, logging, or default) method to control OGR's logging::
+
+        OGR.setErrorHandler("quiet")
+
+    All workspaces now include a Workspace.remove(String name) method that can remove a Layer from the Workspace.
+
+    The Shapefile module inherited a Shapefile.dump(File,Layer) method from GeoTools::
+
+        Directory workspace = Shapefile.dump(dir, layer)
+
+    Shapefile and Property layers can look up side car SLD or CSS files.
+
+    The Property Workspace got a getFile() method.
+
+    The WFS Workspace can optionally take user and password parameters.
+
 1.6.0
 -----
 
