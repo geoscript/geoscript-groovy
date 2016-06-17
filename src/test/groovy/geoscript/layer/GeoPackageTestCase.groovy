@@ -344,6 +344,14 @@ class GeoPackageTestCase {
         }
     }
 
+    @Test
+    void minMaxZoom() {
+        File file = new File(getClass().getClassLoader().getResource("states.gpkg").toURI())
+        GeoPackage layer = new GeoPackage(file, "states")
+        assertEquals 0, layer.minZoom
+        assertEquals 4, layer.maxZoom
+    }
+
     private File getFile(String resource) {
         new File(getClass().getClassLoader().getResource(resource).toURI())
     }
