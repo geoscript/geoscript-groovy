@@ -428,6 +428,7 @@ class Schema {
      * The string representation
      * @return The string representation
      */
+    @Override
     String toString() {
         "${name} ${fields.join(', ')}"
     }
@@ -536,6 +537,7 @@ class Schema {
         builder.buildFeatureType()
     }
 
+    @Override
     boolean equals(Object obj) {
         if (obj instanceof Schema) {
             this.featureType.equals(obj.featureType)
@@ -544,6 +546,7 @@ class Schema {
         }
     }
 
+    @Override
     int hashCode() {
         this.featureType.hashCode()
     }
