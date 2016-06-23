@@ -1032,4 +1032,52 @@ class RasterTestCase {
         assertEquals 3.044522523880005, raster2.eval(new Point(2.5,2.5))[0], 0.1
         assertEquals 2.5649492740631104, raster2.eval(new Point(3.5,2.5))[0], 0.1
     }
+
+    @Test void normalize() {
+        Bounds bounds = new Bounds(0, 0, 7, 5, "EPSG:4326")
+        List data1 = [
+                [100,10,10,10,10,10,10],
+                [10,11,11,11,11,11,10],
+                [10,11,21,13,12,11,10],
+                [10,11,11,11,11,11,10],
+                [10,10,10,10,10,10,10]
+        ]
+        Raster raster1 = new Raster(data1, bounds)
+        Raster raster2 = raster1.normalize()
+        assertEquals 1.0, raster2.getValue(0,0), 0.1
+        assertEquals 0.1, raster2.getValue(0,1), 0.1
+        assertEquals 0.1, raster2.getValue(1,1), 0.1
+    }
+
+    @Test void convolveRadius() {
+        Bounds bounds = new Bounds(0, 0, 7, 5, "EPSG:4326")
+        List data1 = [
+                [100,10,10,10,10,10,10],
+                [10,11,11,11,11,11,10],
+                [10,11,21,13,12,11,10],
+                [10,11,11,11,11,11,10],
+                [10,10,10,10,10,10,10]
+        ]
+        Raster raster1 = new Raster(data1, bounds)
+        Raster raster2 = raster1.convolve(1)
+        assertEquals 0.0, raster2.getValue(0,0), 0.1
+        assertEquals 53.0, raster2.getValue(1,1), 0.1
+        assertEquals 67.0, raster2.getValue(2,2), 0.1
+    }
+
+    @Test void convolveWidthHeight() {
+        Bounds bounds = new Bounds(0, 0, 7, 5, "EPSG:4326")
+        List data1 = [
+                [100,10,10,10,10,10,10],
+                [10,11,11,11,11,11,10],
+                [10,11,21,13,12,11,10],
+                [10,11,11,11,11,11,10],
+                [10,10,10,10,10,10,10]
+        ]
+        Raster raster1 = new Raster(data1, bounds)
+        Raster raster2 = raster1.convolve(2,2)
+        assertEquals 131.0, raster2.getValue(0,0), 0.1
+        assertEquals 54.0, raster2.getValue(1,1), 0.1
+        assertEquals 56.0, raster2.getValue(2,2), 0.1
+    }
 }

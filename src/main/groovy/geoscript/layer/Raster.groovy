@@ -21,6 +21,8 @@ import org.geotools.process.raster.AffineProcess
 import org.geotools.process.raster.BandMergeProcess
 import org.geotools.process.raster.BandSelectProcess
 import org.geotools.process.raster.ContourProcess
+import org.geotools.process.raster.ConvolveCoverageProcess
+import org.geotools.process.raster.NormalizeCoverageProcess
 import org.geotools.process.raster.PolygonExtractionProcess
 import org.geotools.process.raster.RasterAsPointCollectionProcess
 import org.geotools.process.raster.RasterZonalStatistics
@@ -750,6 +752,38 @@ class Raster implements Renderable {
         params.parameter("GridGeometry").value = gg
         def newCoverage = processor.doOperation(params)
         new Raster(newCoverage)
+    }
+
+    /**
+     * Calculate a normalized version of the current Raster
+     * @return A Raster
+     */
+    Raster normalize() {
+        NormalizeCoverageProcess p = new NormalizeCoverageProcess()
+        GridCoverage2D gc = p.execute(this.coverage)
+        new Raster(gc)
+    }
+
+    /**
+     * Calculate a convoluted version of the current Raster
+     * @param options Optional named parameters (kernel, kernelRadius, kernelWidth and kernelHeight)
+     * @return A Raster
+     */
+    Raster convolve(int radius) {
+        ConvolveCoverageProcess p = new ConvolveCoverageProcess()
+        GridCoverage2D gc = p.execute(this.coverage, null, radius, null, null)
+        new Raster(gc)
+    }
+
+    /**
+     * Calculate a convoluted version of the current Raster
+     * @param options Optional named parameters (kernel, kernelRadius, kernelWidth and kernelHeight)
+     * @return A Raster
+     */
+    Raster convolve(int width, int height) {
+        ConvolveCoverageProcess p = new ConvolveCoverageProcess()
+        GridCoverage2D gc = p.execute(this.coverage, null, null, width, height)
+        new Raster(gc)
     }
 
     /**
