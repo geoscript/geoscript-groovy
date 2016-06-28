@@ -111,11 +111,13 @@ class Field {
      * The string representation
      * @return The string representation
      */
+    @Override
     String toString() {
         "${name}: ${typ}${(proj!=null?'(' + proj + ')' : '')}".toString()
     }
 
-    boolean equals(o) {
+    @Override
+    boolean equals(Object o) {
         if (this.is(o)) return true
         if (getClass() != o.class) return false
         Field field = (Field) o
@@ -125,6 +127,7 @@ class Field {
         return true
     }
 
+    @Override
     int hashCode() {
         int result
         result = name.hashCode()
