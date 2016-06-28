@@ -393,16 +393,19 @@ class Raster implements Renderable {
         Number outsideValue = options.get("outside",0)
         String optionName = options.get("order","imagexy")
         SimpleIterator it = new SimpleIterator(
-            image,
-            bounds != null ? new Rectangle(bounds[0], bounds[1], bounds[2], bounds[3]) : null,
-            outsideValue,
-            optionName.equalsIgnoreCase("imagexy") ? AbstractSimpleIterator.Order.IMAGE_X_Y : AbstractSimpleIterator.Order.TILE_X_Y
+                image,
+                bounds != null ? new Rectangle(bounds[0], bounds[1], bounds[2], bounds[3]) : null,
+                outsideValue,
+                optionName.equalsIgnoreCase("imagexy") ? AbstractSimpleIterator.Order.IMAGE_X_Y : AbstractSimpleIterator.Order.TILE_X_Y
         )
-        while(it.hasNext()) {
+
+        while(true) {
             def value = it.getSample(band)
             def pt = it.getPos()
             closure.call(value, pt.x, pt.y)
-            it.next()
+            if (!it.next()) {
+                break
+            }
         }
     }
 
