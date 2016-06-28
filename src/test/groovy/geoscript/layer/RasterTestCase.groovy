@@ -1,10 +1,6 @@
 package geoscript.layer
 
 import geoscript.geom.*
-import geoscript.layer.Band
-import geoscript.layer.GeoTIFF
-import geoscript.layer.Histogram
-import geoscript.layer.Raster
 import geoscript.proj.Projection
 import geoscript.style.ColorMap
 import geoscript.style.Symbolizer
@@ -14,7 +10,6 @@ import org.junit.rules.TemporaryFolder
 
 import javax.imageio.ImageIO
 import static org.junit.Assert.*
-import geoscript.layer.Layer
 import geoscript.workspace.Memory
 import geoscript.feature.Field
 
