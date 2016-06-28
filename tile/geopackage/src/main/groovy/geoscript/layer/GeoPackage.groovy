@@ -209,6 +209,30 @@ class GeoPackage extends ImageTileLayer {
     }
 
     /**
+     * Get the maximum zoom level of the tiles present.
+     * @return The maximum zoom level of the tile present
+     */
+    int getMaxZoom() {
+        int max
+        getSql().eachRow("select max(zoom_level) as max_zoom_level from ${this.tileEntry.tableName}".toString(), {  def row ->
+            max = row.max_zoom_level
+        })
+        max
+    }
+
+    /**
+     * Get the minimum zoom level of the tiles present.
+     * @return The minimum zoom level of the tile present
+     */
+    int getMinZoom() {
+        int min
+        getSql().eachRow("select min(zoom_level) as min_zoom_level from ${this.tileEntry.tableName}".toString(), {  def row ->
+            min = row.min_zoom_level
+        })
+        min
+    }
+
+    /**
      * The GeoPackage TileLayerFactory
      */
     static class Factory extends TileLayerFactory<GeoPackage> {
