@@ -398,11 +398,14 @@ class Raster implements Renderable {
             outsideValue,
             optionName.equalsIgnoreCase("imagexy") ? AbstractSimpleIterator.Order.IMAGE_X_Y : AbstractSimpleIterator.Order.TILE_X_Y
         )
-        while(it.hasNext()) {
+
+        while(true) {
             def value = it.getSample(band)
             def pt = it.getPos()
             closure.call(value, pt.x, pt.y)
-            it.next()
+            if (!it.next()) {
+                break
+            }
         }
     }
 

@@ -753,6 +753,22 @@ class RasterTestCase {
         })
     }
 
+    @Test void eachCellStartToEnd() {
+        Bounds bounds = new Bounds(7, 7, 17, 15, "EPSG:4326")
+        List data = [
+                [1,2,3,4,5,6,7],
+                [8,9,10,11,12,13,14]
+        ]
+        Raster raster = new Raster(data, bounds)
+        List values = []
+        raster.eachCell {v, x, y ->
+            values.add(v)
+        }
+        data.flatten().eachWithIndex { int v, int i ->
+            assertEquals(v, values[i] as double, 0.1)
+        }
+    }
+
     @Test void eachWindow() {
         Bounds bounds = new Bounds(7, 7, 17, 15, "EPSG:4326")
         List data = [
@@ -1075,4 +1091,7 @@ class RasterTestCase {
         assertEquals 54.0, raster2.getValue(1,1), 0.1
         assertEquals 56.0, raster2.getValue(2,2), 0.1
     }
+
+
+
 }
