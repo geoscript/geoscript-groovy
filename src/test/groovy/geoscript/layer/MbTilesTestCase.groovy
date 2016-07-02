@@ -2,7 +2,6 @@ package geoscript.layer
 
 import geoscript.geom.Bounds
 import geoscript.proj.Projection
-import groovy.sql.Sql
 import org.geotools.image.test.ImageAssert
 import org.junit.Rule
 import org.junit.Test
