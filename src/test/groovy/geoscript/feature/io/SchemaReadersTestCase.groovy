@@ -22,6 +22,9 @@ class SchemaReadersTestCase {
         reader = SchemaReaders.find("string")
         assertNotNull reader
 
+        reader = SchemaReaders.find("xml")
+        assertNotNull reader
+
         reader = SchemaReaders.find("asdf")
         assertNull reader
     }

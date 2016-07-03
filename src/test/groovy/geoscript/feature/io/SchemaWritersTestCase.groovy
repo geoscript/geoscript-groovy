@@ -22,6 +22,9 @@ class SchemaWritersTestCase {
         writer = SchemaWriters.find("string")
         assertNotNull writer
 
+        writer = SchemaWriters.find("xml")
+        assertNotNull writer
+
         writer = SchemaWriters.find("asdf")
         assertNull writer
     }
