@@ -2,6 +2,7 @@ package geoscript.feature.io
 
 import geoscript.feature.Field
 import geoscript.feature.Schema
+import geoscript.proj.Projection
 import groovy.json.JsonSlurper
 
 /**
@@ -18,12 +19,12 @@ class JsonSchemaReader implements SchemaReader {
         List fields = obj.fields.collect { Map fld ->
             String fieldName = fld.name
             String fieldType = fld.type
-            if (fld.containsKey('geometry')) {
+            Field field = new Field(fieldName, fieldType)
+            if (fld.containsKey('projection')) {
                 String fieldProjection = fld.projection
-                new Field(fieldName, fieldType, fieldProjection)
-            } else {
-                new Field(fieldName, fieldType)
+                field.proj = new Projection(fieldProjection)
             }
+            field
         }
         new Schema(name, fields)
     }

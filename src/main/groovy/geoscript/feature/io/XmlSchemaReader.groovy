@@ -17,11 +17,8 @@ class XmlSchemaReader implements SchemaReader {
         List fields = root.fields.children().collect { Object fld ->
             String fieldName = fld.name.text()
             String fieldType = fld.type.text()
-            if (!fld.projection.isEmpty()) {
-                new Field(fieldName, fieldType, fld.projection.text())
-            } else {
-                new Field(fieldName, fieldType)
-            }
+            String fieldProjection = fld.projection?.text().trim() ?: null
+            new Field(fieldName, fieldType, fieldProjection)
         }
         new Schema(name, fields)
     }
