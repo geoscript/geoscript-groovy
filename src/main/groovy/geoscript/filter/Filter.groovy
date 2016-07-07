@@ -196,7 +196,7 @@ class Filter {
      */
     Filter and(def other) {
         if (filter == GTFilter.INCLUDE) {
-            return new Filter(other )
+            return new Filter(other)
         } else {
             return new Filter(factory.and(filter, new Filter(other).filter))
         }
@@ -273,6 +273,26 @@ class Filter {
      */
     static Filter intersects(String fieldName = "the_geom", Geometry geometry) {
         new Filter("INTERSECTS(${fieldName}, ${geometry.wkt})")
+    }
+
+    /**
+     * Create Filter for a Feature ID
+     * @param id A Feature ID
+     * @return A Filter
+     */
+    static Filter id(String id) {
+        FilterFactory2 factory = CommonFactoryFinder.getFilterFactory2(GeoTools.defaultHints)
+        new Filter(factory.id(factory.featureId(id)))
+    }
+
+    /**
+     * Create Filter for a List of Feature IDs
+     * @param ids A List of Feature IDs
+     * @return A Filter
+     */
+    static Filter ids(List ids) {
+        FilterFactory2 factory = CommonFactoryFinder.getFilterFactory2(GeoTools.defaultHints)
+        new Filter(factory.id(ids.collect{ factory.featureId(it) } as Set))
     }
 
     /**
