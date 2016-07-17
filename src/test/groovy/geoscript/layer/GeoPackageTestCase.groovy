@@ -352,6 +352,19 @@ class GeoPackageTestCase {
         assertEquals 4, layer.maxZoom
     }
 
+    @Test
+    void deleteLayer() {
+        File file = folder.newFile("states.gpkg")
+        file.delete()
+        GeoPackage layer1 = new GeoPackage(file, "states", Pyramid.createGlobalMercatorPyramid())
+        GeoPackage layer2 = new GeoPackage(file, "world", Pyramid.createGlobalGeodeticPyramid())
+        assertEquals(["states","world"], GeoPackage.getNames(file))
+        layer1.delete()
+        assertEquals(["world"], GeoPackage.getNames(file))
+        layer2.delete()
+        assertEquals([], GeoPackage.getNames(file))
+    }
+
     private File getFile(String resource) {
         new File(getClass().getClassLoader().getResource(resource).toURI())
     }

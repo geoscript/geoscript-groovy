@@ -170,6 +170,22 @@ class GeoPackage extends ImageTileLayer {
     }
 
     /**
+     * Delete this TileLayer.
+     * This removes all of this TileLayers internal tables from the GeoPackage database.
+     */
+    void delete() {
+        String tableName = this.tileEntry.tableName
+        [
+                "DROP TABLE ${tableName}",
+                "DELETE from gpkg_contents WHERE table_name = '${tableName}' and data_type = 'tiles'",
+                "DELETE FROM gpkg_tile_matrix WHERE table_name = '${tableName}'",
+                "DELETE FROM gpkg_tile_matrix_set WHERE table_name = '${tableName}'"
+        ].each { String cmd ->
+            getSql().execute(cmd.toString())
+        }
+    }
+
+    /**
      * Create the Groovy Sql connection lazily
      * @return The Groovy Sql connection
      */
