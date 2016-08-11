@@ -8,6 +8,8 @@ import geoscript.feature.Field
 import geoscript.layer.Layer
 import org.geotools.jdbc.VirtualTableParameter
 
+import javax.sql.DataSource
+
 /**
  * A Workspace that is a Database.
  * <p>A Database subclass can add a SQL query as a Layer:</p>
@@ -27,6 +29,14 @@ class Database extends Workspace {
      */
     Database(DataStore ds) {
         super(ds)
+    }
+
+    /**
+     * Get the javax.sql.DataSource
+     * @return The javax.sql.DataSource
+     */
+    DataSource getDataSource() {
+        (ds as JDBCDataStore).dataSource
     }
 
     /**
