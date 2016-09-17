@@ -148,6 +148,42 @@ class Pyramid {
     }
 
     /**
+     * Get Tile coordinates (minX, minY, maxX, maxY) for the given Bounds and zoom level
+     * @param b The Bounds
+     * @param z The zoom level
+     * @return A Map with tile coordinates (minX, minY, maxX, maxY)
+     */
+    Map getTileCoordinates(Bounds b, long z) {
+        getTileCoordinates(b, grid(z))
+    }
+
+    /**
+     * Get Tile coordinates (minX, minY, maxX, maxY) for the given Bounds and Grid
+     * @param b The Bounds
+     * @param g The Grid
+     * @return A Map with tile coordinates (minX, minY, maxX, maxY)
+     */
+    Map getTileCoordinates(Bounds b, Grid g) {
+        int minX = Math.floor((((b.minX - bounds.minX) / bounds.width) * g.width))
+        int maxX = Math.ceil(((b.maxX - bounds.minX) / bounds.width) * g.width) - 1
+        if (this.origin == Pyramid.Origin.TOP_RIGHT || this.origin == Pyramid.Origin.BOTTOM_RIGHT) {
+            int invertedMinX = g.width - maxX
+            int invertedMaxX = g.width - minX
+            minX = invertedMinX - 1
+            maxX = invertedMaxX - 1
+        }
+        int minY = Math.floor(((b.minY - bounds.minY) / bounds.height) * g.height)
+        int maxY = Math.ceil(((b.maxY - bounds.minY) / bounds.height) * g.height) - 1
+        if (this.origin == Pyramid.Origin.TOP_LEFT || this.origin == Pyramid.Origin.TOP_RIGHT) {
+            int invertedMinY = g.height - maxY
+            int invertedMaxY = g.height - minY
+            minY = invertedMinY - 1
+            maxY = invertedMaxY - 1
+        }
+        [minX: minX, minY: minY, maxX: maxX, maxY: maxY]
+    }
+
+    /**
      * Create a Pyramid from a String.  The String can be a well known name (GlobalMercator or GlobalMercatorBottomLeft),
      * a JSON String or File, an XML String or File, or a CSV String or File
      * @param str A Pyramid String or File

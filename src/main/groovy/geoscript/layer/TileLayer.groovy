@@ -130,23 +130,7 @@ abstract class TileLayer<T extends Tile> implements Closeable {
      * @return A Map with tile coordinates (minX, minY, maxX, maxY)
      */
     Map getTileCoordinates(Bounds b, Grid g) {
-        int minX = Math.floor((((b.minX - bounds.minX) / bounds.width) * g.width))
-        int maxX = Math.ceil(((b.maxX - bounds.minX) / bounds.width) * g.width) - 1
-        if (pyramid.origin == Pyramid.Origin.TOP_RIGHT || pyramid.origin == Pyramid.Origin.BOTTOM_RIGHT) {
-            int invertedMinX = g.width - maxX
-            int invertedMaxX = g.width - minX
-            minX = invertedMinX - 1
-            maxX = invertedMaxX - 1
-        }
-        int minY = Math.floor(((b.minY - bounds.minY) / bounds.height) * g.height)
-        int maxY = Math.ceil(((b.maxY - bounds.minY) / bounds.height) * g.height) - 1
-        if (pyramid.origin == Pyramid.Origin.TOP_LEFT || pyramid.origin == Pyramid.Origin.TOP_RIGHT) {
-            int invertedMinY = g.height - maxY
-            int invertedMaxY = g.height - minY
-            minY = invertedMinY - 1
-            maxY = invertedMaxY - 1
-        }
-        [minX: minX, minY: minY, maxX: maxX, maxY: maxY]
+        this.pyramid.getTileCoordinates(b, g)
     }
 
     /**
