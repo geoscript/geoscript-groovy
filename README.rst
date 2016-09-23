@@ -149,6 +149,18 @@ Versions
 | 1.0       | 8        | 2.2       | 1.12 | 1.8.8   |
 +-----------+----------+-----------+------+---------+
 
+Projects using GeoScript Groovy
+-------------------------------
+`geoc: A geospatial command line application <https://github.com/jericks/geoc>`_
+
+`geo-shell: An interactive geospatial shell <https://github.com/jericks/geo-shell>`_
+
+`mbtiles server: Restful web services for mbtiles <https://github.com/jericks/MBTilesServer>`_
+
+`geopackage server: Restful web services for geopackage <https://github.com/jericks/GeoPackageServer>`_
+
+`geoscript groovy jupyter kernel <https://github.com/jericks/geoscript-groovy-kernel>`_
+
 Presentations
 -------------
 `GeoScript: The GeoSpatial Swiss Army Knife (FOSS4G 2014) <http://geoscript.github.io/foss4g2014-talk/#/>`_
