@@ -30,7 +30,7 @@ class Pie {
         boolean legend = options.get("legend", true)
         boolean tooltips = options.get("tooltips", true)
         boolean urls = options.get("urls", false)
-        boolean trid = options.get("trid", true)
+        boolean trid = options.get("trid", false)
 
         def dataset = new DefaultPieDataset()
         data.each{k,v ->

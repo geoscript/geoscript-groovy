@@ -44,8 +44,8 @@ class Curve {
         boolean legend = options.get("legend", true)
         boolean tooltips = options.get("tooltips", true)
         boolean urls = options.get("urls", false)
-        boolean smooth = options.get("smooth", true)
-        boolean trid = options.get("trid", true)
+        boolean smooth = options.get("smooth", false)
+        boolean trid = options.get("trid", false)
 
         def dataset = new XYSeriesCollection()
         def xy = new XYSeries(name)
@@ -56,8 +56,7 @@ class Curve {
         def chart = ChartFactory.createXYLineChart(title,xLabel,yLabel,dataset,plotOrientation,legend,tooltips,urls)
         if (smooth) {
             chart.getXYPlot().setRenderer(new XYSplineRenderer())
-        }
-        if (trid) {
+        } else if (trid) {
             chart.getXYPlot().setRenderer(new XYLine3DRenderer())
         }
         new Chart(chart)

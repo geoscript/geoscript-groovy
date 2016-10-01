@@ -34,4 +34,47 @@ class BarTestCase {
         assertTrue(file.exists())
     }
 
+    @Test void categoryStacked() {
+        Map data = [
+                "A": ["B":45,"C":2,"D":14],
+                "F": ["G":45,"H":2,"I":14]
+        ]
+        Chart chart = Bar.category(data, stacked: true)
+        File file = folder.newFile("categoryStacked.png")
+        chart.save(file)
+        assertTrue(file.exists())
+    }
+
+    @Test void category3DStacked() {
+        Map data = [
+                "A": ["B":45,"C":2,"D":14],
+                "F": ["G":45,"H":2,"I":14]
+        ]
+        Chart chart = Bar.category(data, trid: true, stacked: true)
+        File file = folder.newFile("category3Dstacked.png")
+        chart.save(file)
+        assertTrue(file.exists())
+    }
+
+    @Test void category3D() {
+        Map data = [
+                "A":20,"B":45,"C":2,"D":14
+        ]
+        Chart chart = Bar.category(data, trid: true)
+        File file = folder.newFile("category3D.png")
+        chart.save(file)
+        assertTrue(file.exists())
+    }
+
+    @Test void categorySeries() {
+        Map data = [
+                "A": ["B":45,"C":2,"D":14],
+                "F": ["G":45,"H":2,"I":14],
+        ]
+        Chart chart = Bar.category(data)
+        File file = folder.newFile("categorySeries.png")
+        chart.save(file)
+        assertTrue(file.exists())
+    }
+
 }

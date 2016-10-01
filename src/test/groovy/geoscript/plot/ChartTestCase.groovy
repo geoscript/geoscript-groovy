@@ -35,6 +35,25 @@ class ChartTestCase {
         chart.save(file)
         assertTrue file.exists()
         assertTrue file.length() > 0
+
+        file = folder.newFile("xy.jpg")
+        chart.save(file)
+        assertTrue file.exists()
+        assertTrue file.length() > 0
+
+        file = folder.newFile("xy.jpeg")
+        chart.save(file)
+        assertTrue file.exists()
+        assertTrue file.length() > 0
+    }
+
+    @Test(expected = IllegalArgumentException) void saveGif() {
+        List data = [
+                [1,10],[45,12],[23,3],[5,20]
+        ]
+        Chart chart = Bar.xy(data)
+        File file = folder.newFile("xy.gif")
+        chart.save(file)
     }
 
     @Test void getImage() {
