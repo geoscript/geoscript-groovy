@@ -1,5 +1,5 @@
 .. image:: https://travis-ci.org/geoscript/geoscript-groovy.svg?branch=master
-:target: https://travis-ci.org/geoscript/geoscript-groovy
+    :target: https://travis-ci.org/geoscript/geoscript-groovy
 
 GeoScript Groovy
 ================
