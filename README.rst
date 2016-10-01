@@ -1,3 +1,6 @@
+.. image:: https://travis-ci.org/geoscript/geoscript-groovy.svg?branch=master
+:target: https://travis-ci.org/geoscript/geoscript-groovy
+
 GeoScript Groovy
 ================
 GeoScript Groovy is the `Groovy <http://groovy.codehaus.org/>`_ implementation of `GeoScript <http://geoscript.org>`_.  GeoScript is a geospatial scripting API for the JVM that contains one API and four implementations (`Python <https://github.com/jdeolive/geoscript-py>`_, `JavaScript <https://github.com/tschaub/geoscript-js>`_, `Scala <https://github.com/dwins/geoscript.scala>`_, and `Groovy <https://github.com/jericks/geoscript-groovy>`_).
@@ -176,6 +179,3 @@ Presentations
 License
 -------
 GeoScript Groovy is open source and licensed under the MIT license.
-
-.. image:: https://travis-ci.org/geoscript/geoscript-groovy.svg?branch=master
-    :target: https://travis-ci.org/geoscript/geoscript-groovy
