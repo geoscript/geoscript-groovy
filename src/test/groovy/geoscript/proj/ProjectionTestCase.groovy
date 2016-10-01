@@ -1,5 +1,6 @@
 package geoscript.proj
 
+import org.geotools.referencing.CRS
 import org.junit.Test
 import static org.junit.Assert.*
 import geoscript.geom.Point
@@ -25,6 +26,10 @@ class ProjectionTestCase {
         Projection p4 = new Projection(p1)
         assertEquals "EPSG:2927", p4.id
 
+    }
+
+    @Test(expected = Exception) void parseError() {
+        new Projection("BAD PROJECTION STRING")
     }
 
     @Test void getId() {
@@ -106,6 +111,8 @@ class ProjectionTestCase {
         Projection dest = new Projection("EPSG:4326")
         Point projectedPoint = src.transform(point, dest)
         assertEquals "POINT (-122.34427530579649 47.10678696848592)", projectedPoint.toString()
+        projectedPoint = src.transform(point, "EPSG:4326")
+        assertEquals "POINT (-122.34427530579649 47.10678696848592)", projectedPoint.toString()
     }
 
     @Test void testToString() {
@@ -116,6 +123,12 @@ class ProjectionTestCase {
     @Test void testEquals() {
         assertTrue new Projection("EPSG:2927") == new Projection("EPSG:2927")
         assertFalse new Projection("EPSG:2927") == new Projection("EPSG:4326")
+        assertFalse new Projection("EPSG:2927") == "String"
+    }
+
+    @Test void testHashcode() {
+        assertTrue new Projection("EPSG:2927").hashCode() == new Projection("EPSG:2927").hashCode()
+        assertFalse new Projection("EPSG:2927").hashCode() == new Projection("EPSG:4326").hashCode()
     }
 
     @Test void staticTransform() {
@@ -130,6 +143,16 @@ class ProjectionTestCase {
         Point point = new Point(776041.0, 3386618.0)
         Point projectedPoint = Projection.transform(point, "EPSG:26916", "EPSG:4326")
         assertEquals "POINT (-84.121611219545 30.580286157377163)", projectedPoint.wkt
+    }
+
+    @Test void projections() {
+        CRS.metaClass.static.getSupportedCodes = { String type ->
+            println "Mocking CRS.getSupportedCodes..."
+            [4326,2927]
+        }
+        List<Projection> projections = Projection.projections()
+        assertEquals 2, projections.size()
+        CRS.metaClass = null
     }
 }
 
