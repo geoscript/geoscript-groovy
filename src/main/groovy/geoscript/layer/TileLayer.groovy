@@ -2,6 +2,7 @@ package geoscript.layer
 
 import geoscript.feature.Field
 import geoscript.geom.Bounds
+import geoscript.geom.Point
 import geoscript.proj.Projection
 import geoscript.workspace.Memory
 import geoscript.workspace.Workspace
@@ -111,6 +112,19 @@ abstract class TileLayer<T extends Tile> implements Closeable {
      */
     TileCursor<T> tiles(Bounds b, int w, int h) {
         new TileCursor(this, b, w, h)
+    }
+
+    /**
+     * Get a TileCursor for all Tiles centered on a Point for a given zoom level that fill an image of
+     * a certain width and height
+     * @param p The Point (in the TileLayer's Projection)
+     * @param z The zoom level
+     * @param w The image width
+     * @param h The image height
+     * @return A TileCursor
+     */
+    TileCursor<T> tiles(Point p, long z, int w, int h) {
+        new TileCursor(this, p, z, w, h)
     }
 
     /**

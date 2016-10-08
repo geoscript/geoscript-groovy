@@ -1,6 +1,7 @@
 package geoscript.layer
 
 import geoscript.geom.Bounds
+import geoscript.geom.Point
 import geoscript.style.RasterSymbolizer
 import org.geotools.map.GridCoverageLayer
 
@@ -69,6 +70,18 @@ abstract class ImageTileLayer extends TileLayer<ImageTile> implements Renderable
         } else {
             new Raster(new BufferedImage(w,h,BufferedImage.TYPE_INT_ARGB), b)
         }
+    }
+
+    /**
+     * Get a Raster around a Point at a given zoom level
+     * @param p The Point (in the TileLayer's projection)
+     * @param z The zoom level
+     * @param w The image width
+     * @param h The image height
+     * @return A Raster
+     */
+    Raster getRaster(Point p, long z, int w, int h) {
+        getRaster(this.pyramid.bounds(p, z, w, h), w, h)
     }
 
     @Override

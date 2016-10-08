@@ -1,8 +1,9 @@
 package geoscript.layer
 
 import geoscript.geom.Bounds
+import geoscript.geom.Point
+import geoscript.proj.Projection
 import org.junit.Test
-
 import static org.junit.Assert.*
 
 /**
@@ -133,6 +134,22 @@ class TileCursorTestCase {
         Bounds cursorBounds = cursor.bounds
         assertTrue cursorBounds.contains(b)
         assertNotNull cursorBounds.proj
+    }
+
+    @Test
+    void boundsAroundPoint() {
+        File file = new File(getClass().getClassLoader().getResource("states.mbtiles").toURI())
+        MBTiles layer = new MBTiles(file)
+        TileCursor cursor = new TileCursor(layer, Projection.transform(new Point(-100.81,46.81),"EPSG:4326","EPSG:3857"), 8, 400, 300)
+        assertEquals(8, cursor.z)
+        assertEquals(55, cursor.minX)
+        assertEquals(165, cursor.minY)
+        assertEquals(57, cursor.maxX)
+        assertEquals(166, cursor.maxY)
+        assertEquals(3, cursor.width)
+        assertEquals(2, cursor.height)
+        assertEquals(6, cursor.size)
+        layer.close()
     }
 
     @Test

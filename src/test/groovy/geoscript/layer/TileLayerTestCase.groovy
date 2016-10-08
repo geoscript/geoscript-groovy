@@ -2,11 +2,14 @@ package geoscript.layer
 
 import geoscript.feature.Feature
 import geoscript.geom.Bounds
+import geoscript.geom.Point
 import geoscript.proj.Projection
 import org.geotools.image.test.ImageAssert
 import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.TemporaryFolder
+
+import javax.imageio.ImageIO
 
 import static junit.framework.Assert.*
 
@@ -225,6 +228,22 @@ class TileLayerTestCase {
     }
 
     @Test
+    void boundsAroundPoint() {
+        File file = new File(getClass().getClassLoader().getResource("states.mbtiles").toURI())
+        MBTiles layer = new MBTiles(file)
+        TileCursor cursor = layer.tiles(Projection.transform(new Point(-100.81,46.81),"EPSG:4326","EPSG:3857"), 8, 400, 300)
+        assertEquals(8, cursor.z)
+        assertEquals(55, cursor.minX)
+        assertEquals(165, cursor.minY)
+        assertEquals(57, cursor.maxX)
+        assertEquals(166, cursor.maxY)
+        assertEquals(3, cursor.width)
+        assertEquals(2, cursor.height)
+        assertEquals(6, cursor.size)
+        layer.close()
+    }
+
+    @Test
     void getRaster() {
         File file = new File(getClass().getClassLoader().getResource("states.mbtiles").toURI())
         MBTiles layer = new MBTiles(file)
@@ -248,6 +267,22 @@ class TileLayerTestCase {
         Raster raster = layer.getRaster(b, 400, 300)
         assertNotNull raster
         ImageAssert.assertEquals(new File(getClass().getClassLoader().getResource("geoscript/layer/tilelayer_raster_cropped.png").toURI()), raster.image, 100)
+        File out = folder.newFile("raster.png")
+        WorldImage format = new WorldImage(out)
+        format.write(raster)
+        assertTrue out.exists()
+        assertTrue out.length() > 0
+        layer.close()
+    }
+
+    @Test
+    void getRasterAroundPoint() {
+        File file = new File(getClass().getClassLoader().getResource("states.mbtiles").toURI())
+        MBTiles layer = new MBTiles(file)
+        Point point = Projection.transform(new Point(-100.81,46.81),"EPSG:4326","EPSG:3857")
+        Raster raster = layer.getRaster(point, 4, 300, 200)
+        assertNotNull raster
+        ImageAssert.assertEquals(new File(getClass().getClassLoader().getResource("geoscript/layer/tilelayer_raster_point.png").toURI()), raster.image, 100)
         File out = folder.newFile("raster.png")
         WorldImage format = new WorldImage(out)
         format.write(raster)
