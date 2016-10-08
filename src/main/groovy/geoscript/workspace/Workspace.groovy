@@ -7,6 +7,7 @@ import geoscript.feature.Schema
 import geoscript.layer.Cursor
 import geoscript.layer.Layer
 import org.geotools.data.DataStore
+import org.geotools.data.DataUtilities
 import org.geotools.feature.FeatureCollection
 import org.geotools.data.collection.ListFeatureCollection
 import org.geotools.data.DataStoreFinder
@@ -315,7 +316,19 @@ class Workspace {
                     value = value.substring(1, value.length() - 1)
                 }
                 if (key.equalsIgnoreCase("url")) {
-                    value = new File(value).absoluteFile.toURL()
+                    try {
+                        // URLs with a protocol (file: http:)
+                        value = new URL(value)
+                        File file = DataUtilities.urlToFile(value)
+                        if (file != null) {
+                            value = DataUtilities.fileToURL(file.absoluteFile)
+                        } else {
+                            value = new URL(value)
+                        }
+                    } catch(MalformedURLException e) {
+                        // Files without a protocol
+                        value = new File(value).absoluteFile.toURL()
+                    }
                 }
                 params.put(key, value)
             }

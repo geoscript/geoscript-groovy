@@ -253,4 +253,12 @@ class GeoScriptTestCase {
             assertEquals "123", f.text
         }
     }
+
+    @Test void download() {
+        URL url = getClass().getClassLoader().getResource("points.zip")
+        File file = folder.newFile("zipped_points")
+        GeoScript.download(url, file)
+        assertTrue file.exists()
+        assertTrue file.length() > 100
+    }
 }

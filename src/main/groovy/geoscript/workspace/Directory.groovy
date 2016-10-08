@@ -1,5 +1,6 @@
 package geoscript.workspace
 
+import geoscript.GeoScript
 import geoscript.layer.Layer
 import org.geotools.data.DataStore
 import org.geotools.data.DataUtilities
@@ -103,6 +104,26 @@ class Directory extends Workspace {
     }
 
     /**
+     * Get a Directory from a zipped Shapefile
+     * @param options Optional named parameters:
+     * <ul>
+     *     <li>overwrite = Whether to overwrite the existing file or not (defaults to true) </li>
+     * </ul>
+     * @param url The URL of the zipped Shapefile
+     * @param dir The File directory where we will unzip the zip file
+     * @return A Directory Workspace
+     */
+    static Directory fromURL(Map options = [:], URL url, File dir) {
+        if (!dir.exists()) {
+            dir.mkdir()
+        }
+        File file = File.createTempFile("download",".zip")
+        GeoScript.download(url, file, overwrite: options.get("overwrite", true) as boolean)
+        GeoScript.unzip(file, dir)
+        new Directory(dir)
+    }
+
+    /**
      * The Directory WorkspaceFactory
      */
     static class Factory extends WorkspaceFactory<Directory> {
@@ -129,6 +150,16 @@ class Directory extends Workspace {
             if (type.equalsIgnoreCase('shapefile') && params.containsKey('file')) {
                 File file = params.get('file') instanceof File ? params.get('file') : new File(params.get('file'))
                 super.create([url: DataUtilities.fileToURL(file.absoluteFile)])
+            } else if (type.equalsIgnoreCase('shapefile') && params.containsKey('url') && params.containsKey("dir")) {
+                URL url = params.get('url') instanceof URL ? params.get('url') : new URL(params.get('url'))
+                File dir = params.get('dir') instanceof File ? params.get('dir') : new File(params.get('dir'))
+                if (!dir.exists()) {
+                    dir.mkdir()
+                }
+                File file = File.createTempFile("download",".zip")
+                GeoScript.download(url, file, overwrite: params.get("overwrite", true) as boolean)
+                GeoScript.unzip(file, dir)
+                super.create([url: DataUtilities.fileToURL(dir.absoluteFile)])
             } else {
                 null
             }

@@ -16,7 +16,6 @@ import geoscript.layer.Layer
 import geoscript.filter.Color
 import geoscript.proj.Projection
 import geoscript.workspace.Workspace
-import org.geotools.data.DataUtilities
 
 import java.util.zip.ZipEntry
 import java.util.zip.ZipFile
@@ -353,5 +352,27 @@ class GeoScript {
             }
         }
         dir
+    }
+
+    /**
+     * Download a URL to a File
+     * @param options Optional named parameters:
+     * <ul>
+     *     <li>overwrite = Whether to overwrite the existing file or not (defaults to true) </li>
+     * </ul>
+     * @param url The URL
+     * @param file The File
+     * @return The downloaded File
+     */
+    static File download(Map options = [:], URL url, File file) {
+        boolean overwrite = options.get('overwrite', true) as boolean
+        if (overwrite == true || (overwrite == false && !file.exists())) {
+            url.withInputStream { InputStream inputStream ->
+                file.withOutputStream { OutputStream outputStream ->
+                    new BufferedOutputStream(outputStream) << inputStream
+                }
+            }
+        }
+        file
     }
 }
