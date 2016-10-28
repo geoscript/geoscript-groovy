@@ -28,6 +28,13 @@ class ProjectionTestCase {
 
     }
 
+    @Test void createFromWellKnownName() {
+        assertNotNull(new Projection("WGS84"))
+        assertNotNull(new Projection("Mollweide"))
+        assertNotNull(new Projection("WagnerIV"))
+        assertNotNull(new Projection("WorldVanderGrintenI"))
+    }
+
     @Test(expected = Exception) void parseError() {
         new Projection("BAD PROJECTION STRING")
     }
