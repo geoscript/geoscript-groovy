@@ -3,6 +3,90 @@
 GeoScript Groovy Releases
 =========================
 
+1.8.0
+-----
+The 1.8.0 release of GeoScript is built on Grooovy 2.4.7, GeoTools 16.0, and the Java Topology Suite 1.13 and
+requires Java 8.
+
+    Create Projections using well known names::
+    
+        new Projection("WGS84")
+        new Projection("Mollweide")
+        new Projection("WagnerIV")
+        new Projection("WorldVanderGrintenI")
+    
+    Create a Raster from Tiles around a Point::
+    
+        Raster raster = osm.getRaster(
+            Projection.transform(Geometry.fromWKT(wkt), "EPSG:4326", "EPSG:3857") as Point, 
+            z, 
+            400, 
+            400
+        )
+
+    Create a Directory Workspace from a zipped shapefile URL::
+    
+        Directory dir = Directory.fromURL(
+          new URL("http://www.naturalearthdata.com/http//www.naturalearthdata.com/download/110m/cultural/ne_110m_admin_0_countries.zip"),
+          new File("naturalearth")
+        )
+        
+    Added a getTileCoordinates() method to the Pyramid class::
+    
+        Pyramid pyramid = Pyramid.createGlobalMercatorPyramid()
+        Bounds b = new Bounds(
+            -124.73142200000001, 
+            24.955967, 
+            -66.969849, 
+            49.371735, 
+            "EPSG:4326"
+        ).reproject("EPSG:3857")
+        Map coords = pyramid.getTileCoordinates(b, pyramid.grid(4))
+        
+    Added getDataSource() method to the Database Workspace.
+    
+    Added Stamen's Terrain layer to the OSM.getWellKnownOSM() method::
+    
+        TileLayer.getTileLayer([type: 'osm', name: 'stamen-terrain'])
+        
+    GeoPackage.delete() method removes a GeoPackage Tile Layer.
+    
+    Added Filter.id() and Filter.ids() methods::
+    
+        Filter filter = Filter.id("points.1")
+        Filter filter = Filter.ids(["points.1","points.2","points.3"])
+
+    Added XmlSchemaReader and XmlSchemaWriter::
+    
+        String str = """<schema>
+            <name>points</name>
+            <projection>EPSG:4326</projection>
+            <geometry>geom</geometry>
+            <fields>
+            <field>
+              <name>geom</name>
+              <type>Point</type>
+              <projection>EPSG:4326</projection>
+            </field>
+            <field>
+              <name>name</name>
+              <type>String</type>
+            </field>
+            <field>
+              <name>price</name>
+              <type>Float</type>
+            </field>
+            </fields>
+            </schema>"""
+        SchemaReader reader = new XmlSchemaReader()
+        Schema schema = reader.read(str)
+
+    Fixed Raster.eachCell so it visits every cell.
+    
+    Added normalize and convolve methods to Raster.
+    
+    Added getMinZoom() and getMaxZoom() methods to GeoPackage TileLayer.
+
 1.7.0
 -----
     The 1.7.0 release of GeoScript is built on Grooovy 2.4.6, GeoTools 15.0, and the Java Topology Suite 1.13 and
