@@ -107,6 +107,10 @@ class LabelTestCase {
         assertTrue label.labelObstacle(true) instanceof Label
         assertTrue label.options.labelObstacle as boolean
 
+        // Underline text
+        assertTrue label.underline(true) instanceof Label
+        assertTrue label.options.underlineText as boolean
+
         // Named parameters
         label = new Label(property: "name", font: new Font(size:16))
         assertEquals "name", label.property.value
