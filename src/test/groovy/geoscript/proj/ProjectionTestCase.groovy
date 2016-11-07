@@ -32,6 +32,7 @@ class ProjectionTestCase {
         assertNotNull(new Projection("WGS84"))
         assertNotNull(new Projection("Mollweide"))
         assertNotNull(new Projection("WagnerIV"))
+        assertNotNull(new Projection("WagnerV"))
         assertNotNull(new Projection("WorldVanderGrintenI"))
     }
 
