@@ -1,5 +1,8 @@
 package geoscript.filter
 
+import org.geotools.factory.CommonFactoryFinder
+import org.geotools.factory.GeoTools
+import org.opengis.filter.FilterFactory2
 import geoscript.workspace.Workspace
 import org.junit.Test
 import static org.junit.Assert.*
@@ -9,7 +12,9 @@ import geoscript.feature.Feature
 import geoscript.AssertUtil
 
 class FilterTestCase {
-    
+
+    private static FilterFactory2 factory = CommonFactoryFinder.getFilterFactory2(GeoTools.defaultHints)
+
     @Test void constructors() {
         Filter f1 = new Filter("name='foobar'")
         assertEquals "[ name = foobar ]", f1.toString()
@@ -185,5 +190,17 @@ class FilterTestCase {
         f = Filter.FAIL.or(p)
         assertEquals p, f.simplify()
     }
+
+    @Test void id() {
+        Filter filter = Filter.id("points.1")
+        assertEquals filter.filter,  factory.id(factory.featureId("points.1"))
+    }
+
+    @Test void ids() {
+        List ids = ["points.1","points.2","points.3"]
+        Filter filter = Filter.ids(ids)
+        assertEquals filter.filter,  factory.id(ids.collect { factory.featureId(it) } as Set)
+    }
+
 }
 
