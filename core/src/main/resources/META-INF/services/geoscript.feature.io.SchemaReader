@@ -1,0 +1,3 @@
+geoscript.feature.io.JsonSchemaReader
+geoscript.feature.io.StringSchemaReader
+geoscript.feature.io.XmlSchemaReader
