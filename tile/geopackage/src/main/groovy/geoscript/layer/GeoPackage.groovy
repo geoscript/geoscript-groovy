@@ -6,6 +6,7 @@ import groovy.sql.Sql
 import org.geotools.geopkg.TileEntry
 import org.geotools.geopkg.TileMatrix
 import org.geotools.geopkg.TileReader
+import javax.sql.DataSource
 
 /**
  * A GeoPackage TileLayer
@@ -39,6 +40,19 @@ class GeoPackage extends ImageTileLayer {
     private Sql sql
 
     /**
+     * Create a new GeoPackage TileLayer from a DataSource and layer name.
+     * @param ds The DataSource
+     * @param layerName The existing layer name
+     */
+    GeoPackage(DataSource ds, String layerName) {
+        this.geopkg = new org.geotools.geopkg.GeoPackage(ds)
+        this.tileEntry = this.geopkg.tile(layerName)
+        this.name = layerName
+        this.proj = new Projection("EPSG:" + this.tileEntry.srid)
+        this.bounds = new Bounds(this.tileEntry.bounds)
+    }
+
+    /**
      * Create a new GeoPackage from an existing database and tile layer
      * @param file The GeoPackage database file
      * @param layerName The existing tile layer name
@@ -46,7 +60,7 @@ class GeoPackage extends ImageTileLayer {
     GeoPackage(File file, String layerName) {
         this.file = file
         this.geopkg = new org.geotools.geopkg.GeoPackage(file)
-        this.tileEntry = geopkg.tile(layerName)
+        this.tileEntry = this.geopkg.tile(layerName)
         this.name = layerName
         this.proj = new Projection("EPSG:" + this.tileEntry.srid)
         this.bounds = new Bounds(this.tileEntry.bounds)
@@ -191,7 +205,7 @@ class GeoPackage extends ImageTileLayer {
      */
     private Sql getSql() {
         if (!sql) {
-            sql = Sql.newInstance("jdbc:sqlite:${file.absolutePath}", "org.sqlite.JDBC")
+            sql = new Sql(this.geopkg.dataSource)
         }
         sql
     }
