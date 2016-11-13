@@ -57,6 +57,8 @@ class OSMTestCase {
         assertEquals "Stamen Toner Lite", osm.name
         osm = OSM.getWellKnownOSM("stamen-watercolor")
         assertEquals "Stamen Watercolor", osm.name
+        osm = OSM.getWellKnownOSM("stamen-terrain")
+        assertEquals "Stamen Terrain", osm.name
         osm = OSM.getWellKnownOSM("mapquest-street")
         assertEquals "MapQuest Street", osm.name
         osm = OSM.getWellKnownOSM("mapquest-satellite")
@@ -80,6 +82,8 @@ class OSMTestCase {
         assertEquals 'Stamen Watercolor', osm.name
         osm = TileLayer.getTileLayer([type: 'osm', name: 'mapquest-satellite'])
         assertEquals 'MapQuest Satellite', osm.name
+        osm = TileLayer.getTileLayer([type: 'osm', name: 'stamen-terrain'])
+        assertEquals 'Stamen Terrain', osm.name
         osm = TileLayer.getTileLayer([type: 'osm', name: 'mapquest-street'])
         assertEquals 'MapQuest Street', osm.name
         osm = TileLayer.getTileLayer([type: 'osm', url: 'http://a.tile.stamen.com/toner-lite'])
@@ -108,6 +112,8 @@ class OSMTestCase {
         assertEquals 'Stamen Watercolor', osm.name
         osm = TileLayer.getTileLayer("stamen-watercolor")
         assertEquals 'Stamen Watercolor', osm.name
+        osm = TileLayer.getTileLayer("type=osm name=stamen-terrain")
+        assertEquals 'Stamen Terrain', osm.name
         osm = TileLayer.getTileLayer("type=osm name=mapquest-satellite")
         assertEquals 'MapQuest Satellite', osm.name
         osm = TileLayer.getTileLayer("mapquest-satellite")

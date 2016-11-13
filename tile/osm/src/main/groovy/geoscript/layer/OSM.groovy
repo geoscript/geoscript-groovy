@@ -150,6 +150,13 @@ class OSM extends ImageTileLayer {
                     "http://c.tile.stamen.com/watercolor",
                     "http://d.tile.stamen.com/watercolor"
             ])
+        } else if (name.equalsIgnoreCase("stamen-terrain")) {
+            new OSM("Stamen Terrain", [
+                    "http://a.tile.stamen.com/terrain",
+                    "http://b.tile.stamen.com/terrain",
+                    "http://c.tile.stamen.com/terrain",
+                    "http://d.tile.stamen.com/terrain"
+            ])
         } else if (name.equalsIgnoreCase("mapquest-street")) {
             new OSM("MapQuest Street", [
                     "http://otile1.mqcdn.com/tiles/1.0.0/map",
