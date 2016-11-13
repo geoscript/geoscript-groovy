@@ -99,6 +99,25 @@ class PyramidTestCase {
     }
 
     @Test
+    void getTileCoordinates() {
+        Pyramid pyramid = Pyramid.createGlobalMercatorPyramid()
+        // Grid
+        Bounds b = new Bounds(-124.73142200000001, 24.955967, -66.969849, 49.371735, "EPSG:4326").reproject("EPSG:3857")
+        Map coords = pyramid.getTileCoordinates(b, pyramid.grid(4))
+        assertEquals 2, coords.minX
+        assertEquals 9, coords.minY
+        assertEquals 5, coords.maxX
+        assertEquals 10, coords.maxY
+        // Zoom Level
+        b = new Bounds(20.798492,36.402494,22.765045,37.223768, "EPSG:4326").reproject("EPSG:3857")
+        coords = pyramid.getTileCoordinates(b, 10)
+        assertEquals 571, coords.minX
+        assertEquals 623, coords.minY
+        assertEquals 576, coords.maxX
+        assertEquals 626, coords.maxY
+    }
+
+    @Test
     void createGlobalMercatorPyramid() {
         // Default Origin.BOTTOM_LEFT
         Pyramid pyramid = Pyramid.createGlobalMercatorPyramid()
