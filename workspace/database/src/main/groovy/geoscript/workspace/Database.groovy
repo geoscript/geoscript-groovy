@@ -7,6 +7,7 @@ import org.geotools.data.DataStore
 import org.geotools.jdbc.JDBCDataStore
 import org.geotools.jdbc.VirtualTable
 import org.geotools.jdbc.VirtualTableParameter
+import javax.sql.DataSource
 
 /**
  * A Workspace that is a Database.
@@ -27,6 +28,14 @@ class Database extends Workspace {
      */
     Database(DataStore ds) {
         super(ds)
+    }
+
+    /**
+     * Get the javax.sql.DataSource
+     * @return The javax.sql.DataSource
+     */
+    DataSource getDataSource() {
+        (ds as JDBCDataStore).dataSource
     }
 
     /**
