@@ -4,7 +4,6 @@ import geoscript.geom.Bounds
 import geoscript.geom.Point
 
 import java.awt.geom.AffineTransform
-import org.geotools.referencing.operation.matrix.AffineTransform2D
 import org.geotools.data.WorldFileReader
 import org.geotools.data.WorldFileWriter
 

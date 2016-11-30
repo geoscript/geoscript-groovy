@@ -22,7 +22,6 @@ import org.geotools.data.DefaultTransaction
 import org.geotools.data.transform.Definition
 import org.geotools.data.transform.TransformFactory
 import org.geotools.factory.Hints
-import org.geotools.feature.DefaultFeatureCollection
 import org.geotools.feature.FeatureCollection
 import org.geotools.feature.FeatureIterator
 import org.geotools.map.FeatureLayer

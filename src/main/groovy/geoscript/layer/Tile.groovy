@@ -4,9 +4,6 @@ import groovy.transform.EqualsAndHashCode
 import groovy.transform.ToString
 import org.apache.commons.codec.binary.Base64
 
-import javax.imageio.ImageIO
-import java.awt.image.BufferedImage
-
 /**
  * A Tile
  * @author Jared Erickson

@@ -5,7 +5,6 @@ import org.geotools.styling.Rule
 import org.geotools.styling.Symbolizer as GtSymbolizer
 import org.geotools.styling.TextSymbolizer
 import org.geotools.styling.FeatureTypeStyle
-import org.geotools.process.function.ProcessFunction
 
 /**
  * A Symbolizer that wraps a geoscript.filter.Function generally

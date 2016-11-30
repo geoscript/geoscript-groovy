@@ -3,8 +3,6 @@ package geoscript.layer.io
 import geoscript.layer.Layer
 import org.apache.commons.codec.binary.Base64
 
-import java.nio.charset.Charset
-
 /**
  * A Mapnik Vector Tile Reader
  * @author Jared Erickson

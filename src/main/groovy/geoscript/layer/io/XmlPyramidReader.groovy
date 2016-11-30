@@ -4,7 +4,6 @@ import geoscript.geom.Bounds
 import geoscript.layer.Grid
 import geoscript.layer.Pyramid
 import geoscript.proj.Projection
-import groovy.util.XmlParser
 
 /**
  * Read a Pyramid from an XML String

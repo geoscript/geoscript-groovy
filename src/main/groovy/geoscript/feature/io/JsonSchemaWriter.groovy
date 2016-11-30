@@ -2,8 +2,6 @@ package geoscript.feature.io
 
 import geoscript.feature.Field
 import geoscript.feature.Schema
-import geoscript.layer.Layer
-import groovy.json.JsonBuilder
 import groovy.json.JsonOutput
 
 /**
