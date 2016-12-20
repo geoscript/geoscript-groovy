@@ -51,6 +51,7 @@ import java.awt.Rectangle
 import java.awt.image.DataBuffer
 import java.awt.image.RenderedImage
 import java.awt.image.WritableRaster
+import java.text.NumberFormat
 
 /**
  * A Raster
@@ -135,7 +136,8 @@ class Raster implements Renderable {
     List getMapLayers(Bounds bounds, List size) {
         [new GridCoverageLayer(this.coverage, this.style.gtStyle)]
     }
-/**
+
+    /**
      * Get the Projection
      * @return The Projection
      */
@@ -374,6 +376,51 @@ class Raster implements Renderable {
             }
         }
         list
+    }
+
+    /**
+     * Get values as a String
+     * @param options Optional named parameters (prettyPrint = false | true)
+     * @param x The pixel x or col to start from
+     * @param y The pixel y or row to start from
+     * @param w The number of columns
+     * @param h The number of rows
+     * @param band The band to get values from (defaults to 0)
+     * @return A String of values
+     */
+    String getValuesAsString(Map options = [:], int x, int y, int w, int h, int band = 0) {
+        boolean prettyPrint = options.get('prettyPrint', false)
+        String NEW_LINE = System.getProperty("line.separator")
+        StringBuilder builder = new StringBuilder()
+        List values = getValues(x, y, w, h, band, false)
+        int maxLength = 0
+        int maxDecimal = 0
+        values.eachWithIndex { List row, int r ->
+            row.each { float n ->
+                String s = String.valueOf(n)
+                maxLength = Math.max(maxLength, s.length())
+                maxDecimal = Math.max(maxDecimal, s.indexOf('.') ? s.substring(s.indexOf('.')).length() - 1 : 0)
+            }
+        }
+        NumberFormat nf = NumberFormat.getNumberInstance()
+        nf.setMinimumFractionDigits(maxDecimal)
+
+        String line = "-" * ((w * (maxLength + 3)) + 1)
+        if (prettyPrint) {
+            builder.append(line).append("\n")
+        }
+        values.eachWithIndex { List row, int r ->
+            if (prettyPrint && r > 0) {
+                builder.append(line).append("\n")
+            }
+            builder.append(row.collect { float n ->
+                String.format("${prettyPrint ? '| ' : ''}%${maxLength}s", nf.format(n))
+            }.join(' ')).append("${prettyPrint ? ' |' : ''}${NEW_LINE}")
+        }
+        if (prettyPrint) {
+            builder.append(line).append(NEW_LINE)
+        }
+        builder.toString()
     }
 
     /**
