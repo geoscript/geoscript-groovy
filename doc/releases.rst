@@ -25,7 +25,7 @@ requires Java 8.
         map.bounds = statesShp.bounds
         map.render(new File("states_underline.png"))
 
-     .. image:: images/states_underline.png
+    .. image:: images/states_underline.png
 
     Add support for the WagnerV projection as a well known name::
 
