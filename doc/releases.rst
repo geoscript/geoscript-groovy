@@ -3,6 +3,61 @@
 GeoScript Groovy Releases
 =========================
 
+1.9.0 (in development)
+----------------------
+The 1.9.0 release of GeoScript is built on Grooovy 2.4.7, GeoTools 17.0, and the Java Topology Suite 1.13 and
+requires Java 8.
+
+    The Label Symbolizer now has an underline method::
+
+        import geoscript.layer.Shapefile
+        import geoscript.render.Map
+        import geoscript.style.*
+
+        def statesShp = new Shapefile("states.shp")
+        statesShp.style = (new Fill("#E6E6E6") + new Stroke("#4C4C4C",0.5)) +
+                (new Shape("#66CCff", 6, "circle").stroke("#004080") + new Transform("centroid(the_geom)")).zindex(1) +
+                (new Label("STATE_ABBR").underline(true).font(new Font("normal", "bold", 10, "serif")).fill(new Fill("#004080")))
+
+        def map = new Map(width: 600, height: 400, fixAspectRatio: true)
+        map.proj = "EPSG:4326"
+        map.addLayer(statesShp)
+        map.bounds = statesShp.bounds
+        map.render(new File("states_underline.png"))
+
+     .. image:: images/states_underline.png
+
+    Add support for the WagnerV projection as a well known name::
+
+        Projection proj = new Projection("WagnerV")
+        println proj
+
+    Raster can pretty print values::
+
+        Format format = new GeoTIFF("earth.tif")
+        Raster raster = format.read()
+        println raster.getValuesAsString(0,0,7,5,0)
+
+          0.100   0.450   0.193   0.200  12.456   0.200   0.000
+          0.100   1.450   1.193   1.200 112.456   1.200   0.000
+          0.100   1.450   2.193   3.200 212.456   1.200   0.000
+          0.100   1.450   1.193   1.200 112.456   1.200   0.000
+          0.100   0.450   0.193   0.200  12.456   0.200   0.000
+
+        println raster.getValuesAsString(0,0,7,5,0, prettyPrint: true)
+
+          -----------------------------------------------------------------------
+          |   0.100 |   0.450 |   0.193 |   0.200 |  12.456 |   0.200 |   0.000 |
+          -----------------------------------------------------------------------
+          |   0.100 |   1.450 |   1.193 |   1.200 | 112.456 |   1.200 |   0.000 |
+          -----------------------------------------------------------------------
+          |   0.100 |   1.450 |   2.193 |   3.200 | 212.456 |   1.200 |   0.000 |
+          -----------------------------------------------------------------------
+          |   0.100 |   1.450 |   1.193 |   1.200 | 112.456 |   1.200 |   0.000 |
+          -----------------------------------------------------------------------
+          |   0.100 |   0.450 |   0.193 |   0.200 |  12.456 |   0.200 |   0.000 |
+          -----------------------------------------------------------------------
+
 1.8.0
 -----
 The 1.8.0 release of GeoScript is built on Grooovy 2.4.7, GeoTools 16.0, and the Java Topology Suite 1.13 and
