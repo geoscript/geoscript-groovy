@@ -144,5 +144,26 @@ class DirectoryTestCase {
         assertNotNull dir
         assertTrue dir.names.contains("states")
     }
-}
 
+    @Test void fromUrl() {
+        URL url = getClass().getClassLoader().getResource("points.zip")
+        File dir = folder.newFolder("points")
+        Directory directory = Directory.fromURL(url, dir)
+        assertTrue directory.names.contains("points")
+    }
+
+    @Test void zippedUrlParamMap() {
+        URL url = getClass().getClassLoader().getResource("points.zip")
+        File dir = folder.newFolder("points")
+        Directory directory = Workspace.getWorkspace([type: "shapefile", url: url, dir: dir])
+        assertTrue directory.names.contains("points")
+    }
+
+    @Test void zippedUrlParamString() {
+        URL url = getClass().getClassLoader().getResource("points.zip")
+        File dir = folder.newFolder("points")
+        Directory directory = Workspace.getWorkspace("type=shapefile url='${url}' dir='${dir}'")
+        assertTrue directory.names.contains("points")
+    }
+
+}

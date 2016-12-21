@@ -336,4 +336,26 @@ class GeoScript {
         dir
     }
 
+    /**
+     * Download a URL to a File
+     * @param options Optional named parameters:
+     * <ul>
+     *     <li>overwrite = Whether to overwrite the existing file or not (defaults to true) </li>
+     * </ul>
+     * @param url The URL
+     * @param file The File
+     * @return The downloaded File
+     */
+    static File download(Map options = [:], URL url, File file) {
+        boolean overwrite = options.get('overwrite', true) as boolean
+        if (overwrite == true || (overwrite == false && !file.exists())) {
+            url.withInputStream { InputStream inputStream ->
+                file.withOutputStream { OutputStream outputStream ->
+                    new BufferedOutputStream(outputStream) << inputStream
+                }
+            }
+        }
+        file
+    }
+
 }
