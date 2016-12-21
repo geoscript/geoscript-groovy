@@ -19,7 +19,7 @@ class ChartTestCase {
 
     @Test void constructor() {
         List data = [
-            [1,10],[45,12],[23,3],[5,20]
+                [1,10],[45,12],[23,3],[5,20]
         ]
         Chart chart = Bar.xy(data)
         assertNotNull chart
@@ -28,18 +28,37 @@ class ChartTestCase {
 
     @Test void save() {
         List data = [
-            [1,10],[45,12],[23,3],[5,20]
+                [1,10],[45,12],[23,3],[5,20]
         ]
         Chart chart = Bar.xy(data)
         File file = folder.newFile("xy.png")
         chart.save(file)
         assertTrue file.exists()
         assertTrue file.length() > 0
+
+        file = folder.newFile("xy.jpg")
+        chart.save(file)
+        assertTrue file.exists()
+        assertTrue file.length() > 0
+
+        file = folder.newFile("xy.jpeg")
+        chart.save(file)
+        assertTrue file.exists()
+        assertTrue file.length() > 0
+    }
+
+    @Test(expected = IllegalArgumentException) void saveGif() {
+        List data = [
+                [1,10],[45,12],[23,3],[5,20]
+        ]
+        Chart chart = Bar.xy(data)
+        File file = folder.newFile("xy.gif")
+        chart.save(file)
     }
 
     @Test void getImage() {
         List data = [
-            [1,10],[45,12],[23,3],[5,20]
+                [1,10],[45,12],[23,3],[5,20]
         ]
         Chart chart = Bar.xy(data)
         def image = chart.image
@@ -52,7 +71,7 @@ class ChartTestCase {
 
     @Test void overlay() {
         List data = [
-            [1,10],[45,12],[23,3],[5,20]
+                [1,10],[45,12],[23,3],[5,20]
         ]
         Chart chart1 = Bar.xy(data)
         Chart chart2 = Curve.curve(data)
