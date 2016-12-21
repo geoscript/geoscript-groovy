@@ -334,6 +334,16 @@ class Label extends Symbolizer {
     }
 
     /**
+     * Set whether the Label should underline the text or not
+     * @param shouldUnderline Whether the label text should be underlined
+     * @return This label
+     */
+    Label underline(boolean shouldUnderline) {
+        options.underlineText = String.valueOf(shouldUnderline)
+        this
+    }
+
+    /**
      * Prepare the GeoTools Rule by applying this Symbolizer
      * @param rule The GeoTools Rule
      */
