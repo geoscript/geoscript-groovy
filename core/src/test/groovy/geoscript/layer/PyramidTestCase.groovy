@@ -1,6 +1,7 @@
 package geoscript.layer
 
 import geoscript.geom.Bounds
+import geoscript.geom.Point
 import geoscript.proj.Projection
 import org.junit.Rule
 import org.junit.Test
@@ -115,6 +116,14 @@ class PyramidTestCase {
         assertEquals 623, coords.minY
         assertEquals 576, coords.maxX
         assertEquals 626, coords.maxY
+    }
+
+    @Test
+    void osmBoundsAroundPoint() {
+        Pyramid pyramid = Pyramid.createGlobalMercatorPyramid()
+        pyramid.origin = Pyramid.Origin.TOP_LEFT
+        Bounds bounds = pyramid.bounds(Projection.transform(new Point(-100.81,46.81),"EPSG:4326","EPSG:3857"), 8, 400, 300)
+        assertEquals(new Bounds(-1.1344314741869908E7,5819468.535791107,-1.1099920991869908E7,6002763.848291107, "EPSG:3857"), bounds)
     }
 
     @Test

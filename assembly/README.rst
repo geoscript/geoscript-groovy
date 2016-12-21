@@ -1,3 +1,6 @@
+.. image:: https://travis-ci.org/geoscript/geoscript-groovy.svg?branch=git
+    :target: https://travis-ci.org/geoscript/geoscript-groovy
+
 GeoScript Groovy
 ================
 GeoScript Groovy is the `Groovy <http://groovy.codehaus.org/>`_ implementation of `GeoScript <http://geoscript.org>`_.  GeoScript is a geospatial scripting API for the JVM that contains one API and four implementations (`Python <https://github.com/jdeolive/geoscript-py>`_, `JavaScript <https://github.com/tschaub/geoscript-js>`_, `Scala <https://github.com/dwins/geoscript.scala>`_, and `Groovy <https://github.com/jericks/geoscript-groovy>`_).
@@ -494,6 +497,18 @@ Versions
 | 1.0       | 8        | 2.2       | 1.12 | 1.8.8   |
 +-----------+----------+-----------+------+---------+
 
+Projects using GeoScript Groovy
+-------------------------------
+`geoc: A geospatial command line application <https://github.com/jericks/geoc>`_
+
+`geo-shell: An interactive geospatial shell <https://github.com/jericks/geo-shell>`_
+
+`mbtiles server: Restful web services for mbtiles <https://github.com/jericks/MBTilesServer>`_
+
+`geopackage server: Restful web services for geopackage <https://github.com/jericks/GeoPackageServer>`_
+
+`geoscript groovy jupyter kernel <https://github.com/jericks/geoscript-groovy-kernel>`_
+
 Presentations
 -------------
 `GeoScript: The GeoSpatial Swiss Army Knife (FOSS4G 2014) <http://geoscript.github.io/foss4g2014-talk/#/>`_
@@ -509,6 +524,3 @@ Presentations
 License
 -------
 GeoScript Groovy is open source and licensed under the MIT license.
-
-.. image:: https://travis-ci.org/geoscript/geoscript-groovy.svg?branch=master
-    :target: https://travis-ci.org/geoscript/geoscript-groovy

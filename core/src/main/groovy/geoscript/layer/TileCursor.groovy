@@ -1,6 +1,7 @@
 package geoscript.layer
 
 import geoscript.geom.Bounds
+import geoscript.geom.Point
 import org.geotools.util.logging.Logging
 import java.util.logging.Logger
 
@@ -219,6 +220,20 @@ class TileCursor<T extends Tile> implements Iterator {
             this.bounds = intersectedBounds
             this.size = 0
         }
+    }
+
+    /**
+     * Create a TileCursor for all Tiles centered on a Point for a given zoom level that fill an image of
+     * a certain width and height
+     * @param layer The TileLayer
+     * @param p The Point (in the TileLayer's Projection)
+     * @param z The zoom level
+     * @param w The image width
+     * @param h The image height
+     * @return A TileCursor
+     */
+    TileCursor(TileLayer layer, Point p, long z, int w, int h) {
+        this(layer, layer.pyramid.bounds(p, z, w, h), z)
     }
 
     /**

@@ -1,6 +1,7 @@
 package geoscript.layer
 
 import geoscript.geom.Bounds
+import geoscript.geom.Point
 import geoscript.layer.io.PyramidReader
 import geoscript.layer.io.PyramidReaders
 import geoscript.proj.Projection
@@ -113,6 +114,21 @@ class Pyramid {
      */
     Grid getMinGrid() {
         grids.min { Grid g -> g.z }
+    }
+
+    /**
+     * Find the Bounds around a Point at a given zoom level for a canvas of a given width and height
+     * @param p The Point (in the Pyramid's projection)
+     * @param z The zoom level
+     * @param width The canvas width
+     * @param height The canvas height
+     * @return a Bounds
+     */
+    Bounds bounds(Point p, long z, int width, int height) {
+        Grid g = grid(z)
+        double boundsWidth = g.xResolution * width
+        double boundsHeight = g.yResolution * height
+        new Bounds(p.x - boundsWidth / 2, p.y - boundsHeight / 2, p.x + boundsWidth / 2, p.y + boundsHeight / 2, this.proj)
     }
 
     /**
