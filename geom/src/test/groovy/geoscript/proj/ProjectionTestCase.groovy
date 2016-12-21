@@ -32,6 +32,13 @@ class ProjectionTestCase {
         new Projection("BAD PROJECTION STRING")
     }
 
+    @Test void createFromWellKnownName() {
+        assertNotNull(new Projection("WGS84"))
+        assertNotNull(new Projection("Mollweide"))
+        assertNotNull(new Projection("WagnerIV"))
+        assertNotNull(new Projection("WorldVanderGrintenI"))
+    }
+
     @Test void getId() {
         Projection p1 = new Projection("EPSG:2927")
         assertEquals "EPSG:2927", p1.id
