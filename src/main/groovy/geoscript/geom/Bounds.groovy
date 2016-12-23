@@ -342,7 +342,7 @@ class Bounds {
      * @return Whether the Bounds is empty
      */
     boolean isEmpty() {
-       env.empty 
+       env.empty || area == 0.0
     }
     
     /**

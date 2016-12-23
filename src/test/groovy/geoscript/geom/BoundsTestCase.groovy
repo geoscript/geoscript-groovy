@@ -238,6 +238,8 @@ class BoundsTestCase {
         def b1 = new Bounds(-10, -20, 10, -10)
         def b2 = new Bounds(-10, 0, 10, 20)
         assertTrue b1.intersection(b2).empty
+        assertTrue new Bounds(0,10,10,10).empty
+        assertFalse new Bounds(0,10,10,20).empty
     }
 
     @Test void equals() {
