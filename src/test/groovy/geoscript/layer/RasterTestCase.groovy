@@ -843,7 +843,7 @@ class RasterTestCase {
                 [0.10, 0.45, 0.193, 0.2,  12.456, 0.2, 0.0]
         ]
         Raster raster = new Raster(data, bounds)
-        String str = raster.getValuesAsString(0, 0, 7, 5)
+        String str = raster.getValuesAsString(0, 0, 7, 5).denormalize()
         assertEquals("""  0.100   0.450   0.193   0.200  12.456   0.200   0.000
   0.100   1.450   1.193   1.200 112.456   1.200   0.000
   0.100   1.450   2.193   3.200 212.456   1.200   0.000
@@ -851,7 +851,7 @@ class RasterTestCase {
   0.100   0.450   0.193   0.200  12.456   0.200   0.000
 """.denormalize(), str)
 
-        str = raster.getValuesAsString(0, 0, 7, 5, prettyPrint: true)
+        str = raster.getValuesAsString(0, 0, 7, 5, prettyPrint: true).denormalize()
         assertEquals("""-----------------------------------------------------------------------
 |   0.100 |   0.450 |   0.193 |   0.200 |  12.456 |   0.200 |   0.000 |
 -----------------------------------------------------------------------
