@@ -25,41 +25,57 @@ class SLDWriter implements Writer {
    
     /**
      * Write the Style to the OutputStream
-     * @param The Style
-     * @param The OutputStream
+     * @param options Optional named parameters
+     * <ol>
+     *     <li>exportDefaultValues = Whether to export default values or not (defaults to false) </li>
+     *     <li>indentation = The number of spaces to use when indenting (defaults to 2) </li>
+     * </ol>
+     * @param style The Style
+     * @param out The OutputStream
      */
-    void write(Style style, OutputStream out) {
+    void write(Map options = [:], Style style, OutputStream out) {
         StyleFactory sf = CommonFactoryFinder.getStyleFactory(null)
         UserLayer userLayer = sf.createUserLayer()
         userLayer.addUserStyle(style.gtStyle)
         StyledLayerDescriptor sld = sf.createStyledLayerDescriptor()
         sld.addStyledLayer(userLayer)
         def transformer = new SLDTransformer()
+        transformer.exportDefaultValues = options.get("exportDefaultValues", false)
         if (format) {
-            transformer.indentation = 2
+            transformer.indentation = options.get("indentation", 2)
         }
         transformer.transform(sld, out)
     }
 
     /**
      * Write the Style to the File
+     * @param options Optional named parameters
+     * <ol>
+     *     <li>exportDefaultValues = Whether to export default values or not (defaults to false) </li>
+     *     <li>indentation = The number of spaces to use when indenting (defaults to 2) </li>
+     * </ol>
      * @param style The Style
      * @param file The File
      */
-    void write(Style style, File file) {
+    void write(Map options = [:], Style style, File file) {
         FileOutputStream out = new FileOutputStream(file)
-        write(style, out)
+        write(options, style, out)
         out.close()
     }
 
     /**
      * Write the Style to a String
+     * @param options Optional named parameters
+     * <ol>
+     *     <li>exportDefaultValues = Whether to export default values or not (defaults to false) </li>
+     *     <li>indentation = The number of spaces to use when indenting (defaults to 2) </li>
+     * </ol>
      * @param The Style
      * @return A String
      */
-    String write(Style style) {
+    String write(Map options = [:], Style style) {
         ByteArrayOutputStream out = new ByteArrayOutputStream()
-        write(style, out);
+        write(options, style, out);
         out.close()
         return out.toString()
     }
