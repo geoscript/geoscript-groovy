@@ -165,6 +165,26 @@ class Color extends Expression {
         if (color instanceof java.awt.Color) {
             return color
         }
+        // RGB as String: "rgb(255,255,255)"
+        else if (color instanceof String && color.startsWith("rgb(") && color.endsWith(")")) {
+            color = color.substring(color.indexOf("(") + 1, color.lastIndexOf(")"))
+            String[] parts = color.split(",")
+            int r = parts[0] as int
+            int g = parts[1] as int
+            int b =  parts[2] as int
+            int a = parts.length > 3 ? parts[3] as int : 0
+            return new java.awt.Color(r, g, b, a)
+        }
+        // HSL as String: "hsl(0,1,0.5)"
+        else if (color instanceof String && color.startsWith("hsl(") && color.endsWith(")")) {
+            color = color.substring(color.indexOf("(") + 1, color.lastIndexOf(")"))
+            String[] parts = color.split(",")
+            double h = parts[0] as double
+            double s = parts[1] as double
+            double l =  parts[2] as double
+            Map rgb = hsl2rgb([h, s, l])
+            return new java.awt.Color(rgb.r, rgb.g, rgb.b)
+        }
         // RGB as String: "255,255,255"
         else if (color instanceof String && color.split(",").length >= 3 && allItemsAreInegers(color.split(","))) {
             String[] parts = color.split(",")

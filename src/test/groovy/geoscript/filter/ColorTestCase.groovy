@@ -39,6 +39,14 @@ class ColorTestCase {
         assertTrue color.expr instanceof org.opengis.filter.expression.Literal
         assertEquals "#000000", color.toString()
 
+        color = new Color("rgb(255,0,255)")
+        assertTrue color.expr instanceof org.opengis.filter.expression.Literal
+        assertEquals "#ff00ff", color.toString()
+
+        color = new Color("hsl(0,1,0.5)")
+        assertTrue color.expr instanceof org.opengis.filter.expression.Literal
+        assertEquals "#ff0000", color.toString()
+
         // Make sure HSL run trips
         Color c1 = new Color("silver")
         def hsl = c1.hsl

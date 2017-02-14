@@ -32,6 +32,11 @@ requires Java 8.
         Projection proj = new Projection("WagnerV")
         println proj
 
+    Create Colors with rgb and hsl function syntax::
+
+        Color color1 = new Color("rgb(255,0,255)")
+        Color color2 = new Color("hsl(0,1,0.5)")
+
     Raster can pretty print values::
 
         Format format = new GeoTIFF("earth.tif")
