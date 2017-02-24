@@ -1,5 +1,7 @@
 package geoscript.geom
 
+import com.vividsolutions.jts.geom.Envelope
+import com.vividsolutions.jts.geom.IntersectionMatrix
 import org.junit.Test
 import static org.junit.Assert.*
 import com.vividsolutions.jts.geom.Point as JtsPoint
@@ -584,4 +586,655 @@ class GeometryTestCase {
         assertEquals "LINESTRING (0 3, 5 3)", g.wkt
     }
 
+    @Test void convexHull() {
+        Geometry geometry = new MultiPoint(
+                new Point(-119.882, 47.279),
+                new Point(-100.195, 46.316),
+                new Point(-111.796, 42.553),
+                new Point(-90.7031, 34.016)
+        )
+        Geometry convexHull = geometry.convexHull
+        assertEquals("POLYGON ((-90.7031 34.016, -111.796 42.553, -119.882 47.279, " +
+                "-100.195 46.316, -90.7031 34.016))", convexHull.wkt)
+    }
+
+    @Test void covers() {
+
+        Polygon polygon1 = new Polygon([[
+                [-120.739, 48.151],
+                [-121.003, 47.070],
+                [-119.465, 47.137],
+                [-119.553, 46.581],
+                [-121.267, 46.513],
+                [-121.168, 45.706],
+                [-118.476, 45.951],
+                [-118.762, 48.195],
+                [-120.739, 48.151]
+        ]])
+
+        Polygon polygon2 = new Polygon([[
+                [-120.212, 47.591],
+                [-119.663, 47.591],
+                [-119.663, 47.872],
+                [-120.212, 47.872],
+                [-120.212, 47.591]
+        ]])
+
+        Polygon polygon3 = new Polygon([[
+                [-120.563, 46.739],
+                [-119.948, 46.739],
+                [-119.948, 46.965],
+                [-120.563, 46.965],
+                [-120.563, 46.739]
+        ]])
+
+        assertTrue(polygon1.covers(polygon2))
+        assertFalse(polygon1.covers(polygon3))
+    }
+
+    @Test void coveredBy() {
+
+        Polygon polygon1 = new Polygon([[
+                [-120.739, 48.151],
+                [-121.003, 47.070],
+                [-119.465, 47.137],
+                [-119.553, 46.581],
+                [-121.267, 46.513],
+                [-121.168, 45.706],
+                [-118.476, 45.951],
+                [-118.762, 48.195],
+                [-120.739, 48.151]
+        ]])
+
+        Polygon polygon2 = new Polygon([[
+                [-120.212, 47.591],
+                [-119.663, 47.591],
+                [-119.663, 47.872],
+                [-120.212, 47.872],
+                [-120.212, 47.591]
+        ]])
+
+        Polygon polygon3 = new Polygon([[
+                [-120.563, 46.739],
+                [-119.948, 46.739],
+                [-119.948, 46.965],
+                [-120.563, 46.965],
+                [-120.563, 46.739]
+        ]])
+
+        assertTrue(polygon2.coveredBy(polygon1))
+        assertFalse(polygon3.coveredBy(polygon1))
+    }
+
+    @Test void crosses() {
+        LineString line1 = new LineString([[-122.486, 47.256], [-121.695, 46.822]])
+        LineString line2 = new LineString([[-122.387, 47.613], [-121.750, 47.353]])
+        LineString line3 = new LineString([[-122.255, 47.368], [-121.882, 47.746]])
+
+        assertFalse(line1.crosses(line2))
+        assertFalse(line1.crosses(line3))
+        assertTrue(line2.crosses(line3))
+    }
+
+    @Test void difference() {
+        Polygon polygon1 = new Polygon([[
+            [-121.915, 47.390],
+            [-122.640, 46.995],
+            [-121.739, 46.308],
+            [-121.168, 46.777],
+            [-120.981, 47.316],
+            [-121.409, 47.413],
+            [-121.915, 47.390]
+        ]])
+
+        Polygon polygon2 = new Polygon([[
+            [-120.794, 46.664],
+            [-121.541, 46.995],
+            [-122.200, 46.536],
+            [-121.937, 45.890],
+            [-120.959, 46.096],
+            [-120.794, 46.664]
+        ]])
+
+        assertEquals("POLYGON ((-122.11534856491807 46.59496055948802, " +
+                "-122.64 46.995, -121.915 47.39, " +
+                "-121.409 47.413, -120.981 47.316, " +
+                "-121.15214608098509 46.82269659010183, " +
+                "-121.541 46.995, " +
+                "-122.11534856491807 46.59496055948802))", polygon1.difference(polygon2).wkt)
+    }
+
+    @Test void disjoint() {
+
+        Polygon polygon1 = new Polygon([[
+                [-121.915, 47.390],
+                [-122.640, 46.995],
+                [-121.739, 46.308],
+                [-121.168, 46.777],
+                [-120.981, 47.316],
+                [-121.409, 47.413],
+                [-121.915, 47.390]
+        ]])
+
+        Polygon polygon2 = new Polygon([[
+                [-120.794, 46.664],
+                [-121.541, 46.995],
+                [-122.200, 46.536],
+                [-121.937, 45.890],
+                [-120.959, 46.096],
+                [-120.794, 46.664]
+        ]])
+
+        Polygon polygon3 = new Polygon([[
+                [-120.541, 47.376],
+                [-120.695, 47.047],
+                [-119.794, 46.830],
+                [-119.586, 47.331],
+                [-120.102, 47.509],
+                [-120.541, 47.376]
+        ]])
+
+        assertFalse(polygon1.disjoint(polygon2))
+        assertTrue(polygon1.disjoint(polygon3))
+        assertTrue(polygon2.disjoint(polygon3))
+    }
+
+    @Test void distance() {
+        Point point1 = new Point(-122.442, 47.256)
+        Point point2 = new Point(-122.321, 47.613)
+        assertEquals(0.37694827231332195, point1.distance(point2), 0.0001)
+    }
+
+    @Test void getArea() {
+        Polygon polygon = new Polygon([[
+                [-121.915, 47.390],
+                [-122.640, 46.995],
+                [-121.739, 46.308],
+                [-121.168, 46.777],
+                [-120.981, 47.316],
+                [-121.409, 47.413],
+                [-121.915, 47.390]
+        ]])
+        assertEquals(1.0652629999999994, polygon.area, 0.0001)
+    }
+
+    @Test void getBoundary() {
+        Polygon polygon = new Polygon([
+            [
+                [-121.915, 47.390],
+                [-122.640, 46.995],
+                [-121.739, 46.308],
+                [-121.168, 46.777],
+                [-120.981, 47.316],
+                [-121.409, 47.413],
+                [-121.915, 47.390]
+            ],
+            [
+                [-122.255, 46.935],
+                [-121.992, 46.935],
+                [-121.992, 47.100],
+                [-122.255, 47.100],
+                [-122.255, 46.935]
+            ],
+            [
+                [-121.717, 46.777],
+                [-121.398, 46.777],
+                [-121.398, 47.002],
+                [-121.717, 47.002],
+                [-121.717, 46.777]
+            ]
+        ])
+        assertEquals("MULTILINESTRING (" +
+                "(-121.915 47.39, -122.64 46.995, -121.739 46.308, -121.168 46.777, -120.981 47.316, " +
+                "-121.409 47.413, -121.915 47.39), " +
+                "(-122.255 46.935, -121.992 46.935, -121.992 47.1, -122.255 47.1, -122.255 46.935), " +
+                "(-121.717 46.777, -121.398 46.777, -121.398 47.002, -121.717 47.002, -121.717 46.777" +
+                "))", polygon.boundary.wkt)
+    }
+
+    @Test void getEnvelope() {
+        Polygon polygon = new Polygon([[
+               [-121.915, 47.390],
+               [-122.640, 46.995],
+               [-121.739, 46.308],
+               [-121.168, 46.777],
+               [-120.981, 47.316],
+               [-121.409, 47.413],
+               [-121.915, 47.390]
+        ]])
+        Envelope env = polygon.envelope
+        assertEquals(new Envelope(-122.64, -120.981, 46.308, 47.413), env)
+    }
+
+    @Test void getGeometryN() {
+        MultiPoint multiPoint = new MultiPoint(
+            [98.000, -24.688],
+            [-43.255, -20.955],
+            [-21.128, -50.821],
+            [-122.626, -2.611],
+            [-10.857, -32.074]
+        )
+        assertEquals("POINT (98 -24.688)", multiPoint.getGeometryN(0).wkt)
+        assertEquals("POINT (-43.255 -20.955)", multiPoint.getGeometryN(1).wkt)
+        assertEquals("POINT (-21.128 -50.821)", multiPoint.getGeometryN(2).wkt)
+        assertEquals("POINT (-122.626 -2.611)", multiPoint.getGeometryN(3).wkt)
+        assertEquals("POINT (-10.857 -32.074)", multiPoint.getGeometryN(4).wkt)
+    }
+
+    @Test void getInteriorPoint() {
+        Polygon polygon = new Polygon([[
+            [-118.937, 48.327],
+            [-121.157, 48.356],
+            [-121.684, 46.331],
+            [-119.355, 46.498],
+            [-119.355, 47.219],
+            [-120.629, 47.219],
+            [-120.607, 47.783],
+            [-119.201, 47.739],
+            [-118.937, 48.327]
+        ]])
+        assertEquals("POINT (-120.43206854809475 47.34584003114768)", polygon.centroid.wkt)
+        assertEquals("POINT (-121.02232180851064 47.343500000000006)", polygon.interiorPoint.wkt)
+    }
+
+    @Test void getLength() {
+        LineString line = new LineString(
+            [-122.321, 47.620],
+            [-117.355, 47.694],
+            [-113.928, 46.875]
+        )
+        assertEquals(8.490056675456453, line.length, 0.0001)
+    }
+
+    @Test void getGeometries() {
+        MultiPoint multiPoint = new MultiPoint(
+            [98.000, -24.688],
+            [-43.255, -20.955],
+            [-21.128, -50.821],
+            [-122.626, -2.611],
+            [-10.857, -32.074]
+        )
+        List<Geometry> geometries = multiPoint.geometries
+        assertEquals(multiPoint.getNumGeometries(), geometries.size())
+        assertEquals(multiPoint.getGeometryN(0), geometries.get(0))
+        assertEquals(multiPoint.getGeometryN(1), geometries.get(1))
+        assertEquals(multiPoint.getGeometryN(2), geometries.get(2))
+        assertEquals(multiPoint.getGeometryN(3), geometries.get(3))
+        assertEquals(multiPoint.getGeometryN(4), geometries.get(4))
+    }
+
+    @Test void intersects() {
+
+        Polygon polygon1 = new Polygon([[
+                [-121.915, 47.390],
+                [-122.640, 46.995],
+                [-121.739, 46.308],
+                [-121.168, 46.777],
+                [-120.981, 47.316],
+                [-121.409, 47.413],
+                [-121.915, 47.390]
+        ]])
+
+        Polygon polygon2 = new Polygon([[
+                [-120.794, 46.664],
+                [-121.541, 46.995],
+                [-122.200, 46.536],
+                [-121.937, 45.890],
+                [-120.959, 46.096],
+                [-120.794, 46.664]
+        ]])
+
+        Polygon polygon3 = new Polygon([[
+                [-120.541, 47.376],
+                [-120.695, 47.047],
+                [-119.794, 46.830],
+                [-119.586, 47.331],
+                [-120.102, 47.509],
+                [-120.541, 47.376]
+        ]])
+
+        assertTrue(polygon1.intersects(polygon2))
+        assertFalse(polygon1.intersects(polygon3))
+        assertFalse(polygon2.intersects(polygon3))
+    }
+
+    @Test void intersection() {
+
+        Polygon polygon1 = new Polygon([[
+                [-121.915, 47.390],
+                [-122.640, 46.995],
+                [-121.739, 46.308],
+                [-121.168, 46.777],
+                [-120.981, 47.316],
+                [-121.409, 47.413],
+                [-121.915, 47.390]
+        ]])
+
+        Polygon polygon2 = new Polygon([[
+                [-120.794, 46.664],
+                [-121.541, 46.995],
+                [-122.200, 46.536],
+                [-121.937, 45.890],
+                [-120.959, 46.096],
+                [-120.794, 46.664]
+        ]])
+
+        assertEquals("POLYGON ((-121.15214608098509 46.82269659010183, " +
+                "-121.168 46.777, -121.739 46.308, " +
+                "-122.11534856491807 46.59496055948802, " +
+                "-121.541 46.995, " +
+                "-121.15214608098509 46.82269659010183))", polygon1.intersection(polygon2).wkt)
+    }
+
+    @Test void isRectangle() {
+
+        Polygon polygon1 = new Polygon([[
+            [-126.562, 43.580],
+            [-113.203, 43.580],
+            [-113.203, 49.610],
+            [-126.562, 49.610],
+            [-126.562, 43.580]
+        ]])
+
+        Polygon polygon2 = new Polygon([[
+            [-121.915, 47.390],
+            [-122.640, 46.995],
+            [-121.739, 46.308],
+            [-121.168, 46.777],
+            [-120.981, 47.316],
+            [-121.409, 47.413],
+            [-121.915, 47.390]
+        ]])
+
+        assertTrue(polygon1.isRectangle())
+        assertFalse(polygon2.isRectangle())
+
+    }
+
+    @Test void isSimple() {
+        Geometry geom1 = new LineString(
+            [-122.323, 47.599],
+            [-122.385, 47.581]
+        )
+        assertTrue(geom1.simple)
+
+        Geometry geom2 = new LineString(
+            [-122.356, 47.537],
+            [-122.295, 47.580],
+            [-122.284, 47.532],
+            [-122.353, 47.574]
+        )
+        assertFalse(geom2.simple)
+    }
+
+    @Test void isWithinDistance() {
+        Point point1 = new Point(-122.442, 47.256)
+        Point point2 = new Point(-122.321, 47.613)
+        assertTrue(point1.isWithinDistance(point2, 0.4))
+        assertFalse(point1.isWithinDistance(point2, 0.2))
+    }
+
+    @Test void normalize() {
+        Geometry geom = new Polygon([10,10],[10,20],[20,20],[20,10],[10,10])
+        geom.normalize()
+        assertEquals("POLYGON ((10 10, 10 20, 20 20, 20 10, 10 10))", geom.wkt)
+    }
+
+    @Test void overlaps() {
+        Polygon polygon1 = new Polygon([[
+            [-121.915, 47.390],
+            [-122.640, 46.995],
+            [-121.739, 46.308],
+            [-121.168, 46.777],
+            [-120.981, 47.316],
+            [-121.409, 47.413],
+            [-121.915, 47.390]
+        ]])
+
+        Polygon polygon2 = new Polygon([[
+            [-120.794, 46.664],
+            [-121.541, 46.995],
+            [-122.200, 46.536],
+            [-121.937, 45.890],
+            [-120.959, 46.096],
+            [-120.794, 46.664]
+        ]])
+
+        Polygon polygon3 = new Polygon([[
+            [-120.541, 47.376],
+            [-120.695, 47.047],
+            [-119.794, 46.830],
+            [-119.586, 47.331],
+            [-120.102, 47.509],
+            [-120.541, 47.376]
+        ]])
+
+        assertTrue(polygon1.overlaps(polygon2))
+        assertFalse(polygon1.overlaps(polygon3))
+        assertFalse(polygon2.overlaps(polygon3))
+    }
+
+    @Test void relateIntersectionMatrix() {
+
+        Polygon polygon1 = new Polygon([[
+            [-121.915, 47.390],
+            [-122.640, 46.995],
+            [-121.739, 46.308],
+            [-121.168, 46.777],
+            [-120.981, 47.316],
+            [-121.409, 47.413],
+            [-121.915, 47.390]
+        ]])
+
+        Polygon polygon2 = new Polygon([[
+            [-120.794, 46.664],
+            [-121.541, 46.995],
+            [-122.200, 46.536],
+            [-121.937, 45.890],
+            [-120.959, 46.096],
+            [-120.794, 46.664]
+        ]])
+
+        IntersectionMatrix matrix = polygon1.relate(polygon2)
+        assertEquals("212101212", matrix.toString())
+        assertFalse(matrix.contains)
+        assertFalse(matrix.coveredBy)
+        assertFalse(matrix.covers)
+        assertFalse(matrix.disjoint)
+        assertTrue(matrix.intersects)
+        assertFalse(matrix.within)
+    }
+
+    @Test void relate() {
+
+        Polygon polygon1 = new Polygon([[
+            [-121.915, 47.390],
+            [-122.640, 46.995],
+            [-121.739, 46.308],
+            [-121.168, 46.777],
+            [-120.981, 47.316],
+            [-121.409, 47.413],
+            [-121.915, 47.390]
+        ]])
+
+        Polygon polygon2 = new Polygon([[
+            [-120.794, 46.664],
+            [-121.541, 46.995],
+            [-122.200, 46.536],
+            [-121.937, 45.890],
+            [-120.959, 46.096],
+            [-120.794, 46.664]
+        ]])
+
+        assertTrue(polygon1.relate(polygon2,  "212101212"))
+        assertFalse(polygon1.relate(polygon2, "111111111"))
+        assertFalse(polygon1.relate(polygon2, "222222222"))
+    }
+
+    @Test void symDifference() {
+
+        Polygon polygon1 = new Polygon([[
+            [-121.915, 47.390],
+            [-122.640, 46.995],
+            [-121.739, 46.308],
+            [-121.168, 46.777],
+            [-120.981, 47.316],
+            [-121.409, 47.413],
+            [-121.915, 47.390]
+        ]])
+
+        Polygon polygon2 = new Polygon([[
+            [-120.794, 46.664],
+            [-121.541, 46.995],
+            [-122.200, 46.536],
+            [-121.937, 45.890],
+            [-120.959, 46.096],
+            [-120.794, 46.664]
+        ]])
+
+        assertEquals("MULTIPOLYGON (" +
+                "((-122.11534856491807 46.59496055948802, -122.64 46.995, " +
+                "-121.915 47.39, -121.409 47.413, -120.981 47.316, " +
+                "-121.15214608098509 46.82269659010183, -121.541 46.995, " +
+                "-122.11534856491807 46.59496055948802)), " +
+                "((-122.11534856491807 46.59496055948802, -121.739 46.308, " +
+                "-121.168 46.777, -121.15214608098509 46.82269659010183, " +
+                "-120.794 46.664, -120.959 46.096, -121.937 45.89, -122.2 46.536, " +
+                "-122.11534856491807 46.59496055948802)))", polygon1.symDifference(polygon2).wkt)
+    }
+
+    @Test void touches() {
+        LineString line1 = new LineString([-122.4408030, 47.25315], [-122.4401056, 47.25322])
+        LineString line2 = new LineString([-122.4401056, 47.25322], [-122.4399930, 47.25271])
+        LineString line3 = new LineString([-122.4394243, 47.25331], [-122.4392044, 47.25241])
+
+        assertTrue(line1.touches(line2))
+        assertTrue(line2.touches(line1))
+        assertFalse(line1.touches(line3))
+        assertFalse(line3.touches(line1))
+        assertFalse(line2.touches(line3))
+        assertFalse(line3.touches(line2))
+    }
+
+    @Test void unionWithOther() {
+
+        Polygon polygon1 = new Polygon([[
+            [-121.915, 47.390],
+            [-122.640, 46.995],
+            [-121.739, 46.308],
+            [-121.168, 46.777],
+            [-120.981, 47.316],
+            [-121.409, 47.413],
+            [-121.915, 47.390]
+        ]])
+
+        Polygon polygon2 = new Polygon([[
+            [-120.794, 46.664],
+            [-121.541, 46.995],
+            [-122.200, 46.536],
+            [-121.937, 45.890],
+            [-120.959, 46.096],
+            [-120.794, 46.664]
+        ]])
+
+        assertEquals("POLYGON ((-122.11534856491807 46.59496055948802, " +
+                "-122.64 46.995, -121.915 47.39, " +
+                "-121.409 47.413, -120.981 47.316, " +
+                "-121.15214608098509 46.82269659010183, " +
+                "-120.794 46.664, -120.959 46.096, " +
+                "-121.937 45.89, -122.2 46.536, " +
+                "-122.11534856491807 46.59496055948802))", polygon1.union(polygon2).wkt)
+    }
+
+    @Test void union() {
+        MultiPolygon multiPolygon = new MultiPolygon(
+            new Polygon([[
+                [-121.915, 47.390],
+                [-122.640, 46.995],
+                [-121.739, 46.308],
+                [-121.168, 46.777],
+                [-120.981, 47.316],
+                [-121.409, 47.413],
+                [-121.915, 47.390]
+            ]]),
+            new Polygon([[
+                [-120.794, 46.664],
+                [-121.541, 46.995],
+                [-122.200, 46.536],
+                [-121.937, 45.890],
+                [-120.959, 46.096],
+                [-120.794, 46.664]
+            ]])
+        )
+
+        assertEquals("POLYGON ((-121.15214608098509 46.82269659010183, " +
+                "-120.794 46.664, -120.959 46.096, -121.937 45.89, " +
+                "-122.2 46.536, -122.11534856491807 46.59496055948802, " +
+                "-122.64 46.995, -121.915 47.39, -121.409 47.413, -120.981 47.316, " +
+                "-121.15214608098509 46.82269659010183))", multiPolygon.union().wkt)
+    }
+
+    @Test void within() {
+
+        Polygon polygon1 = new Polygon([[
+            [-121.926, 47.279],
+            [-120.520, 47.279],
+            [-120.520, 48.283],
+            [-121.926, 48.283],
+            [-121.926, 47.279]
+        ]])
+
+        Polygon polygon2 = new Polygon([[
+            [-121.508, 47.842],
+            [-121.091, 47.842],
+            [-121.091, 48.122],
+            [-121.508, 48.122],
+            [-121.508, 47.842]
+        ]])
+
+        Polygon polygon3 = new Polygon([[
+            [-120.146, 46.845],
+            [-118.586, 46.845],
+            [-118.586, 47.620],
+            [-120.146, 47.620],
+            [-120.146, 46.845]
+        ]])
+
+        assertTrue(polygon2.within(polygon1))
+        assertFalse(polygon1.within(polygon2))
+        assertFalse(polygon2.within(polygon3))
+        assertFalse(polygon3.within(polygon2))
+        assertFalse(polygon3.within(polygon1))
+        assertFalse(polygon1.within(polygon3))
+    }
+
+    @Test void prepare() {
+        Geometry geom = new Polygon([[
+                [-121.915, 47.390],
+                [-122.640, 46.995],
+                [-121.739, 46.308],
+                [-121.168, 46.777],
+                [-120.981, 47.316],
+                [-121.409, 47.413],
+                [-121.915, 47.390]
+        ]])
+        PreparedGeometry preparedGeom = geom.prepare()
+        assertTrue(preparedGeom instanceof PreparedGeometry)
+        assertEquals(geom.toString(), preparedGeom.toString())
+    }
+
+    @Test void prepareStatic() {
+        Geometry geom = new Polygon([[
+             [-121.915, 47.390],
+             [-122.640, 46.995],
+             [-121.739, 46.308],
+             [-121.168, 46.777],
+             [-120.981, 47.316],
+             [-121.409, 47.413],
+             [-121.915, 47.390]
+        ]])
+        PreparedGeometry preparedGeom = Geometry.prepare(geom)
+        assertTrue(preparedGeom instanceof PreparedGeometry)
+        assertEquals(geom.toString(), preparedGeom.toString())
+    }
 }
