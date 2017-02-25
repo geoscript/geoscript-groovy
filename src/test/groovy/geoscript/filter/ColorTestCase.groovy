@@ -54,6 +54,11 @@ class ColorTestCase {
         assertEquals hsl, c2.hsl
     }
 
+    @Test void asColor() {
+        java.awt.Color c = new Color("red").asColor()
+        assertEquals(java.awt.Color.RED, c)
+    }
+
     @Test void evaluate() {
         Color color = new Color("black")
         assertEquals "#000000", color.evaluate()
@@ -89,7 +94,7 @@ class ColorTestCase {
         assertNull Color.getColor("NOT A COLOR")
         assertNull Color.getColor("0 1 COLOR")
         assertNull Color.getColor("0 1")
-
+        assertNull Color.getColor("#12")
     }
 
     @Test void toHex() {
@@ -105,6 +110,8 @@ class ColorTestCase {
 
         // CSS Color Name
         assertEquals "#f5deb3", Color.toHex("wheat")
+
+        assertNull Color.toHex(null)
     }
 
     @Test void getRandom() {
@@ -181,6 +188,11 @@ class ColorTestCase {
         colors = Color.getPaletteColors("BoldLandUse", 4)
         colors.each{c -> assertTrue c instanceof Color}
         assertTrue(colors.size() == 4)
+
+        // Custom with negative number
+        colors = Color.getPaletteColors("greens", -1)
+        colors.each{c -> assertTrue c instanceof Color}
+        assertEquals(9, colors.size())
     }
 
     @Test void getHex() {

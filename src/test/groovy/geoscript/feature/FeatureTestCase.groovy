@@ -91,6 +91,12 @@ class FeatureTestCase {
         assertEquals "House", f1[s1.get("name")]
     }
 
+    @Test void getLongAttributes() {
+        Schema s1 = new Schema("points", [new Field("name&Descr", "string")])
+        Feature f1 = new Feature(["Seattle: A city in washington"], "points", s1)
+        assertEquals "Seattle: A city in washington", f1.get("name&Description").toString()
+    }
+
     @Test void set() {
         Schema s1 = new Schema("houses", [new Field("geom","Point"), new Field("name","string"), new Field("price","float")])
         Feature f1 = new Feature([new Point(111,-47), "House", 12.5], "house1", s1)

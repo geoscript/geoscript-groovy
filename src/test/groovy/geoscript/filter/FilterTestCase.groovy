@@ -27,6 +27,15 @@ class FilterTestCase {
 
         Filter f4 = new Filter("CARPOOL/PERSON > 0.06")
         assertEquals "[ (CARPOOL/PERSON) > 0.06 ]", f4.toString()
+
+        Filter f5 = new Filter("""<ogc:Filter xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:gml="http://www.opengis.net/gml" xmlns:ogc="http://www.opengis.net/ogc">
+<ogc:PropertyIsEqualTo matchCase="true">
+<ogc:PropertyName>name</ogc:PropertyName>
+<ogc:Literal>foobar</ogc:Literal>
+</ogc:PropertyIsEqualTo>
+</ogc:Filter>
+""")
+        assertEquals("[ name = foobar ]", f5.toString())
     }
 
     @Test void id() {
@@ -55,6 +64,16 @@ class FilterTestCase {
         String actual = f.xml
         String expected = """<ogc:Filter xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:ogc="http://www.opengis.net/ogc" xmlns:gml="http://www.opengis.net/gml">
 <ogc:PropertyIsEqualTo>
+<ogc:PropertyName>name</ogc:PropertyName>
+<ogc:Literal>foobar</ogc:Literal>
+</ogc:PropertyIsEqualTo>
+</ogc:Filter>
+"""
+        AssertUtil.assertStringsEqual expected, actual, removeXmlNS: true
+
+        actual = f.getXml(false, 1.1)
+        expected = """<ogc:Filter xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:gml="http://www.opengis.net/gml" xmlns:ogc="http://www.opengis.net/ogc">
+<ogc:PropertyIsEqualTo matchCase="true">
 <ogc:PropertyName>name</ogc:PropertyName>
 <ogc:Literal>foobar</ogc:Literal>
 </ogc:PropertyIsEqualTo>

@@ -1,5 +1,6 @@
 package geoscript.filter
 
+import geoscript.process.Process
 import org.geotools.feature.NameImpl
 
 /**
