@@ -180,33 +180,32 @@ class Draw {
 
     /**
      * Draw a Geometry to an image
-     * @param options A java.util.Map of options or named parameters (style, bounds, size, out, format, proj)
+     * @param options A java.util.Map of options or named parameters (style, bounds, size, format, proj)
      * <ul>
      *  <li>style = A Style</li>
      *  <li>bounds = The Bounds</li>
      *  <li>size = The size of the canvas ([400,350])</li>
-     *  <li>out = The OutputStream, File, or File name.  If null (which is the default) a GUI will be opened.</li>
      *  <li>imageType = The format ("jpeg", "png", "gif")</li>
      *  <li>proj = The Projection</li>
+     *  <li>backgroundColor = The background color (defaults to null)</li>
      * </ul>
      * @param geometry The Geometry
      * @return A BufferedImage
      */
-    // Style style = null, Bounds bounds = null, List size = [500, 500], String imageType = "png"
     static BufferedImage drawToImage(java.util.Map options = [:], Geometry geometry) {
         drawToImage(options, [geometry])
     }
 
     /**
      * Draw a List of Geometries to an image
-     * @param options A java.util.Map of options or named parameters (style, bounds, size, out, imageType, proj)
+     * @param options A java.util.Map of options or named parameters (style, bounds, size, imageType, proj)
      * <ul>
      *  <li>style = A Style</li>
      *  <li>bounds = The Bounds</li>
      *  <li>size = The size of the canvas ([400,350])</li>
-     *  <li>out = The OutputStream, File, or File name.  If null (which is the default) a GUI will be opened.</li>
      *  <li>imageType = The format ("jpeg", "png", "gif")</li>
      *  <li>proj = The Projection</li>
+     *  <li>backgroundColor = The background color (defaults to null)</li>
      * </ul>
      * @param geometries A List of Geometries
      * @return A BufferedImage
@@ -222,14 +221,14 @@ class Draw {
 
     /**
      * Draw a Feature to an image
-     * @param options A java.util.Map of options or named parameters (style, bounds, size, out, imageType, proj)
+     * @param options A java.util.Map of options or named parameters (style, bounds, size, imageType, proj)
      * <ul>
      *  <li>style = A Style</li>
      *  <li>bounds = The Bounds</li>
      *  <li>size = The size of the canvas ([400,350])</li>
-     *  <li>out = The OutputStream, File, or File name.  If null (which is the default) a GUI will be opened.</li>
      *  <li>imageType = The format ("jpeg", "png", "gif")</li>
      *  <li>proj = The Projection</li>
+     *  <li>backgroundColor = The background color (defaults to null)</li>
      * </ul>
      * @param feature The Feature
      * @return A BufferedImage
@@ -248,12 +247,11 @@ class Draw {
 
     /**
      * Draw a Layer to an image
-     * @param options A java.util.Map of options or named parameters (style, bounds, size, out, imageType, proj)
+     * @param options A java.util.Map of options or named parameters (style, bounds, size, imageType, proj)
      * <ul>
      *  <li>style = A Style</li>
      *  <li>bounds = The Bounds</li>
      *  <li>size = The size of the canvas ([400,350])</li>
-     *  <li>out = The OutputStream, File, or File name.  If null (which is the default) a GUI will be opened.</li>
      *  <li>imageType = The format ("jpeg", "png", "gif")</li>
      *  <li>proj = The Projection</li>
      *  <li>backgroundColor = The background color (defaults to null)</li>
@@ -280,12 +278,11 @@ class Draw {
 
     /**
      * Draw a Raster to an image
-     * @param options A java.util.Map of options or named parameters (style, bounds, size, out, imageType, proj)
+     * @param options A java.util.Map of options or named parameters (style, bounds, size, imageType, proj)
      * <ul>
      *  <li>style = A Style</li>
      *  <li>bounds = The Bounds</li>
      *  <li>size = The size of the canvas ([400,350])</li>
-     *  <li>out = The OutputStream, File, or File name.  If null (which is the default) a GUI will be opened.</li>
      *  <li>imageType = The format ("jpeg", "png", "gif")</li>
      *  <li>proj = The Projection</li>
      *  <li>backgroundColor = The background color (defaults to null)</li>
