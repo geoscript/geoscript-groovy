@@ -47,6 +47,20 @@ class DrawTestCase {
         ImageAssert.assertEquals(expectedFile, ImageIO.read(file), 100)
     }
 
+    @Test void drawGeometryToOutputStream() {
+        Symbolizer sym = new Stroke('black', 2) + new Fill('gray',0.75)
+        Geometry geom = new Point(0,0).buffer(0.2)
+        File file = folder.newFile("draw_geometry.png")
+        OutputStream outputStream = new FileOutputStream(file)
+        draw(geom, style: sym, bounds: geom.bounds.scale(1.1), size: [250,250], out: outputStream, format: "png", backgroundColor: "white")
+        outputStream.flush()
+        outputStream.close()
+        assertTrue file.exists()
+        assertTrue file.length() > 0
+        File expectedFile = getFile("geoscript/render/draw_geometry.png")
+        ImageAssert.assertEquals(expectedFile, ImageIO.read(file), 100)
+    }
+
     @Test void drawGeometries() {
         Symbolizer sym = new Stroke('navy', 0.1)
         Geometry geom = new Point(0,0)
