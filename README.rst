@@ -157,6 +157,8 @@ Versions
 +-----------+----------+-----------+------+----------+
 
 API Groovy Docs
+---------------
+
 `1.9-SNAPSHOT <http://geoscript.github.io/geoscript-groovy/api/1.9-SNAPSHOT/index.html>`_
 
 `1.8.0 <http://geoscript.github.io/geoscript-groovy/api/1.8.0/index.html>`_
