@@ -106,7 +106,7 @@ Generating tiles::
     TileGenerator generator = new TileGenerator(verbose: true)
     generator.generate(gpkg, renderer, 0, 4)
 
-See the `web site <http://geoscript.org>`_, the `cook book <https://jericks.github.io/geoscript-groovy-cookbook/>`_ or the `examples directory <https://github.com/jericks/geoscript-groovy/tree/master/examples>`_ for more examples.
+See the `web site <http://geoscript.org>`_, the `groovy docs <http://geoscript.github.io/geoscript-groovy/api/1.9-SNAPSHOT/index.html>`_ or the `cook book <https://jericks.github.io/geoscript-groovy-cookbook/>`_ or the `examples directory <https://github.com/jericks/geoscript-groovy/tree/master/examples>`_ for more examples.
 
 You can also use GeoScript Groovy as a library. If you use Maven you will need to add the Boundless Maven Repository::
 
@@ -155,6 +155,11 @@ Versions
 +-----------+----------+-----------+------+----------+
 | 1.0       | 8        | 2.2       | 1.12 | 1.8.8    |
 +-----------+----------+-----------+------+----------+
+
+API Groovy Docs
+`1.9-SNAPSHOT <http://geoscript.github.io/geoscript-groovy/api/1.9-SNAPSHOT/index.html>`_
+
+`1.8.0 <http://geoscript.github.io/geoscript-groovy/api/1.8.0/index.html>`_
 
 Projects using GeoScript Groovy
 -------------------------------
