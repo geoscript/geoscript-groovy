@@ -126,7 +126,7 @@ and then include the GeoScript Groovy dependency::
     <dependency>
         <groupId>org.geoscript</groupId>
         <artifactId>geoscript-groovy</artifactId>
-        <version>1.8.0</version>
+        <version>1.9.0</version>
     </dependency>
 
 Versions
@@ -159,7 +159,7 @@ Versions
 API Groovy Docs
 ---------------
 
-`1.9-SNAPSHOT <http://geoscript.github.io/geoscript-groovy/api/1.9-SNAPSHOT/index.html>`_
+`1.9.0 <http://geoscript.github.io/geoscript-groovy/api/1.9.0/index.html>`_
 
 `1.8.0 <http://geoscript.github.io/geoscript-groovy/api/1.8.0/index.html>`_
 

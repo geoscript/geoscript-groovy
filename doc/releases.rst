@@ -3,10 +3,22 @@
 GeoScript Groovy Releases
 =========================
 
-1.9.0 (in development)
-----------------------
-The 1.9.0 release of GeoScript is built on Grooovy 2.4.7, GeoTools 17.0, and the Java Topology Suite 1.13 and
+1.9.0
+-----
+The 1.9.0 release of GeoScript is built on Grooovy 2.4.10, GeoTools 17.0, and the Java Topology Suite 1.13 and
 requires Java 8.
+
+Alot of work went into improving documentation.
+
+Javadocs are now published online.
+
+http://geoscript.github.io/geoscript-groovy/api/1.9.0/index.html
+
+And a GeoScript Groovy Cookbook is slowly but surely adding simple recipes.
+
+https://jericks.github.io/geoscript-groovy-cookbook/index.html
+
+https://jericks.github.io/geoscript-groovy-cookbook/index.pdf
 
     The Label Symbolizer now has an underline method::
 
