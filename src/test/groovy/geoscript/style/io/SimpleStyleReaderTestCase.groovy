@@ -1,5 +1,8 @@
 package geoscript.style.io
 
+import geoscript.style.Composite
+import geoscript.style.CompositeTestCase
+import geoscript.style.Icon
 import geoscript.style.Style
 import org.junit.Rule
 import org.junit.Test
@@ -36,6 +39,20 @@ class SimpleStyleReaderTestCase {
         // Just shape
         style = styleReader.read("shape=#554466")
         assertEquals style.toString(), "Composite (Shape(color = #554466, size = 6, type = circle))"
+        // Icon
+        style = styleReader.read("icon=place.png")
+        Composite composite = style as Composite
+        Icon icon = composite.parts[0] as Icon
+        assertTrue(icon.url.toString().endsWith("place.png"))
+        assertEquals(-1, icon.size.value, 0.1)
+        assertEquals("image/png", icon.format)
+        // Icon with Size
+        style = styleReader.read("icon=place.jpeg icon-size=8")
+        composite = style as Composite
+        icon = composite.parts[0] as Icon
+        assertTrue(icon.url.toString().endsWith("place.jpeg"))
+        assertEquals(8, icon.size.value, 0.1)
+        assertEquals("image/jpeg", icon.format)
     }
 
     @Test void readFromMap() {

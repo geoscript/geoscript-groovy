@@ -3,6 +3,7 @@ package geoscript.style.io
 import geoscript.style.Composite
 import geoscript.style.Fill
 import geoscript.style.Font
+import geoscript.style.Icon
 import geoscript.style.Label
 import geoscript.style.Shape
 import geoscript.style.Stroke
@@ -82,6 +83,13 @@ class SimpleStyleReader implements Reader {
                     type: options.get('shape-type', 'circle')
             )
             parts.add(shape)
+        }
+        if (['icon'].any{ options.containsKey(it) }) {
+            Icon icon = new Icon(
+                    url: options.get('icon'),
+                    size: options.get('icon-size', -1) as double
+            )
+            parts.add(icon)
         }
         if (['label-size','label-style','label-weight','label-family'].any{ options.containsKey(it) }) {
             Font font = new Font(
