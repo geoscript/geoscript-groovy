@@ -13,6 +13,8 @@ class NetCDFTestCase {
         NetCDF netcdf = new NetCDF(file)
         assertNotNull(netcdf)
         assertEquals "NetCDF", netcdf.name
+        assertNotNull(netcdf.read("O3"))
+        assertNotNull(netcdf.read("NO2"))
     }
 
     @Test void getNames() {
@@ -24,6 +26,7 @@ class NetCDFTestCase {
         assertTrue(names.contains("O3"))
         assertTrue(names.contains("NO2"))
         netcdf.names.each{ String name ->
+            println name
             Raster raster = netcdf.read(name)
             assertNotNull raster
             assertNotNull raster.proj
