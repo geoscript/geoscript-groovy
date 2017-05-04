@@ -114,7 +114,111 @@ class Color extends Expression {
         (1..n).each{c=c.brighter()}
         new Color(c)
     }
-    
+
+    /**
+     * Create a new Color by darkening the current Color
+     * @param percentage The percentage 0-1
+     * @return A new Color
+     */
+    Color darken(double percentage) {
+        Function function = new Function("darken('${this.getHex()}', ${percentage})")
+        new Color(function.evaluate(null))
+    }
+
+    /**
+     * Create a new Color by lightening the current Color
+     * @param percentage The percentage 0-1
+     * @return A new Color
+     */
+    Color lighten(double percentage) {
+        Function function = new Function("lighten('${this.getHex()}', ${percentage})")
+        new Color(function.evaluate(null))
+    }
+
+    /**
+     * Create a new Color that has the largest constrast of the current Color between
+     * the dark and light Colors.
+     * @param color1 The dark Color
+     * @param color2 The light Color
+     * @param percentage The percentage
+     * @return A new Color
+     */
+    Color contrast(Color color1, Color color2, double threshold) {
+        Function function = new Function("contrast('${this.getHex()}', '${color1.hex}', '${color2.hex}', ${threshold})")
+        new Color(function.evaluate(null))
+    }
+
+    /**
+     * Create a new Color by desaturating the current Color
+     * @param percentage The percentage
+     * @return A new Color
+     */
+    Color desaturate(double percentage) {
+        Function function = new Function("desaturate('${this.getHex()}', ${percentage})")
+        new Color(function.evaluate(null))
+    }
+
+    /**
+     * Create a new Color by saturating the current Color
+     * @param percentage The percentage
+     * @return A new Color
+     */
+    Color saturate(double percentage) {
+        Function function = new Function("saturate('${this.getHex()}', ${percentage})")
+        new Color(function.evaluate(null))
+    }
+
+    /**
+     * Create a new Color by converting the current Color to grayscale
+     * @param percentage The percentage
+     * @return A new Color
+     */
+    Color grayscale(double percentage) {
+        Function function = new Function("grayscale('${this.getHex()}', ${percentage})")
+        new Color(function.evaluate(null))
+    }
+
+    /**
+     * Create a new Color by mixing the current Color with another Color
+     * @param color The other Color
+     * @param weight The weight
+     * @return A new Color
+     */
+    Color mix(Color color, double weight) {
+        Function function = new Function("mix('${this.getHex()}', '${color.hex}', ${weight})")
+        new Color(function.evaluate(null))
+    }
+
+    /**
+     * Create a new Color by mixing the current Color with black
+     * @param weight The weight
+     * @return A new Color
+     */
+    Color shade(double weight) {
+        Function function = new Function("shade('${this.getHex()}', ${weight})")
+        new Color(function.evaluate(null))
+    }
+
+    /**
+     * Create a new Color by rotating the hue angle of the current Color
+     * @param amount The amount
+     * @return A new Color
+     */
+    Color spin(double amount) {
+        Function function = new Function("spin('${this.getHex()}', ${amount})")
+        new Color(function.evaluate(null))
+    }
+
+    /**
+     * Create a new Color by mixing the current Color with the Color white
+     * @param weight The weight
+     * @return A new Color
+     */
+    Color tint(double weight) {
+        Function function = new Function("tint('${this.getHex()}', ${weight})")
+        new Color(function.evaluate(null))
+    }
+
     /**
      * Interpolate a List of Colors between this Color and the given Color
      * @param color The other Color

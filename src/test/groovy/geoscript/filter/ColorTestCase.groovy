@@ -4,6 +4,8 @@ import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.TemporaryFolder
 
+import javax.imageio.ImageIO
+
 import static org.junit.Assert.*
 
 /**
@@ -305,4 +307,17 @@ class ColorTestCase {
         javax.imageio.ImageIO.write(image, "png", file)
     }
 
+    @Test void functions() {
+        Color c = new Color("#6495ED")
+        assertEquals("#092049", c.darken(0.50).hex)
+        assertEquals("#bfd3f8", c.lighten(0.20).hex)
+        assertEquals("#000080", c.contrast(new Color("navy"), new Color("white"), 0.20).hex)
+        assertEquals("#819dd0", c.desaturate(0.33).hex)
+        assertEquals("#5290ff", c.saturate(0.33).hex)
+        assertEquals("#a9a9a9", c.grayscale(0.45).hex)
+        assertEquals("#dfd3bc", c.mix(new Color("wheat"), 0.15).hex)
+        assertEquals("#375282", c.shade(0.45).hex)
+        assertEquals("#6494ed", c.spin(0.61).hex)
+        assertEquals("#74a0ef", c.tint(0.10).hex)
+    }
 }

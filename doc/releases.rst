@@ -8,6 +8,50 @@ GeoScript Groovy Releases
 The 1.10.0 release of GeoScript is under development and is built on Grooovy 2.4.11, GeoTools 18.0, and the Java Topology Suite 1.13 and
 requires Java 8.
 
+Several methods were added to the Color class:
+
+    Color c = new Color("#6495ED")
+    c.darken(0.50)
+
+.. image:: images/colors/color_darken.png
+
+    c.lighten(0.20)
+    
+.. image:: images/colors/color_lighten.png
+
+    c.contrast(new Color("navy"), new Color("white"), 0.20)
+
+.. image:: images/colors/color_contrast.png
+
+    c.desaturate(0.33)
+
+.. image:: images/colors/color_desaturate.png
+
+    c.saturate(0.33)
+
+.. image:: images/colors/color_saturate.png
+
+    c.grayscale(0.45)
+
+.. image:: images/colors/color_grayscale.png
+
+    c.mix(new Color("wheat"), 0.15)
+
+.. image:: images/colors/color_mix.png
+
+    c.shade(0.45)
+
+.. image:: images/colors/color_shade.png
+
+    c.spin(0.61)
+
+.. image:: images/colors/color_spin.png
+
+    c.tint(0.10)
+
+.. image:: images/colors/color_tint.png
+
+
 1.9.0
 -----
 The 1.9.0 release of GeoScript is built on Grooovy 2.4.10, GeoTools 17.0, and the Java Topology Suite 1.13 and
