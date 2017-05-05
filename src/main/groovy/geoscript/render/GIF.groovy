@@ -32,8 +32,9 @@ class GIF extends Image {
      * @param loop Whether to loop continuously or not
      */
     public void renderAnimated(List<BufferedImage> images, File file, int delay = 300, boolean loop = false) {
-        def out = new FileOutputStream(file)
-        renderAnimatedToOutputStream(images, out, delay, loop)
+        file.withOutputStream { OutputStream out ->
+            renderAnimatedToOutputStream(images, out, delay, loop)
+        }
     }
 
     /**
@@ -45,7 +46,11 @@ class GIF extends Image {
      */
     public byte[] renderAnimated(List<BufferedImage> images, int delay = 300, boolean loop = false) {
         ByteArrayOutputStream out = new ByteArrayOutputStream()
-        renderAnimatedToOutputStream(images, out, delay, loop)
+        try {
+            renderAnimatedToOutputStream(images, out, delay, loop)
+        } finally {
+            out.close()
+        }
         out.toByteArray()
     }
 
@@ -58,32 +63,35 @@ class GIF extends Image {
      */
     private void renderAnimatedToOutputStream(List<BufferedImage> images, OutputStream out, int delay = 300, boolean loop = false) {
         def ios = ImageIO.createImageOutputStream(out)
-        def w = new GIFImageWriter(new GIFImageWriterSpi())
-        w.output = ios
-        w.prepareWriteSequence(null)
+        try {
+            def w = new GIFImageWriter(new GIFImageWriterSpi())
+            w.output = ios
+            w.prepareWriteSequence(null)
 
-        def wp = w.defaultWriteParam
-        wp.compressionMode = ImageWriteParam.MODE_EXPLICIT
-        wp.compressionType = "LZW"
-        wp.compressionQuality = 0.75
+            def wp = w.defaultWriteParam
+            wp.compressionMode = ImageWriteParam.MODE_EXPLICIT
+            wp.compressionType = "LZW"
+            wp.compressionQuality = 0.75
 
-        images.each{image ->
-            def md = w.getDefaultImageMetadata(new ImageTypeSpecifier(image),wp)
-            def t = new IIOMetadataTree(md)
-            t.set(["GraphicControlExtension"],[delayTime: delay/10])
-            if (loop) {
-                def n = t.set(["ApplicationExtensions","ApplicationExtension"],[
-                        applicationID: "NETSCAPE", authenticationCode: "2.0"
-                ])
-                n.userObject = [0x1,0,0] as byte[]
+            images.each { image ->
+                def md = w.getDefaultImageMetadata(new ImageTypeSpecifier(image), wp)
+                def t = new IIOMetadataTree(md)
+                t.set(["GraphicControlExtension"], [delayTime: delay / 10])
+                if (loop) {
+                    def n = t.set(["ApplicationExtensions", "ApplicationExtension"], [
+                            applicationID: "NETSCAPE", authenticationCode: "2.0"
+                    ])
+                    n.userObject = [0x1, 0, 0] as byte[]
+                }
+                t.commit()
+                w.writeToSequence(new IIOImage(image, null, md), wp)
             }
-            t.commit()
-            w.writeToSequence(new IIOImage(image, null, md), wp)
-        }
 
-        w.endWriteSequence()
-        ios.flush()
-        ios.close()
+            w.endWriteSequence()
+            ios.flush()
+        } finally {
+            ios.close()
+        }
     }
 
     /**
