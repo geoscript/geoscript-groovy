@@ -8,6 +8,13 @@ GeoScript Groovy Releases
 The 1.10.0 release of GeoScript is under development and is built on Grooovy 2.4.11, GeoTools 18.0, and the Java Topology Suite 1.13 and
 requires Java 8.
 
+Create a map cube using the gnomonic cube sphere projection::
+
+    MapCube mapCube = new MapCube(title: "The Earth Map Cube", source: "Natural Earth", drawOutline: true)
+    mapCube.render([ocean, countries], new File("map_cube.png"))
+
+.. image:: images/map_cube.png
+
 Several methods were added to the Color class::
 
     Color c = new Color("#6495ED")
