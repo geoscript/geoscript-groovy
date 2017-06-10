@@ -54,6 +54,8 @@ Store tiles in any JDBC database (like H2, Postgres, or SQLite) in the familiar 
 
     dbtiles.close()
 
+.. image:: images/h2_1.png
+
 Create a map cube using the gnomonic cube sphere projection::
 
     MapCube mapCube = new MapCube(title: "The Earth Map Cube", source: "Natural Earth", drawOutline: true)
