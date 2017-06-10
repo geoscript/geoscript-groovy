@@ -1,5 +1,3 @@
-import geoscript.feature.Feature
-import geoscript.geom.Bounds
 import geoscript.layer.DBTiles
 import geoscript.layer.ImageTileRenderer
 import geoscript.layer.Layer

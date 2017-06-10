@@ -8,6 +8,52 @@ GeoScript Groovy Releases
 The 1.10.0 release of GeoScript is under development and is built on Grooovy 2.4.11, GeoTools 18.0, and the Java Topology Suite 1.13 and
 requires Java 8.
 
+Store tiles in any JDBC database (like H2, Postgres, or SQLite) in the familiar MBTiles format::
+
+    import geoscript.layer.*
+    import geoscript.style.io.SimpleStyleReader
+    import javax.imageio.ImageIO
+    import static geoscript.GeoScript.download
+    import static geoscript.GeoScript.unzip
+
+    // Create a directory fo
+    File dir = new File("dbtiles")
+    dir.mkdir()
+
+    // Download data from natural earth
+    File shpDir = new File("naturalearth")
+    [
+            [name: "countries", url: "http://www.naturalearthdata.com/http//www.naturalearthdata.com/download/110m/cultural/ne_110m_admin_0_countries.zip"],
+            [name: "ocean",     url: "http://www.naturalearthdata.com/http//www.naturalearthdata.com/download/110m/physical/ne_110m_ocean.zip"]
+    ].each { Map item ->
+        unzip(download(new URL(item.url), new File(shpDir, "${item.name}.zip"), overwrite: false))
+    }
+
+    // Use simple style reader to create styles
+    SimpleStyleReader styleReader = new SimpleStyleReader()
+
+    // Get Layers and their styles
+    Layer ocean = new Shapefile("naturalearth/ne_110m_ocean.shp")
+    ocean.style = styleReader.read("fill=#88caf8")
+
+    Layer countries = new Shapefile("naturalearth/ne_110m_admin_0_countries.shp")
+    countries.style = styleReader.read("stroke=black stroke-width=0.5 fill=white")
+
+    // DBTiles with h2
+    File file = new File("world.db")
+    DBTiles dbtiles = new DBTiles("jdbc:h2:${file}","org.h2.Driver", "World", "A map of the world")
+
+    TileRenderer renderer = new ImageTileRenderer(dbtiles, [ocean, countries])
+    TileGenerator generator = new TileGenerator(verbose: true)
+    generator.generate(dbtiles, renderer, 0, 4)
+
+    (0..3).each{int zoom ->
+        Raster raster = dbtiles.getRaster(dbtiles.tiles(zoom))
+        ImageIO.write(raster.image, "png", new File(dir, "h2_${zoom}.png"))
+    }
+
+    dbtiles.close()
+
 Create a map cube using the gnomonic cube sphere projection::
 
     MapCube mapCube = new MapCube(title: "The Earth Map Cube", source: "Natural Earth", drawOutline: true)
