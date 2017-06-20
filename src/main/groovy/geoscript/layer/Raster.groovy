@@ -1145,9 +1145,9 @@ class Raster implements Renderable {
     Raster multiply(Raster other) {
         def processor = new CoverageProcessor()
         def params = processor.getOperation("Multiply").parameters
-        //params.parameter("Sources").value = [this.coverage, other.coverage]
-        params.parameter("source0").value = this.coverage
-        params.parameter("source1").value = other.coverage
+        params.parameter("Sources").value = [this.coverage, other.coverage]
+        // params.parameter("source0").value = this.coverage
+        // params.parameter("source1").value = other.coverage
         def newCoverage = processor.doOperation(params)
         new Raster(newCoverage)
     }
