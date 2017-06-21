@@ -7,4 +7,5 @@ geoscript.geom.io.GpxWriter
 geoscript.geom.io.KmlWriter
 geoscript.geom.io.WkbWriter
 geoscript.geom.io.WktWriter
+geoscript.geom.io.GeoPackageWriter
 geoscript.geom.io.GooglePolylineEncoder
