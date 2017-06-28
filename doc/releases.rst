@@ -8,6 +8,20 @@ GeoScript Groovy Releases
 The 1.10.0 release of GeoScript is under development and is built on Grooovy 2.4.11, GeoTools 18.0, and the Java Topology Suite 1.13 and
 requires Java 8.
 
+Read and Write Geometry in the GeoPackage format::
+
+    GeoPackageReader reader = new GeoPackageReader()
+    String hexString = "4750000200000000405bc00000000000405bc00000000000c047800000000000c0478000000000000000000001405bc00000000000c047800000000000"
+    Point point = reader.read(hexString)
+    println point 
+    POINT (111 047)
+    
+    GeoPackageWriter writer = new GeoPackageWriter()
+    Point p = new Point(111,-47)
+    String hexString = writer.write(p)
+    println hexString
+    4750000200000000405bc00000000000405bc00000000000c047800000000000c0478000000000000000000001405bc00000000000c047800000000000
+    
 Store tiles in any JDBC database (like H2, Postgres, or SQLite) in the familiar MBTiles format::
 
     import geoscript.layer.*
