@@ -4,6 +4,7 @@ geoscript.workspace.GeoPackage$Factory
 geoscript.workspace.H2$Factory
 geoscript.workspace.Memory$Factory
 geoscript.workspace.MySQL$Factory
+geoscript.workspace.Sqlite$Factory
 geoscript.workspace.OGR$Factory
 geoscript.workspace.PostGIS$Factory
 geoscript.workspace.Property$Factory

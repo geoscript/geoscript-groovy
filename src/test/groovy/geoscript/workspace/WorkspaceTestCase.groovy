@@ -133,7 +133,7 @@ class WorkspaceTestCase {
         assertEquals(params['database'], "layers.sqlite")
 
         params = Workspace.getParametersFromString("layers.sqlite")
-        assertEquals(params['dbtype'], "spatialite")
+        assertEquals(params['dbtype'], "sqlite")
         assertTrue(params['database'].toString().endsWith("layers.sqlite"))
 
         // WFS

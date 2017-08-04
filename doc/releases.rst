@@ -8,6 +8,12 @@ GeoScript Groovy Releases
 The 1.10.0 release of GeoScript is under development and is built on Grooovy 2.4.12, GeoTools 18.0, and the Java Topology Suite 1.13 and
 requires Java 8.
 
+A Sqlite Workspace based on the OGR non-spatialite Sqlite format::
+
+    Sqlite sqlite = new Sqlite(new File("naturalearth"))
+    Layer countries = sqlite.get("countries")
+    Layer ocean = sqlite.get("ocean")
+
 Read and Write Geometry in the GeoPackage format::
 
     GeoPackageReader reader = new GeoPackageReader()
