@@ -474,7 +474,7 @@ class Bounds {
      * Get a generated grid with the given number of the rows and column
      * @param columns The number of columns
      * @param rows The number of rows
-     * @param type The cell type (polygon, point, circle/ellipse, hexagon, hexagon-inv)
+     * @param type The cell type (polygon, point, circle/ellipse, hexagon, hexagon-inv, triangle)
      * @return The generated grid as a Geometry
      */
     Geometry getGrid(int columns, int rows, String type = "polygon") {
@@ -489,7 +489,7 @@ class Bounds {
      * Generate a grid with the given number or rows and columns
      * @param columns The number of columns
      * @param rows The number of rows
-     * @param type The cell type (polygon, point, circle/ellipse, hexagon, hexagon-inv)
+     * @param type The cell type (polygon, point, circle/ellipse, hexagon, hexagon-inv, triangle)
      * @param c A Closure that is called with each Geometry cell with the geometry, the column, and the row
      */
     void generateGrid(int columns, int rows, String type, Closure c) {
@@ -521,6 +521,8 @@ class Bounds {
                             b.maxY + b.height / 6,
                     )
                     g = newBounds.createHexagon(true)
+                } else if (type.equalsIgnoreCase("triangle")) {
+                    g = b.createTriangles()
                 }
                 c.call(g, column, row)
                 y += cellHeight
@@ -534,7 +536,7 @@ class Bounds {
      * Get a generated grid with the given cell width and height
      * @param cellWidth The cell width
      * @param cellHeight The cell height
-     * @param type The cell type (polygon, point, circle/ellipse, hexagon, hexagon-inv)
+     * @param type The cell type (polygon, point, circle/ellipse, hexagon, hexagon-inv, triangle)
      * @return The generated grid as a Geometry
      */
     Geometry getGrid(double cellWidth, double cellHeight, String type = "polygon") {
@@ -549,7 +551,7 @@ class Bounds {
      * Generate a grid with the given cell width and height
      * @param cellWidth The cell width
      * @param cellHeight The cell height
-     * @param type The cell type (polygon, point, circle/ellipse, hexagon, hexagon-inv)
+     * @param type The cell type (polygon, point, circle/ellipse, hexagon, hexagon-inv, triangle)
      * @param c A Closure that is called with each Geometry cell with the geometry, the column, and the row
      */
     void generateGrid(double cellWidth, double cellHeight, String type, Closure c) {
@@ -594,6 +596,25 @@ class Bounds {
                     [this.minX + w * 1/4, this.minY]
             ]])
         }
+    }
+
+    /**
+     * Create triangles to fill the Bounds
+     * @return A MultiPolygon of 8 triangles
+     */
+    MultiPolygon createTriangles() {
+        double midX = minX + width / 2
+        double midY = minY + height / 2
+        new MultiPolygon([
+            new Polygon(new LinearRing(new Point(minX, midY), new Point(minX, maxY), new Point(midX, maxY), new Point(minX, midY))),
+            new Polygon(new LinearRing(new Point(minX, midY), new Point(midX, maxY), new Point(midX, midY), new Point(minX, midY))),
+            new Polygon(new LinearRing(new Point(midX, midY), new Point(midX, maxY), new Point(maxX, midY), new Point(midX, midY))),
+            new Polygon(new LinearRing(new Point(midX, maxY), new Point(maxX, maxY), new Point(maxX, midY), new Point(midX, maxY))),
+            new Polygon(new LinearRing(new Point(minX, minY), new Point(minX, midY), new Point(midX, minY), new Point(minX, minY))),
+            new Polygon(new LinearRing(new Point(minX, midY), new Point(midX, minY), new Point(midX, midY), new Point(minX, midY))),
+            new Polygon(new LinearRing(new Point(midX, minY), new Point(midX, midY), new Point(maxX, midY), new Point(midX, minY))),
+            new Polygon(new LinearRing(new Point(midX, minY), new Point(maxX, minY), new Point(maxX, midY), new Point(midX, minY))),
+        ])
     }
 
     /**
@@ -714,4 +735,5 @@ class Bounds {
     String toString() {
         "(${minX},${minY},${maxX},${maxY}${if (proj != null){',' + proj.id } else {''}})"
     }
+
 }

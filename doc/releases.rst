@@ -83,6 +83,13 @@ Create a map cube using the gnomonic cube sphere projection::
 
 .. image:: images/map_cube.png
 
+Generate a grid with triangles::
+
+    Bounds b = new Bounds(0,0,10,10)
+    Draw.draw(b.getGrid(5,5,"triangle"), out: "triangles.png")
+
+.. image:: images/triangles.png
+
 Several methods were added to the Color class::
 
     Color c = new Color("#6495ED")

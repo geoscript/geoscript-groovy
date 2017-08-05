@@ -299,6 +299,20 @@ class BoundsTestCase {
         assertEquals new Bounds(9.9,19.9,10.1,20.1), b3.ensureWidthAndHeight()
     }
 
+    @Test void createTriangles() {
+        def b = new Bounds(0,0,10,10)
+        def g = b.createTriangles()
+        assertEquals "MULTIPOLYGON (" +
+                "((0 5, 0 10, 5 10, 0 5)), " +
+                "((0 5, 5 10, 5 5, 0 5)), " +
+                "((5 5, 5 10, 10 5, 5 5)), " +
+                "((5 10, 10 10, 10 5, 5 10)), " +
+                "((0 0, 0 5, 5 0, 0 0)), " +
+                "((0 5, 5 0, 5 5, 0 5)), " +
+                "((5 0, 5 5, 10 5, 5 0)), " +
+                "((5 0, 10 0, 10 5, 5 0)))", g.wkt
+    }
+
     @Test void createRectangle() {
         def b = new Bounds(0,0,10,10)
         def g = b.createRectangle()
@@ -418,6 +432,16 @@ class BoundsTestCase {
             geoms.add(cell)
         })
         assertEquals 25, geoms.size()
+    }
+
+    @Test void getGridRowsAndColumnsWithTriangles() {
+        def b = new Bounds(0,0,100,100)
+        def g = b.getGrid(20,20,"triangle")
+        g.geometries.each {cell ->
+            assertEquals "MultiPolygon", cell.geometryType
+            assertEquals 8, cell.numGeometries
+        }
+        assertEquals 400, g.numGeometries
     }
 
     @Test void getGridRowsAndColumns() {
