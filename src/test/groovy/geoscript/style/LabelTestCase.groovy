@@ -111,6 +111,14 @@ class LabelTestCase {
         assertTrue label.underline(true) instanceof Label
         assertTrue label.options.underlineText as boolean
 
+        // Word Spacing
+        assertTrue label.wordSpacing(5) instanceof Label
+        assertEquals 5, label.options.wordSpacing as int
+
+        // Character Spacing
+        assertTrue label.characterSpacing(5) instanceof Label
+        assertEquals 5, label.options.charSpacing as int
+
         // Named parameters
         label = new Label(property: "name", font: new Font(size:16))
         assertEquals "name", label.property.value

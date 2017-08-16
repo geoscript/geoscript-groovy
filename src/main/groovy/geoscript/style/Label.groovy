@@ -344,6 +344,26 @@ class Label extends Symbolizer {
     }
 
     /**
+     * Set the spacing between words
+     * @param spacing The spacing
+     * @return This Label
+     */
+    Label wordSpacing(int spacing) {
+        options.wordSpacing = String.valueOf(spacing)
+        this
+    }
+
+    /**
+     * Set the spacing between characters
+     * @param spacing The spacing
+     * @return This Label
+     */
+    Label characterSpacing(int spacing) {
+        options.charSpacing = String.valueOf(spacing)
+        this
+    }
+
+    /**
      * Prepare the GeoTools Rule by applying this Symbolizer
      * @param rule The GeoTools Rule
      */
