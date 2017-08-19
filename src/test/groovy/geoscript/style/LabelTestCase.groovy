@@ -111,6 +111,10 @@ class LabelTestCase {
         assertTrue label.underline(true) instanceof Label
         assertTrue label.options.underlineText as boolean
 
+        // strikethrough text
+        assertTrue label.strikethrough(true) instanceof Label
+        assertTrue label.options.strikethroughText as boolean
+
         // Word Spacing
         assertTrue label.wordSpacing(5) instanceof Label
         assertEquals 5, label.options.wordSpacing as int

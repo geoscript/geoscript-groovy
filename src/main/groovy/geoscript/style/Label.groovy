@@ -344,6 +344,16 @@ class Label extends Symbolizer {
     }
 
     /**
+     * Set whether the Label should strike through the text or not
+     * @param shouldStrikeThrough Whether the label text should be underlined
+     * @return This label
+     */
+    Label strikethrough(boolean shouldStrikeThrough) {
+        options.strikethroughText = String.valueOf(shouldStrikeThrough)
+        this
+    }
+
+    /**
      * Set the spacing between words
      * @param spacing The spacing
      * @return This Label
