@@ -108,7 +108,7 @@ class ProcessTestCase {
         def p = new Process(processName)
         assertEquals processName, p.name
         assertEquals "Collect Geometries", p.title
-        assertEquals "Collects the deafult geometries of the input features and combines them into a single geometry collection", p.description
+        assertEquals "Collects the default geometries of the input features and combines them into a single geometry collection", p.description
         assertEquals "1.0.0", p.version
         assertEquals processName, p.toString()
 
