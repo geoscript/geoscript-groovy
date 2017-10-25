@@ -8,6 +8,8 @@ GeoScript Groovy Releases
 The 1.11 release of GeoScript is currently under development and is built on Grooovy 2.4.12, GeoTools 19.0, and the Java Topology Suite 1.13 and
 requires Java 8.
 
+Include the gt-epsg-extension GeoTools Library to support more projections.
+
 1.10.0
 ------
 The 1.10.0 release of GeoScript is built on Grooovy 2.4.12, GeoTools 18.0, and the Java Topology Suite 1.13 and

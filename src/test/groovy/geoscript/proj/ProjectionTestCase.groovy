@@ -162,5 +162,9 @@ class ProjectionTestCase {
         assertEquals 2, projections.size()
         CRS.metaClass = null
     }
+
+    @Test void hasEpsgExtension() {
+        assertNotNull new Projection("EPSG:104905")
+    }
 }
 
