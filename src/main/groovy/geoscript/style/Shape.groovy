@@ -265,7 +265,11 @@ class Shape extends Symbolizer {
      * @return The string representation
      */
     String toString() {
-        buildString("Shape", ['color': color, 'size': size, 'type': type])
+        Map options = ['color': color, 'size': size, 'type': type]
+        if (stroke) {
+            options.put('stroke', stroke)
+        }
+        buildString("Shape", options)
     }
 }
 

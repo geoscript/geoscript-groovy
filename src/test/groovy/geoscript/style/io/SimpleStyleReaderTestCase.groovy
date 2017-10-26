@@ -26,10 +26,10 @@ class SimpleStyleReaderTestCase {
         assertEquals style.toString(), "Composite (Fill(color = #555555, opacity = 0.6), Stroke(color = #555555, width = 0.5))"
         // Shape with Fill and Stroke
         style = styleReader.read("fill=navy stroke=yellow shape-type=circle")
-        assertEquals style.toString(), "Composite (Fill(color = #000080, opacity = 0.6), Stroke(color = #ffff00, width = 0.5), Shape(color = #7e7e7e, size = 6, type = circle))"
+        assertEquals style.toString(), "Composite (Shape(color = #000080, size = 6, type = circle, stroke = Stroke(color = #ffff00, width = 0.5)))"
         // Shape with Fill and Stroke with Label
         style = styleReader.read("fill=#554466 stroke=255,255,0 shape-type=triangle label=NAME label-size=12")
-        assertEquals style.toString(), "Composite (Fill(color = #554466, opacity = 0.6), Stroke(color = #ffff00, width = 0.5), Shape(color = #7e7e7e, size = 6, type = triangle), Label(property = NAME))"
+        assertEquals style.toString(), "Composite (Shape(color = #554466, size = 6, type = triangle, stroke = Stroke(color = #ffff00, width = 0.5)), Label(property = NAME))"
         // Just fill
         style = styleReader.read("fill=#554466")
         assertEquals style.toString(), "Composite (Fill(color = #554466, opacity = 0.6))"

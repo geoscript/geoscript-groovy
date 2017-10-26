@@ -61,12 +61,26 @@ class SimpleStyleReader implements Reader {
      */
     Style read(Map options) {
         List parts = []
+        Shape shape = null
+        if (['shape','shape-size','shape-type'].any{ options.containsKey(it) }) {
+            shape = new Shape(
+                    color: options.get('shape', '#7e7e7e'),
+                    size: options.get('shape-size', 6),
+                    type: options.get('shape-type', 'circle')
+            )
+            parts.add(shape)
+        }
         if (['fill','fill-opacity'].any{ options.containsKey(it) }) {
             Fill fill = new Fill(
                     color: options.get('fill', "#555555"),
                     opacity: options.get('fill-opacity', 0.6)
             )
-            parts.add(fill)
+            if (shape) {
+                shape.color = fill.color
+                shape.opacity = fill.opacity
+            } else {
+                parts.add(fill)
+            }
         }
         if (['stroke','stroke-width','stroke-opacity'].any{ options.containsKey(it) }) {
             Stroke stroke = new Stroke(
@@ -74,16 +88,13 @@ class SimpleStyleReader implements Reader {
                     width: options.get('stroke-width', 0.5),
                     opacity: options.get('stroke-opacity', 1.0)
             )
-            parts.add(stroke)
+            if (shape) {
+                shape.setStroke(stroke)
+            } else {
+                parts.add(stroke)
+            }
         }
-        if (['shape','shape-size','shape-type'].any{ options.containsKey(it) }) {
-            Shape shape = new Shape(
-                    color: options.get('shape', '#7e7e7e'),
-                    size: options.get('shape-size', 6),
-                    type: options.get('shape-type', 'circle')
-            )
-            parts.add(shape)
-        }
+
         if (['icon'].any{ options.containsKey(it) }) {
             Icon icon = new Icon(
                     url: options.get('icon'),

@@ -49,7 +49,7 @@ class ShapeTestCase {
         assertEquals 6, shape.size.value, 0.1
         assertEquals "circle", shape.type.value
         assertEquals "#ffff00", shape.stroke.color.value
-        assertEquals "Shape(color = #999999, size = 6, type = circle)", shape.toString()
+        assertEquals "Shape(color = #999999, size = 6, type = circle, stroke = Stroke(color = #ffff00, width = 1))", shape.toString()
 
         mark = shape.createMark()
         assertEquals "#999999", mark.fill.color.value
