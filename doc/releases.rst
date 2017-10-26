@@ -10,6 +10,10 @@ requires Java 8.
 
 Include the gt-epsg-extension GeoTools Library to support more projections.
 
+Add a Filter.equals method to create a Filter where a Property equals some Literal value::
+
+    Filter filter = Filter.equals("NAME", "Washington")
+
 1.10.0
 ------
 The 1.10.0 release of GeoScript is built on Grooovy 2.4.12, GeoTools 18.0, and the Java Topology Suite 1.13 and

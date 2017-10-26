@@ -215,5 +215,10 @@ class FilterTestCase {
         f = Filter.FAIL.or(p)
         assertEquals p, f.simplify()
     }
+
+    @Test void createEqualsFilter() {
+        Filter filter = Filter.equals("NAME", "Washington")
+        assertEquals "[ NAME = Washington ]", filter.toString()
+    }
 }
 

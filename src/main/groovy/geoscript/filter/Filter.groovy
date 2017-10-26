@@ -222,6 +222,17 @@ class Filter {
     static Filter FAIL = new Filter(GTFilter.EXCLUDE)
 
     /**
+     * Create a Filter where a Property equals a Literal
+     * @param field The name of the Property
+     * @param value The literal value
+     * @return A Filter
+     */
+    static Filter equals(String field, Object value) {
+        FilterFactory2 factory = CommonFactoryFinder.getFilterFactory2(GeoTools.defaultHints)
+        new Filter(factory.equals(factory.property(field), factory.literal(value)))
+    }
+
+    /**
      * Create a Spatial Bounding Box Filter
      * @param fieldName The geometry field name (defaults to the_geom)
      * @param bounds The Bounds
