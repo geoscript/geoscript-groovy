@@ -344,11 +344,15 @@ class GeoScript {
         ZipFile zip = new ZipFile(zipFile)
         zip.entries().each { ZipEntry entry ->
             File f = new File(dir, entry.name)
-            if (!f.parentFile.exists()) {
-                f.parentFile.mkdirs()
-            }
-            f.withOutputStream { OutputStream out ->
-                out << zip.getInputStream(entry)
+            if (entry.directory) {
+                f.mkdirs()
+            } else {
+                if (!f.parentFile.exists()) {
+                    f.parentFile.mkdirs()
+                }
+                f.withOutputStream { OutputStream out ->
+                    out << zip.getInputStream(entry)
+                }
             }
         }
         dir
