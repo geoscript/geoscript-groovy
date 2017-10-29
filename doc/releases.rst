@@ -14,6 +14,35 @@ Add a Filter.equals method to create a Filter where a Property equals some Liter
 
     Filter filter = Filter.equals("NAME", "Washington")
 
+Add a UniqueValuesReader for reading text files that contain a color per value.  Very useful when styling geologic maps::
+
+    import geoscript.layer.Layer
+    import geoscript.layer.Shapefile
+    import geoscript.render.Map
+    import geoscript.style.io.UniqueValuesReader
+
+    import static geoscript.GeoScript.download
+    import static geoscript.GeoScript.unzip
+
+    File dir = new File("mars")
+    dir.mkdir()
+
+    unzip(
+        download(new URL("https://astropedia.astrogeology.usgs.gov/download/Mars/Geology/Mars15MGeologicGISRenovation.zip"),
+                 new File(dir, "mars.zip"), overwrite: false
+        )
+    )
+
+    Layer layer = new Shapefile("mars/I1802ABC_Mars_global_geology/Shapefiles/I1802ABC_Mars2000_Sphere/geo_units_oc_dd.shp")
+
+    UniqueValuesReader styleReader = new UniqueValuesReader("UnitSymbol", "polygon")
+    layer.style = styleReader.read(new File("mars/I1802ABC_Mars_global_geology/I1802ABC_geo_units_RGBlut.txt"))
+
+    Map map = new Map(layers: [layer])
+    map.render(new File("mars_geology.png"))
+
+.. image:: images/mars_geology.png
+
 1.10.0
 ------
 The 1.10.0 release of GeoScript is built on Grooovy 2.4.12, GeoTools 18.0, and the Java Topology Suite 1.13 and
