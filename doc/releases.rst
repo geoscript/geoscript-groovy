@@ -41,7 +41,7 @@ The SimpleStyleReader correctly applies stroke and fill attributes when a shape 
     GMap map = new GMap(layers: [layer])
     map.renderToImage()
 
-..image:: images/simple_style_read_shape.png
+.. image:: images/simple_style_read_shape.png
 
 Add a UniqueValuesReader for reading text files that contain a color per value.  Very useful when styling geologic maps::
 
