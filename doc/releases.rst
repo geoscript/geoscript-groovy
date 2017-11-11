@@ -8,11 +8,40 @@ GeoScript Groovy Releases
 The 1.11 release of GeoScript is currently under development and is built on Grooovy 2.4.12, GeoTools 19.0, and the Java Topology Suite 1.13 and
 requires Java 8.
 
-Include the gt-epsg-extension GeoTools Library to support more projections.
+Include the gt-epsg-extension GeoTools Library to support more projections::
+
+    Projection proj = new Projection("EPSG:104905")
 
 Add a Filter.equals method to create a Filter where a Property equals some Literal value::
 
     Filter filter = Filter.equals("NAME", "Washington")
+
+The GeoScript.unzip method now correctly unzips nested directories.
+
+The SimpleStyleReader correctly applies stroke and fill attributes when a shape is specified::
+
+
+    import geoscript.geom.*
+    import geoscript.layer.Layer
+    import geoscript.workspace.*
+    import geoscript.feature.Schema
+    import geoscript.render.Map as GMap
+    import geoscript.style.io.SimpleStyleReader
+
+    Bounds bounds = new Bounds(-180,-90,180,90,"EPSG:4326")
+    MultiPoint points = Geometry.createRandomPoints(bounds.geometry, 100)
+
+    Workspace workspace = new Memory()
+    Layer layer = workspace.create(new Schema("points", [[name: "geom", type: "Point"]]))
+    points.geometries.each {
+        layer.add([geom: it])
+    }
+    layer.style = new SimpleStyleReader().read("stroke=black fill=blue shape-type=star shape-size=14")
+
+    GMap map = new GMap(layers: [layer])
+    map.renderToImage()
+
+..image:: images/simple_style_read_shape.png
 
 Add a UniqueValuesReader for reading text files that contain a color per value.  Very useful when styling geologic maps::
 

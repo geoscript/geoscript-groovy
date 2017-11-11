@@ -2,12 +2,9 @@ package geoscript.style.io
 
 import geoscript.filter.Filter
 import geoscript.filter.Color
-import geoscript.layer.Layer
-import geoscript.render.Draw
 import geoscript.style.Composite
 import geoscript.style.Style
 import geoscript.style.Symbolizer
-import geoscript.workspace.GeoPackage
 
 /**
  * Read a Unique Values from a text file.
