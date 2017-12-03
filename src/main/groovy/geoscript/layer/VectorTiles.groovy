@@ -3,6 +3,7 @@ package geoscript.layer
 import geoscript.feature.Feature
 import geoscript.feature.Field
 import geoscript.geom.Bounds
+import geoscript.layer.io.Pbf
 import geoscript.layer.io.Reader
 import geoscript.layer.io.Writer
 import geoscript.layer.io.Readers
