@@ -9,7 +9,7 @@ import geoscript.proj.Projection
 
 /*
     To View in OpenLayers, run python -m SimpleHTTPServer from the examples/ directory and then
-    browse  http://localhost:8000/vectortiles.html
+    browse  http://localhost:8000/vectortiles_json.html
 */
 
 File dir = new File("states_vector_tiles")
@@ -30,6 +30,6 @@ VectorTiles vectorTiles = new VectorTiles(
 Shapefile shp = new Shapefile("states.shp")
 VectorTileRenderer renderer = new VectorTileRenderer(new GeoJSONWriter(), shp, [shp.schema.get("STATE_NAME")])
 TileGenerator generator = new TileGenerator(verbose: true)
-generator.generate(vectorTiles, renderer, 0, 4)
+generator.generate(vectorTiles, renderer, 0, 6)
 
 
