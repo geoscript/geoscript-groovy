@@ -10,6 +10,19 @@ import geoscript.geom.*
  */
 class GeoJSONWriterTestCase {
 
+    @Test void writePointPrettyPrint() {
+        GeoJSONWriter writer = new GeoJSONWriter()
+        Point p = new Point(111.1,-47.2)
+        assertEquals """{
+    "type": "Point",
+    "coordinates": [
+        111.1,
+        -47.2
+    ]
+}""", writer.write(p, prettyPrint: true)
+        assertEquals """{"type":"Point","coordinates":[111.1,-47.2]}""", writer.write(p, prettyPrint: false)
+    }
+
     @Test void writePoint() {
         GeoJSONWriter writer = new GeoJSONWriter()
         Point p = new Point(111.1,-47.2)

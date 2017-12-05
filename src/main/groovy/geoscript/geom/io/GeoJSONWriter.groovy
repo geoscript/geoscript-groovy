@@ -1,6 +1,7 @@
 package geoscript.geom.io
 
 import geoscript.geom.Geometry
+import groovy.json.JsonOutput
 import org.geotools.geojson.geom.GeometryJSON
 
 /**
@@ -20,6 +21,7 @@ class GeoJSONWriter implements Writer {
      * @param options Optional named parameters:
      * <ol>
      *     <li> decimals = The number of decimals (defaults to 4) </li>
+     *     <li> prettyPrint = Whether to pretty print the json or not </li>
      * </ol>
      * @param geom The Geometry
      * @return A GeoJSON String
@@ -29,7 +31,11 @@ class GeoJSONWriter implements Writer {
         GeometryJSON geometryJSON = new GeometryJSON(numberOfDecimals)
         StringWriter writer = new StringWriter()
         geometryJSON.write(geom.g, writer)
-        writer.toString()
+        String json = writer.toString()
+        if (options.prettyPrint) {
+            json = JsonOutput.prettyPrint(json)
+        }
+        json
     }
 }
 

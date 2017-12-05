@@ -12,7 +12,6 @@ import geoscript.feature.Feature
  */
 class GeoJSONWriterTestCase {
 
-
     @Test void write() {
         Schema schema = new Schema("houses", [new Field("geom","Point"), new Field("name","string"), new Field("price","float")])
         Feature feature = new Feature([new Point(111,-47), "House", 12.5], "house1", schema)
@@ -32,4 +31,26 @@ class GeoJSONWriterTestCase {
         assertEquals expected, actual
     }
 
+    @Test void prettyPrint() {
+        Schema schema = new Schema("houses", [new Field("geom","Point"), new Field("name","string"), new Field("price","float")])
+        Feature feature = new Feature([new Point(111,-47), "House", 12.5], "house1", schema)
+        GeoJSONWriter writer = new GeoJSONWriter()
+        String expected = """{
+    "type": "Feature",
+    "geometry": {
+        "type": "Point",
+        "coordinates": [
+            111,
+            -47
+        ]
+    },
+    "properties": {
+        "name": "House",
+        "price": 12.5
+    },
+    "id": "house1"
+}"""
+        String actual = writer.write(feature, prettyPrint: true)
+        assertEquals expected, actual
+    }
 }

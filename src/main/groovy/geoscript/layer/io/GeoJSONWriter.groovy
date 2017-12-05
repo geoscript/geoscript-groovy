@@ -1,6 +1,7 @@
 package geoscript.layer.io
 
 import geoscript.layer.Layer
+import groovy.json.JsonOutput
 import org.geotools.geojson.feature.FeatureJSON
 import org.geotools.geojson.geom.GeometryJSON
 
@@ -25,6 +26,7 @@ class GeoJSONWriter implements Writer {
      *     <li> encodeFeatureCollectionCRS = Whether to encode FeatureCollection CRS (default is false) </li>
      *     <li> encodeFeatureCRS = Whether to encode Feature CRS (default is false) </li>
      *     <li> encodeNullValues = Whether to encode null values (default is false) </li>
+     *     <li> prettyPrint = Whether to pretty print the json or not </li>
      * </ol>
      * @param layer The Layer
      * @param out The OutputStream
@@ -43,7 +45,16 @@ class GeoJSONWriter implements Writer {
         featureJSON.encodeFeatureCollectionCRS = encodeFeatureCollectionCRS
         featureJSON.encodeFeatureCRS = encodeFeatureCRS
         featureJSON.encodeNullValues = encodeNullValues
-        featureJSON.writeFeatureCollection(layer.fs.features, out)
+        if (options.prettyPrint) {
+            StringWriter writer = new StringWriter()
+            featureJSON.writeFeatureCollection(layer.fs.features, writer)
+            String json = JsonOutput.prettyPrint(writer.toString())
+            out.withWriter { java.io.Writer w ->
+                w.write(json)
+            }
+        } else {
+            featureJSON.writeFeatureCollection(layer.fs.features, out)
+        }
     }
 
     /**
@@ -56,6 +67,7 @@ class GeoJSONWriter implements Writer {
      *     <li> encodeFeatureCollectionCRS = Whether to encode FeatureCollection CRS (default is false) </li>
      *     <li> encodeFeatureCRS = Whether to encode Feature CRS (default is false) </li>
      *     <li> encodeNullValues = Whether to encode null values (default is false) </li>
+     *     <li> prettyPrint = Whether to pretty print the json or not </li>
      * </ol>
      * @param layer The Layer
      * @param file The File
@@ -76,6 +88,7 @@ class GeoJSONWriter implements Writer {
      *     <li> encodeFeatureCollectionCRS = Whether to encode FeatureCollection CRS (default is false) </li>
      *     <li> encodeFeatureCRS = Whether to encode Feature CRS (default is false) </li>
      *     <li> encodeNullValues = Whether to encode null values (default is false) </li>
+     *     <li> prettyPrint = Whether to pretty print the json or not </li>
      * </ol>
      * @param layer The Layer
      * @return A String

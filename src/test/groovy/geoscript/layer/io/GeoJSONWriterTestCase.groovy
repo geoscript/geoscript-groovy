@@ -87,6 +87,10 @@ class GeoJSONWriterTestCase {
                 encodeFeatureCollectionBounds: true, encodeFeatureCollectionCRS: true)
         geojson = file.text
         checkJson(geojson)
+
+        // Pretty print
+        geojson = writer.write(layer, prettyPrint: true)
+        assertTrue geojson.split("\n").length > 1
     }
 
     private void checkJson(String geojson) {

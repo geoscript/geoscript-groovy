@@ -1,6 +1,7 @@
 package geoscript.feature.io
 
 import geoscript.feature.Feature
+import groovy.json.JsonOutput
 import org.geotools.geojson.feature.FeatureJSON
 import org.geotools.geojson.geom.GeometryJSON
 
@@ -28,6 +29,7 @@ class GeoJSONWriter implements Writer {
       *     <li> encodeFeatureCollectionCRS = Whether to encode FeatureCollection CRS (default is false) </li>
       *     <li> encodeFeatureCRS = Whether to encode Feature CRS (default is false) </li>
       *     <li> encodeNullValues = Whether to encode null values (default is false) </li>
+      *     <li> prettyPrint = Whether to pretty print the json or not </li>
       * </ol>
       * @param feature The Feature
       * @return A GeoJSON String
@@ -46,6 +48,10 @@ class GeoJSONWriter implements Writer {
         featureJSON.encodeFeatureCollectionCRS = encodeFeatureCollectionCRS
         featureJSON.encodeFeatureCRS = encodeFeatureCRS
         featureJSON.encodeNullValues = encodeNullValues
-        featureJSON.toString(feature.f)
+        String json = featureJSON.toString(feature.f)
+        if (options.prettyPrint) {
+            json = JsonOutput.prettyPrint(json)
+        }
+        json
     }
 }
