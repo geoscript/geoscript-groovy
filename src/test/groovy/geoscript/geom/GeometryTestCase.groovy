@@ -834,7 +834,7 @@ class GeometryTestCase {
             [-118.937, 48.327]
         ]])
         assertEquals("POINT (-120.43206854809475 47.34584003114768)", polygon.centroid.wkt)
-        assertEquals("POINT (-121.02232180851064 47.343500000000006)", polygon.interiorPoint.wkt)
+        assertEquals("POINT (-121.00204734961912 47.479)", polygon.interiorPoint.wkt)
     }
 
     @Test void getLength() {
