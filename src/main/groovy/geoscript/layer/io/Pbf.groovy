@@ -1,7 +1,24 @@
 package geoscript.layer.io
 
+import com.vividsolutions.jts.algorithm.CGAlgorithms
 import com.vividsolutions.jts.geom.Coordinate
+import com.vividsolutions.jts.geom.Envelope
+import com.vividsolutions.jts.geom.Geometry as JtsGeometry
 import com.vividsolutions.jts.geom.GeometryFactory
+import com.vividsolutions.jts.geom.LinearRing
+import com.vividsolutions.jts.geom.Polygon
+import com.wdtinc.mapbox_vector_tile.VectorTile
+import com.wdtinc.mapbox_vector_tile.adapt.jts.IGeometryFilter
+import com.wdtinc.mapbox_vector_tile.adapt.jts.JtsAdapter
+import com.wdtinc.mapbox_vector_tile.adapt.jts.TagKeyValueMapConverter
+import com.wdtinc.mapbox_vector_tile.adapt.jts.TileGeomResult
+import com.wdtinc.mapbox_vector_tile.adapt.jts.UserDataKeyValueMapConverter
+import com.wdtinc.mapbox_vector_tile.adapt.jts.model.JtsLayer
+import com.wdtinc.mapbox_vector_tile.adapt.jts.model.JtsMvt
+import com.wdtinc.mapbox_vector_tile.adapt.jts.MvtReader as JtsMvtReader
+import com.wdtinc.mapbox_vector_tile.build.MvtLayerBuild
+import com.wdtinc.mapbox_vector_tile.build.MvtLayerParams
+import com.wdtinc.mapbox_vector_tile.build.MvtLayerProps
 import geoscript.feature.Feature
 import geoscript.feature.Field
 import geoscript.feature.Schema
@@ -10,14 +27,13 @@ import geoscript.geom.Bounds
 import geoscript.geom.Geometry
 import geoscript.layer.Layer
 import geoscript.proj.Projection
-import no.ecc.vectortile.VectorTileDecoder
-import no.ecc.vectortile.VectorTileEncoder
+import geoscript.workspace.Memory
 
 /**
  * A MapBox Vector Tile Reader and Writer
  */
 class Pbf {
-    
+
     /**
      * Read a List of Layers
      * @param options The optional named parameters
@@ -31,32 +47,63 @@ class Pbf {
     static List<Layer> read(Map options = [:], byte[] bytes, Bounds b) {
         Projection proj = options.get("proj", new Projection("EPSG:3857"))
         int tileSize = options.get("tileSize", 256)
-        VectorTileDecoder decoder = new VectorTileDecoder()
-        VectorTileDecoder.FeatureIterable fit = decoder.decode(bytes)
-        Map<String, Layer> layers = [:]
-        fit.iterator().each { VectorTileDecoder.Feature f ->
-            if (!layers.containsKey(f.layerName)) {
-                List<Field> fields = []
-                fields.add(new Field("geom", f.geometry.geometryType, proj))
-                f.attributes.each {String key, Object value ->
-                    fields.add(new Field(key, value ? value.class.name : "String"))
+        int extent = options.get("extent", 4096)
+        List<Layer> layers = []
+        GeometryFactory geometryFactory = new GeometryFactory()
+        ByteArrayInputStream inputStream = new ByteArrayInputStream(bytes)
+        JtsMvt jtsMvt = JtsMvtReader.loadMvt(inputStream, geometryFactory, new TagKeyValueMapConverter(), new NonValidatingRingClassifier())
+
+        jtsMvt.layers.each { JtsLayer jtsLayer ->
+            String name = jtsLayer.name
+            Layer layer
+            Schema schema
+            jtsLayer.geometries.eachWithIndex { JtsGeometry jtsGeometry, int i ->
+                Geometry geometry = fromPixel(Geometry.wrap(jtsGeometry), b, tileSize, extent)
+                Map properties = jtsGeometry.userData as Map
+                properties.put("geometry", geometry)
+                Feature feature
+                if (!schema) {
+                    feature = new Feature(properties, "1")
+                    schema = new Schema(name, feature.schema.fields).reproject(proj)
+                    layer = new Memory().create(schema)
+                } else {
+                    feature = schema.feature(properties)
                 }
-                // Create a Schema and Layer
-                Schema schema = new Schema(f.layerName, fields)
-                layers.put(f.layerName, new Layer(f.layerName, schema))
+                layer.add(feature)
             }
-            Layer layer = layers[f.layerName]
-            Schema schema = layer.schema
-            Map attributes = [:]
-            attributes.put(schema.geom.name, fromPixel(Geometry.wrap(f.geometry), b, tileSize))
-            attributes.putAll(f.attributes)
-            layer.add(attributes)
+            layers.add(layer)
         }
-        layers.values() as List
+        layers
     }
-    
+
     /**
-     * Write a List of Layers 
+     * Convert a Geometry from pixel coordinates to geographic coordinates
+     * @param g The Geometry in pixel coordinates
+     * @param b The Bounds in geographic coordinates
+     * @param tileSize The tile size
+     * @return A Geometry in geographic coordinates
+     */
+    private static Geometry fromPixel(Geometry g, Bounds b, int size, int extent) {
+        // Clone the Geometry in pixel coordinates
+        GeometryFactory factory = new GeometryFactory()
+        Geometry gpx = Geometry.wrap(factory.createGeometry(g.g))
+        // Convert a Coordinate from pixel to geographic
+        gpx.coordinates.each { Coordinate c ->
+            // Convert from 0 - extent (4096) to 0 - tileSize (256)
+            double tileX = size * (c.x / extent)
+            double tileY = size * (c.y / extent)
+            // Determine percent based on tile size
+            double px = tileX / size
+            double py = tileY / size
+            // Convert from pixel to geographic
+            c.x = b.minX + (b.width * px)
+            c.y = b.maxY - (b.height * py)
+        }
+        gpx
+    }
+
+    /**
+     * Write a List of Layers
      * @param options The optional named parameters
      * <ul>
      *   <li>tileSize = The tile size (defaults to 256)</li>
@@ -67,72 +114,114 @@ class Pbf {
      */
     static byte[] write(Map options = [:], List<Layer> layers, Bounds b) {
         int tileSize = options.get("tileSize", 256)
-        Map<String,List> subFields = options.get("subFields")
-        VectorTileEncoder encoder = new VectorTileEncoder()
+        Map<String, List> subFields = options.get("subFields")
+
+        Envelope clipEnvelope = new Envelope(b.env)
+        final double bufferWidth = b.env.width * 0.1f
+        final double bufferHeight = b.env.height * 0.1f
+        clipEnvelope.expandBy(bufferWidth, bufferHeight)
+
+        VectorTile.Tile.Builder tileBuilder = VectorTile.Tile.newBuilder()
+        MvtLayerParams mvtParams = MvtLayerParams.DEFAULT
+        GeometryFactory geometryFactory = new GeometryFactory()
+        IGeometryFilter geometryFilter = new IGeometryFilter() {
+            @Override
+            boolean accept(com.vividsolutions.jts.geom.Geometry geometry) {
+                true
+            }
+        }
+
         layers.each { Layer layer ->
             Bounds projectedBounds = b.reproject(layer.proj)
+            projectedBounds.expandBy(projectedBounds.width * 0.1f)
             Geometry boundsGeom = projectedBounds.geometry
+            boolean isPoint = layer.schema.geom.typ.equalsIgnoreCase("point")
+            VectorTile.Tile.Layer.Builder layerBuilder = MvtLayerBuild.newLayerBuilder(layer.name, mvtParams)
+            MvtLayerProps layerProps = new MvtLayerProps()
+            List<JtsGeometry> geometries = []
             layer.eachFeature(Filter.intersects(boundsGeom), { Feature f ->
-                Geometry geom = f.geom.intersection(boundsGeom)
-                Geometry pixelGeom = toPixel(geom, projectedBounds, tileSize)
-                Map attributes = [:]
-                layer.schema.fields.each { Field fld ->
-                    if (!fld.isGeometry()) {
-                        if (subFields == null
-                                || subFields.isEmpty()
-                                || !subFields.containsKey(layer.name)
-                                || subFields[layer.name].contains(fld)
-                                || subFields[layer.name].contains(fld.name)) {
-                            attributes.put(fld.name, f.get(fld))
+                Geometry geom = isPoint ? f.geom : f.geom.intersection(boundsGeom)
+                if (!geom.empty) {
+                    JtsGeometry geometry = Projection.transform(geom, layer.proj, b.proj).g
+                    Map attributes = [:]
+                    layer.schema.fields.each { Field fld ->
+                        if (!fld.isGeometry()) {
+                            if (subFields == null
+                                    || subFields.isEmpty()
+                                    || !subFields.containsKey(layer.name)
+                                    || subFields[layer.name].contains(fld)
+                                    || subFields[layer.name].contains(fld.name)) {
+                                attributes.put(fld.name, f.get(fld))
+                            }
                         }
                     }
+                    geometry.userData = attributes
+
+                    TileGeomResult tileGeom = JtsAdapter.createTileGeom([geometry], b.env, clipEnvelope, geometryFactory, mvtParams, geometryFilter);
+                    geometries.addAll(tileGeom.mvtGeoms)
                 }
-                encoder.addFeature(layer.name, attributes, pixelGeom.g)
             })
+
+            List<VectorTile.Tile.Feature> features = JtsAdapter.toFeatures(geometries, layerProps, new UserDataKeyValueMapConverter())
+            layerBuilder.addAllFeatures(features);
+            MvtLayerBuild.writeProps(layerBuilder, layerProps);
+
+            VectorTile.Tile.Layer vtLayer = layerBuilder.build()
+            tileBuilder.addLayers(vtLayer)
         }
-        encoder.encode()
-    }
-   
-    /**
-     * Convert a Geometry from pixel coordinates to geographic coordinates
-     * @param g The Geometry in pixel coordinates
-     * @param b The Bounds in geographic coordinates
-     * @param tileSize The tile size
-     * @return A Geometry in geographic coordinates
-     */
-    private static Geometry fromPixel(Geometry g, Bounds b, int size) {
-        // Clone the Geometry in pixel coordinates
-        GeometryFactory factory = new GeometryFactory()
-        Geometry gpx = Geometry.wrap(factory.createGeometry(g.g))
-        // Convert a Coordinate from pixel to geographic
-        gpx.coordinates.each { Coordinate c ->
-            double px = c.x / size
-            double py = c.y / size
-            c.x = b.minX + (b.width * px)
-            c.y = b.minY + (b.height * py)
-        }
-        gpx
+
+        VectorTile.Tile tile = tileBuilder.build()
+        byte[] bytes = tile.toByteArray()
+        bytes
     }
 
-    /**
-     * Convert a Geometry from geographic coordinates to pixel coordinates
-     * @param g The Geometry in geographic coordinates
-     * @param b The Bounds in geographic coordinates
-     * @param tileSize The tile size
-     * @return A Geometry in pixel coordinates
-     */
-    private static Geometry toPixel(Geometry g, Bounds b, int size) {
-        // Clone the Geometry in pixel coordinates
-        GeometryFactory factory = new GeometryFactory()
-        Geometry gpx = Geometry.wrap(factory.createGeometry(g.g))
-        // Convert a Coordinate from geographic to pixel
-        gpx.coordinates.each { Coordinate c ->
-            double px = (c.x - b.minX) / b.width
-            double py = (c.y - b.minY) / b.height
-            c.x = size * px
-            c.y = size * py
+    private static final class NonValidatingRingClassifier implements com.wdtinc.mapbox_vector_tile.adapt.jts.MvtReader.RingClassifier {
+
+        @Override
+        public List<Polygon> classifyRings(List<LinearRing> rings, GeometryFactory geomFactory) {
+
+            final List<Polygon> polygons = new ArrayList<>();
+            final List<LinearRing> holes = new ArrayList<>();
+
+            double outerArea = 0d;
+            LinearRing outerPoly = null;
+
+            for(LinearRing r : rings) {
+
+                double area = CGAlgorithms.signedArea(r.getCoordinates());
+
+                if(area == 0d) {
+                    continue; // zero-area
+                }
+
+                if(area > 0d) {
+                    if(outerPoly != null) {
+                        polygons.add(geomFactory.createPolygon(outerPoly, holes.toArray(new LinearRing[holes.size()])));
+                        holes.clear();
+                    }
+
+                    // Pos --> CCW, Outer
+                    outerPoly = r;
+                    outerArea = area;
+                } else {
+
+                    if(Math.abs(outerArea) < Math.abs(area)) {
+                        continue; // Holes must have less area, could probably be handled in a isSimple() check
+                    }
+
+                    // Neg --> CW, Hole
+                    holes.add(r);
+                }
+            }
+
+            if(outerPoly != null) {
+                holes.toArray();
+                polygons.add(geomFactory.createPolygon(outerPoly, holes.toArray(new LinearRing[holes.size()])));
+            }
+
+            return polygons;
         }
-        gpx
+
     }
 
 }

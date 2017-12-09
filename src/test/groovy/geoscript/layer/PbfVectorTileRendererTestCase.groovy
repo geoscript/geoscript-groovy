@@ -28,10 +28,12 @@ class PbfVectorTileRendererTestCase {
         assertTrue data.length > 0
         List layers = Pbf.read(data, bounds)
         assertEquals 1, layers.size()
-        assertEquals 9, layers[0].count
+        assertEquals 7, layers[0].count
+        assertEquals "states", layers[0].name
         layers.each { Layer layer ->
             layer.eachFeature { Feature f ->
                 assertNotNull f.geom
+                assertNotNull f.get("STATE_NAME")
             }
         }
     }

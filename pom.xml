@@ -43,11 +43,16 @@
     </repositories>
     <dependencies>
         <dependency>
-            <groupId>no.ecc.vectortile</groupId>
-            <artifactId>java-vector-tile</artifactId>
-            <version>1.1.2</version>
-            <!-- Exclude protobuf here so gt-geobuf can pull in a more recent version -->
+            <groupId>com.wdtinc</groupId>
+            <artifactId>mapbox-vector-tile</artifactId>
+            <version>2.0.0</version>
             <exclusions>
+                <!-- Exclude JTS so geotools can pull in it's version -->
+                <exclusion>
+                    <groupId>com.vividsolutions</groupId>
+                    <artifactId>jts-core</artifactId>
+                </exclusion>
+                <!-- Exclude protobuf here so gt-geobuf can pull in a more recent version -->
                 <exclusion>
                     <groupId>com.google.protobuf</groupId>
                     <artifactId>protobuf-java</artifactId>
