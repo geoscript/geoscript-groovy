@@ -28,6 +28,9 @@ import geoscript.geom.Geometry
 import geoscript.layer.Layer
 import geoscript.proj.Projection
 import geoscript.workspace.Memory
+import org.geotools.renderer.crs.ProjectionHandler
+import org.geotools.renderer.crs.ProjectionHandlerFactory
+import org.geotools.renderer.crs.ProjectionHandlerFinder
 
 /**
  * A MapBox Vector Tile Reader and Writer
@@ -142,6 +145,13 @@ class Pbf {
             layer.eachFeature(Filter.intersects(boundsGeom), { Feature f ->
                 Geometry geom = isPoint ? f.geom : f.geom.intersection(boundsGeom)
                 if (!geom.empty) {
+                    ProjectionHandler projectionHandler = ProjectionHandlerFinder.getHandler(b.env, layer.proj.crs, true)
+                    if (projectionHandler) {
+                        JtsGeometry processedGeom = projectionHandler.preProcess(geom.g)
+                        if (processedGeom) {
+                            geom = Geometry.wrap(processedGeom)
+                        }
+                    }
                     JtsGeometry geometry = Projection.transform(geom, layer.proj, b.proj).g
                     Map attributes = [:]
                     layer.schema.fields.each { Field fld ->
