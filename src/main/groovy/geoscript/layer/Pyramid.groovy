@@ -211,6 +211,8 @@ class Pyramid {
             Pyramid.createGlobalMercatorPyramid()
         } else if (str.equalsIgnoreCase("GlobalMercatorBottomLeft")) {
             Pyramid.createGlobalMercatorPyramid(origin: Pyramid.Origin.BOTTOM_LEFT)
+        } else if (str.equalsIgnoreCase("GlobalMercatorTopLeft")) {
+            Pyramid.createGlobalMercatorPyramid(origin: Pyramid.Origin.TOP_LEFT)
         } else if (str.equalsIgnoreCase("GlobalGeodetic") || str.equalsIgnoreCase("geodetic")) {
             Pyramid.createGlobalGeodeticPyramid()
         } else {

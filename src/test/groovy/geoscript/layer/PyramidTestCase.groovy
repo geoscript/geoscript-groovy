@@ -230,6 +230,8 @@ class PyramidTestCase {
         assertEquals Pyramid.createGlobalMercatorPyramid(), p
         p = Pyramid.fromString("GlobalMercatorBottomLeft")
         assertEquals Pyramid.createGlobalMercatorPyramid(origin: Pyramid.Origin.BOTTOM_LEFT), p
+        p = Pyramid.fromString("GlobalMercatorTopLeft")
+        assertEquals Pyramid.createGlobalMercatorPyramid(origin: Pyramid.Origin.TOP_LEFT), p
         p = Pyramid.fromString("GlobalGeodetic")
         assertEquals Pyramid.createGlobalGeodeticPyramid(), p
         p = Pyramid.fromString("geodetic")
