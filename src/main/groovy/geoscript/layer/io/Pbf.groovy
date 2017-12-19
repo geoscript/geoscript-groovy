@@ -29,7 +29,6 @@ import geoscript.layer.Layer
 import geoscript.proj.Projection
 import geoscript.workspace.Memory
 import org.geotools.renderer.crs.ProjectionHandler
-import org.geotools.renderer.crs.ProjectionHandlerFactory
 import org.geotools.renderer.crs.ProjectionHandlerFinder
 
 /**
@@ -41,7 +40,7 @@ class Pbf {
      * Read a List of Layers
      * @param options The optional named parameters
      * <ul>
-     *    <li>proj = The Projection (defaults to EPSG3857)</li>
+     *    <li>proj = The Projection (defaults to EPSG:3857)</li>
      *    <li>size = The tile size (defaults to 256)</li>
      * </ul>
      * @param byte The array of bytes
@@ -62,6 +61,13 @@ class Pbf {
             Schema schema
             jtsLayer.geometries.eachWithIndex { JtsGeometry jtsGeometry, int i ->
                 Geometry geometry = fromPixel(Geometry.wrap(jtsGeometry), b, tileSize, extent)
+                ProjectionHandler projectionHandler = ProjectionHandlerFinder.getHandler(b.env, b.proj.crs, true)
+                if (projectionHandler) {
+                    JtsGeometry processedGeom = projectionHandler.preProcess(geometry.g)
+                    if (processedGeom) {
+                        geometry = Geometry.wrap(processedGeom)
+                    }
+                }
                 Map properties = jtsGeometry.userData as Map
                 properties.put("geometry", geometry)
                 Feature feature
@@ -92,15 +98,11 @@ class Pbf {
         Geometry gpx = Geometry.wrap(factory.createGeometry(g.g))
         // Convert a Coordinate from pixel to geographic
         gpx.coordinates.each { Coordinate c ->
-            // Convert from 0 - extent (4096) to 0 - tileSize (256)
-            double tileX = size * (c.x / extent)
-            double tileY = size * (c.y / extent)
-            // Determine percent based on tile size
-            double px = tileX / size
-            double py = tileY / size
-            // Convert from pixel to geographic
+            c.y = extent - c.y
+            double px = c.x / extent
+            double py = c.y / extent
             c.x = b.minX + (b.width * px)
-            c.y = b.maxY - (b.height * py)
+            c.y = b.minY + (b.height * py)
         }
         gpx
     }
