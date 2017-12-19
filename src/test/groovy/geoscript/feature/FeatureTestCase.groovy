@@ -262,13 +262,7 @@ class FeatureTestCase {
     @Test void getKml() {
         Schema s1 = new Schema("houses", [new Field("geom","Point"), new Field("name","string"), new Field("price","float")])
         Feature f1 = new Feature([new Point(111,-47), "House", 12.5], "house1", s1)
-        AssertUtil.assertStringsEqual """<kml:Placemark xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:kml="http://earth.google.com/kml/2.1" id="house1">
-<kml:name>House</kml:name>
-<kml:Point>
-<kml:coordinates>111.0,-47.0</kml:coordinates>
-</kml:Point>
-</kml:Placemark>
-""", f1.kml, removeXmlNS: true
+        AssertUtil.assertStringsEqual """<kml:Placemark xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:kml="http://earth.google.com/kml/2.1" id="house1"><kml:name>House</kml:name><kml:Point><kml:coordinates>111.0,-47.0</kml:coordinates></kml:Point></kml:Placemark>""", f1.kml, removeXmlNS: true
     }
 
     @Test void fromKml() {
