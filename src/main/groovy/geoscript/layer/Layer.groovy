@@ -1515,7 +1515,7 @@ class Layer implements Renderable {
      * <ul>
      *     <li>outLayer = The name of the output Layer (defaults to this.layer.name_layer2.name_union)</li>
      *     <li>outWorkspace = The output Workspace (defaults to the Memory Workspace)</li>
-     *     <li>postfixAll = Whether to postfix all field names when combinging schemas (defaults to false)</li>
+     *     <li>postfixAll = Whether to postfix all field names when combining schemas (defaults to false)</li>
      *     <li>includeDuplicates = Whether to include duplicate field names (defaults to true)</li>
      *     <li>maxFieldNameLength = The maximum field name length (defaults to 10 if output Workspace is Directory, otherwise there is no limit)</li>
      * </ul>
@@ -1605,7 +1605,7 @@ class Layer implements Renderable {
      * <ul>
      *     <li>outLayer = The name of the output Layer (defaults to this.layer.name_layer2.name_intersection)</li>
      *     <li>outWorkspace = The output Workspace (defaults to the Memory Workspace)</li>
-     *     <li>postfixAll = Whether to postfix all field names when combinging schemas (defaults to false)</li>
+     *     <li>postfixAll = Whether to postfix all field names when combining schemas (defaults to false)</li>
      *     <li>includeDuplicates = Whether to include duplicate field names (defaults to true)</li>
      *     <li>maxFieldNameLength = The maximum field name length (defaults to 10 if output Workspace is Directory, otherwise there is no limit)</li>
      * </ul>
@@ -1733,7 +1733,7 @@ class Layer implements Renderable {
      * <ul>
      *     <li>outLayer = The name of the output Layer (defaults to this.layer.name_layer2.name_identity)</li>
      *     <li>outWorkspace = The output Workspace (defaults to the Memory Workspace)</li>
-     *     <li>postfixAll = Whether to postfix all field names when combinging schemas (defaults to false)</li>
+     *     <li>postfixAll = Whether to postfix all field names when combining schemas (defaults to false)</li>
      *     <li>includeDuplicates = Whether to include duplicate field names (defaults to true)</li>
      *     <li>maxFieldNameLength = The maximum field name length (defaults to 10 if output Workspace is Directory, otherwise there is no limit)</li>
      * </ul>
@@ -1879,7 +1879,7 @@ class Layer implements Renderable {
      * <ul>
      *     <li>outLayer = The name of the output Layer (defaults to this.layer.name_layer2.name_symdifference)</li>
      *     <li>outWorkspace = The output Workspace (defaults to the Memory Workspace)</li>
-     *     <li>postfixAll = Whether to postfix all field names when combinging schemas (defaults to false)</li>
+     *     <li>postfixAll = Whether to postfix all field names when combining schemas (defaults to false)</li>
      *     <li>includeDuplicates = Whether to include duplicate field names (defaults to true)</li>
      *     <li>maxFieldNameLength = The maximum field name length (defaults to 10 if output Workspace is Directory, otherwise there is no limit)</li>
      * </ul>
