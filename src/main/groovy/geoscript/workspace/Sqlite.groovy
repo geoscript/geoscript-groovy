@@ -19,6 +19,7 @@ import groovy.sql.Sql
 import org.apache.commons.dbcp.BasicDataSource
 import org.geotools.data.DataAccessFactory
 import org.geotools.data.DataStore
+import org.geotools.factory.Hints
 import org.geotools.geometry.jts.Geometries
 import org.geotools.jdbc.JDBCDataStore
 import org.geotools.jdbc.JDBCDataStoreFactory
@@ -327,9 +328,9 @@ class Sqlite extends Database {
             Geometry g = readGeometry(rs.getBytes(column), new GeometryFactory(), geometryFormat)
             g != null ? g.getEnvelopeInternal() : null
         }
-
+        
         @Override
-        Geometry decodeGeometryValue(GeometryDescriptor descriptor, ResultSet rs, String column, GeometryFactory factory, Connection cx) throws IOException, SQLException {
+        Geometry decodeGeometryValue(GeometryDescriptor descriptor, ResultSet rs, String column, GeometryFactory factory, Connection cx, Hints hints) throws IOException, SQLException {
             GeometryFormat geometryFormat = getGeometryFormat(cx, rs.metaData.getTableName(1))
             return readGeometry(rs.getBytes(column), factory, geometryFormat)
         }
