@@ -330,13 +330,26 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
+    <pluginRepositories>
+        <pluginRepository>
+            <id>bintray</id>
+            <name>Groovy Bintray</name>
+            <url>https://dl.bintray.com/groovy/maven</url>
+            <releases>
+                <updatePolicy>never</updatePolicy>
+            </releases>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+        </pluginRepository>
+    </pluginRepositories>
     <build>
         <sourceDirectory>src/main/groovy</sourceDirectory>
         <plugins>
             <plugin>
                 <groupId>org.codehaus.groovy</groupId>
                 <artifactId>groovy-eclipse-compiler</artifactId>
-                <version>2.9.0-01</version>
+                <version>2.9.2-04</version>
                 <extensions>true</extensions>
             </plugin>
             <plugin>
@@ -351,12 +364,12 @@
                     <dependency>
                         <groupId>org.codehaus.groovy</groupId>
                         <artifactId>groovy-eclipse-compiler</artifactId>
-                        <version>2.9.0-01</version>
+                        <version>2.9.2-04</version>
                     </dependency>
                     <dependency>
                         <groupId>org.codehaus.groovy</groupId>
                         <artifactId>groovy-eclipse-batch</artifactId>
-                        <version>2.4.3-01</version>
+                        <version>2.4.13-02</version>
                     </dependency>
                 </dependencies>
             </plugin>
