@@ -2,6 +2,7 @@ package geoscript.layer
 
 import geoscript.geom.Bounds
 import geoscript.proj.Projection
+import groovy.sql.GroovyRowResult
 import groovy.sql.Sql
 
 import javax.sql.DataSource
@@ -199,6 +200,28 @@ class DBTiles extends ImageTileLayer {
         }
     }
 
+    /**
+     * Get metadata (type, name, description, format, version, attribution, bounds)
+     * @return A Map of metadata
+     */
+    Map<String, String> getMetadata() {
+        Map<String, String> data = [:]
+        sql.rows("SELECT name, value FROM ${metadataTable}".toString()).each {
+            String name = getValue(it, 'name')
+            String value = getValue(it, 'value')
+            data[name] = value
+        }
+        data
+    }
+
+    private String getValue(GroovyRowResult result, String key) {
+        Object obj = result[key]
+        if (obj instanceof org.h2.jdbc.JdbcClob) {
+            obj = obj.characterStream.text
+        }
+        obj?.toString()
+    }
+
     @Override
     Pyramid getPyramid() {
         if (!this.pyramid) {
@@ -249,14 +272,17 @@ class DBTiles extends ImageTileLayer {
         DBTiles create(Map params) {
             String type = params.get("type","").toString()
             if (type.equalsIgnoreCase("dbtiles")) {
+                Map dbTilesParams = [:]
+                dbTilesParams.putAll(params)
+                dbTilesParams.type = "baselayer"
                 String url = params.url
                 String driver = params.driver
                 String name = params.name
-                String description = params.name
+                String description = params.description
                 if (!name && !description) {
-                    new DBTiles(params, url, driver)
+                    new DBTiles(dbTilesParams, url, driver)
                 } else {
-                    new DBTiles(params, url, driver, name, description)
+                    new DBTiles(dbTilesParams, url, driver, name, description)
                 }
             } else {
                 null

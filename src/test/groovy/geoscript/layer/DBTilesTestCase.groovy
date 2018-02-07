@@ -50,6 +50,15 @@ class DBTilesTestCase {
         assertNotNull dbtiles.get(2,0,0)
         dbtiles.delete(new ImageTile(2,0,0))
         assertNull dbtiles.get(2,0,0).data
+
+        Map<String,String> metadata = dbtiles.metadata
+        assertEquals("Random", metadata.name)
+        assertEquals("baselayer", metadata.type)
+        assertEquals("1.0", metadata.version)
+        assertEquals("Random Color Tiles", metadata.description)
+        assertEquals("png", metadata.format)
+        assertEquals("-179.99,-85.0511,179.99,85.0511", metadata.bounds)
+        assertEquals("Created with GeoScript", metadata.attribution)
     }
 
     @Test void h2() {
