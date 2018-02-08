@@ -222,6 +222,51 @@ class DBTiles extends ImageTileLayer {
         obj?.toString()
     }
 
+    /**
+     * Get the number of tiles per zoom level.
+     * @return A List of Maps with zoom, tiles, total, and percent keys
+     */
+    List<Map> getTileCounts() {
+        List stats = []
+        sql.eachRow("select count(*) as num_tiles, zoom_level from ${tilesTable} group by zoom_level order by zoom_level".toString(), { def row ->
+            long zoom = row.zoom_level
+            long numberOfTiles = row.num_tiles
+            long totalNumberOfTiles = this.pyramid.grid(row.zoom_level).size
+            double percent = totalNumberOfTiles / numberOfTiles
+            stats.add([
+                    zoom: zoom,
+                    tiles: numberOfTiles,
+                    total: totalNumberOfTiles,
+                    percent: percent
+            ])
+        })
+        stats
+    }
+
+    /**
+     * Get the maximum zoom level of the tiles present.
+     * @return The maximum zoom level of the tile present
+     */
+    int getMaxZoom() {
+        int max
+        sql.eachRow("select max(zoom_level) as max_zoom_level from ${tilesTable}".toString(), {  def row ->
+            max = row.max_zoom_level
+        })
+        max
+    }
+
+    /**
+     * Get the minimum zoom level of the tiles present.
+     * @return The minimum zoom level of the tile present
+     */
+    int getMinZoom() {
+        int min
+        sql.eachRow("select min(zoom_level) as min_zoom_level from ${tilesTable}".toString(), {  def row ->
+            min = row.min_zoom_level
+        })
+        min
+    }
+
     @Override
     Pyramid getPyramid() {
         if (!this.pyramid) {

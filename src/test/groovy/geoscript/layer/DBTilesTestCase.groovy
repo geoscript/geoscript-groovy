@@ -40,7 +40,6 @@ class DBTilesTestCase {
 
         TileGenerator generator = new TileGenerator(verbose: false)
         generator.generate(dbtiles, renderer, 0, 2)
-        read(dbtiles)
     }
 
     private void read(DBTiles dbtiles) {
@@ -50,7 +49,9 @@ class DBTilesTestCase {
         assertNotNull dbtiles.get(2,0,0)
         dbtiles.delete(new ImageTile(2,0,0))
         assertNull dbtiles.get(2,0,0).data
+    }
 
+    private metadata(DBTiles dbtiles) {
         Map<String,String> metadata = dbtiles.metadata
         assertEquals("Random", metadata.name)
         assertEquals("baselayer", metadata.type)
@@ -59,6 +60,17 @@ class DBTilesTestCase {
         assertEquals("png", metadata.format)
         assertEquals("-179.99,-85.0511,179.99,85.0511", metadata.bounds)
         assertEquals("Created with GeoScript", metadata.attribution)
+
+        List stats = dbtiles.tileCounts
+        stats.eachWithIndex { Map stat, int index ->
+            assertEquals(index, stat.zoom)
+            assertEquals(Math.pow(4, index), stat.tiles, 0.1)
+            assertEquals(Math.pow(4, index), stat.total, 0.1)
+            assertEquals(1.0, stat.percent, 0.1)
+        }
+
+        assertEquals 0, dbtiles.minZoom
+        assertEquals 2, dbtiles.maxZoom
     }
 
     @Test void h2() {
@@ -80,8 +92,16 @@ class DBTilesTestCase {
         read(dbtiles)
     }
 
-    @Test void sqlite() {
+    @Test void h2Metadata() {
         File dbFile = folder.newFile("tiles.db")
+        DBTiles dbtiles = new DBTiles("jdbc:h2:${dbFile}","org.h2.Driver", "Random", "Random Color Tiles")
+        generate(dbtiles)
+        dbtiles = new DBTiles("jdbc:h2:${dbFile}","org.h2.Driver")
+        metadata(dbtiles)
+    }
+
+    @Test void sqlite() {
+        File dbFile = new File("tiles.db") //folder.newFile("tiles.db")
         DBTiles dbtiles = new DBTiles("jdbc:sqlite:${dbFile}","org.sqlite.JDBC", "Random", "Random Color Tiles")
         generate(dbtiles)
         dbtiles = new DBTiles("jdbc:sqlite:${dbFile}","org.sqlite.JDBC")
@@ -97,6 +117,14 @@ class DBTilesTestCase {
         generate(dbtiles)
         dbtiles = new DBTiles(ds)
         read(dbtiles)
+    }
+
+    @Test void sqliteMetadata() {
+        File dbFile = folder.newFile("tiles.db")
+        DBTiles dbtiles = new DBTiles("jdbc:sqlite:${dbFile}","org.sqlite.JDBC", "Random", "Random Color Tiles")
+        generate(dbtiles)
+        dbtiles = new DBTiles("jdbc:sqlite:${dbFile}","org.sqlite.JDBC")
+        metadata(dbtiles)
     }
 
     @Test void lookupWithTileFactories() {
