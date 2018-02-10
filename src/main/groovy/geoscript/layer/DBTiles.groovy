@@ -96,6 +96,7 @@ class DBTiles extends ImageTileLayer {
         this.bounds = mercatorBounds
         this.proj = mercatorProj
         sql = Sql.newInstance(url, user, password, driver)
+        this.name = this.metadata.name
     }
 
     /**
@@ -113,6 +114,7 @@ class DBTiles extends ImageTileLayer {
         this.bounds = mercatorBounds
         this.proj = mercatorProj
         sql = new Sql(dataSource.connection)
+        this.name = this.metadata.name
     }
 
     /**

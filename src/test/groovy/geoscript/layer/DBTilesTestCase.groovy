@@ -43,6 +43,7 @@ class DBTilesTestCase {
     }
 
     private void read(DBTiles dbtiles) {
+        assertEquals("Random", dbtiles.name)
         Raster raster = dbtiles.getRaster(dbtiles.tiles(2))
         assertNotNull raster
 
@@ -76,8 +77,10 @@ class DBTilesTestCase {
     @Test void h2() {
         File dbFile = folder.newFile("tiles.db")
         DBTiles dbtiles = new DBTiles("jdbc:h2:${dbFile}","org.h2.Driver", "Random", "Random Color Tiles")
+        assertEquals("Random", dbtiles.name)
         generate(dbtiles)
         dbtiles = new DBTiles("jdbc:h2:${dbFile}","org.h2.Driver")
+        assertEquals("Random", dbtiles.name)
         read(dbtiles)
     }
 
@@ -87,24 +90,30 @@ class DBTilesTestCase {
         ds.url ="jdbc:h2:${dbFile}"
         ds.driverClassName = "org.h2.Driver"
         DBTiles dbtiles = new DBTiles(ds, "Random", "Random Color Tiles")
+        assertEquals("Random", dbtiles.name)
         generate(dbtiles)
         dbtiles = new DBTiles(ds)
+        assertEquals("Random", dbtiles.name)
         read(dbtiles)
     }
 
     @Test void h2Metadata() {
         File dbFile = folder.newFile("tiles.db")
         DBTiles dbtiles = new DBTiles("jdbc:h2:${dbFile}","org.h2.Driver", "Random", "Random Color Tiles")
+        assertEquals("Random", dbtiles.name)
         generate(dbtiles)
         dbtiles = new DBTiles("jdbc:h2:${dbFile}","org.h2.Driver")
+        assertEquals("Random", dbtiles.name)
         metadata(dbtiles)
     }
 
     @Test void sqlite() {
         File dbFile = new File("tiles.db") //folder.newFile("tiles.db")
         DBTiles dbtiles = new DBTiles("jdbc:sqlite:${dbFile}","org.sqlite.JDBC", "Random", "Random Color Tiles")
+        assertEquals("Random", dbtiles.name)
         generate(dbtiles)
         dbtiles = new DBTiles("jdbc:sqlite:${dbFile}","org.sqlite.JDBC")
+        assertEquals("Random", dbtiles.name)
         read(dbtiles)
     }
 
@@ -114,16 +123,20 @@ class DBTilesTestCase {
         ds.url ="jdbc:sqlite:${dbFile}"
         ds.driverClassName = "org.sqlite.JDBC"
         DBTiles dbtiles = new DBTiles(ds, "Random", "Random Color Tiles")
+        assertEquals("Random", dbtiles.name)
         generate(dbtiles)
         dbtiles = new DBTiles(ds)
+        assertEquals("Random", dbtiles.name)
         read(dbtiles)
     }
 
     @Test void sqliteMetadata() {
         File dbFile = folder.newFile("tiles.db")
         DBTiles dbtiles = new DBTiles("jdbc:sqlite:${dbFile}","org.sqlite.JDBC", "Random", "Random Color Tiles")
+        assertEquals("Random", dbtiles.name)
         generate(dbtiles)
         dbtiles = new DBTiles("jdbc:sqlite:${dbFile}","org.sqlite.JDBC")
+        assertEquals("Random", dbtiles.name)
         metadata(dbtiles)
     }
 
