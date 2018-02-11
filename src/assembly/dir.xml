@@ -21,13 +21,45 @@
             </excludes>
         </dependencySet>
     </dependencySets>
+    <files>
+        <file>
+            <source>${project.basedir}/bin/geoscript-groovy</source>
+            <outputDirectory>/bin</outputDirectory>
+            <filtered>true</filtered>
+            <fileMode>0755</fileMode>
+        </file>
+        <file>
+            <source>${project.basedir}/bin/geoscript-groovy.bat</source>
+            <outputDirectory>/bin</outputDirectory>
+            <filtered>true</filtered>
+            <fileMode>0755</fileMode>
+        </file>
+        <file>
+            <source>${project.basedir}/bin/geoscript-groovyConsole</source>
+            <outputDirectory>/bin</outputDirectory>
+            <filtered>true</filtered>
+            <fileMode>0755</fileMode>
+        </file>
+        <file>
+            <source>${project.basedir}/bin/geoscript-groovyConsole.bat</source>
+            <outputDirectory>/bin</outputDirectory>
+            <filtered>true</filtered>
+            <fileMode>0755</fileMode>
+        </file>
+        <file>
+            <source>${project.basedir}/bin/geoscript-groovysh</source>
+            <outputDirectory>/bin</outputDirectory>
+            <filtered>true</filtered>
+            <fileMode>0755</fileMode>
+        </file>
+        <file>
+            <source>${project.basedir}/bin/geoscript-groovysh.bat</source>
+            <outputDirectory>/bin</outputDirectory>
+            <filtered>true</filtered>
+            <fileMode>0755</fileMode>
+        </file>
+    </files>
     <fileSets>
-        <fileSet>
-            <outputDirectory>/</outputDirectory>
-            <includes>
-                <include>bin/geoscript*</include>
-            </includes>
-        </fileSet>
         <fileSet>
             <outputDirectory>/</outputDirectory>
             <includes>

@@ -20,14 +20,7 @@ if [ ! -e "$LIBDIR" ]; then
   exit
 fi
 
-CLASSPATH=""
-for jar in `ls $LIBDIR`; do
-  if [ "$CLASSPATH" == "" ]; then
-    CLASSPATH=$LIBDIR/$jar
-  else
-    CLASSPATH=$CLASSPATH:$LIBDIR/$jar
-  fi
-done
+CLASSPATH=$LIBDIR/geoscript-groovy-${project.version}.jar
 
 if [ -e "$GEOSCRIPT_GDAL_HOME" ]; then
     if [ "$(uname)" == "Darwin" ]; then
