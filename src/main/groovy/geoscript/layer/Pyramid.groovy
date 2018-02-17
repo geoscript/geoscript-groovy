@@ -233,7 +233,12 @@ class Pyramid {
     }
 
     /**
-     * Create a Pyramid with Grids for common global web mercator tile sets
+     * Create a Pyramid with Grids for common global web mercator tile sets.
+     * @param options The optional named parameters:
+     * <ul>
+     *     <li>origin = The Pyramid Origin (defaults to bottom left)</li>
+     *     <li>maxZoom = The max zoom level (defaults to 19)</li>
+     * </ul>
      * @return A Pyramid
      */
     static Pyramid createGlobalMercatorPyramid(Map options = [:]) {
@@ -261,6 +266,10 @@ class Pyramid {
     /**
      * Create a Pyramid with Grids for common global geodetic tile sets.
      * http://wiki.osgeo.org/wiki/Tile_Map_Service_Specification#global-geodetic
+     * @param options The optional named parameters:
+     * <ul>
+     *     <li>maxZoom = The max zoom level (defaults to 19)</li>
+     * </ul>
      * @return A Pyramid
      */
     static Pyramid createGlobalGeodeticPyramid(Map options = [:]) {
