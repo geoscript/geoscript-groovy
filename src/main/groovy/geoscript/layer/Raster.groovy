@@ -355,19 +355,23 @@ class Raster implements Renderable {
      */
     List getValues(int x, int y, int w, int h, int band = 0, boolean flat = true) {
         Band b = bands[band]
-        def array
+        List list = []
         if (b.type.equalsIgnoreCase("byte")) {
-            array = new byte[w * h]
+            byte[] array = new byte[w * h]
+            list = data.getSamples(x,y,w,h,band,array)
         } else if (b.type.equalsIgnoreCase("int")) {
-            array = new int[w * h]
+            int[] array = new int[w * h]
+            list = data.getSamples(x,y,w,h,band,array)
         } else if (b.type.equalsIgnoreCase("float")) {
-            array = new float[w * h]
+            float[] array = new float[w * h]
+            list = data.getSamples(x,y,w,h,band,array)
         } else if (b.type.equalsIgnoreCase("double")) {
-            array = new double[w * h]
+            double[] array = new double[w * h]
+            list = data.getSamples(x,y,w,h,band,array)
         } else if (b.type.equalsIgnoreCase("short")) {
-            array = new short[w * h]
+            int[] array = new int[w * h]
+            list = data.getSamples(x,y,w,h,band,array)
         }
-        List list = data.getSamples(x,y,w,h,band,array)
         if (!flat) {
             list = (0..<h).collect{i ->
                 int from = i * w
