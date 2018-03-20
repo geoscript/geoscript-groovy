@@ -4,9 +4,58 @@ GeoScript Groovy Releases
 =========================
 
 1.11-SNAPSHOT
-------
-The 1.11 release of GeoScript is currently under development and is built on Grooovy 2.4.12, GeoTools 19.0, and the Java Topology Suite 1.13 and
+-------------
+The 1.11 release of GeoScript is currently under development and is built on Grooovy 2.4.14, GeoTools 19.0, and the Java Topology Suite 1.13 and
 requires Java 8.
+
+Add support for storing PBF vector tiles in MBTiles database::
+
+    File file = new File("world.mbtiles")
+
+    Pyramid pyramid = Pyramid.createGlobalMercatorPyramid()
+    pyramid.origin = Pyramid.Origin.TOP_LEFT
+    VectorTiles vectorTiles = new VectorTiles(
+        "world",
+        file,
+        pyramid,
+        "pbf"
+    )
+
+Fix getting values from Rasters with short values.
+
+Set the name when creating DBTiles.
+
+Add tile counts and min and max zoom level methods to DBTiles::
+
+    DBTiles dbtiles = new DBTiles("jdbc:sqlite:${dbFile}","org.sqlite.JDBC")
+    List stats = dbtiles.tileCounts
+    stats.eachWithIndex { Map stat, int index ->
+        println stat.zoom
+        println stat.tiles
+        println stat.total
+        println stat.percent
+    }
+
+    println dbtiles.minZoom
+    println dbtiles.maxZoom
+
+Add getMetadata method to DBTiles::
+
+    DBTiles dbtiles = new DBTiles("jdbc:sqlite:${dbFile}","org.sqlite.JDBC")
+    Map<String,String> metadata = dbtiles.metadata
+    println metadata.name
+    println metadata.type
+    println metadata.version
+    println metadata.description
+    println metadata.format
+    println metadata.bounds
+    println metadata.attribution
+
+Improve PBF VectorTile reading and writing.
+
+Add mercator top left wellknown pyramid name.
+
+Add pretty print option to geojson writing.
 
 Include the gt-epsg-extension GeoTools Library to support more projections::
 
