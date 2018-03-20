@@ -12,7 +12,11 @@ import geoscript.proj.Projection
 import geoscript.style.Style
 import geoscript.workspace.Memory
 import geoscript.workspace.Workspace
+import groovy.sql.Sql
 import org.geotools.map.FeatureLayer
+import org.geotools.mbtiles.MBTilesFile
+import org.geotools.mbtiles.MBTilesMetadata
+import org.geotools.mbtiles.MBTilesTile
 import org.geotools.util.logging.Logging
 
 import java.util.logging.Level
@@ -33,6 +37,16 @@ class VectorTiles extends TileLayer<Tile> implements Renderable {
      * The base URL
      */
     URL url
+
+    /**
+     * The MBTiles File
+     */
+    File file
+
+    /**
+     * The TileStore used to get, put, and delete Tiles
+     */
+    private TileStore tileStore
 
     /**
      * The Pyramid structure
@@ -72,19 +86,25 @@ class VectorTiles extends TileLayer<Tile> implements Renderable {
      *     <li>style = A Style or a Map of Styles with the Layer name as key</li>
      * </ul>
      * @param name The name of the TileLayer
-     * @param dir The directory of the Tiles
+     * @param file The directory of the Tiles or the MBTiles File
      * @param pyramid The Pyramid
      * @param type The type (pbf, mvt, geojson, kml)
      */
-    VectorTiles(Map options = [:], String name, File dir, Pyramid pyramid, String type) {
+    VectorTiles(Map options = [:], String name, File file, Pyramid pyramid, String type) {
         this.name = name
-        this.dir = dir
         this.pyramid = pyramid
         this.bounds = this.pyramid.bounds
         this.type = type
         this.reader = getReaderForType(type)
         this.proj = options.get("proj", pyramid.proj)
         this.style = options.get("style")
+        if (file.isDirectory()) {
+            this.dir = file
+            this.tileStore = new DirectoryTileStore(this.dir, this.type)
+        } else {
+            this.file = file
+            this.tileStore = new MBTilesTileStore(this.file, this.name, "Vector Tiles", format: this.type)
+        }
     }
 
     /**
@@ -108,6 +128,7 @@ class VectorTiles extends TileLayer<Tile> implements Renderable {
         this.reader = getReaderForType(type)
         this.proj = options.get("proj", pyramid.proj)
         this.style = options.get("style")
+        this.tileStore = new UrlTileStore(this.url, this.type)
     }
 
     private Reader getReaderForType(String type) {
@@ -135,19 +156,7 @@ class VectorTiles extends TileLayer<Tile> implements Renderable {
      */
     @Override
     Tile get(long z, long x, long y) {
-        Tile tile = new ImageTile(z, x, y)
-        if (dir) {
-            File file = new File(new File(new File(this.dir, String.valueOf(z)), String.valueOf(x)), "${y}.${type}")
-            if (file.exists()) {
-                tile.data = file.bytes
-            }
-        } else {
-            URL tileUrl = new URL("${url.toString()}/${z}/${x}/${y}.${type}")
-            tileUrl.withInputStream { input ->
-                tile.data = input.bytes
-            }
-        }
-        tile
+        tileStore.get(z,x,y)
     }
 
     /**
@@ -156,16 +165,7 @@ class VectorTiles extends TileLayer<Tile> implements Renderable {
      */
     @Override
     void put(Tile t) {
-        if (!dir) {
-            throw new IllegalArgumentException("Vector Tiles with URL are ready only!")
-        }
-        File file = new File(new File(new File(this.dir, String.valueOf(t.z)), String.valueOf(t.x)), "${t.y}.${type}")
-        if (!file.parentFile.exists()) {
-            file.parentFile.mkdirs()
-        }
-        file.withOutputStream { out ->
-            out.write(t.data)
-        }
+        tileStore.put(t)
     }
 
     /**
@@ -174,13 +174,7 @@ class VectorTiles extends TileLayer<Tile> implements Renderable {
      */
     @Override
     void delete(Tile t) {
-        if (!dir) {
-            throw new IllegalArgumentException("Vector Tiles with URL are ready only!")
-        }
-        File file = new File(new File(new File(this.dir, String.valueOf(t.z)), String.valueOf(t.x)), "${t.y}.${type}")
-        if (file.exists()) {
-            file.delete()
-        }
+        tileStore.delete(t)
     }
 
     /**
@@ -188,6 +182,341 @@ class VectorTiles extends TileLayer<Tile> implements Renderable {
      */
     @Override
     void close() throws IOException {
+        tileStore.close()
+    }
+
+    private static interface TileStore {
+        Tile get(long z, long x, long y)
+        void put(Tile t)
+        void delete(Tile t)
+        void close() throws IOException
+    }
+
+    private static class DirectoryTileStore implements TileStore {
+
+        private File dir
+
+        private String type
+
+        DirectoryTileStore(File dir, String type) {
+            this.dir = dir
+            this.type = type
+        }
+
+        @Override
+        Tile get(long z, long x, long y) {
+            Tile tile = new Tile(z, x, y)
+            File file = new File(new File(new File(this.dir, String.valueOf(z)), String.valueOf(x)), "${y}.${type}")
+            if (file.exists()) {
+                tile.data = file.bytes
+            }
+            tile
+        }
+
+        @Override
+        void put(Tile t) {
+            File file = new File(new File(new File(this.dir, String.valueOf(t.z)), String.valueOf(t.x)), "${t.y}.${type}")
+            if (!file.parentFile.exists()) {
+                file.parentFile.mkdirs()
+            }
+            file.withOutputStream { out ->
+                out.write(t.data)
+            }
+        }
+
+        @Override
+        void delete(Tile t) {
+            File file = new File(new File(new File(this.dir, String.valueOf(t.z)), String.valueOf(t.x)), "${t.y}.${type}")
+            if (file.exists()) {
+                file.delete()
+            }
+        }
+
+        @Override
+        void close() throws IOException {
+        }
+    }
+
+    private static class UrlTileStore implements TileStore {
+
+        private URL url
+
+        private String type
+
+        UrlTileStore(URL url, String type) {
+            this.url = url
+            this.type = type
+        }
+
+        @Override
+        Tile get(long z, long x, long y) {
+            Tile tile = new Tile(z, x, y)
+            URL tileUrl = new URL("${url.toString()}/${z}/${x}/${y}.${type}")
+            tileUrl.withInputStream { input ->
+                tile.data = input.bytes
+            }
+            tile
+        }
+
+        @Override
+        void put(Tile t) {
+            throw new IllegalArgumentException("Vector Tiles with URL are ready only!")
+        }
+
+        @Override
+        void delete(Tile t) {
+            throw new IllegalArgumentException("Vector Tiles with URL are ready only!")
+        }
+
+        @Override
+        void close() throws IOException {
+        }
+    }
+
+    private static class MBTilesTileStore implements TileStore {
+
+        /**
+         * The MBTiles File
+         */
+        private final File file
+
+        /**
+         * The GeoTools MBTilesFile
+         */
+        MBTilesFile tiles
+
+        /**
+         * The name
+         */
+        String name
+
+        /**
+         * The Bounds
+         */
+        Bounds bounds
+
+        /**
+         * The Projection
+         */
+        Projection proj
+
+        /**
+         * The cached internal Pyramid
+         */
+        private Pyramid pyramid
+
+        /**
+         * The EPSG:4326 Projection
+         */
+        private Projection latLonProj = new Projection("EPSG:4326")
+
+        /**
+         * The EPSG:3857 Projection
+         */
+        private Projection mercatorProj = new Projection("EPSG:3857")
+
+        /**
+         * The world wide Bounds in EPSG:4326
+         */
+        private Bounds latLonBounds = new Bounds(-179.99, -85.0511, 179.99, 85.0511, latLonProj)
+
+        /**
+         * The world wide Bounds in EPSG:3857
+         */
+        private Bounds mercatorBounds = latLonBounds.reproject(mercatorProj)
+
+        /**
+         * The Groovy Sql Connection
+         */
+        private Sql sql
+
+        /**
+         * Create a new MBTilesTileStore with a existing File
+         * @param file The existing File
+         */
+        MBTilesTileStore(File file) {
+            this.file = file
+            this.tiles = new MBTilesFile(file)
+            this.bounds = mercatorBounds
+            this.proj = mercatorProj
+            this.name = this.tiles.loadMetaData().name
+        }
+
+        /**
+         * Create a new MBTilesTileStore with a existing File
+         * @param file The existing File name
+         */
+        MBTilesTileStore(String file) {
+            this(new File(file))
+        }
+
+        /**
+         * Create a new MBTilesTileStore with a new File
+         * @param options The optional named parameters
+         * <ul>
+         *     <li>type = The type of layer (base_layer is the default or overlay)</li>
+         *     <li>version = The version number (1.0 is the default)</li>
+         *     <li>format = The image format (png is the default, jpeg, or pbf)</li>
+         *     <li>attribution = The attributes</li>
+         * </ul>
+         * @param file The new File
+         * @param name The name of the layer
+         * @param description The description of the layer
+         */
+        MBTilesTileStore(java.util.Map options = [:], File file, String name, String description) {
+
+            this.file = file
+            this.tiles = new MBTilesFile(file)
+            this.bounds = mercatorBounds
+            this.proj = mercatorProj
+            this.name = name
+
+            String type = options.get("type", "base_layer")
+            String version = options.get("version", "1.0")
+            String format = options.get("format", "png")
+            String attribution = options.get("attribution","Created with GeoScript")
+
+            tiles.init()
+            MBTilesMetadata metadata = new MBTilesMetadata()
+            metadata.name = name
+            metadata.description = description
+            metadata.formatStr = format
+            metadata.version = version
+            metadata.typeStr = type
+            metadata.bounds = latLonBounds.env
+            metadata.attribution = attribution
+            tiles.saveMetaData(metadata)
+        }
+
+        /**
+         * Create a new MBTilesTileStore with a new File
+         * @param options The optional named parameters
+         * <ul>
+         *     <li>type = The type of layer (base_layer is the default or overlay)</li>
+         *     <li>version = The version number (1.0 is the default)</li>
+         *     <li>format = The image format (png is the default, jpeg, or pbf)</li>
+         *     <li>attribution = The attributes</li>
+         * </ul>
+         * @param file The new File name
+         * @param name The name of the layer
+         * @param description The description of the layer
+         */
+        MBTilesTileStore(java.util.Map options = [:], String fileName, String name, String description) {
+            this(options, new File(fileName), name, description)
+        }
+
+        Pyramid getPyramid() {
+            if (!this.pyramid) {
+                this.pyramid = Pyramid.createGlobalMercatorPyramid()
+            }
+            this.pyramid
+        }
+
+        @Override
+        Tile get(long z, long x, long y) {
+            MBTilesTile t = tiles.loadTile(z, x, y)
+            new Tile(t.zoomLevel, t.tileColumn, t.tileRow, t.data)
+        }
+
+        @Override
+        void put(Tile t) {
+            MBTilesTile tile = new MBTilesTile(t.z, t.x, t.y)
+            tile.data = t.data
+            tiles.saveTile(tile)
+        }
+
+        @Override
+        void delete(Tile t) {
+            getSql().execute("DELETE FROM tiles WHERE zoom_level = ? AND tile_column = ? AND tile_row = ?", [t.z, t.x, t.y])
+        }
+
+        /**
+         * Delete all Tiles in the TileCursor
+         * @param tiles The TileCursor
+         */
+        void delete(TileCursor<Tile> tiles) {
+            getSql().execute("DELETE FROM tiles WHERE zoom_level = ? AND tile_column >= ? AND tile_column <= ? " +
+                    "AND tile_row >= ? AND tile_row <= ?", [tiles.z, tiles.minX, tiles.maxX, tiles.minY, tiles.maxY])
+        }
+
+        /**
+         * Lazily create the Groovy Sql Connection
+         * @return
+         */
+        private Sql getSql() {
+            if (!sql) {
+                sql = Sql.newInstance("jdbc:sqlite:${file.absolutePath}", "org.sqlite.JDBC")
+            }
+            sql
+        }
+
+        @Override
+        void close() throws IOException {
+            this.tiles.close()
+            if (sql) sql.close()
+        }
+
+        /**
+         * Get metadata (type, name, description, format, version, attribution, bounds)
+         * @return A Map of metadata
+         */
+        Map<String,String> getMetadata() {
+            MBTilesMetadata metadata = tiles.loadMetaData()
+            [
+                    type: metadata.typeStr,
+                    name: metadata.name,
+                    description: metadata.description,
+                    format: metadata.formatStr,
+                    version: metadata.version,
+                    attribution: metadata.attribution,
+                    bounds: metadata.boundsStr
+            ]
+        }
+
+        /**
+         * Get the number of tiles per zoom level.
+         * @return A List of Maps with zoom, tiles, total, and percent keys
+         */
+        List<Map> getTileCounts() {
+            List stats = []
+            getSql().eachRow("select count(*) as num_tiles, zoom_level from tiles group by zoom_level order by zoom_level", { def row ->
+                long zoom = row.zoom_level
+                long numberOfTiles = row.num_tiles
+                long totalNumberOfTiles = this.pyramid.grid(row.zoom_level).size
+                double percent = totalNumberOfTiles / numberOfTiles
+                stats.add([
+                        zoom: zoom,
+                        tiles: numberOfTiles,
+                        total: totalNumberOfTiles,
+                        percent: percent
+                ])
+            })
+            stats
+        }
+
+        /**
+         * Get the maximum zoom level of the tiles present.
+         * @return The maximum zoom level of the tile present
+         */
+        int getMaxZoom() {
+            int max
+            getSql().eachRow("select max(zoom_level) as max_zoom_level from tiles", {  def row ->
+                max = row.max_zoom_level
+            })
+            max
+        }
+
+        /**
+         * Get the minimum zoom level of the tiles present.
+         * @return The minimum zoom level of the tile present
+         */
+        int getMinZoom() {
+            int min
+            getSql().eachRow("select min(zoom_level) as min_zoom_level from tiles", {  def row ->
+                min = row.min_zoom_level
+            })
+            min
+        }
     }
 
     /**
