@@ -3,9 +3,9 @@
 GeoScript Groovy Releases
 =========================
 
-1.11-SNAPSHOT
--------------
-The 1.11 release of GeoScript is currently under development and is built on Grooovy 2.4.14, GeoTools 19.0, and the Java Topology Suite 1.13 and
+1.11.0
+------
+The 1.11 release of GeoScript is built on Groovy 2.4.14, GeoTools 19.0, and the Java Topology Suite 1.13 and
 requires Java 8.
 
 Add support for storing PBF vector tiles in MBTiles database::
