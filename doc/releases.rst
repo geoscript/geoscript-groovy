@@ -3,6 +3,11 @@
 GeoScript Groovy Releases
 =========================
 
+1.12.0 (Under development)
+--------------------------
+The 1.12 release of GeoScript is built on Groovy 2.4.14, GeoTools 20.0, and the Java Topology Suite 1.13 and
+requires Java 8.
+
 1.11.0
 ------
 The 1.11 release of GeoScript is built on Groovy 2.4.14, GeoTools 19.0, and the Java Topology Suite 1.13 and
