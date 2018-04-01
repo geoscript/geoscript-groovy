@@ -293,9 +293,13 @@ class GeometryTestCase {
     }
 
     @Test void getValidReason() {
+        // If geometry is invalid return the reason
         Geometry g = new Polygon([0,0],[10,10],[0,10],[10,0],[0,0])
         assertFalse(g.isValid())
         assertEquals("Self-intersection",g.validReason)
+        // If geometry is valid just return empty string
+        Geometry g2 = new Polygon([0,0],[0,10],[10,10],[10,0],[0,0])
+        assertEquals("", g2.validReason)
     }
 
     @Test void translate() {

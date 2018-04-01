@@ -357,7 +357,7 @@ class Geometry {
      */
     String getValidReason() {
         def op = new com.vividsolutions.jts.operation.valid.IsValidOp(this.g)
-        op.validationError.message
+        op.validationError?.message ?: ""
     }
 
     /**
