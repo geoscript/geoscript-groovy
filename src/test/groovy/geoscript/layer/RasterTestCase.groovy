@@ -13,8 +13,6 @@ import static org.junit.Assert.*
 import geoscript.workspace.Memory
 import geoscript.feature.Field
 
-import static org.junit.Assert.assertEquals
-
 /**
  * The Raster unit test
  */
