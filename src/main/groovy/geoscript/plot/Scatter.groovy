@@ -24,14 +24,15 @@ class Scatter {
      * Create a scatter plot Chart
      * @param options Named parameter options
      * <ul>
-     *      <li>title: The chart title</li>
-     *      <li>xLabel: The x axis label</li>
-     *      <li>yLabel: The y axis label</li>
-     *      <li>size: The size of the markers</li>
-     *      <li>legend: Whether to show the legend</li>
-     *      <li>tooltips: Whether to show the tooltips</li>
-     *      <li>urls: Whether to show the urls</li>
-     *      <li>orientation: The plot orientation (vertical or horizontal)</li>
+     *      <li>title: The chart title (defaults to an empty string)</li>
+     *      <li>xLabel: The x axis label (defaults to an empty string)</li>
+     *      <li>yLabel: The y axis label (defaults to an empty string)</li>
+     *      <li>dataLabel: The data series label (defaults to Values)</li>
+     *      <li>size: The size of the markers (defaults to 3)</li>
+     *      <li>legend: Whether to show the legend (defaults to true)</li>
+     *      <li>tooltips: Whether to show the tooltips (defaults to true)</li>
+     *      <li>urls: Whether to show the urls (defaults to false)</li>
+     *      <li>orientation: The plot orientation (vertical or horizontal) (defaults to vertical)</li>
      * </ul>
      * @param data A List of data where each item is a List with two items.
      * @return A Chart
@@ -40,6 +41,7 @@ class Scatter {
         String title = options.get("title","")
         String xLabel = options.get("xLabel","")
         String yLabel = options.get("yLabel","")
+        String dataLabel = options.get("dataLabel", "Values")
         int size = options.get("size",3)
         boolean legend = options.get("legend", true)
         boolean tooltips = options.get("tooltips", true)
@@ -52,7 +54,7 @@ class Scatter {
         def yAxis = new NumberAxis(yLabel)
         yAxis.autoRangeIncludesZero = false
 
-        def series = new XYSeries("Values")
+        def series = new XYSeries(dataLabel)
         data.each {datum ->
             series.add(datum[0], datum[1])
         }
