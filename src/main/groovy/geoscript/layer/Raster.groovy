@@ -39,7 +39,6 @@ import org.jaitools.numeric.Range
 import org.geotools.coverage.grid.GridCoverageFactory
 import org.opengis.coverage.grid.GridCoverage
 
-
 import javax.media.jai.Interpolation
 import javax.media.jai.RasterFactory
 import javax.media.jai.TiledImage
@@ -48,6 +47,8 @@ import javax.media.jai.iterator.WritableRandomIter
 import java.awt.Color
 import java.awt.Dimension
 import java.awt.Rectangle
+import java.awt.image.BufferedImage
+import java.awt.image.ColorModel
 import java.awt.image.DataBuffer
 import java.awt.image.RenderedImage
 import java.awt.image.WritableRaster
@@ -129,6 +130,34 @@ class Raster implements Renderable {
     Raster(RenderedImage image, Bounds bounds) {
         GridCoverageFactory gridCoverageFactory = new GridCoverageFactory()
         this.coverage = gridCoverageFactory.create("Raster", image, bounds.env)
+        this.style = new RasterSymbolizer()
+    }
+
+    /**
+     * Create a new Raster form a Bounds, image size, and List of Bands
+     * @param bounds A Bounds with a Projection
+     * @param width The Raster width
+     * @param height The Raster height
+     * @param bands A List of Bands
+     */
+    Raster(Bounds bounds, int width, int height, List<Band> bands) {
+        GridCoverageFactory gridCoverageFactory = new GridCoverageFactory()
+        BufferedImage image
+        if(bands.size() == 0) {
+            image = new BufferedImage(width, height, BufferedImage.TYPE_BYTE_GRAY)
+        } else {
+            GridSampleDimension dim = bands[0].dim as GridSampleDimension
+            ColorModel colorModel = bands.size() == 1 ? dim.colorModel : dim.getColorModel(0, bands.size())
+            image = new BufferedImage(colorModel, colorModel.createCompatibleWritableRaster(width, height), false, null)
+        }
+        this.coverage = gridCoverageFactory.create(
+                null,
+                image,
+                bounds.env,
+                bands.collect { it.dim  } as GridSampleDimension[],
+                null,
+                null
+        )
         this.style = new RasterSymbolizer()
     }
 
@@ -547,7 +576,7 @@ class Raster implements Renderable {
             enableWriteSupport()
         }
         def pixel = (p instanceof Point) ? getPixel(p) : p
-        writable.setSample(pixel[0], pixel[1], band, value)
+        writable.setSample(pixel[0] as int, pixel[1] as int, band, value)
     }
 
     /**

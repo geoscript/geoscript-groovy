@@ -1,5 +1,6 @@
 package geoscript.layer
 
+import geoscript.filter.Color
 import geoscript.geom.*
 import geoscript.proj.Projection
 import geoscript.style.ColorMap
@@ -1124,6 +1125,40 @@ class RasterTestCase {
         assertEquals 56.0, raster2.getValue(2,2), 0.1
     }
 
+    @Test void createNewRaster() {
 
+        // Create a new Raster
+        Raster raster = new Raster(
+            new Bounds(-180,-90,180,90,"EPSG:4326"),
+            100,80,
+            [
+                    new Band("red", 0, 255, 256),
+                    new Band("green", 0, 255, 256),
+                    new Band("blue", 0, 255, 256)
+            ]
+        )
+        assertEquals(new Bounds(-180,-90,180,90,"EPSG:4326"), raster.bounds)
+        assertEquals(100, raster.size[0])
+        assertEquals(80, raster.size[1])
+        assertEquals(3, raster.bands.size())
+
+        // Set values of each pixel
+        raster.eachCell { double value, double x, double y ->
+            Color color = Color.randomPastel
+            raster.setValue([x,y], color.rgb[0], 0)
+            raster.setValue([x,y], color.rgb[1], 1)
+            raster.setValue([x,y], color.rgb[2], 2)
+        }
+
+        // Write the Raster to disk
+        File file = folder.newFile("elevation.tif")
+        GeoTIFF geotiff = new GeoTIFF(file)
+        geotiff.write(raster)
+        Raster geotiffRaster = geotiff.read("elevation")
+        assertEquals(new Bounds(-180,-90,180,90,"EPSG:4326"), geotiffRaster.bounds)
+        assertEquals(100, geotiffRaster.size[0])
+        assertEquals(80, geotiffRaster.size[1])
+        assertEquals(3, geotiffRaster.bands.size())
+    }
 
 }

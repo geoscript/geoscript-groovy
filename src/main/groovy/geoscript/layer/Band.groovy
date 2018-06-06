@@ -1,6 +1,9 @@
 package geoscript.layer
 
+import org.geotools.coverage.GridSampleDimension
 import org.geotools.coverage.TypeMap
+import org.opengis.coverage.SampleDimensionType
+import javax.measure.Unit
 import java.awt.image.DataBuffer
 import org.opengis.coverage.SampleDimension
 
@@ -20,8 +23,28 @@ class Band {
      * @param dim The wrapped GeoTools SampleDimension
      */
     Band(SampleDimension dim) {
-         this.dim = dim
-        dim.getSampleDimensionType()
+        this.dim = dim
+    }
+
+    /**
+     * Create a new Band with minimum and maximum values
+     * @param description The Band's description
+     * @param min The minimum value
+     * @param max The maximum value
+     */
+    Band(String description, double min, double max) {
+        this(builder().description(description).minimum(min).maximum(max).build().dim)
+    }
+
+    /**
+     * Create a new Band with minimum, maximum, and no data values
+     * @param description The Band's description
+     * @param min The minimum value
+     * @param max The maximum value
+     * @param noValue The no data value
+     */
+    Band(String description, double min, double max, double noValue) {
+        this(builder().description(description).minimum(min).maximum(max).noDataValue(noValue).build().dim)
     }
 
     /**
@@ -61,7 +84,7 @@ class Band {
      * Get the unit information
      * @return The unit information
      */
-    def getUnit() {
+    Unit getUnit() {
         dim.units
     }
 
@@ -112,4 +135,104 @@ class Band {
     String toString() {
         dim.description.toString()
     }
+
+    /**
+     * Create a new Band Builder
+     * @return A new Band Builder
+     */
+    static Builder builder() {
+        new Builder()
+    }
+
+    /**
+     * A Builder for fluently creating Bands
+     */
+    static private class Builder {
+
+        private String description
+        private String type = null
+        private List<String> categories = []
+        private List<Double> noDataValues = []
+        private double minimum
+        private double maximum
+        private double scale = 1
+        private double offset = 0
+        private Unit unit = null
+
+        Builder description(String description) {
+            this.description = description
+            this
+        }
+
+        /**
+         * Set the type (UNSIGNED_1BIT,UNSIGNED_2BITS,UNSIGNED_4BITS,UNSIGNED_8BITS,
+         * SIGNED_8BITS,UNSIGNED_16BITS,SIGNED_16BITS,UNSIGNED_32BITS,SIGNED_32BITS,
+         * REAL_32BITS,REAL_64BITS)
+         * @param type The type
+         * @return This Builder
+         */
+        Builder type(String type) {
+            this.type = type
+            this
+        }
+
+        Builder noDataValues(List<Double> noDataValues) {
+            this.noDataValues = noDataValues
+            this
+        }
+
+        Builder noDataValue(double noDataValue) {
+            if (this.noDataValues == null) {
+                this.noDataValues = []
+            }
+            this.noDataValues.add(noDataValue)
+            this
+        }
+
+        Builder minimum(double minimum) {
+            this.minimum = minimum
+            this
+        }
+
+        Builder maximum(double maximum) {
+            this.maximum = maximum
+            this
+        }
+
+        Builder scale(double scale) {
+            this.scale = scale
+            this
+        }
+
+        Builder offset(double offset) {
+            this.offset = offset
+            this
+        }
+
+        Builder unit(Unit unit) {
+            this.unit = unit
+            this
+        }
+
+        Band build() {
+            new Band(getSampleDimension())
+        }
+
+        protected GridSampleDimension getSampleDimension() {
+            new GridSampleDimension(
+                description,
+                type ? SampleDimensionType.valueOf(type) : null,
+                null,
+                null,
+                categories ? categories as String[] : null,
+                noDataValues ? noDataValues as double[] : null,
+                minimum,
+                maximum,
+                scale,
+                offset,
+                unit
+            )
+        }
+    }
+
 }
