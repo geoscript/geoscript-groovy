@@ -890,6 +890,24 @@ class RasterTestCase {
         assertEquals 250.0, result.max[2], 0.1
     }
 
+    @Test void getMinimumAndMaximumValues() {
+        File file = new File(getClass().getClassLoader().getResource("alki.tif").toURI())
+        GeoTIFF geoTIFF = new GeoTIFF(file)
+        Raster raster = geoTIFF.read()
+        assertEquals 10.0, raster.getMinValue(0), 0.1
+        assertEquals 51.0, raster.getMinValue(1), 0.1
+        assertEquals 58.0, raster.getMinValue(2), 0.1
+        assertEquals 255.0, raster.getMaxValue(0), 0.1
+        assertEquals 255.0, raster.getMaxValue(1), 0.1
+        assertEquals 250.0, raster.getMaxValue(2), 0.1
+
+        file = new File(getClass().getClassLoader().getResource("raster.tif").toURI())
+        geoTIFF = new GeoTIFF(file)
+        raster = geoTIFF.read()
+        assertEquals 49.0, raster.getMinValue(0), 0.1
+        assertEquals 255.0, raster.getMaxValue(0), 0.1
+    }
+
     @Test void resample() {
         File file = new File(getClass().getClassLoader().getResource("alki.tif").toURI())
         GeoTIFF geoTIFF = new GeoTIFF(file)
@@ -1159,6 +1177,41 @@ class RasterTestCase {
         assertEquals(100, geotiffRaster.size[0])
         assertEquals(80, geotiffRaster.size[1])
         assertEquals(3, geotiffRaster.bands.size())
+    }
+
+    @Test void copyRasterToNewRaster() {
+
+        // Get an existing Raster
+        File alkiFile = new File(getClass().getClassLoader().getResource("alki.tif").toURI())
+        assertNotNull(alkiFile)
+        GeoTIFF alkiGeoTiff = new GeoTIFF(alkiFile)
+        Raster alkiRaster = alkiGeoTiff.read()
+        assertNotNull(alkiRaster)
+
+        // Create a new Blank Raster that is a copy of the existing Raster
+        Raster raster = new Raster(alkiRaster.bounds, alkiRaster.size[0], alkiRaster.size[1], alkiRaster.bands)
+        assertEquals(alkiRaster.bounds, raster.bounds)
+        assertEquals(alkiRaster.size[0], raster.size[0])
+        assertEquals(alkiRaster.size[1], raster.size[1])
+        assertEquals(alkiRaster.bands.size(), raster.bands.size())
+
+        // Set values of each pixel
+        raster.eachCell { double value, double x, double y ->
+            raster.bands.eachWithIndex { Band b, int i ->
+                double alkiValue = alkiRaster.getValue([x,y], i)
+                raster.setValue([x,y], alkiValue, i)
+            }
+        }
+
+        // Write the New Raster to disk
+        File file = folder.newFile("alkiCopy.tif")
+        GeoTIFF geotiff = new GeoTIFF(file)
+        geotiff.write(raster)
+        Raster geotiffRaster = geotiff.read("alkiCopy")
+        assertEquals(alkiRaster.bounds, geotiffRaster.bounds)
+        assertEquals(alkiRaster.size[0], geotiffRaster.size[0])
+        assertEquals(alkiRaster.size[1], geotiffRaster.size[1])
+        assertEquals(alkiRaster.bands.size(), geotiffRaster.bands.size())
     }
 
 }

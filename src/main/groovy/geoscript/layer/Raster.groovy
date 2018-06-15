@@ -37,6 +37,7 @@ import org.jaitools.imageutils.iterator.SimpleIterator
 import org.jaitools.imageutils.iterator.WindowIterator
 import org.jaitools.numeric.Range
 import org.geotools.coverage.grid.GridCoverageFactory
+import org.opengis.coverage.SampleDimension
 import org.opengis.coverage.grid.GridCoverage
 
 import javax.media.jai.Interpolation
@@ -235,9 +236,47 @@ class Raster implements Renderable {
      * @return The List of Bands
      */
     List<Band> getBands() {
-        (0..<coverage.numSampleDimensions).collect{i ->
-            new Band(coverage.getSampleDimension(i))
+        (0..<this.coverage.numSampleDimensions).collect { int i ->
+            SampleDimension d = coverage.getSampleDimension(i)
+            Band.builder()
+                .description(d.description?.toString())
+                .type(d.sampleDimensionType?.name())
+                .noDataValues(d.noDataValues as List)
+                .minimum(getMinValue(i))
+                .maximum(getMaxValue(i))
+                .scale(d.scale)
+                .offset(d.offset)
+                .unit(d.units)
+                .build()
         }
+    }
+
+    /**
+     * Get the minimum value for a band.  It first tries to get the value from the Band's metadata
+     * and then calculates it from the actual data.
+     * @param band The Band index
+     * @return A minimum value
+     */
+    double getMinValue(int band) {
+        double minValue = this.coverage.getSampleDimension(band).minimumValue
+        if (Double.isInfinite(minValue)) {
+            minValue = this.getExtrema().min[band]
+        }
+        minValue
+    }
+
+    /**
+     * Get the maximum value for a band.  It first tries to get the value from the Band's metadata
+     * and then calculates it from the actual data.
+     * @param band The Band index
+     * @return A maximum value
+     */
+    double getMaxValue(int band) {
+        double maxValue = this.coverage.getSampleDimension(band).maximumValue
+        if (Double.isInfinite(maxValue)) {
+            maxValue = this.getExtrema().max[band]
+        }
+        maxValue
     }
 
     /**

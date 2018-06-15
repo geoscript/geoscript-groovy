@@ -176,16 +176,17 @@ class Band {
             this
         }
 
-        Builder noDataValues(List<Double> noDataValues) {
-            this.noDataValues = noDataValues
+        Builder noDataValues(List<Double> values) {
+            if (values) {
+                this.noDataValues.addAll(values)
+            }
             this
         }
 
-        Builder noDataValue(double noDataValue) {
-            if (this.noDataValues == null) {
-                this.noDataValues = []
+        Builder noDataValue(double value) {
+            if (value) {
+                this.noDataValues.add(value)
             }
-            this.noDataValues.add(noDataValue)
             this
         }
 
