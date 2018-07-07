@@ -1,7 +1,7 @@
 package geoscript.geom.io
 
 import geoscript.geom.Geometry
-import com.vividsolutions.jts.io.WKBReader
+import org.locationtech.jts.io.WKBReader
 
 /**
  * Read a {@link geoscript.geom.Geometry Geometry} from a WKB hex String or byte array.

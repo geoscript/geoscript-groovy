@@ -1,12 +1,12 @@
 package geoscript.layer.io
 
-import com.vividsolutions.jts.algorithm.CGAlgorithms
-import com.vividsolutions.jts.geom.Coordinate
-import com.vividsolutions.jts.geom.Envelope
-import com.vividsolutions.jts.geom.Geometry as JtsGeometry
-import com.vividsolutions.jts.geom.GeometryFactory
-import com.vividsolutions.jts.geom.LinearRing
-import com.vividsolutions.jts.geom.Polygon
+import org.locationtech.jts.algorithm.CGAlgorithms
+import org.locationtech.jts.geom.Coordinate
+import org.locationtech.jts.geom.Envelope
+import org.locationtech.jts.geom.Geometry as JtsGeometry
+import org.locationtech.jts.geom.GeometryFactory
+import org.locationtech.jts.geom.LinearRing
+import org.locationtech.jts.geom.Polygon
 import com.wdtinc.mapbox_vector_tile.VectorTile
 import com.wdtinc.mapbox_vector_tile.adapt.jts.IGeometryFilter
 import com.wdtinc.mapbox_vector_tile.adapt.jts.JtsAdapter
@@ -131,7 +131,7 @@ class Pbf {
         GeometryFactory geometryFactory = new GeometryFactory()
         IGeometryFilter geometryFilter = new IGeometryFilter() {
             @Override
-            boolean accept(com.vividsolutions.jts.geom.Geometry geometry) {
+            boolean accept(org.locationtech.jts.geom.Geometry geometry) {
                 true
             }
         }

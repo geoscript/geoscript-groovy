@@ -1,7 +1,7 @@
 package geoscript.geom
 
-import com.vividsolutions.jts.geom.Polygon as JtsPolygon
-import com.vividsolutions.jts.geom.LinearRing as JtsLinearRing
+import org.locationtech.jts.geom.Polygon as JtsPolygon
+import org.locationtech.jts.geom.LinearRing as JtsLinearRing
 
 /**
  * A Polygon Geometry.

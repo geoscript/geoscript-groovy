@@ -1,6 +1,6 @@
 package geoscript.plot
 
-import com.vividsolutions.jts.geom.Geometry
+import org.locationtech.jts.geom.Geometry
 import geoscript.viewer.Viewer
 import org.geotools.renderer.chart.GeometryDataset
 import org.geotools.renderer.chart.GeometryRenderer

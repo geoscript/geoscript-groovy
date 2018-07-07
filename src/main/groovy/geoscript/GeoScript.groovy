@@ -166,8 +166,8 @@ class GeoScript {
             return new Schema(obj as org.opengis.feature.simple.SimpleFeatureType)
         }
         // JTS Geometry -> Geometry
-        else if (obj instanceof com.vividsolutions.jts.geom.Geometry) {
-            return Geometry.wrap(obj as com.vividsolutions.jts.geom.Geometry)
+        else if (obj instanceof org.locationtech.jts.geom.Geometry) {
+            return Geometry.wrap(obj as org.locationtech.jts.geom.Geometry)
         }
         // ReferencedEnvelope -> Bounds
         else if (obj instanceof org.geotools.geometry.jts.ReferencedEnvelope) {

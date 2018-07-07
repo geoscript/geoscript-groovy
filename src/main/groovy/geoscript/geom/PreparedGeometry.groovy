@@ -1,7 +1,7 @@
 package geoscript.geom
 
-import com.vividsolutions.jts.geom.prep.PreparedGeometry as JtsPreparedGeometry
-import com.vividsolutions.jts.geom.prep.PreparedGeometryFactory
+import org.locationtech.jts.geom.prep.PreparedGeometry as JtsPreparedGeometry
+import org.locationtech.jts.geom.prep.PreparedGeometryFactory
 
 /**
  * A PreparedGeometry makes repeated spatial operations more efficient.

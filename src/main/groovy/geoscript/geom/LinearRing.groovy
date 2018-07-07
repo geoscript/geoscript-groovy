@@ -1,7 +1,7 @@
 package geoscript.geom
 
-import com.vividsolutions.jts.geom.LinearRing as JtsLinearRing
-import com.vividsolutions.jts.geom.Coordinate
+import org.locationtech.jts.geom.LinearRing as JtsLinearRing
+import org.locationtech.jts.geom.Coordinate
 
 /**
  * A LinearRing Geometry is a LineString whose first and last coordinates are the same forming a closed ring.

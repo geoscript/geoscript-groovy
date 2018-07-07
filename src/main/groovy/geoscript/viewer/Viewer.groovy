@@ -1,11 +1,11 @@
 package geoscript.viewer
 
-import com.vividsolutions.jts.geom.Geometry as JtsGeometry
+import org.locationtech.jts.geom.Geometry as JtsGeometry
 
-import com.vividsolutions.jts.awt.PointShapeFactory
-import com.vividsolutions.jts.awt.PointTransformation
-import com.vividsolutions.jts.awt.ShapeWriter
-import com.vividsolutions.jts.geom.Coordinate
+import org.locationtech.jts.awt.PointShapeFactory
+import org.locationtech.jts.awt.PointTransformation
+import org.locationtech.jts.awt.ShapeWriter
+import org.locationtech.jts.geom.Coordinate
 import geoscript.geom.Bounds
 import geoscript.geom.Geometry
 import geoscript.geom.GeometryCollection
@@ -187,7 +187,7 @@ class Viewer {
         geometries.each{geometry->
             Shape shp = shapeWriter.toShape(geometry.g)
             // Fill
-            if (!(geometry.g instanceof com.vividsolutions.jts.geom.Lineal)) {
+            if (!(geometry.g instanceof org.locationtech.jts.geom.Lineal)) {
                 g2d.setComposite(fillComposite)
                 g2d.setColor(fillColor)
                 g2d.fill(shp)

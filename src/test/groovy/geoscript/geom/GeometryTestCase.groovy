@@ -1,11 +1,11 @@
 package geoscript.geom
 
-import com.vividsolutions.jts.geom.Envelope
-import com.vividsolutions.jts.geom.IntersectionMatrix
+import org.locationtech.jts.geom.Envelope
+import org.locationtech.jts.geom.IntersectionMatrix
 import org.junit.Test
 import static org.junit.Assert.*
-import com.vividsolutions.jts.geom.Point as JtsPoint
-import com.vividsolutions.jts.geom.Coordinate
+import org.locationtech.jts.geom.Point as JtsPoint
+import org.locationtech.jts.geom.Coordinate
 
 /**
  * The Geometry unit test

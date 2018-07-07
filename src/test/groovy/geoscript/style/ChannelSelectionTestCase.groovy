@@ -52,15 +52,15 @@ class ChannelSelectionTestCase {
         def channel = new ChannelSelection("red", "green", "blue")
         def sym = Symbolizer.styleFactory.createRasterSymbolizer()
         channel.apply(sym)
-        assertEquals "red", sym.channelSelection.RGBChannels[0].channelName
-        assertEquals "green", sym.channelSelection.RGBChannels[1].channelName
-        assertEquals "blue", sym.channelSelection.RGBChannels[2].channelName
+        assertEquals "red", sym.channelSelection.RGBChannels[0].channelName.value
+        assertEquals "green", sym.channelSelection.RGBChannels[1].channelName.value
+        assertEquals "blue", sym.channelSelection.RGBChannels[2].channelName.value
 
         // Gray Name
         channel = new ChannelSelection("gray")
         sym = Symbolizer.styleFactory.createRasterSymbolizer()
         channel.apply(sym)
-        assertEquals "gray", sym.channelSelection.grayChannel.channelName
+        assertEquals "gray", sym.channelSelection.grayChannel.channelName.value
 
         // Empty Constructor RGB
         channel = new ChannelSelection()
@@ -70,15 +70,15 @@ class ChannelSelectionTestCase {
         sym = Symbolizer.styleFactory.createRasterSymbolizer()
         channel.apply(sym)
 
-        assertEquals "red", sym.channelSelection.RGBChannels[0].channelName
+        assertEquals "red", sym.channelSelection.RGBChannels[0].channelName.value
         assertEquals "HISTOGRAM", sym.channelSelection.RGBChannels[0].contrastEnhancement.method.name()
         assertEquals 0.35, sym.channelSelection.RGBChannels[0].contrastEnhancement.gammaValue.value
 
-        assertEquals "green", sym.channelSelection.RGBChannels[1].channelName
+        assertEquals "green", sym.channelSelection.RGBChannels[1].channelName.value
         assertEquals "HISTOGRAM", sym.channelSelection.RGBChannels[1].contrastEnhancement.method.name()
         assertEquals 0.45, sym.channelSelection.RGBChannels[1].contrastEnhancement.gammaValue.value
 
-        assertEquals "blue", sym.channelSelection.RGBChannels[2].channelName
+        assertEquals "blue", sym.channelSelection.RGBChannels[2].channelName.value
         assertEquals "HISTOGRAM", sym.channelSelection.RGBChannels[2].contrastEnhancement.method.name()
         assertEquals 0.55, sym.channelSelection.RGBChannels[2].contrastEnhancement.gammaValue.value
 
@@ -86,7 +86,7 @@ class ChannelSelectionTestCase {
         channel = new ChannelSelection().gray("gray", new ContrastEnhancement("normalize"))
         sym = Symbolizer.styleFactory.createRasterSymbolizer()
         channel.apply(sym)
-        assertEquals "gray", sym.channelSelection.grayChannel.channelName
+        assertEquals "gray", sym.channelSelection.grayChannel.channelName.value
         assertEquals "NORMALIZE", sym.channelSelection.grayChannel.contrastEnhancement.method.name()
         assertNull sym.channelSelection.grayChannel.contrastEnhancement.gammaValue
     }
@@ -99,9 +99,9 @@ class ChannelSelectionTestCase {
         rule.symbolizers().add(Symbolizer.styleFactory.createRasterSymbolizer())
         channel.prepare(rule)
         def sym = rule.symbolizers[0]
-        assertEquals "red", sym.channelSelection.RGBChannels[0].channelName
-        assertEquals "green", sym.channelSelection.RGBChannels[1].channelName
-        assertEquals "blue", sym.channelSelection.RGBChannels[2].channelName
+        assertEquals "red", sym.channelSelection.RGBChannels[0].channelName.value
+        assertEquals "green", sym.channelSelection.RGBChannels[1].channelName.value
+        assertEquals "blue", sym.channelSelection.RGBChannels[2].channelName.value
     }
 
     @Test void string() {

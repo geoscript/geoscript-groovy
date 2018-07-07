@@ -57,7 +57,7 @@ class GeoScriptTestCase {
     }
 
     @Test void unwrap() {
-        assertTrue GeoScript.unwrap(new Point(111,-47)) instanceof com.vividsolutions.jts.geom.Point
+        assertTrue GeoScript.unwrap(new Point(111,-47)) instanceof org.locationtech.jts.geom.Point
         assertTrue GeoScript.unwrap(new Feature([the_geom: "POINT (1 1)"],"pt")) instanceof org.opengis.feature.simple.SimpleFeature
         assertTrue GeoScript.unwrap(new Schema("widgets", "geom:Point:srid=4326")) instanceof org.opengis.feature.simple.SimpleFeatureType
         assertTrue GeoScript.unwrap(new Bounds(0,0,10,10)) instanceof org.geotools.geometry.jts.ReferencedEnvelope

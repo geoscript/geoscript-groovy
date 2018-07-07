@@ -359,8 +359,7 @@ class LayerTestCase {
         def out = new java.io.ByteArrayOutputStream()
         layer1.toKML(out, {f->f.get("name")}, {f-> "${f.get('name')} ${f.get('price')}"})
         String kml = out.toString()
-        String expected = """<?xml version="1.0" encoding="UTF-8"?>
-<kml:kml xmlns:kml="http://www.opengis.net/kml/2.2">
+        String expected = """<?xml version="1.0" encoding="UTF-8"?><kml:kml xmlns:kml="http://www.opengis.net/kml/2.2">
   <kml:Document>
     <kml:Folder>
       <kml:name>facilities</kml:name>

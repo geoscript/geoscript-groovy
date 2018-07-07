@@ -1,6 +1,6 @@
 package geoscript.index
 
-import com.vividsolutions.jts.index.SpatialIndex as JtsSpatialIndex
+import org.locationtech.jts.index.SpatialIndex as JtsSpatialIndex
 import geoscript.geom.Bounds
 
 /**

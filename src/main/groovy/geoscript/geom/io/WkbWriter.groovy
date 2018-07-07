@@ -1,7 +1,7 @@
 package geoscript.geom.io
 
 import geoscript.geom.Geometry
-import com.vividsolutions.jts.io.WKBWriter
+import org.locationtech.jts.io.WKBWriter
 
 /**
  * Write a {@link geoscript.geom.Geometry Geometry} to a WKB hex String or byte array.

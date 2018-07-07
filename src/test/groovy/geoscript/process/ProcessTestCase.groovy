@@ -25,7 +25,7 @@ class ProcessTestCase {
     
     @Test void conversions() {
         def pt = new Point(0,0)
-        assertTrue Process.convert(pt, com.vividsolutions.jts.geom.Geometry) instanceof com.vividsolutions.jts.geom.Geometry
+        assertTrue Process.convert(pt, org.locationtech.jts.geom.Geometry) instanceof org.locationtech.jts.geom.Geometry
         assertTrue Process.convert(pt.g, geoscript.geom.Geometry) instanceof geoscript.geom.Geometry
 
         def b = new Bounds(0,0,10,10,"EPSG:4326")

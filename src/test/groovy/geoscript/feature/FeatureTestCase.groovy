@@ -5,7 +5,7 @@ import org.junit.Test
 import static org.junit.Assert.*
 import geoscript.geom.*
 import geoscript.AssertUtil
-import com.vividsolutions.jts.geom.Geometry as JtsGeometry
+import org.locationtech.jts.geom.Geometry as JtsGeometry
 
 /**
  * The Feature UnitTest

@@ -1,7 +1,7 @@
 package geoscript.geom.io
 
 import geoscript.geom.Geometry
-import com.vividsolutions.jts.io.WKTWriter
+import org.locationtech.jts.io.WKTWriter
 
 /**
  * Write a {@link geoscript.geom.Geometry Geometry} to a WKT String.

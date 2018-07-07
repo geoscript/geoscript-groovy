@@ -1,7 +1,7 @@
 package geoscript.geom
 
-import com.vividsolutions.jts.geom.MultiPolygon as JtsMultiPolygon
-import com.vividsolutions.jts.geom.Polygon as JtsPolygon
+import org.locationtech.jts.geom.MultiPolygon as JtsMultiPolygon
+import org.locationtech.jts.geom.Polygon as JtsPolygon
 
 /**
  * A MultiPolygon Geometry.

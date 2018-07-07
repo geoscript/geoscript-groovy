@@ -172,23 +172,23 @@ class Database extends Workspace {
      */
     private Class getGeometryClass(String geometry) {
         if (geometry.equalsIgnoreCase("point")) {
-            return com.vividsolutions.jts.geom.Point.class
+            return org.locationtech.jts.geom.Point.class
         } else if (geometry.equalsIgnoreCase("multipoint")) {
-            return com.vividsolutions.jts.geom.MultiPoint.class
+            return org.locationtech.jts.geom.MultiPoint.class
         } else if (geometry.equalsIgnoreCase("linestring")) {
-            return com.vividsolutions.jts.geom.LineString.class
+            return org.locationtech.jts.geom.LineString.class
         } else if (geometry.equalsIgnoreCase("multilinestring")) {
-            return com.vividsolutions.jts.geom.MultiLineString.class
+            return org.locationtech.jts.geom.MultiLineString.class
         } else if (geometry.equalsIgnoreCase("linearring")) {
-            return com.vividsolutions.jts.geom.LinearRing.class
+            return org.locationtech.jts.geom.LinearRing.class
         } else if (geometry.equalsIgnoreCase("polygon")) {
-            return com.vividsolutions.jts.geom.Polygon.class
+            return org.locationtech.jts.geom.Polygon.class
         } else if (geometry.equalsIgnoreCase("multipolygon")) {
-            return com.vividsolutions.jts.geom.MultiPolygon.class
+            return org.locationtech.jts.geom.MultiPolygon.class
         } else if (geometry.equalsIgnoreCase("geometrycollection")) {
-            return com.vividsolutions.jts.geom.GeometryCollection.class
+            return org.locationtech.jts.geom.GeometryCollection.class
         } else {
-            return com.vividsolutions.jts.geom.Geometry.class
+            return org.locationtech.jts.geom.Geometry.class
         }
     }
 }

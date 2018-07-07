@@ -24,7 +24,7 @@
 
 package geoscript.geom.io
 
-import com.vividsolutions.jts.geom.Coordinate
+import org.locationtech.jts.geom.Coordinate
 import geoscript.geom.Geometry
 import geoscript.geom.LineString
 import geoscript.geom.Point

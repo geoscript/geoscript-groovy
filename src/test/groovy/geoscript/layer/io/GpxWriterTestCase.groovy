@@ -40,8 +40,7 @@ class GpxWriterTestCase {
                 type: "Trail"
         )
         String actual = writer.write(layer)
-        String expected = """<?xml version="1.0" encoding="UTF-8"?>
-<gpx xmlns="http://www.topografix.com/GPX/1/1" version="1.1" creator="geoscript">
+        String expected = """<?xml version="1.0" encoding="UTF-8"?><gpx xmlns="http://www.topografix.com/GPX/1/1" version="1.1" creator="geoscript">
 <wpt lat="0.0" lon="0.0">
 <name>1</name>
 <desc>This is feature # 1</desc>
@@ -115,8 +114,7 @@ class GpxWriterTestCase {
                 includeAttributes: true
         )
         String actual = writer.write(layer)
-        String expected = """<?xml version="1.0" encoding="UTF-8"?>
-<gpx xmlns:ogr="http://www.gdal.org/ogr/" xmlns="http://www.topografix.com/GPX/1/1" version="1.1" creator="geoscript">
+        String expected = """<?xml version="1.0" encoding="UTF-8"?><gpx xmlns:ogr="http://www.gdal.org/ogr/" xmlns="http://www.topografix.com/GPX/1/1" version="1.1" creator="geoscript">
 <wpt lat="0.0" lon="0.0">
 <name>1</name>
 <extensions>

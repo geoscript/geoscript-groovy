@@ -435,20 +435,20 @@ class Schema {
 
     /**
      * Look up the alias of a GeoTools binding.
-     * For example: "com.vividsolutions.jts.geom.LinearRing" => "LinearRing"
+     * For example: "org.locationtech.jts.geom.LinearRing" => "LinearRing"
      * @param The Class name
      * @return The alias
      */
     static String lookUpAlias(String binding) {
         Map map = [
-            ("com.vividsolutions.jts.geom.LinearRing".toLowerCase()) : "LinearRing",
-            ("com.vividsolutions.jts.geom.LineString".toLowerCase()) : "LineString",
-            ("com.vividsolutions.jts.geom.MultiLineString".toLowerCase()) : "MultiLineString",
-            ("com.vividsolutions.jts.geom.MultiPoint".toLowerCase()) : "MultiPoint",
-            ("com.vividsolutions.jts.geom.MultiPolygon".toLowerCase()) : "MultiPolygon",
-            ("com.vividsolutions.jts.geom.Point".toLowerCase()) : "Point",
-            ("com.vividsolutions.jts.geom.Polygon".toLowerCase()) : "Polygon",
-            ("com.vividsolutions.jts.geom.Geometry".toLowerCase()) : "Geometry",
+            ("org.locationtech.jts.geom.LinearRing".toLowerCase()) : "LinearRing",
+            ("org.locationtech.jts.geom.LineString".toLowerCase()) : "LineString",
+            ("org.locationtech.jts.geom.MultiLineString".toLowerCase()) : "MultiLineString",
+            ("org.locationtech.jts.geom.MultiPoint".toLowerCase()) : "MultiPoint",
+            ("org.locationtech.jts.geom.MultiPolygon".toLowerCase()) : "MultiPolygon",
+            ("org.locationtech.jts.geom.Point".toLowerCase()) : "Point",
+            ("org.locationtech.jts.geom.Polygon".toLowerCase()) : "Polygon",
+            ("org.locationtech.jts.geom.Geometry".toLowerCase()) : "Geometry",
             ("org.geotools.geometry.jts.CircularRing".toLowerCase()) : "CircularRing",
             ("org.geotools.geometry.jts.CircularString".toLowerCase()) : "CircularString",
             ("org.geotools.geometry.jts.CompoundCurve".toLowerCase()) : "CompoundCurve",
@@ -465,28 +465,28 @@ class Schema {
 
     /**
      * Look up a GeoTools binding for the alias.
-     * For example: "geoscript.geom.LinearRing" => "com.vividsolutions.jts.geom.LinearRing"
+     * For example: "geoscript.geom.LinearRing" => "org.locationtech.jts.geom.LinearRing"
      * @param alias The alias
      * @return The GeoTools binding class name
      */
     static lookUpBinding(String alias) {
         Map map = [
-            ("geoscript.geom.LinearRing".toLowerCase()) : "com.vividsolutions.jts.geom.LinearRing",
-            ("LinearRing".toLowerCase()) : "com.vividsolutions.jts.geom.LinearRing",
-            ("geoscript.geom.LineString".toLowerCase()) : "com.vividsolutions.jts.geom.LineString",
-            ("LineString".toLowerCase()) : "com.vividsolutions.jts.geom.LineString",
-            ("geoscript.geom.MultiLineString".toLowerCase()) : "com.vividsolutions.jts.geom.MultiLineString",
-            ("MultiLineString".toLowerCase()) : "com.vividsolutions.jts.geom.MultiLineString",
-            ("geoscript.geom.MultiPoint".toLowerCase()) : "com.vividsolutions.jts.geom.MultiPoint",
-            ("MultiPoint".toLowerCase()) : "com.vividsolutions.jts.geom.MultiPoint",
-            ("geoscript.geom.MultiPolygon".toLowerCase()) : "com.vividsolutions.jts.geom.MultiPolygon",
-            ("MultiPolygon".toLowerCase()) : "com.vividsolutions.jts.geom.MultiPolygon",
-            ("geoscript.geom.Point".toLowerCase()) : "com.vividsolutions.jts.geom.Point",
-            ("Point".toLowerCase()) : "com.vividsolutions.jts.geom.Point",
-            ("geoscript.geom.Polygon".toLowerCase()) : "com.vividsolutions.jts.geom.Polygon",
-            ("Polygon".toLowerCase()) : "com.vividsolutions.jts.geom.Polygon",
-            ("geoscript.geom.Geometry".toLowerCase()) : "com.vividsolutions.jts.geom.Geometry",
-            ("Geometry".toLowerCase()) : "com.vividsolutions.jts.geom.Geometry",
+            ("geoscript.geom.LinearRing".toLowerCase()) : "org.locationtech.jts.geom.LinearRing",
+            ("LinearRing".toLowerCase()) : "org.locationtech.jts.geom.LinearRing",
+            ("geoscript.geom.LineString".toLowerCase()) : "org.locationtech.jts.geom.LineString",
+            ("LineString".toLowerCase()) : "org.locationtech.jts.geom.LineString",
+            ("geoscript.geom.MultiLineString".toLowerCase()) : "org.locationtech.jts.geom.MultiLineString",
+            ("MultiLineString".toLowerCase()) : "org.locationtech.jts.geom.MultiLineString",
+            ("geoscript.geom.MultiPoint".toLowerCase()) : "org.locationtech.jts.geom.MultiPoint",
+            ("MultiPoint".toLowerCase()) : "org.locationtech.jts.geom.MultiPoint",
+            ("geoscript.geom.MultiPolygon".toLowerCase()) : "org.locationtech.jts.geom.MultiPolygon",
+            ("MultiPolygon".toLowerCase()) : "org.locationtech.jts.geom.MultiPolygon",
+            ("geoscript.geom.Point".toLowerCase()) : "org.locationtech.jts.geom.Point",
+            ("Point".toLowerCase()) : "org.locationtech.jts.geom.Point",
+            ("geoscript.geom.Polygon".toLowerCase()) : "org.locationtech.jts.geom.Polygon",
+            ("Polygon".toLowerCase()) : "org.locationtech.jts.geom.Polygon",
+            ("geoscript.geom.Geometry".toLowerCase()) : "org.locationtech.jts.geom.Geometry",
+            ("Geometry".toLowerCase()) : "org.locationtech.jts.geom.Geometry",
             ("geoscript.geom.CircularRing".toLowerCase()) : "org.geotools.geometry.jts.CircularRing",
             ("CircularRing".toLowerCase()) : "org.geotools.geometry.jts.CircularRing",
             ("geoscript.geom.CircularString".toLowerCase()) : "org.geotools.geometry.jts.CircularString",

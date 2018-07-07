@@ -2,7 +2,7 @@ package geoscript.geom
 
 import org.junit.Test
 import static org.junit.Assert.assertEquals
-import com.vividsolutions.jts.geom.LinearRing as JtsLinearRing
+import org.locationtech.jts.geom.LinearRing as JtsLinearRing
 
 import static org.junit.Assert.assertTrue
 

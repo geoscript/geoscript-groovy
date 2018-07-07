@@ -1,8 +1,8 @@
 package geoscript.geom
 
-import com.vividsolutions.jts.algorithm.Angle
-import com.vividsolutions.jts.geom.Point as JtsPoint
-import com.vividsolutions.jts.geom.Coordinate
+import org.locationtech.jts.algorithm.Angle
+import org.locationtech.jts.geom.Point as JtsPoint
+import org.locationtech.jts.geom.Coordinate
 import geoscript.proj.Geodetic
 
 /**

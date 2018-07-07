@@ -1,7 +1,7 @@
 package geoscript.geom.io
 
 import geoscript.geom.Geometry
-import com.vividsolutions.jts.io.WKTReader
+import org.locationtech.jts.io.WKTReader
 import org.geotools.geometry.jts.WKTReader2
 
 /**

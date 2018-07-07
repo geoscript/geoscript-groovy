@@ -1,10 +1,10 @@
 package geoscript.geom
 
 import org.geotools.geometry.jts.ReferencedEnvelope
-import com.vividsolutions.jts.geom.Envelope
+import org.locationtech.jts.geom.Envelope
 import geoscript.proj.Projection
-import com.vividsolutions.jts.util.GeometricShapeFactory
-import com.vividsolutions.jts.geom.util.SineStarFactory
+import org.locationtech.jts.util.GeometricShapeFactory
+import org.locationtech.jts.geom.util.SineStarFactory
 
 /**
  * A Bounds is an Envelope with a {@link geoscript.proj.Projection Projection}.

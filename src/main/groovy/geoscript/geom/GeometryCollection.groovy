@@ -1,7 +1,7 @@
 package geoscript.geom
 
-import com.vividsolutions.jts.geom.GeometryCollection as JtsGeometryCollection
-import com.vividsolutions.jts.geom.Geometry as JtsGeometry
+import org.locationtech.jts.geom.GeometryCollection as JtsGeometryCollection
+import org.locationtech.jts.geom.Geometry as JtsGeometry
 
 /**
  * A GeometryCollection is a heterogenerous collection of other Geometries.

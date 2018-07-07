@@ -31,7 +31,7 @@ import org.opengis.feature.simple.SimpleFeatureType
 import org.opengis.feature.simple.SimpleFeature
 import org.opengis.referencing.crs.CoordinateReferenceSystem
 import org.opengis.feature.type.AttributeDescriptor
-import com.vividsolutions.jts.geom.Envelope
+import org.locationtech.jts.geom.Envelope
 import org.opengis.filter.FilterFactory2
 import org.geotools.data.collection.ListFeatureCollection
 

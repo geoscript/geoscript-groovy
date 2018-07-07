@@ -4,7 +4,7 @@ import org.junit.Test
 import static org.junit.Assert.*
 import geoscript.proj.Projection
 import org.geotools.geometry.jts.ReferencedEnvelope
-import com.vividsolutions.jts.geom.Envelope
+import org.locationtech.jts.geom.Envelope
 
 /**
  * The Bounds unit test

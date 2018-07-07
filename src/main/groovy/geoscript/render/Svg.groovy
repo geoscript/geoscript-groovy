@@ -1,6 +1,6 @@
 package geoscript.render
 
-import org.apache.batik.dom.svg.SVGDOMImplementation
+import org.apache.batik.anim.dom.SVGDOMImplementation
 import org.apache.batik.svggen.SVGGraphics2D
 import org.w3c.dom.DOMImplementation
 import org.w3c.dom.Document
@@ -26,7 +26,7 @@ class Svg extends Renderer<Document> {
      * @return The SVG Document
      */
     @Override
-    public Document render(Map map) {
+    Document render(Map map) {
         OutputStream out = new ByteArrayOutputStream()
         return renderAndReturn(map, out)
     }
@@ -37,7 +37,7 @@ class Svg extends Renderer<Document> {
      * @param out The OutputStream
      */
     @Override
-    public void render(Map map, OutputStream out) {
+    void render(Map map, OutputStream out) {
         renderAndReturn(map, out)
     }
 

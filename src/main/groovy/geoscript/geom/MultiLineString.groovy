@@ -1,11 +1,11 @@
 package geoscript.geom
 
-import com.vividsolutions.jts.geom.MultiLineString as JtsMultiLineString
-import com.vividsolutions.jts.geom.LineString as JtsLineString
-import com.vividsolutions.jts.geom.PrecisionModel
-import com.vividsolutions.jts.noding.snapround.GeometryNoder
-import com.vividsolutions.jts.operation.linemerge.LineMerger
-import com.vividsolutions.jts.operation.polygonize.Polygonizer as JtsPolygonizer
+import org.locationtech.jts.geom.MultiLineString as JtsMultiLineString
+import org.locationtech.jts.geom.LineString as JtsLineString
+import org.locationtech.jts.geom.PrecisionModel
+import org.locationtech.jts.noding.snapround.GeometryNoder
+import org.locationtech.jts.operation.linemerge.LineMerger
+import org.locationtech.jts.operation.polygonize.Polygonizer as JtsPolygonizer
 
 /**
  * A MultiLineString Geometry.

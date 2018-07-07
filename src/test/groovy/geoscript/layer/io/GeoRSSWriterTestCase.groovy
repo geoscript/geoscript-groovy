@@ -47,8 +47,7 @@ class GeoRSSWriterTestCase {
                 }
         )
         String actual = writer.write(createLayer())
-        String expected = """<?xml version="1.0" encoding="UTF-8"?>
-<feed xmlns:georss="http://www.georss.org/georss" xmlns="http://www.w3.org/2005/Atom">
+        String expected = """<?xml version="1.0" encoding="UTF-8"?><feed xmlns:georss="http://www.georss.org/georss" xmlns="http://www.w3.org/2005/Atom">
 <title>points</title>
 <subtitle>points geom: Point, name: String, description: String, id: Integer</subtitle>
 <link>http://geoscript.org/feature</link>
@@ -87,8 +86,7 @@ class GeoRSSWriterTestCase {
                 }
         )
         String actual = writer.write(createLayer())
-        String expected = """<?xml version="1.0" encoding="UTF-8"?>
-<feed xmlns:geo="http://www.w3.org/2003/01/geo/wgs84_pos#" xmlns="http://www.w3.org/2005/Atom">
+        String expected = """<?xml version="1.0" encoding="UTF-8"?><feed xmlns:geo="http://www.w3.org/2003/01/geo/wgs84_pos#" xmlns="http://www.w3.org/2005/Atom">
 <title>points</title>
 <subtitle>points geom: Point, name: String, description: String, id: Integer</subtitle>
 <link>http://geoscript.org/feature</link>
@@ -136,8 +134,7 @@ class GeoRSSWriterTestCase {
                 }
         )
         String actual = writer.write(createLayer())
-        String expected = """<?xml version="1.0" encoding="UTF-8"?>
-<rss xmlns:georss="http://www.georss.org/georss" xmlns:gml="http://www.opengis.net/gml" version="2.0">
+        String expected = """<?xml version="1.0" encoding="UTF-8"?><rss xmlns:georss="http://www.georss.org/georss" xmlns:gml="http://www.opengis.net/gml" version="2.0">
 <channel>
 <title>points</title>
 <description>points geom: Point, name: String, description: String, id: Integer</description>
@@ -230,8 +227,7 @@ class GeoRSSWriterTestCase {
                 itemDate: "11/23/2013"
         )
         String actual = writer.write(layer)
-        String expected = """<?xml version="1.0" encoding="UTF-8"?>
-<rss xmlns:georss="http://www.georss.org/georss" xmlns:gml="http://www.opengis.net/gml" version="2.0">
+        String expected = """<?xml version="1.0" encoding="UTF-8"?><rss xmlns:georss="http://www.georss.org/georss" xmlns:gml="http://www.opengis.net/gml" version="2.0">
 <channel>
 <title>points</title>
 <description>points geom: Point(EPSG:2927), title: String, description: String</description>

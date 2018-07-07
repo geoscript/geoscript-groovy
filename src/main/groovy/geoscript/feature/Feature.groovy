@@ -1,6 +1,6 @@
 package geoscript.feature
 
-import com.vividsolutions.jts.geom.Geometry as JtsGeometry
+import org.locationtech.jts.geom.Geometry as JtsGeometry
 import geoscript.geom.Bounds
 import geoscript.geom.Geometry
 import geoscript.layer.Layer

@@ -1,20 +1,20 @@
 package geoscript.geom
 
-import com.vividsolutions.jts.geom.Geometry as JtsGeometry
-import com.vividsolutions.jts.geom.GeometryFactory
-import com.vividsolutions.jts.geom.Coordinate
-import com.vividsolutions.jts.geom.prep.PreparedGeometryFactory
-import com.vividsolutions.jts.geom.Envelope
-import com.vividsolutions.jts.geom.IntersectionMatrix
-import com.vividsolutions.jts.geom.util.AffineTransformation
-import com.vividsolutions.jts.operation.buffer.BufferParameters
-import com.vividsolutions.jts.operation.buffer.BufferOp
-import com.vividsolutions.jts.awt.FontGlyphReader
-import com.vividsolutions.jts.operation.overlay.snap.GeometrySnapper
+import org.locationtech.jts.geom.Geometry as JtsGeometry
+import org.locationtech.jts.geom.GeometryFactory
+import org.locationtech.jts.geom.Coordinate
+import org.locationtech.jts.geom.prep.PreparedGeometryFactory
+import org.locationtech.jts.geom.Envelope
+import org.locationtech.jts.geom.IntersectionMatrix
+import org.locationtech.jts.geom.util.AffineTransformation
+import org.locationtech.jts.operation.buffer.BufferParameters
+import org.locationtech.jts.operation.buffer.BufferOp
+import org.locationtech.jts.awt.FontGlyphReader
+import org.locationtech.jts.operation.overlay.snap.GeometrySnapper
 import geoscript.geom.io.Reader
 import geoscript.geom.io.Readers
-import com.vividsolutions.jts.geom.PrecisionModel
-import com.vividsolutions.jts.precision.GeometryPrecisionReducer
+import org.locationtech.jts.geom.PrecisionModel
+import org.locationtech.jts.precision.GeometryPrecisionReducer
 import org.geotools.geometry.jts.CurvedGeometries
 import org.geotools.geometry.jts.OffsetCurveBuilder
 
@@ -50,17 +50,17 @@ class Geometry {
     /**
      * Round Buffer cap style
      */
-    static final int CAP_ROUND = com.vividsolutions.jts.operation.buffer.BufferOp.CAP_ROUND
+    static final int CAP_ROUND = org.locationtech.jts.operation.buffer.BufferOp.CAP_ROUND
 
     /**
      * Butt Buffer cap style
      */
-    static final int CAP_BUTT = com.vividsolutions.jts.operation.buffer.BufferOp.CAP_BUTT
+    static final int CAP_BUTT = org.locationtech.jts.operation.buffer.BufferOp.CAP_BUTT
 
     /**
      * Square Buffer cap style
      */
-    static final int CAP_SQUARE = com.vividsolutions.jts.operation.buffer.BufferOp.CAP_SQUARE
+    static final int CAP_SQUARE = org.locationtech.jts.operation.buffer.BufferOp.CAP_SQUARE
 
     /**
      * Buffer the Geometry by some distance.
@@ -140,7 +140,7 @@ class Geometry {
     Geometry difference(Geometry other) {
         try {
             return wrap(this.g.difference(other.g))
-        } catch (com.vividsolutions.jts.geom.TopologyException e) {
+        } catch (org.locationtech.jts.geom.TopologyException e) {
             return wrap(this.g.buffer(0).difference(other.g))
         }
     }
@@ -356,7 +356,7 @@ class Geometry {
      * @return A textual reason why this Geometry is invalid
      */
     String getValidReason() {
-        def op = new com.vividsolutions.jts.operation.valid.IsValidOp(this.g)
+        def op = new org.locationtech.jts.operation.valid.IsValidOp(this.g)
         op.validationError?.message ?: ""
     }
 
@@ -483,7 +483,7 @@ class Geometry {
      * @return The minimum bouding circle as a Geometry
      */
     Geometry getMinimumBoundingCircle() {
-        def circle = new com.vividsolutions.jts.algorithm.MinimumBoundingCircle(g)
+        def circle = new org.locationtech.jts.algorithm.MinimumBoundingCircle(g)
         Geometry.wrap(circle.getCircle())
     }
 
@@ -492,7 +492,7 @@ class Geometry {
      * @return the octagonal envelope for this Geometry
      */
     Geometry getOctagonalEnvelope() {
-        def oct = new com.vividsolutions.jts.geom.OctagonalEnvelope(g)
+        def oct = new org.locationtech.jts.geom.OctagonalEnvelope(g)
         Geometry.wrap(oct.toGeometry(factory))
     }
 
@@ -503,10 +503,10 @@ class Geometry {
     Geometry getDelaunayTriangleDiagram(boolean isConforming = false) {
         def builder;
         if (isConforming) {
-            builder = new com.vividsolutions.jts.triangulate.ConformingDelaunayTriangulationBuilder()
+            builder = new org.locationtech.jts.triangulate.ConformingDelaunayTriangulationBuilder()
         }
         else {
-            builder = new com.vividsolutions.jts.triangulate.DelaunayTriangulationBuilder()
+            builder = new org.locationtech.jts.triangulate.DelaunayTriangulationBuilder()
         }
         builder.setSites(g)
         Geometry.wrap(builder.getTriangles(Geometry.factory))
@@ -517,7 +517,7 @@ class Geometry {
      * @return A Voronoi Diagram Geometry
      */
     Geometry getVoronoiDiagram() {
-        def builder = new com.vividsolutions.jts.triangulate.VoronoiDiagramBuilder()
+        def builder = new org.locationtech.jts.triangulate.VoronoiDiagramBuilder()
         builder.setSites(g)
         Geometry.wrap(builder.getDiagram(Geometry.factory))
     }
@@ -528,7 +528,7 @@ class Geometry {
      * @return A simplified Geometry
      */
     Geometry simplify(double tolerance) {
-        Geometry.wrap(com.vividsolutions.jts.simplify.DouglasPeuckerSimplifier.simplify(this.g, tolerance))
+        Geometry.wrap(org.locationtech.jts.simplify.DouglasPeuckerSimplifier.simplify(this.g, tolerance))
     }
 
     /**
@@ -537,7 +537,7 @@ class Geometry {
      * @return A simplified Geometry
      */
     Geometry simplifyPreservingTopology(double tolerance) {
-        Geometry.wrap(com.vividsolutions.jts.simplify.TopologyPreservingSimplifier.simplify(this.g, tolerance))
+        Geometry.wrap(org.locationtech.jts.simplify.TopologyPreservingSimplifier.simplify(this.g, tolerance))
     }
 
     /**
@@ -546,7 +546,7 @@ class Geometry {
      * @return A new densified Geometry
      */
     Geometry densify(double distance) {
-        Geometry.wrap(com.vividsolutions.jts.densify.Densifier.densify(this.g, distance))
+        Geometry.wrap(org.locationtech.jts.densify.Densifier.densify(this.g, distance))
     }
 
     /**
@@ -554,7 +554,7 @@ class Geometry {
      * @return The minimum enclosing rectangle
      */
     Geometry getMinimumRectangle() {
-        def minDiameter = new com.vividsolutions.jts.algorithm.MinimumDiameter(this.g)
+        def minDiameter = new org.locationtech.jts.algorithm.MinimumDiameter(this.g)
         Geometry.wrap(minDiameter.minimumRectangle)
     }
 
@@ -563,7 +563,7 @@ class Geometry {
      * @return The minimum diameter as a LineString
      */
     Geometry getMinimumDiameter() {
-        def minDiameter = new com.vividsolutions.jts.algorithm.MinimumDiameter(this.g)
+        def minDiameter = new org.locationtech.jts.algorithm.MinimumDiameter(this.g)
         Geometry.wrap(minDiameter.diameter)
     }
 
@@ -572,7 +572,7 @@ class Geometry {
      * @return The minimum clearance of this Geometry
      */
     Geometry getMinimumClearance() {
-        Geometry.wrap(com.vividsolutions.jts.precision.MinimumClearance.getLine(g))
+        Geometry.wrap(org.locationtech.jts.precision.MinimumClearance.getLine(g))
     }
 
     /**
@@ -693,7 +693,7 @@ class Geometry {
      * @return A List of Points
      */
     List<Point> getNearestPoints(Geometry other) {
-        com.vividsolutions.jts.operation.distance.DistanceOp.nearestPoints(this.g, other.g).collect {c->
+        org.locationtech.jts.operation.distance.DistanceOp.nearestPoints(this.g, other.g).collect {c->
             new Point(c.x, c.y)
         }
     }
@@ -731,7 +731,7 @@ class Geometry {
      */
     Object getAt(int index) {
         // Point => X, Y
-        if (g instanceof com.vividsolutions.jts.geom.Point) {
+        if (g instanceof org.locationtech.jts.geom.Point) {
             if (index == 0) {
                 return g.x
             } else if (index == 1) {
@@ -739,7 +739,7 @@ class Geometry {
             }
         }
         // Polygon => Exterior and Interior LinearRing(s)
-        else if (g instanceof com.vividsolutions.jts.geom.Polygon) {
+        else if (g instanceof org.locationtech.jts.geom.Polygon) {
             if (index == 0) {
                 return Geometry.wrap(g.exteriorRing)
             } else if (g.numInteriorRing > 0 && index <= g.numInteriorRing) {
@@ -747,7 +747,7 @@ class Geometry {
             }
         }
         // GeometryCollection => Geometry
-        else if (g instanceof com.vividsolutions.jts.geom.GeometryCollection) {
+        else if (g instanceof org.locationtech.jts.geom.GeometryCollection) {
             if (index < g.numGeometries) {
                 return Geometry.wrap(g.getGeometryN(index))
             }
@@ -851,7 +851,7 @@ class Geometry {
     static Geometry wrap(JtsGeometry jts) {
         if (jts == null) {
             return null
-        } else if (jts instanceof com.vividsolutions.jts.geom.Point) {
+        } else if (jts instanceof org.locationtech.jts.geom.Point) {
             return new Point(jts)
         }
         else if (jts instanceof org.geotools.geometry.jts.CompoundRing) {
@@ -866,25 +866,25 @@ class Geometry {
         else if (jts instanceof org.geotools.geometry.jts.CircularString) {
             return new CircularString(jts)
         }
-        else if (jts instanceof com.vividsolutions.jts.geom.LinearRing) {
+        else if (jts instanceof org.locationtech.jts.geom.LinearRing) {
             return new LinearRing(jts)
         }
-        else if (jts instanceof com.vividsolutions.jts.geom.LineString) {
+        else if (jts instanceof org.locationtech.jts.geom.LineString) {
             return new LineString(jts)
         }
-        else if (jts instanceof com.vividsolutions.jts.geom.Polygon) {
+        else if (jts instanceof org.locationtech.jts.geom.Polygon) {
             return new Polygon(jts)
         }
-        else if (jts instanceof com.vividsolutions.jts.geom.MultiPoint) {
+        else if (jts instanceof org.locationtech.jts.geom.MultiPoint) {
             return new MultiPoint(jts)
         }
-        else if (jts instanceof com.vividsolutions.jts.geom.MultiLineString) {
+        else if (jts instanceof org.locationtech.jts.geom.MultiLineString) {
             return new MultiLineString(jts)
         }
-        else if (jts instanceof com.vividsolutions.jts.geom.MultiPolygon) {
+        else if (jts instanceof org.locationtech.jts.geom.MultiPolygon) {
             return new MultiPolygon(jts)
         }
-        else if (jts instanceof com.vividsolutions.jts.geom.GeometryCollection) {
+        else if (jts instanceof org.locationtech.jts.geom.GeometryCollection) {
             return new GeometryCollection(jts)
         }
         else {
@@ -954,7 +954,7 @@ class Geometry {
      * @return A MultiPoint
      */
     static Geometry createRandomPoints(Geometry geometry, int number) {
-        def builder = new com.vividsolutions.jts.shape.random.RandomPointsBuilder(factory)
+        def builder = new org.locationtech.jts.shape.random.RandomPointsBuilder(factory)
         builder.setExtent(geometry.g)
         builder.numPoints = number
         Geometry.wrap(builder.getGeometry())
@@ -970,7 +970,7 @@ class Geometry {
      * @return A MultiPoint
      */
     static Geometry createRandomPointsInGrid(Bounds bounds, int number, boolean constrainedToCircle, double gutterFraction) {
-        def builder = new com.vividsolutions.jts.shape.random.RandomPointsInGridBuilder(factory)
+        def builder = new org.locationtech.jts.shape.random.RandomPointsInGridBuilder(factory)
         builder.extent = bounds.env
         builder.numPoints = number
         builder.setConstrainedToCircle(constrainedToCircle)
@@ -996,7 +996,7 @@ class Geometry {
      * @return A Geometry
      */
     static Geometry createSierpinskiCarpet(Bounds bounds, int numberOfPoints) {
-        def builder = new com.vividsolutions.jts.shape.fractal.SierpinskiCarpetBuilder(factory)
+        def builder = new org.locationtech.jts.shape.fractal.SierpinskiCarpetBuilder(factory)
         builder.extent = bounds.env
         builder.numPoints = numberOfPoints
         Geometry.wrap(builder.geometry)
@@ -1009,7 +1009,7 @@ class Geometry {
      * @return A Geometry
      */
     static Geometry createKochSnowflake(Bounds bounds, int numberOfPoints) {
-        def builder = new com.vividsolutions.jts.shape.fractal.KochSnowflakeBuilder(factory)
+        def builder = new org.locationtech.jts.shape.fractal.KochSnowflakeBuilder(factory)
         builder.extent = bounds.env
         builder.numPoints = numberOfPoints
         Geometry.wrap(builder.geometry)
@@ -1021,6 +1021,6 @@ class Geometry {
      * @return A unioned Geometry
      */
     static Geometry cascadedUnion(List<Polygon> polygons) {
-        Geometry.wrap(com.vividsolutions.jts.operation.union.CascadedPolygonUnion.union(polygons.collect{it.g}))
+        Geometry.wrap(org.locationtech.jts.operation.union.CascadedPolygonUnion.union(polygons.collect{it.g}))
     }
 }

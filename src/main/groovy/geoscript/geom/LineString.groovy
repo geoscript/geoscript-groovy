@@ -1,7 +1,7 @@
 package geoscript.geom
 
-import com.vividsolutions.jts.geom.LineString as JtsLineString
-import com.vividsolutions.jts.geom.Coordinate
+import org.locationtech.jts.geom.LineString as JtsLineString
+import org.locationtech.jts.geom.Coordinate
 
 /**
  * A LineString Geometry.
@@ -193,7 +193,7 @@ class LineString extends Geometry {
      * @return A Point on this LineString
      */
     Point interpolatePoint(double position) {
-        def indexedLine = new com.vividsolutions.jts.linearref.LengthIndexedLine(g)
+        def indexedLine = new org.locationtech.jts.linearref.LengthIndexedLine(g)
         double length = getLength()
         def c = indexedLine.extractPoint(position * length)
         new Point(c.x, c.y)
@@ -205,7 +205,7 @@ class LineString extends Geometry {
      * @return The position of the Point along this LineString.
      */
     double locatePoint(Point point) {
-        def indexedLine = new com.vividsolutions.jts.linearref.LengthIndexedLine(g)
+        def indexedLine = new org.locationtech.jts.linearref.LengthIndexedLine(g)
         double position = indexedLine.indexOf(point.g.coordinate)
         double len = getLength()
         double percentAlong = position / len
@@ -218,7 +218,7 @@ class LineString extends Geometry {
      * @return A new Point on the LineString
      */
     Point placePoint(Point point) {
-        def indexedLine = new com.vividsolutions.jts.linearref.LengthIndexedLine(g)
+        def indexedLine = new org.locationtech.jts.linearref.LengthIndexedLine(g)
         double position = indexedLine.indexOf(point.g.coordinate)
         def c = indexedLine.extractPoint(position)
         new Point(c.x, c.y)
@@ -231,7 +231,7 @@ class LineString extends Geometry {
      * @return A sub LineString
      */
     LineString subLine(double start, double end) {
-        def indexedLine = new com.vividsolutions.jts.linearref.LengthIndexedLine(g)
+        def indexedLine = new org.locationtech.jts.linearref.LengthIndexedLine(g)
         def length = length
         Geometry.wrap(indexedLine.extractLine(start * length, end * length))
     }

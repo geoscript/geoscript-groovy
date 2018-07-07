@@ -1,7 +1,7 @@
 package geoscript.geom.io
 
 import geoscript.geom.*
-import com.vividsolutions.jts.geom.Coordinate
+import org.locationtech.jts.geom.Coordinate
 
 /**
  * Write a Geoscript {@link geoscript.geom.Geometry Geometry} to a GML Version 2 String.

@@ -3,7 +3,7 @@ package geoscript.index
 import org.junit.Test
 import static org.junit.Assert.*
 import geoscript.geom.*
-import com.vividsolutions.jts.index.strtree.STRtree as JtsSTRtree
+import org.locationtech.jts.index.strtree.STRtree as JtsSTRtree
 
 /**
  * The SpatialIndexTestCase

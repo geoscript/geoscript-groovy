@@ -1,6 +1,6 @@
 package geoscript.render
 
-import com.vividsolutions.jts.geom.Geometry as JtsGeometry
+import org.locationtech.jts.geom.Geometry as JtsGeometry
 
 import geoscript.feature.Feature
 import geoscript.geom.Geometry

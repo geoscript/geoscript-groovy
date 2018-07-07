@@ -1,6 +1,6 @@
 package geoscript.geom.io
 
-import com.vividsolutions.jts.geom.Envelope
+import org.locationtech.jts.geom.Envelope
 import geoscript.geom.Bounds
 import geoscript.geom.Geometry
 import geoscript.proj.Projection

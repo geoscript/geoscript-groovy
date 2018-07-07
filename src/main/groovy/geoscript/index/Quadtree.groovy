@@ -1,6 +1,6 @@
 package geoscript.index
 
-import com.vividsolutions.jts.index.quadtree.Quadtree as JtsQuadtree
+import org.locationtech.jts.index.quadtree.Quadtree as JtsQuadtree
 import geoscript.geom.Bounds
 
 /**

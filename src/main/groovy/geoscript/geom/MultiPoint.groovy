@@ -1,7 +1,7 @@
 package geoscript.geom
 
-import com.vividsolutions.jts.geom.MultiPoint as JtsMultiPoint
-import com.vividsolutions.jts.geom.Point as JtsPoint
+import org.locationtech.jts.geom.MultiPoint as JtsMultiPoint
+import org.locationtech.jts.geom.Point as JtsPoint
 
 /**
  * A MultiPoint Geometry.

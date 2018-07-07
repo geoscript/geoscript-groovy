@@ -1,6 +1,6 @@
 package geoscript.geom
 
-import com.vividsolutions.jts.geom.LineString as JtsLineString
+import org.locationtech.jts.geom.LineString as JtsLineString
 import org.geotools.geometry.jts.CompoundCurve as GtCompoundCurve
 import org.geotools.geometry.jts.CurvedGeometryFactory
 

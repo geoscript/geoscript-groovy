@@ -475,7 +475,7 @@ class Process {
      */
     static Class convertGeoScriptToGeoToolsClass(Class geoScriptClass) {
         if (geoscript.geom.Geometry.isAssignableFrom(geoScriptClass)) {
-            return com.vividsolutions.jts.geom.Geometry
+            return org.locationtech.jts.geom.Geometry
         } else if (geoscript.geom.Bounds.isAssignableFrom(geoScriptClass)) {
             return org.geotools.geometry.jts.ReferencedEnvelope
         } else if (geoscript.layer.Layer.isAssignableFrom(geoScriptClass)) {
@@ -495,7 +495,7 @@ class Process {
      * @return The Class
      */
     static Class convertGeoToolsToGeoScriptClass(Class geoToolsClass) {
-        if (com.vividsolutions.jts.geom.Geometry.isAssignableFrom(geoToolsClass)) {
+        if (org.locationtech.jts.geom.Geometry.isAssignableFrom(geoToolsClass)) {
             return geoscript.geom.Geometry
         } else if (org.geotools.geometry.jts.ReferencedEnvelope.isAssignableFrom(geoToolsClass)) {
             return geoscript.geom.Bounds
@@ -519,11 +519,11 @@ class Process {
      */
     static Object convert(Object source, Class target) {
         // Geometry and Geometry
-        if (com.vividsolutions.jts.geom.Geometry.isAssignableFrom(target) && geoscript.geom.Geometry.isInstance(source)) {
+        if (org.locationtech.jts.geom.Geometry.isAssignableFrom(target) && geoscript.geom.Geometry.isInstance(source)) {
             return (source as geoscript.geom.Geometry).g
         }
-        else if (geoscript.geom.Geometry.isAssignableFrom(target) && com.vividsolutions.jts.geom.Geometry.isInstance(source)) {
-            return geoscript.geom.Geometry.wrap(source as com.vividsolutions.jts.geom.Geometry)
+        else if (geoscript.geom.Geometry.isAssignableFrom(target) && org.locationtech.jts.geom.Geometry.isInstance(source)) {
+            return geoscript.geom.Geometry.wrap(source as org.locationtech.jts.geom.Geometry)
         }
         // ReferencedEnvelope and Bounds
         else if (org.geotools.geometry.jts.ReferencedEnvelope.isAssignableFrom(target) && geoscript.geom.Bounds.isInstance(source)) {

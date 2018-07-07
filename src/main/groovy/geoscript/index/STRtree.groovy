@@ -1,6 +1,6 @@
 package geoscript.index
 
-import com.vividsolutions.jts.index.strtree.STRtree as JtsSTRtree
+import org.locationtech.jts.index.strtree.STRtree as JtsSTRtree
 
 /**
  * Create a SpatialIndex using the STR Tree spatial index.

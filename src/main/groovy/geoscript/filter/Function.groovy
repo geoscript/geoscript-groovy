@@ -199,7 +199,7 @@ class Function extends Expression {
             def args = getParameters().collect{p ->
                 def v = p.evaluate(obj)
                 // Wrap GeoTools objects with GeoScript objects
-                if (v instanceof com.vividsolutions.jts.geom.Geometry) {
+                if (v instanceof org.locationtech.jts.geom.Geometry) {
                     v = geoscript.geom.Geometry.wrap(v)
                 }
                 return v
