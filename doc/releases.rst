@@ -5,8 +5,27 @@ GeoScript Groovy Releases
 
 1.12.0 (Under development)
 --------------------------
-The 1.12 release of GeoScript is built on Groovy 2.4.14, GeoTools 20.0, and the Java Topology Suite 1.13 and
+The 1.12 release of GeoScript is built on Groovy 2.4.15, GeoTools 20.0, and the Java Topology Suite 1.15.1 and
 requires Java 8.
+
+Viewer.plot should handle closing the Window like other viewers.
+
+Calling Geometry.validReason on a valid geometry should return an empty string.
+
+Update to use si.uon.SI.
+
+Add data label option the Scatter plot.
+
+Create Band with a description and min and max values.
+
+Create Band with a description and min and max values and no data value.
+
+Create a Raster with bounds, size, and a List of Bands.
+
+Add an example for creating a new Raster and setting random values.
+
+Add getMinValue and getMaxValue to Raster.  Both methods first tries to get the value from the Band's metadata
+and then calculates it from the actual data.
 
 1.11.0
 ------
