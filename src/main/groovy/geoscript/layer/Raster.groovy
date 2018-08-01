@@ -6,6 +6,7 @@ import geoscript.geom.Bounds
 import geoscript.geom.Point
 import geoscript.style.RasterSymbolizer
 import geoscript.style.Style
+import it.geosolutions.jaiext.shadedrelief.ShadedReliefAlgorithm
 import org.geotools.coverage.Category
 import org.geotools.coverage.GridSampleDimension
 import org.geotools.coverage.grid.GridCoordinates2D
@@ -1141,6 +1142,35 @@ class Raster implements Renderable {
         Layer layer = new Memory().create(schema)
         layer.add(fc)
         layer
+    }
+
+    /**
+     * Create a shaded relief Raster from the current Raster
+     * @param options The optional named parameters.
+     * <ol>
+     *     <li>resX = The x resolution (defaults to 0.5d)</li>
+     *     <li>resY = The y resolution (defaults to 0.5d)</li>
+     *     <li>zetaFactor = The zeta factor (defaults to 1.0d)</li>
+     *     <li>algorithm = The algorithm ZEVENBERGEN_THORNE | ZEVENBERGEN_THORNE_COMBINED | DEFAULT | COMBINED</li>
+     * </oi>
+     * @param scale The scale 1 or 10000
+     * @param altitude The altitude in degrees 65
+     * @param azimuth The azimuth in degrees 75
+     * @return A new Raster
+     */
+    Raster createShadedRelief(Map options = [:], double scale, double altitude, double azimuth) {
+        def processor = new CoverageProcessor()
+        def params = processor.getOperation("ShadedRelief").parameters
+        params.parameter("Source").value = this.coverage
+        params.parameter("resX").value = options.get('resX', 0.5d)
+        params.parameter("resY").value = options.get('resY', 0.5d)
+        params.parameter("zetaFactor").value = options.get('zetaFactory', 1.0d)
+        params.parameter("scale").value = scale
+        params.parameter("altitude").value = altitude
+        params.parameter("azimuth").value = azimuth
+        params.parameter("algorithm").value = ShadedReliefAlgorithm.valueOf(options.get('algorithm', 'DEFAULT'))
+        def newCoverage = processor.doOperation(params)
+        new Raster(newCoverage)
     }
 
     /**

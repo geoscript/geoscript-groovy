@@ -908,6 +908,14 @@ class RasterTestCase {
         assertEquals 255.0, raster.getMaxValue(0), 0.1
     }
 
+    @Test void createShadedRelief() {
+        File file = new File(getClass().getClassLoader().getResource("raster.tif").toURI())
+        GeoTIFF geoTIFF = new GeoTIFF(file)
+        Raster raster = geoTIFF.read()
+        Raster shadedReliefRaster = raster.createShadedRelief(1, 75, 65)
+        assertNotNull(shadedReliefRaster)
+    }
+
     @Test void resample() {
         File file = new File(getClass().getClassLoader().getResource("alki.tif").toURI())
         GeoTIFF geoTIFF = new GeoTIFF(file)
