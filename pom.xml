@@ -88,6 +88,12 @@
             <groupId>org.geotools.jdbc</groupId>
             <artifactId>gt-jdbc-h2</artifactId>
             <version>${gt.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>net.sourceforge.hatbox</groupId>
+                    <artifactId>hatbox</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.geotools.jdbc</groupId>
@@ -344,7 +350,7 @@
         </pluginRepository>
     </pluginRepositories>
     <build>
-        <sourceDirectory>src/main/groovy</sourceDirectory>
+        <!-- <sourceDirectory>src/main/groovy</sourceDirectory> -->
         <plugins>
             <plugin>
                 <groupId>org.codehaus.groovy</groupId>
