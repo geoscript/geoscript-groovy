@@ -1,8 +1,8 @@
 package geoscript.layer
 
 import geoscript.geom.Bounds
+import it.geosolutions.jaiext.jiffle.JiffleBuilder
 import java.awt.image.RenderedImage
-import org.jaitools.jiffle.JiffleBuilder
 import org.geotools.coverage.grid.GridCoverage2D
 import org.geotools.coverage.grid.GridCoverageFactory
 
