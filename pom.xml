@@ -44,7 +44,7 @@
             <exclusions>
                 <!-- Exclude JTS so geotools can pull in it's version -->
                 <exclusion>
-                    <groupId>com.vividsolutions</groupId>
+                    <groupId>org.locationtech.jts</groupId>
                     <artifactId>jts-core</artifactId>
                 </exclusion>
                 <!-- Exclude protobuf here so gt-geobuf can pull in a more recent version -->
