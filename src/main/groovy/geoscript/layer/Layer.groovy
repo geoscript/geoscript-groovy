@@ -26,6 +26,7 @@ import org.geotools.feature.FeatureCollection
 import org.geotools.feature.FeatureIterator
 import org.geotools.map.FeatureLayer
 import org.geotools.process.vector.VectorToRasterProcess
+import org.locationtech.jts.geom.TopologyException
 import org.opengis.filter.sort.SortOrder
 import org.opengis.feature.simple.SimpleFeatureType
 import org.opengis.feature.simple.SimpleFeature
@@ -1368,7 +1369,12 @@ class Layer implements Renderable {
                     // Make sure it actually intersects the Geometry of a Feature in the spatial index
                     if (f.geom.intersects(layerFeature.geom)) {
                         // Clip the geometry from the input Layer
-                        Geometry intersection = layerFeature.geom.intersection(f.geom)
+                        Geometry intersection = null
+                        try {
+                            intersection = layerFeature.geom.intersection(f.geom)
+                        } catch(TopologyException ex) {
+                            intersection = layerFeature.geom.buffer(0).intersection(f.geom.buffer(0))
+                        }
                         // Create a new Feature and add if to the clipped Layer
                         Map values = layerFeature.attributes
                         values[outLayer.schema.geom.name] = intersection
