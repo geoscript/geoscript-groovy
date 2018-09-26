@@ -5,7 +5,7 @@ GeoScript Groovy Releases
 
 1.12.0 (Under development)
 --------------------------
-The 1.12 release of GeoScript is built on Groovy 2.4.15, GeoTools 20.0, and the Java Topology Suite 1.15.1 and
+The 1.12 release of GeoScript is built on Groovy 2.4.15, GeoTools 20.0, and the Java Topology Suite 1.16.0 and
 requires Java 8.
 
 Viewer.plot should handle closing the Window like other viewers.
@@ -26,6 +26,8 @@ Add an example for creating a new Raster and setting random values.
 
 Add getMinValue and getMaxValue to Raster.  Both methods first tries to get the value from the Band's metadata
 and then calculates it from the actual data.
+
+Remove OGR Workspace due to GeoTools modules being unpublished.
 
 1.11.0
 ------

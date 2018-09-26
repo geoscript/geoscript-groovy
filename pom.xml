@@ -268,22 +268,6 @@
             <version>${gt.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.gdal</groupId>
-            <artifactId>gdal</artifactId>
-            <version>1.11.2</version>
-        </dependency>
-        <dependency>
-            <groupId>org.geotools</groupId>
-            <artifactId>gt-ogr-jni</artifactId>
-            <version>${gt.version}</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.gdal</groupId>
-                    <artifactId>gdal</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-        <dependency>
             <groupId>org.codehaus.groovy</groupId>
             <artifactId>groovy-all</artifactId>
             <version>2.4.15</version>
@@ -379,11 +363,6 @@
                     <systemPropertyVariables>
                         <org.geotools.referencing.forceXY>true</org.geotools.referencing.forceXY>
                     </systemPropertyVariables>
-                    <environmentVariables>
-                        <PATH>${env.GEOSCRIPT_GDAL_HOME}${path.sepatator}${env.PATH}</PATH>
-                        <DYLD_LIBRARY_PATH>${env.GEOSCRIPT_GDAL_HOME}${path.sepatator}${env.DYLD_LIBRARY_PATH}</DYLD_LIBRARY_PATH>
-                        <LD_LIBRARY_PATH>${env.GEOSCRIPT_GDAL_HOME}${path.sepatator}${env.LD_LIBRARY_PATH}</LD_LIBRARY_PATH>
-                    </environmentVariables>
                 </configuration>
             </plugin>
             <plugin>
@@ -493,7 +472,7 @@
         </plugins>
     </reporting>
     <properties>
-        <gt.version>20-SNAPSHOT</gt.version>
+        <gt.version>20.0</gt.version>
     </properties>
     <name>geoscript groovy</name>
     <description>A groovy implementation of geoscript.</description>
