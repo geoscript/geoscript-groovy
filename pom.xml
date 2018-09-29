@@ -275,8 +275,12 @@
         <dependency>
             <groupId>org.geotools</groupId>
             <artifactId>gt-ogr-jni</artifactId>
-            <version>${gt.version}</version>
+            <version>20-SNAPSHOT</version>
             <exclusions>
+                <exclusion>
+                    <groupId>org.geotools</groupId>
+                    <artifactId>gt-data</artifactId>
+                </exclusion>
                 <exclusion>
                     <groupId>org.gdal</groupId>
                     <artifactId>gdal</artifactId>
@@ -493,7 +497,7 @@
         </plugins>
     </reporting>
     <properties>
-        <gt.version>20-SNAPSHOT</gt.version>
+        <gt.version>20.0</gt.version>
     </properties>
     <name>geoscript groovy</name>
     <description>A groovy implementation of geoscript.</description>
