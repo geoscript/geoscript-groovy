@@ -5,27 +5,95 @@ GeoScript Groovy Releases
 
 1.12.0 (Under development)
 --------------------------
-The 1.12 release of GeoScript is built on Groovy 2.4.15, GeoTools 20.0, and the Java Topology Suite 1.15.1 and
+The 1.12 release of GeoScript is built on Groovy 2.4.15, GeoTools 20.0, and the Java Topology Suite 1.16.0 and
 requires Java 8.
 
-Viewer.plot should handle closing the Window like other viewers.
+Update JTS to 1.16.0
 
-Calling Geometry.validReason on a valid geometry should return an empty string.
+Switch jiffle from jaitools to geosolutions.
 
-Update to use si.uon.SI.
+Switch to si.uon.SI.
 
-Add data label option the Scatter plot.
+Calculate a hillshade from a Relief::
 
-Create Band with a description and min and max values.
+    import geoscript.layer.GeoTIFF
+    import geoscript.layer.Raster
+    import geoscript.render.Draw
 
-Create Band with a description and min and max values and no data value.
+    File file = new File("mt_rainier.tif")
+    GeoTIFF geoTIFF = new GeoTIFF(file)
+    Raster raster = geoTIFF.read()
 
-Create a Raster with bounds, size, and a List of Bands.
+    Raster shadedReliefRaster = raster.createShadedRelief(1.0, 25, 260)
+    File outFile = new File("mt_rainier_shadedrelief.tif")
+    new GeoTIFF(outFile).write(shadedReliefRaster)
 
-Add an example for creating a new Raster and setting random values.
+    Draw.draw(shadedReliefRaster, out: new File("mt_rainier_map.png"), size: [800,400])
+
+.. image:: images/hillshade.png
+
+Create Band with a description and min and max values::
+
+    Band band = new Band("Red",0,255)
+
+Create Band with a description and min and max values and no data value::
+
+    Band band = new Band("Elevation",100,200, 200)
+
+Create a Raster with bounds, size, and a List of Bands::
+
+    Raster raster = new Raster(
+            new Bounds(-180,-90,180,90,"EPSG:4326"),
+            400,300,
+            [
+                    new Band("red", 0, 255, 256),
+                    new Band("green", 0, 255, 256),
+                    new Band("blue", 0, 255, 256)
+            ]
+    )
+
+Add an example for creating a new Raster and setting random values::
+
+    import geoscript.filter.Color
+    import geoscript.geom.Bounds
+    import geoscript.layer.Band
+    import geoscript.layer.GeoTIFF
+    import geoscript.layer.Raster
+
+    // Create a new Raster
+    Raster raster = new Raster(
+            new Bounds(-180,-90,180,90,"EPSG:4326"),
+            400,300,
+            [
+                    new Band("red", 0, 255, 256),
+                    new Band("green", 0, 255, 256),
+                    new Band("blue", 0, 255, 256)
+            ]
+    )
+
+    // Set values of each pixel
+    raster.eachCell { double value, double x, double y ->
+        Color color = Color.randomPastel
+        raster.setValue([x,y], color.rgb[0], 0)
+        raster.setValue([x,y], color.rgb[1], 1)
+        raster.setValue([x,y], color.rgb[2], 2)
+    }
+
+    // Write the Raster to disk
+    File file = new File("random.tif")
+    GeoTIFF geotiff = new GeoTIFF(file)
+    geotiff.write(raster)
+
+image:: images/random_raster.png
 
 Add getMinValue and getMaxValue to Raster.  Both methods first tries to get the value from the Band's metadata
 and then calculates it from the actual data.
+
+Viewer.plot should handle closing the Window like other viewers.
+
+Add data label option the Scatter plot.
+
+Calling Geometry.validReason on a valid geometry should return an empty string.
 
 1.11.0
 ------
