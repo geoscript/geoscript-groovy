@@ -17,7 +17,7 @@
             <excludes>
 				<exclude>org.codehaus.groovy:groovy-all</exclude>
                 <exclude>xml-apis:xml-apis</exclude>
-                <exclude>jai_*</exclude>
+                <exclude>javax.media:jai_*</exclude>
             </excludes>
         </dependencySet>
     </dependencySets>
