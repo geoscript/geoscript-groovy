@@ -84,7 +84,7 @@ Add an example for creating a new Raster and setting random values::
     GeoTIFF geotiff = new GeoTIFF(file)
     geotiff.write(raster)
 
-image:: images/random_raster.png
+.. image:: images/random_raster.png
 
 Add getMinValue and getMaxValue to Raster.  Both methods first tries to get the value from the Band's metadata
 and then calculates it from the actual data.
