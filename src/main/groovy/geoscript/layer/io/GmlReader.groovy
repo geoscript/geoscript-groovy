@@ -8,7 +8,7 @@ import geoscript.workspace.Workspace
 import geoscript.workspace.Memory
 import net.opengis.wfs.FeatureCollectionType
 import org.geotools.feature.FeatureCollection
-import org.geotools.xml.Parser
+import org.geotools.xsd.Parser
 import org.geotools.wfs.v1_0.WFSConfiguration_1_0 as WFS10
 import org.geotools.wfs.v1_1.WFSConfiguration as WFS11
 import org.geotools.wfs.v2_0.WFSConfiguration as WFS20

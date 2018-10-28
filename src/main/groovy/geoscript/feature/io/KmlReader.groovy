@@ -2,7 +2,7 @@ package geoscript.feature.io
 
 import geoscript.feature.Feature
 import org.geotools.kml.KMLConfiguration
-import org.geotools.xml.Parser
+import org.geotools.xsd.Parser
 
 /**
  * Read a Feature from a KML Placemark

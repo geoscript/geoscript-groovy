@@ -4,8 +4,8 @@ import geoscript.feature.Feature
 import geoscript.filter.Expression
 import org.geotools.kml.KML
 import org.geotools.kml.KMLConfiguration
-import org.geotools.xml.Configuration
-import org.geotools.xml.Encoder
+import org.geotools.xsd.Configuration
+import org.geotools.xsd.Encoder
 
 /**
  * Write a Feature as a KML Placemark.

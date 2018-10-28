@@ -100,7 +100,7 @@ class WMSLayer implements Renderable {
 
     @Override
     List<org.geotools.map.Layer> getMapLayers(Bounds bounds, List size) {
-        def gtWmsLayer = new org.geotools.map.WMSLayer(wms.wms, layers[0].layer)
+        def gtWmsLayer = new org.geotools.ows.wms.map.WMSLayer(wms.wms, layers[0].layer)
         (1..<this.layers.size()).each{i ->
             gtWmsLayer.addLayer(this.layers[i].layer)
         }

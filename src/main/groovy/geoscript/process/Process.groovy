@@ -8,11 +8,11 @@ import org.opengis.util.InternationalString
 import org.opengis.feature.type.Name
 import org.geotools.process.Processors
 import org.geotools.util.SimpleInternationalString
-import org.geotools.factory.FactoryIteratorProvider
+import org.geotools.util.factory.FactoryIteratorProvider
 import org.geotools.data.Parameter
 import java.awt.RenderingHints
 import org.opengis.util.ProgressListener
-import org.geotools.factory.GeoTools
+import org.geotools.util.factory.GeoTools
 import geoscript.layer.Layer
 import geoscript.geom.Bounds
 

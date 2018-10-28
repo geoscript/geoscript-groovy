@@ -10,7 +10,7 @@ import geoscript.geom.MultiPolygon
 import geoscript.geom.Point
 import geoscript.geom.Polygon
 import org.geotools.kml.KMLConfiguration
-import org.geotools.xml.Parser
+import org.geotools.xsd.Parser
 
 /**
  * Read a {@link geoscript.geom.Geometry Geometry} from a KML String.

@@ -3,11 +3,11 @@ package geoscript.layer
 import geoscript.geom.Bounds
 import geoscript.proj.Projection
 import org.geotools.data.ows.HTTPClient
-import org.geotools.data.ows.Layer as GtLayer
+import org.geotools.ows.wms.Layer as GtLayer
 import org.geotools.data.ows.SimpleHttpClient
-import org.geotools.data.ows.StyleImpl
-import org.geotools.data.ows.WMSCapabilities
-import org.geotools.data.wms.WebMapServer
+import org.geotools.ows.wms.StyleImpl
+import org.geotools.ows.wms.WMSCapabilities
+import org.geotools.ows.wms.WebMapServer
 import javax.imageio.ImageIO
 import java.awt.image.BufferedImage
 
@@ -185,7 +185,7 @@ class WMS {
         mapRequest.setDimensions(w,h)
         mapRequest.SRS = srs
         mapRequest.format = format;
-        mapRequest.setBBox(new org.geotools.data.ows.CRSEnvelope(srs, bounds.minX, bounds.minY, bounds.maxX, bounds.maxY))
+        mapRequest.setBBox(new org.geotools.ows.wms.CRSEnvelope(srs, bounds.minX, bounds.minY, bounds.maxX, bounds.maxY))
         mapRequest.transparent = isTransparent
         layers.each{layer ->
             String name

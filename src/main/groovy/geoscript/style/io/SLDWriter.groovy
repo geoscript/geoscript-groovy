@@ -2,7 +2,7 @@ package geoscript.style.io
 
 import geoscript.style.Style
 import org.geotools.factory.CommonFactoryFinder
-import org.geotools.styling.SLDTransformer
+import org.geotools.xml.styling.SLDTransformer
 import org.geotools.styling.StyleFactory
 import org.geotools.styling.StyledLayerDescriptor
 import org.geotools.styling.UserLayer

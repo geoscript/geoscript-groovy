@@ -19,7 +19,7 @@ import groovy.sql.Sql
 import org.apache.commons.dbcp.BasicDataSource
 import org.geotools.data.DataAccessFactory
 import org.geotools.data.DataStore
-import org.geotools.factory.Hints
+import org.geotools.util.factory.Hints
 import org.geotools.geometry.jts.Geometries
 import org.geotools.jdbc.JDBCDataStore
 import org.geotools.jdbc.JDBCDataStoreFactory

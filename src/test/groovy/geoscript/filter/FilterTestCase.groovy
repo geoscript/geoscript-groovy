@@ -1,7 +1,7 @@
 package geoscript.filter
 
 import org.geotools.factory.CommonFactoryFinder
-import org.geotools.factory.GeoTools
+import org.geotools.util.factory.GeoTools
 import org.junit.Test
 import org.opengis.filter.FilterFactory2
 

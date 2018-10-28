@@ -5,16 +5,15 @@ import geoscript.geom.Geometry
 import geoscript.feature.Feature
 import org.geotools.filter.visitor.SimplifyingFilterVisitor
 import org.opengis.filter.Filter as GTFilter
-import org.geotools.filter.text.cql2.CQL
 import org.geotools.filter.text.ecql.ECQL
-import org.geotools.xml.Parser
-import org.geotools.xml.Encoder
+import org.geotools.xsd.Parser
+import org.geotools.xsd.Encoder
 import org.geotools.filter.v1_0.OGCConfiguration as OGCConfiguration10 
 import org.geotools.filter.v1_0.OGC as OGC10 
 import org.geotools.filter.v1_1.OGCConfiguration as OGCConfiguration11 
 import org.geotools.filter.v1_1.OGC as OGC11 
 import org.geotools.factory.CommonFactoryFinder
-import org.geotools.factory.GeoTools
+import org.geotools.util.factory.GeoTools
 import org.opengis.filter.FilterFactory2
 
 /**

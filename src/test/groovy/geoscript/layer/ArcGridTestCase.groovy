@@ -4,8 +4,8 @@ import geoscript.AssertUtil
 import geoscript.geom.Bounds
 import geoscript.proj.Projection
 import org.apache.commons.io.input.ReaderInputStream
-import org.geotools.factory.GeoTools
-import org.geotools.factory.Hints
+import org.geotools.util.factory.GeoTools
+import org.geotools.util.factory.Hints
 import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.TemporaryFolder

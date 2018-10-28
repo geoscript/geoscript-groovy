@@ -3,8 +3,8 @@ package geoscript.layer
 import geoscript.proj.Projection
 import org.apache.commons.io.input.ReaderInputStream
 import org.geotools.coverage.grid.io.AbstractGridFormat
-import org.geotools.factory.GeoTools
-import org.geotools.factory.Hints
+import org.geotools.util.factory.GeoTools
+import org.geotools.util.factory.Hints
 import org.geotools.gce.arcgrid.ArcGridFormat
 
 import java.nio.charset.Charset

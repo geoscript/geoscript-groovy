@@ -7,8 +7,8 @@ import org.geotools.coverage.grid.GridGeometry2D
 import org.geotools.coverage.grid.io.AbstractGridFormat
 import org.geotools.coverage.grid.io.GridFormatFinder
 import org.geotools.coverage.grid.io.UnknownFormat
-import org.geotools.factory.GeoTools
-import org.geotools.factory.Hints
+import org.geotools.util.factory.GeoTools
+import org.geotools.util.factory.Hints
 import org.opengis.coverage.grid.GridCoverageReader
 import org.opengis.parameter.GeneralParameterValue
 import org.opengis.parameter.ParameterValueGroup

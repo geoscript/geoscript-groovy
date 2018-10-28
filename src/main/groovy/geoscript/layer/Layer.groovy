@@ -21,7 +21,7 @@ import org.geotools.data.FeatureStore
 import org.geotools.data.DefaultTransaction
 import org.geotools.data.transform.Definition
 import org.geotools.data.transform.TransformFactory
-import org.geotools.factory.Hints
+import org.geotools.util.factory.Hints
 import org.geotools.feature.FeatureCollection
 import org.geotools.feature.FeatureIterator
 import org.geotools.map.FeatureLayer
@@ -94,7 +94,7 @@ class Layer implements Renderable {
     /**
      * The FilterFactory2 for creating Filters
      */
-    protected final static FilterFactory2 filterFactory = org.geotools.factory.CommonFactoryFinder.getFilterFactory2(org.geotools.factory.GeoTools.getDefaultHints())
+    protected final static FilterFactory2 filterFactory = org.geotools.factory.CommonFactoryFinder.getFilterFactory2(org.geotools.util.factory.GeoTools.getDefaultHints())
 
     /**
      * Create a new Layer from a GeoTools FeatureSource

@@ -1,7 +1,7 @@
 package geoscript.feature.io
 
 import geoscript.feature.Feature
-import org.geotools.xml.Parser
+import org.geotools.xsd.Parser
 import org.geotools.gml2.GMLConfiguration as GML2
 import org.geotools.gml3.GMLConfiguration as GML3
 import org.geotools.gml3.v3_2.GMLConfiguration as GML32

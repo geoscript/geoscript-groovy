@@ -6,8 +6,7 @@ import geoscript.layer.Layer
 import geoscript.proj.Projection
 import geoscript.workspace.Workspace
 import geoscript.workspace.Memory
-import org.geotools.xml.Parser
-import org.geotools.kml.KML
+import org.geotools.xsd.Parser
 import org.geotools.kml.KMLConfiguration
 import org.opengis.feature.simple.SimpleFeature
 

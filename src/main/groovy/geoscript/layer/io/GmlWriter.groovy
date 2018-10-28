@@ -3,7 +3,7 @@ package geoscript.layer.io
 import geoscript.layer.Layer
 import net.opengis.wfs.WfsFactory
 import javax.xml.namespace.QName
-import org.geotools.xml.Encoder
+import org.geotools.xsd.Encoder
 import org.geotools.gml2.GMLConfiguration as GML2
 import org.geotools.wfs.v1_0.WFSConfiguration_1_0 as WFS10
 import org.geotools.wfs.v1_1.WFSConfiguration as WFS11

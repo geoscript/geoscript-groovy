@@ -3,7 +3,7 @@ package geoscript.layer.io
 import geoscript.layer.Layer
 import org.geotools.kml.KML
 import org.geotools.kml.KMLConfiguration
-import org.geotools.xml.Encoder
+import org.geotools.xsd.Encoder
 
 /**
  * Write a {@link geoscript.layer.Layer Layer}  to a KML InputStream, File, or String.

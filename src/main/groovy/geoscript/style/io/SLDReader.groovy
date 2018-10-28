@@ -4,7 +4,7 @@ import geoscript.style.Style
 import org.geotools.styling.Style as GtStyle
 import org.geotools.styling.StyleFactory
 import org.geotools.styling.StyleFactoryImpl
-import org.geotools.styling.SLDParser
+import org.geotools.xml.styling.SLDParser
 
 /**
  * Read a Geoscript Style from a SLD File, InputStream or String
