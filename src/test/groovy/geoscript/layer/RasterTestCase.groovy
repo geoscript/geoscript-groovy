@@ -1041,7 +1041,7 @@ class RasterTestCase {
     }
 
     @Test void extractFootPrint() {
-        File file = new File(getClass().getClassLoader().getResource("raster_circle_cropped.tif").toURI())
+        File file = new File(getClass().getClassLoader().getResource("raster.tif").toURI())
         GeoTIFF geoTIFF = new GeoTIFF(file)
         Raster raster = geoTIFF.read()
         Layer layer = raster.extractFootPrint()
@@ -1054,11 +1054,11 @@ class RasterTestCase {
     @Test void absolute() {
         Bounds bounds = new Bounds(0, 0, 7, 5, "EPSG:4326")
         List data1 = [
-                [0,0,0,0,0,0,0],
-                [0,-1,-1,1,-1,-1,0],
-                [0,-1,2,-3,-2,1,0],
-                [0,-1,-1,1,-1,-1,0],
-                [0,0,0,0,0,0,0]
+                [0,  0,  0,  0,  0,  0, 0],
+                [0, -1, -1,  1, -1, -1, 0],
+                [0, -1,  2, -3, -2,  1, 0],
+                [0, -1, -1,  1, -1, -1, 0],
+                [0,  0,  0,  0,  0,  0, 0]
         ]
         Raster raster1 = new Raster(data1, bounds)
         Raster raster2 = raster1.absolute()
@@ -1072,11 +1072,11 @@ class RasterTestCase {
     @Test void exponential() {
         Bounds bounds = new Bounds(0, 0, 7, 5, "EPSG:4326")
         List data1 = [
-                [10,10,10,10,10,10,10],
-                [10,11,11,11,11,11,10],
-                [10,11,21,13,12,11,10],
-                [10,11,11,11,11,11,10],
-                [10,10,10,10,10,10,10]
+                [10, 10, 10, 10, 10, 10, 10],
+                [10, 11, 11, 11, 11, 11, 10],
+                [10, 11, 21, 13, 12, 11, 10],
+                [10, 11, 11, 11, 11, 11, 10],
+                [10, 10, 10, 10, 10, 10, 10]
         ]
         Raster raster1 = new Raster(data1, bounds)
         Raster raster2 = raster1.exp()
