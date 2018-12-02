@@ -9,7 +9,7 @@ import org.apache.commons.codec.binary.Base64
  * @author Jared Erickson
  */
 @EqualsAndHashCode
-@ToString(includePackage = false, includeNames = true, excludes = "data")
+@ToString(includePackage = false, includeNames = true, excludes = ["data","base64String"])
 class Tile {
 
     /**

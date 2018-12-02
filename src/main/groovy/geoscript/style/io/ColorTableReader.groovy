@@ -1,6 +1,6 @@
 package geoscript.style.io
 
-import geoscript.filter.Color
+import geoscript.filter.Color as FilterColor
 import geoscript.style.ColorMap
 import geoscript.style.Style
 
@@ -38,11 +38,11 @@ class ColorTableReader implements Reader {
         str.eachLine {line ->
             def parts = line.replaceAll("\\s+"," ").split(" ") as List
             String value = parts[0]
-            Color color
+            FilterColor color
             if (parts.size() == 2) {
-                color = new Color(parts[1])
+                color = new FilterColor(parts[1])
             } else {
-                color = new Color(parts.subList(1,parts.size()).join(",") )
+                color = new FilterColor(parts.subList(1,parts.size()).join(",") )
             }
             if (value.isNumber() && color?.value) {
                 values.add([quantity: value, color: color])

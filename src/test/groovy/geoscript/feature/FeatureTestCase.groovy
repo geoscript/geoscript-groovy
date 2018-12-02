@@ -197,11 +197,11 @@ class FeatureTestCase {
     @Test void getGeoRSS() {
         Schema s1 = new Schema("houses", [new Field("geom","Point"), new Field("name","string"), new Field("price","float")])
         Feature f1 = new Feature([new Point(111,-47), "House", 12.5], "house1", s1)
-        AssertUtil.assertStringsEqual "<entry xmlns:georss='http://www.georss.org/georss' xmlns='http://www.w3.org/2005/Atom'>" +
+        AssertUtil.assertStringsEqual "<entry  >" +
                 "<title>house1</title>" +
-                "<summary>[geom:POINT (111 -47), name:House, price:12.5]</summary>" +
+                "<summary  >[geom:POINT (111 -47), name:House, price:12.5]</summary>" +
                 "<updated>12/7/2013</updated>" +
-                "<georss:point>-47.0 111.0</georss:point>" +
+                "<georss:point  >-47.0 111.0</georss:point>" +
                 "</entry>", f1.getGeoRSS(feedType: "atom", geometryType: "simple", itemDate: "12/7/2013"), removeXmlNS: true
     }
 
@@ -283,7 +283,9 @@ class FeatureTestCase {
         Schema s1 = new Schema("houses", [new Field("geom","Point"), new Field("name","string"), new Field("price","float")])
         Feature f1 = new Feature([new Point(111,-47), "House", 12.5], "house1", s1)
         AssertUtil.assertStringsEqual "<wpt lat='-47.0' lon='111.0' xmlns='http://www.topografix.com/GPX/1/1'>" +
-                "<name>House</name><desc>House costs \$12.5</desc></wpt>",
+                "<name>House</name>" +
+                "<desc xmlns='http://www.topografix.com/GPX/1/1'>House costs \$12.5</desc>" +
+                "</wpt>",
                 f1.getGpx(name: new Property("name"), description: {Feature f -> "${f['name']} costs \$${f['price']}"})
     }
 

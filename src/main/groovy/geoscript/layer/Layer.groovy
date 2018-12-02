@@ -636,7 +636,7 @@ class Layer implements Renderable {
                 else {
                     List values = s.toString().split(" ") as List
                     if (values.last().toUpperCase() in ["ASC","DESC"]) {
-                        sortDirection = values.pop().toUpperCase()
+                        sortDirection = values.removeLast().toUpperCase()
                         sortName = values.join(" ")
                     } else {
                         sortName = values.join(" ")

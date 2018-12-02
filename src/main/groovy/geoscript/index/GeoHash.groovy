@@ -507,7 +507,7 @@ class GeoHash {
         List<String> hashList = []
         for (int lat = 0; lat <= latStep; lat++) {
             for (int lon = 0; lon <= lonStep; lon++) {
-                hashList.push(neighbor(hashSouthWest, lon, lat, numberOfChars))
+                hashList.add(hashList.size(), neighbor(hashSouthWest, lon, lat, numberOfChars))
             }
         }
         hashList
@@ -546,7 +546,7 @@ class GeoHash {
         List<String> hashList = []
         for (int lat = 0; lat <= latStep; lat++) {
             for (int lon = 0; lon <= lonStep; lon++) {
-                hashList.push(neighbor(hashSouthWest, lon, lat, bitDepth))
+                hashList.add(hashList.size(), neighbor(hashSouthWest, lon, lat, bitDepth))
             }
         }
         hashList

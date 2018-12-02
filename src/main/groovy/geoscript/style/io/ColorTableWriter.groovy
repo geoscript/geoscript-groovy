@@ -1,6 +1,6 @@
 package geoscript.style.io
 
-import geoscript.filter.Color
+import geoscript.filter.Color as FilterColor
 import geoscript.style.ColorMap
 import geoscript.style.Style
 
@@ -48,7 +48,7 @@ class ColorTableWriter implements Writer {
         StringWriter writer = new StringWriter()
         colorMap.values.eachWithIndex{value,i ->
             if (i > 0) writer.write(NEW_LINE)
-            writer.write("${value.quantity} ${new Color(value.color).rgb.join(' ')}")
+            writer.write("${value.quantity} ${new FilterColor(value.color).rgb.join(' ')}")
         }
         writer.toString()
     }

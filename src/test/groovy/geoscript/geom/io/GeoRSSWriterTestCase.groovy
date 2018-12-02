@@ -128,7 +128,7 @@ class GeoRSSWriterTestCase {
             mkp.declareNamespace(geo: "http://www.w3.org/2003/01/geo/wgs84_pos#")
             writer.write b, new Point(-71.92, 45.256)
         } as String
-        expected = "<geo:Point xmlns:geo='http://www.w3.org/2003/01/geo/wgs84_pos#'><geo:lat>45.256</geo:lat><geo:long>-71.92</geo:long></geo:Point>"
+        expected = "<geo:Point xmlns:geo='http://www.w3.org/2003/01/geo/wgs84_pos#'><geo:lat>45.256</geo:lat><geo:long xmlns:geo='http://www.w3.org/2003/01/geo/wgs84_pos#'>-71.92</geo:long></geo:Point>"
         assertEquals expected, actual
     }
 }

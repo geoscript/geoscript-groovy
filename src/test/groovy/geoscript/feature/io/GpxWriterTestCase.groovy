@@ -32,8 +32,9 @@ class GpxWriterTestCase {
         )
         String actual = writer.write(feature)
         String expected = "<wpt lat='0.0' lon='0.0' xmlns='http://www.topografix.com/GPX/1/1'>" +
-                "<name>1</name><desc>This is feature #1</desc>" +
-                "<type>Trail</type><time>1/20/14 1:47 PM</time></wpt>"
+                "<name>1</name>" +
+                "<desc xmlns='http://www.topografix.com/GPX/1/1'>This is feature #1</desc>" +
+                "<type>Trail</type><time xmlns='http://www.topografix.com/GPX/1/1'>1/20/14 1:47 PM</time></wpt>"
         AssertUtil.assertStringsEqual(expected, actual, trim: true)
     }
 
@@ -51,9 +52,12 @@ class GpxWriterTestCase {
                 type: "Trail"
         )
         String actual = writer.write(feature)
-        String expected = "<rte xmlns='http://www.topografix.com/GPX/1/1'><name>1</name><desc>This is feature #1</desc>" +
-                "<type>Trail</type><rtept lat='2.0' lon='1.0'><time>1/20/14 1:47 PM</time></rtept>" +
-                "<rtept lat='4.0' lon='3.0'><time>1/20/14 1:47 PM</time></rtept><rtept lat='6.0' lon='5.0'>" +
+        String expected = "<rte xmlns='http://www.topografix.com/GPX/1/1'>" +
+                "<name>1</name><desc xmlns='http://www.topografix.com/GPX/1/1'>This is feature #1</desc>" +
+                "<type>Trail</type><rtept lat='2.0' lon='1.0' xmlns='http://www.topografix.com/GPX/1/1'>" +
+                "<time>1/20/14 1:47 PM</time></rtept>" +
+                "<rtept lat='4.0' lon='3.0' xmlns='http://www.topografix.com/GPX/1/1'>" +
+                "<time>1/20/14 1:47 PM</time></rtept><rtept lat='6.0' lon='5.0' xmlns='http://www.topografix.com/GPX/1/1'>" +
                 "<time>1/20/14 1:47 PM</time></rtept></rte>"
         AssertUtil.assertStringsEqual(expected, actual, trim: true)
     }
@@ -74,12 +78,15 @@ class GpxWriterTestCase {
                 type: "Trail"
         )
         String actual = writer.write(feature)
-        String expected = "<trk xmlns='http://www.topografix.com/GPX/1/1'><name>1</name><desc>This is feature #1</desc>" +
-                "<type>Trail</type><trkseg><trkpt lat='2.0' lon='1.0'><time>1/20/14 1:47 PM</time></trkpt>" +
-                "<trkpt lat='4.0' lon='3.0'><time>1/20/14 1:47 PM</time></trkpt><trkpt lat='6.0' lon='5.0'>" +
-                "<time>1/20/14 1:47 PM</time></trkpt></trkseg><trkseg><trkpt lat='20.0' lon='10.0'>" +
-                "<time>1/20/14 1:47 PM</time></trkpt><trkpt lat='40.0' lon='30.0'><time>1/20/14 1:47 PM</time><" +
-                "/trkpt><trkpt lat='60.0' lon='50.0'><time>1/20/14 1:47 PM</time></trkpt></trkseg></trk>"
+        String expected = "<trk xmlns='http://www.topografix.com/GPX/1/1'>" +
+                "<name>1</name><desc xmlns='http://www.topografix.com/GPX/1/1'>This is feature #1</desc>" +
+                "<type>Trail</type><trkseg xmlns='http://www.topografix.com/GPX/1/1'>" +
+                "<trkpt lat='2.0' lon='1.0'><time>1/20/14 1:47 PM</time></trkpt>" +
+                "<trkpt lat='4.0' lon='3.0' xmlns='http://www.topografix.com/GPX/1/1'><time>1/20/14 1:47 PM</time>" +
+                "</trkpt><trkpt lat='6.0' lon='5.0'><time>1/20/14 1:47 PM</time></trkpt></trkseg>" +
+                "<trkseg><trkpt lat='20.0' lon='10.0'><time>1/20/14 1:47 PM</time></trkpt>" +
+                "<trkpt lat='40.0' lon='30.0'><time>1/20/14 1:47 PM</time></trkpt>" +
+                "<trkpt lat='60.0' lon='50.0'><time>1/20/14 1:47 PM</time></trkpt></trkseg></trk>"
         AssertUtil.assertStringsEqual(expected, actual, trim: true)
     }
 

@@ -1,7 +1,7 @@
 package geoscript.style
 
 import geoscript.feature.Feature
-import geoscript.filter.Color
+import geoscript.filter.Color as FColor
 import geoscript.filter.Filter
 import geoscript.layer.Cursor
 import geoscript.layer.Layer
@@ -24,7 +24,7 @@ class UniqueValues extends Composite {
      * @param field The Field or the Field's name
      * @param colors A Closure (which takes index based on 0 and a value), a Palette name, or a List of Colors
      */
-    UniqueValues(Layer layer, def field, def colors = {index, value -> Color.getRandomPastel()}) {
+    UniqueValues(Layer layer, def field, def colors = {index, value -> FColor.getRandomPastel()}) {
         super(createSymbolizers(layer, field instanceof Field ? field.name : field as String, colors))
     }
 
@@ -35,7 +35,7 @@ class UniqueValues extends Composite {
      * @param colors A Closure (which takes index based on 0 and a value), a Palette name, or a List of Colors
      * @return A Symbolizer
      */
-    private static List createSymbolizers(Layer layer, String field, def colors = {index, value -> Color.getRandomPastel()}) {
+    private static List createSymbolizers(Layer layer, String field, def colors = {index, value -> FColor.getRandomPastel()}) {
 
         // Collect the unique values
         Set uniqueValueSet = new HashSet()
@@ -53,7 +53,7 @@ class UniqueValues extends Composite {
         // If the colors argument is a String treat it
         // like a Palette
         if (colors instanceof String) {
-            colors = Color.getPaletteColors(colors)
+            colors = FColor.getPaletteColors(colors)
         }
 
         // Create the list of Rules
@@ -77,7 +77,7 @@ class UniqueValues extends Composite {
 
             // Make sure color is a java.awt.Color
             if (color instanceof String) {
-                color = new Color(color)
+                color = new FColor(color)
             }
 
             // Increment our counter

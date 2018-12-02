@@ -1,7 +1,7 @@
 package geoscript.style.io
 
 import geoscript.filter.Filter
-import geoscript.filter.Color
+import geoscript.filter.Color as FColor
 import geoscript.style.Composite
 import geoscript.style.Style
 import geoscript.style.Symbolizer
@@ -106,7 +106,7 @@ class UniqueValuesReader implements Reader {
                 if (line.contains("=")) {
                     List parts = line.split("=")
                     String value = parts[0]
-                    String color = Color.toHex(parts[1])
+                    String color = FColor.toHex(parts[1])
                     if (color) {
                         Filter filter = Filter.equals(this.field, value)
                         styles.add(Symbolizer.getDefault(this.geometryType, color).where(filter))
@@ -116,7 +116,7 @@ class UniqueValuesReader implements Reader {
                     List parts = line.split(",")
                     if (parts.size() >= 2) {
                         String value = parts[0]
-                        String color = Color.toHex(parts.tail().join(","))
+                        String color = FColor.toHex(parts.tail().join(","))
                         if (color) {
                             Filter filter = Filter.equals(this.field, value)
                             styles.add(Symbolizer.getDefault(this.geometryType, color).where(filter))
