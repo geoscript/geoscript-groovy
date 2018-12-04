@@ -13,7 +13,7 @@ import groovy.transform.ToString
  * @author Jared Erickson
  */
 @EqualsAndHashCode
-@ToString(includeNames = true, excludes = "grids")
+@ToString(includeNames = true, excludes = ["grids", "minGrid", "maxGrid"])
 class Pyramid {
 
     /**
