@@ -1,11 +1,6 @@
 package geoscript.layer
 
 import geoscript.geom.Bounds
-import geoscript.style.Fill
-import geoscript.style.Stroke
-import geoscript.workspace.Directory
-import geoscript.workspace.Workspace
-
 import javax.imageio.ImageIO
 import java.awt.image.BufferedImage
 
@@ -85,9 +80,10 @@ class TileGenerator {
                         if (verbose) println "   Metatile ${c} ${r} = ${startX},${startY} - ${endX},${endY} @ ${bounds}"
 
                         byte[] imageData = imageTileRenderer.render(size: [
-                                width: tileLayer.pyramid.tileWidth * metaTileCursor.width,
-                                height: tileLayer.pyramid.tileHeight * metaTileCursor.height],
-                        bounds)
+                            width: tileLayer.pyramid.tileWidth * metaTileCursor.width,
+                            height: tileLayer.pyramid.tileHeight * metaTileCursor.height],
+                            bounds
+                        )
                         BufferedImage image = ImageIO.read(new ByteArrayInputStream(imageData))
                         int imageWidth = image.width
                         int imageHeight = image.height
@@ -131,24 +127,6 @@ class TileGenerator {
                 println "   Generating ${numberOfTiles} tile${numberOfTiles > 1 ? 's':''} took ${endTime / 1000000000.0} seconds"
             }
         }
-    }
-
-    static void main(String[] args) {
-
-        Workspace workspace = new Directory("examples/naturalearth")
-        Layer countries = workspace.get("ne_110m_admin_0_countries")
-        countries.style = new Fill("white") + new Stroke("black")
-        Layer ocean = workspace.get("ne_110m_ocean")
-        ocean.style = new Fill("blue")
-
-        File dir = new File("target/tiles")
-        Pyramid pyramid = Pyramid.createGlobalMercatorPyramid(origin: Pyramid.Origin.BOTTOM_LEFT)
-
-        TMS tms = new TMS("world", "png", dir, pyramid)
-        TileRenderer renderer = new ImageTileRenderer(tms, [ocean, countries])
-        TileGenerator generator = new TileGenerator(verbose: true)
-        generator.generate(tms, renderer, 0, 4, metatile: [width:4, height: 4])
-
     }
 
 }
