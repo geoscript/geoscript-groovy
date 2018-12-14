@@ -24,6 +24,20 @@ class TileGeneratorTestCase {
     public TemporaryFolder folder = new TemporaryFolder()
 
     @Test
+    void generateTmsMetatiles() {
+        Shapefile shp = new Shapefile(new File(getClass().getClassLoader().getResource("states.shp").toURI()))
+        shp.style = new Fill("wheat") + new Stroke("navy", 0.1)
+        File dir = folder.newFolder("tiles")
+        TMS tms = new TMS("states", "png", dir, Pyramid.createGlobalMercatorPyramid())
+        ImageTileRenderer renderer = new ImageTileRenderer(tms, shp)
+        TileGenerator generator = new TileGenerator(verbose: false)
+        generator.generate(tms, renderer, 0, 2, metatile: [width:3, height: 3])
+        assertNotNull tms.get(0, 0, 0).data
+        assertNotNull tms.get(1, 1, 1).data
+        assertNotNull tms.get(2, 2, 2).data
+    }
+
+    @Test
     void generateMbTiles() {
         Shapefile shp = new Shapefile(new File(getClass().getClassLoader().getResource("states.shp").toURI()))
         shp.style = new Fill("wheat") + new Stroke("navy", 0.1)

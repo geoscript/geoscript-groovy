@@ -35,8 +35,12 @@ class ImageTileRenderer implements TileRenderer {
     }
 
     @Override
-    byte[] render(Bounds b) {
+    byte[] render(Map options = [:], Bounds b) {
         map.bounds = b
+        if (options.size) {
+            map.width = options.size.width
+            map.height = options.size.height
+        }
         def out = new ByteArrayOutputStream()
         map.render(out)
         out.close()
