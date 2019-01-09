@@ -469,7 +469,7 @@ class Schema {
      * @param alias The alias
      * @return The GeoTools binding class name
      */
-    static lookUpBinding(String alias) {
+    static String lookUpBinding(String alias) {
         Map map = [
             ("geoscript.geom.LinearRing".toLowerCase()) : "org.locationtech.jts.geom.LinearRing",
             ("LinearRing".toLowerCase()) : "org.locationtech.jts.geom.LinearRing",
@@ -506,6 +506,16 @@ class Schema {
             ("Date".toLowerCase()) : "java.util.Date"    
         ]
         map.get(alias.toLowerCase(), alias)
+    }
+
+    static boolean isValidFieldType(String type) {
+        boolean isValid = true
+        try {
+            Class.forName(Schema.lookUpBinding(type))
+        } catch(ClassNotFoundException ex) {
+            isValid = false
+        }
+        isValid
     }
 
     /**

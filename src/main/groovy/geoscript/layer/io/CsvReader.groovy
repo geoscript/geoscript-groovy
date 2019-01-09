@@ -218,7 +218,14 @@ class CsvReader implements Reader {
                     name = parts[0]
                     type = parts[1]
                 }
-                new Field(name, type)
+                // Make sure the type is valid
+                if (Schema.isValidFieldType(type)) {
+                    new Field(name, type)
+                }
+                // Otherwise fall back
+                else {
+                    new Field("${name}:${type}", "String")
+                }
             }
             fields.add(new Field("geom", "Point"))
             Schema schema = new Schema(layerName, fields)
@@ -245,8 +252,8 @@ class CsvReader implements Reader {
                         def v = values[i]
                         def colType = "String"
                         def proj = null
-                        // Get the type from the header
-                        if (c.contains(":")) {
+                        // Get the type from the header (if the type is valid)
+                        if (c.contains(":") && Schema.isValidFieldType(c.split(":")[1])) {
                             String[] parts = c.split(":")
                             c = parts[0]
                             colType = parts[1]
@@ -293,6 +300,9 @@ class CsvReader implements Reader {
                     Map valueMap = [:]
                     cols.eachWithIndex {c,i ->
                         String colName = getColumnName(c)
+                        if (!layer.schema.has(colName)) {
+                            colName = c
+                        }
                         def v = values[i]
                         if (usingSingleColumn && colName.equalsIgnoreCase(column)) {
                             if (isGeom) {
@@ -400,7 +410,11 @@ class CsvReader implements Reader {
             str.startsWith("MULTILINESTRING (") || str.startsWith("MULTILINESTRING(") ||
             str.startsWith("MULTIPOLYGON") || str.startsWith("MULTIPOLYGON(") ||
             str.startsWith("GEOMETRYCOLLECTION (") || str.startsWith("GEOMETRYCOLLECTION(") ||
-            str.startsWith("LINEARRING (") || str.startsWith("LINEARRING(")
+            str.startsWith("LINEARRING (") || str.startsWith("LINEARRING(") ||
+            str.startsWith("CIRCULARSTRING (") || str.startsWith("CIRCULARSTRING(") ||
+            str.startsWith("CIRCULARRING (") || str.startsWith("CIRCULARRING(") ||
+            str.startsWith("COMPOUNDCURVE (") || str.startsWith("COMPOUNDCURVE(") ||
+            str.startsWith("COMPOUNDRING (") || str.startsWith("COMPOUNDRING(")
         ) {
             return true
         }

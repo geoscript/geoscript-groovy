@@ -39,6 +39,20 @@ class CsvReaderTestCase {
         }
     }
 
+    @Test void readWKTWithSemiColons() {
+        String csv = """"geom:geom","name:x","price:y"
+"POINT (111 -47)","House","12.5"
+"POINT (121 -45)","School","22.7"
+"""
+        CsvReader reader = new CsvReader()
+        Layer layer = reader.read(csv)
+        assertEquals("csv geom:geom: Point, name:x: String, price:y: String", layer.schema.toString())
+        assertEquals(2, layer.count)
+        layer.eachFeature { f ->
+            assertTrue(f.geom instanceof geoscript.geom.Point)
+        }
+    }
+
     @Test void readWKTWithTypesAndProj() {
         String csv = """"geom:Point:EPSG:4326","name:String","price:Double"
 "POINT (111 -47)","House","12.5"

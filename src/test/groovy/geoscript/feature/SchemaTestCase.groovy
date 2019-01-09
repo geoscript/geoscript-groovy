@@ -319,6 +319,20 @@ class SchemaTestCase {
         assertEquals "org.geotools.geometry.jts.CompoundCurve", Schema.lookUpBinding("CompoundCurve")
     }
 
+    @Test void isValidFieldType() {
+        assertTrue(Schema.isValidFieldType("str"))
+        assertTrue(Schema.isValidFieldType("string"))
+        assertTrue(Schema.isValidFieldType("java.lang.String"))
+        assertTrue(Schema.isValidFieldType("Point"))
+        assertTrue(Schema.isValidFieldType("geoscript.geom.Point"))
+        assertTrue(Schema.isValidFieldType("int"))
+        assertTrue(Schema.isValidFieldType("integer"))
+
+        assertFalse(Schema.isValidFieldType("asdf"))
+        assertFalse(Schema.isValidFieldType("junk"))
+        assertFalse(Schema.isValidFieldType("inter"))
+    }
+
     @Test void spec() {
         Schema s1 = new Schema("widgets", [new Field("geom","Point"), new Field("name","string"), new Field("price","float")])
         assertEquals "geom:Point,name:String,price:Float", s1.spec
