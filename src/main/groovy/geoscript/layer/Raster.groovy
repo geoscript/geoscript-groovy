@@ -1181,8 +1181,7 @@ class Raster implements Renderable {
     Raster add(Raster other) {
         def processor = new CoverageProcessor()
         def params = processor.getOperation("Add").parameters
-        params.parameter("source0").value = this.coverage
-        params.parameter("source1").value = other.coverage
+        params.parameter("Sources").value = [this.coverage, other.coverage]
         def newCoverage = processor.doOperation(params)
         new Raster(newCoverage)
     }
@@ -1248,8 +1247,6 @@ class Raster implements Renderable {
         def processor = new CoverageProcessor()
         def params = processor.getOperation("Multiply").parameters
         params.parameter("Sources").value = [this.coverage, other.coverage]
-        // params.parameter("source0").value = this.coverage
-        // params.parameter("source1").value = other.coverage
         def newCoverage = processor.doOperation(params)
         new Raster(newCoverage)
     }
@@ -1408,7 +1405,7 @@ class Raster implements Renderable {
     Raster invert() {
         def processor = new CoverageProcessor()
         def params = processor.getOperation("Invert").parameters
-        params.parameter("source").value = this.coverage
+        params.parameter("Sources").value = [this.coverage]
         def newCoverage = processor.doOperation(params)
         new Raster(newCoverage)
     }
