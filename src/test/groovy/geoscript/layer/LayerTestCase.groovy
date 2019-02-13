@@ -636,9 +636,26 @@ class LayerTestCase {
     @Test void interpolate() {
         File file = new File(getClass().getClassLoader().getResource("states.shp").toURI())
         Shapefile shp = new Shapefile(file)
+
+        // Default: classes = 10 and method = linear
         def values = shp.interpolate("SAMP_POP")
         assertEquals 11, values.size()
         assertEquals 72696.0, values[0], 0.1
+        assertEquals 1932624.5, values[5], 0.1
+        assertEquals 3792553.0, values[values.size() - 1], 0.1
+
+        // exp
+        values = shp.interpolate("SAMP_POP", 8, "exp")
+        assertEquals 9, values.size()
+        assertEquals 72696.0, values[0], 0.1
+        assertEquals 74623.69, values[4], 0.1
+        assertEquals 3792553.0, values[values.size() - 1], 0.1
+
+        // log
+        values = shp.interpolate("SAMP_POP", 12, "log")
+        assertEquals 13, values.size()
+        assertEquals 72696.0, values[0], 0.1
+        assertEquals 2248672.85, values[6], 0.1
         assertEquals 3792553.0, values[values.size() - 1], 0.1
     }
 
