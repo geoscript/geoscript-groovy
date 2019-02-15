@@ -50,7 +50,7 @@ class VectorTileRenderer implements TileRenderer {
         Layer outLayer = new Layer(layer.name, layer.schema.includeFields(fields, layer.name))
         Bounds projectedBounds = b.reproject(layer.proj)
         Geometry boundsGeom = projectedBounds.geometry
-        layer.eachFeature(Filter.intersects(boundsGeom), { Feature f ->
+        layer.eachFeature(Filter.intersects(layer.schema.geom.name, boundsGeom), { Feature f ->
             // Crop the Geometry to the Bounds
             Geometry geom = f.geom.intersection(boundsGeom)
             // Collect the attributes

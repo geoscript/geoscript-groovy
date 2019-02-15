@@ -144,7 +144,7 @@ class Pbf {
             VectorTile.Tile.Layer.Builder layerBuilder = MvtLayerBuild.newLayerBuilder(layer.name, mvtParams)
             MvtLayerProps layerProps = new MvtLayerProps()
             List<JtsGeometry> geometries = []
-            layer.eachFeature(Filter.intersects(boundsGeom), { Feature f ->
+            layer.eachFeature(Filter.intersects(layer.schema.geom.name, boundsGeom), { Feature f ->
                 Geometry geom = isPoint ? f.geom : f.geom.intersection(boundsGeom)
                 if (!geom.empty) {
                     ProjectionHandler projectionHandler = ProjectionHandlerFinder.getHandler(b.env, layer.proj.crs, true)

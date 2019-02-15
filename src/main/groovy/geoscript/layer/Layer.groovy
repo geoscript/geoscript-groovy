@@ -1497,7 +1497,7 @@ class Layer implements Renderable {
 
         // Iterate through all of the Features in the input Layer
         clippedLayer.withWriter { w ->
-            this.eachFeature(Filter.intersects(clipLayer.bounds.geometry), { f ->
+            this.eachFeature(Filter.intersects(this.schema.geom.name, clipLayer.bounds.geometry), { f ->
                 // See if the Feature intersects with the Bounds of any Feature in the spatial index
                 index.query(f.bounds).each { clipFeature ->
                     // Make sure it actually intersects the Geometry of a Feature in the spatial index
