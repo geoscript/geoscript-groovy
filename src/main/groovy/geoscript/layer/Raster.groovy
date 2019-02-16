@@ -463,20 +463,21 @@ class Raster implements Renderable {
      */
     String getValuesAsString(Map options = [:], int x, int y, int w, int h, int band = 0) {
         boolean prettyPrint = options.get('prettyPrint', false)
+        int numberOfDecimals = options.get('numberOfDecimals', 2)
         String NEW_LINE = System.getProperty("line.separator")
         StringBuilder builder = new StringBuilder()
         List values = getValues(x, y, w, h, band, false)
         int maxLength = 0
-        int maxDecimal = 0
         values.eachWithIndex { List row, int r ->
             row.each { float n ->
-                String s = String.valueOf(n)
-                maxLength = Math.max(maxLength, s.length())
-                maxDecimal = Math.max(maxDecimal, s.indexOf('.') ? s.substring(s.indexOf('.')).length() - 1 : 0)
+                String s = String.valueOf(n.longValue())
+                maxLength = Math.max(maxLength, s.length() + numberOfDecimals + 1)
             }
         }
         NumberFormat nf = NumberFormat.getNumberInstance()
-        nf.setMinimumFractionDigits(maxDecimal)
+        nf.setMinimumFractionDigits(numberOfDecimals)
+        nf.setMaximumFractionDigits(numberOfDecimals)
+        nf.setGroupingUsed(false)
 
         String line = "-" * ((w * (maxLength + 3)) + 1)
         if (prettyPrint) {
