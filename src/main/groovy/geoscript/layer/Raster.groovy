@@ -890,7 +890,7 @@ class Raster implements Renderable {
 
     /**
      * Calculate a convoluted version of the current Raster
-     * @param options Optional named parameters (kernel, kernelRadius, kernelWidth and kernelHeight)
+     * @param radius The kernel radius
      * @return A Raster
      */
     Raster convolve(int radius) {
@@ -901,7 +901,8 @@ class Raster implements Renderable {
 
     /**
      * Calculate a convoluted version of the current Raster
-     * @param options Optional named parameters (kernel, kernelRadius, kernelWidth and kernelHeight)
+     * @param width The kernel width
+     * @param height The height width
      * @return A Raster
      */
     Raster convolve(int width, int height) {
