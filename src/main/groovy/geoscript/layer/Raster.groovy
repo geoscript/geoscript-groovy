@@ -979,6 +979,48 @@ class Raster implements Renderable {
     }
 
     /**
+     * Mosaic a List of Rasters into a single Raster
+     * @param options options Optional named parameters:
+     * <ul>
+     *    <li>bounds = The final Bounds</li>
+     *    <li>size = The final size of the Raster</li>
+     * </ul>
+     * @param rasters The List of Rasters
+     * @return A new Raster
+     */
+    static Raster mosaic(Map options = [:], List<Raster> rasters) {
+        Bounds bounds = options.get("bounds")
+        if (!bounds) {
+            rasters.each { Raster r ->
+                if (!bounds) {
+                    bounds = r.bounds
+                } else {
+                    bounds.expand(r.bounds)
+                }
+            }
+        }
+        List size = options.get("size")
+        if (!size) {
+            int width = 0
+            int height = 0
+            rasters.each { Raster r ->
+                width += r.size[0]
+                height += r.size[1]
+            }
+            size = [width, height]
+        }
+        GridGeometry2D gg = new GridGeometry2D(new GridEnvelope2D(0, 0, size[0], size[1]), bounds.env)
+        def processor = new CoverageProcessor()
+        def params = processor.getOperation("Mosaic").parameters
+        params.parameter("Sources").value = rasters.collect { Raster raster -> raster.coverage}
+        params.parameter("geometry").value = gg
+        def newCoverage = processor.doOperation(params)
+        new Raster(newCoverage)
+    }
+
+
+
+    /**
      * Create a new Raster with styling baked in.
      * @param style The Style/Symobolizer
      * @return A new Raster

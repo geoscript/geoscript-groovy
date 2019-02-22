@@ -1074,6 +1074,17 @@ class RasterTestCase {
         assertNotNull rgb
     }
 
+    @Test void mosaic() {
+        File file = new File(getClass().getClassLoader().getResource("alki.tif").toURI())
+        GeoTIFF geoTIFF = new GeoTIFF(file)
+        Raster raster = geoTIFF.read()
+        Bounds bounds = raster.bounds
+        Raster mosaicRaster = Raster.mosaic(
+            bounds.tile(0.5).collect { Bounds b -> raster.crop(b) }
+        )
+        assertNotNull mosaicRaster
+    }
+
     @Test void extractFootPrint() {
         File file = new File(getClass().getClassLoader().getResource("raster.tif").toURI())
         GeoTIFF geoTIFF = new GeoTIFF(file)
