@@ -51,8 +51,7 @@ Then edit the build.gradle file.
     }
 
     dependencies {
-       compile "org.codehaus.groovy:groovy-all:2.4.14"
-       compile "org.geoscript:geoscript-groovy:1.12.0"
+       compile "org.geoscript:geoscript-groovy:1.13.0"
     }
 
     task wrapper(type: Wrapper) {

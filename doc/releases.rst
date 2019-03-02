@@ -3,9 +3,28 @@
 GeoScript Groovy Releases
 =========================
 
-1.13.0 (Under development)
---------------------------
-The 1.13 release of GeoScript is built on Groovy 2.4.15, GeoTools 21.0, and the Java Topologu Suite 1.16.0 and requires Java 8.
+1.13.0
+------
+The 1.13 release of GeoScript is built on Groovy 2.5.6, GeoTools 21.0, and the Java Topology Suite 1.16.0 and requires Java 8.
+
+Added a Raster mosaic method::
+
+    Raster mosaicedRaster = Raster.mosaic([raster1, raster2, raster3])
+
+Add metatile support to the Tile generator::
+
+    TMS tms = new TMS("world", "png", dir, pyramid)
+    TileRenderer renderer = new ImageTileRenderer(tms, [ocean, countries])
+    TileGenerator generator = new TileGenerator(verbose: true)
+    generator.generate(tms, renderer, 0, 4, metatile: [width:4, height: 4])
+
+Updates due to GeoTools Java 11 refactoring.
+
+Fixed Raster getValueAsString method.
+
+Fixed all usages of Filter.intersects to include geometry name
+
+Improved CSV reading when semi-colon is a part of the name.
 
 1.12.0
 ------
