@@ -106,7 +106,7 @@ Generating tiles::
     TileGenerator generator = new TileGenerator(verbose: true)
     generator.generate(gpkg, renderer, 0, 4)
 
-See the `web site <http://geoscript.org>`_, the `groovy docs <http://geoscript.github.io/geoscript-groovy/api/1.11.0/index.html>`_ or the `cook book <https://jericks.github.io/geoscript-groovy-cookbook/>`_ or the `examples directory <https://github.com/jericks/geoscript-groovy/tree/master/examples>`_ for more examples.
+See the `web site <http://geoscript.org>`_, the `groovy docs <http://geoscript.github.io/geoscript-groovy/api/1.13.0/index.html>`_ or the `cook book <https://jericks.github.io/geoscript-groovy-cookbook/>`_ or the `examples directory <https://github.com/jericks/geoscript-groovy/tree/master/examples>`_ for more examples.
 
 You can also use GeoScript Groovy as a library. If you use Maven you will need to add the Boundless Maven Repository::
 
@@ -134,6 +134,8 @@ Versions
 
 +-----------+----------+-----------+--------+----------+
 | GeoScript | GeoTools | GeoServer | JTS    | Groovy   |
++-----------+----------+-----------+--------+----------+
+| 1.14      | 22       | 2.16      | 1.16.0 | 2.5.6    |
 +-----------+----------+-----------+--------+----------+
 | 1.13      | 21       | 2.15      | 1.16.0 | 2.5.6    |
 +-----------+----------+-----------+--------+----------+
@@ -166,6 +168,8 @@ Versions
 
 API Groovy Docs
 ---------------
+
+`1.14-SNAPSHOT <http://geoscript.github.io/geoscript-groovy/api/1.14-SNAPSHOT/index.html>`_
 
 `1.13.0 <http://geoscript.github.io/geoscript-groovy/api/1.13.0/index.html>`_
 

@@ -5,7 +5,7 @@
     <groupId>org.geoscript</groupId>
     <artifactId>geoscript-groovy</artifactId>
     <packaging>jar</packaging>
-    <version>1.13.0</version>
+    <version>1.14-SNAPSHOT</version>
     <repositories>
         <repository>
             <id>boundless</id>
@@ -275,7 +275,7 @@
         <dependency>
             <groupId>org.geotools</groupId>
             <artifactId>gt-ogr-jni</artifactId>
-            <version>20-SNAPSHOT</version>
+            <version>${gt.version}</version>
             <exclusions>
                 <exclusion>
                     <groupId>org.geotools</groupId>
@@ -529,7 +529,7 @@
         </plugins>
     </reporting>
     <properties>
-        <gt.version>21.0</gt.version>
+        <gt.version>22-SNAPSHOT</gt.version>
     </properties>
     <name>geoscript groovy</name>
     <description>A groovy implementation of geoscript.</description>
