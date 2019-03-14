@@ -29,7 +29,7 @@ class WMSLayer implements Renderable {
     /**
      * The Bounds of this WMSLayer
      */
-    private Bounds bounds
+    private Bounds calculatedBounds
 
     /**
      * The Projection of this WMSLayer
@@ -73,13 +73,20 @@ class WMSLayer implements Renderable {
      * @return The Bounds
      */
     Bounds getBounds() {
-        if (!this.bounds) {
-            wmsLayers.each {l ->
-                if (!this.bounds) this.bounds = l.getBounds(this.proj)
-                else this.bounds.expand(l.getBounds(this.proj))
+        if (!this.calculatedBounds) {
+            calculateBounds()
+        } 
+        this.calculatedBounds
+    }
+
+    private void calculateBounds() {
+        this.wmsLayers.each { Layer layer ->
+            if (!this.calculatedBounds) {
+                this.calculatedBounds = layer.getBounds(this.proj)
+            } else {
+                this.calculatedBounds.expand(layer.getBounds(this.proj))
             }
         }
-        this.bounds
     }
 
     /**
