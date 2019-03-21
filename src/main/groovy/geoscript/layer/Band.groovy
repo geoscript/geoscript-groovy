@@ -128,12 +128,20 @@ class Band {
     }
 
     /**
+     * Get the Band's description
+     * @return The Band's description
+     */
+    String getDescription() {
+        dim.description.toString()
+    }
+
+    /**
      * Get the string representation
      * @return The string representation
      */
     @Override
     String toString() {
-        dim.description.toString()
+        "${this.getDescription()}"
     }
 
     /**

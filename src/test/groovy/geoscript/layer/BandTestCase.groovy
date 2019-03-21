@@ -24,6 +24,10 @@ class BandTestCase {
         assertEquals("GREEN_BAND", bands[1].toString())
         assertEquals("BLUE_BAND", bands[2].toString())
 
+        assertEquals("RED_BAND", bands[0].getDescription())
+        assertEquals("GREEN_BAND", bands[1].getDescription())
+        assertEquals("BLUE_BAND", bands[2].getDescription())
+
         assertFalse(bands[0].isNoData(-99))
 
         bands.eachWithIndex {band,i ->
