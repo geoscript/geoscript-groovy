@@ -101,11 +101,6 @@
             <version>${gt.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.geotools.jdbc</groupId>
-            <artifactId>gt-jdbc-spatialite</artifactId>
-            <version>20.0</version>
-        </dependency>
-        <dependency>
             <groupId>org.geotools.xsd</groupId>
             <artifactId>gt-xsd-wfs</artifactId>
             <version>${gt.version}</version>
@@ -268,24 +263,9 @@
             <version>${gt.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.gdal</groupId>
-            <artifactId>gdal</artifactId>
-            <version>1.11.2</version>
-        </dependency>
-        <dependency>
             <groupId>org.geotools</groupId>
             <artifactId>gt-ogr-jni</artifactId>
             <version>${gt.version}</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.geotools</groupId>
-                    <artifactId>gt-data</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.gdal</groupId>
-                    <artifactId>gdal</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.codehaus.groovy</groupId>
