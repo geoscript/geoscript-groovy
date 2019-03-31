@@ -140,7 +140,7 @@ class OGRTestCase {
             assertTrue ogr.toString().startsWith("OGR (Driver = GeoJSON, Dataset = ")
             assertTrue ogr.toString().endsWith("states.geojson)")
             assertEquals 1, ogr.names.size()
-            assertTrue ogr.names.contains("OGRGeoJSON")
+            assertTrue ogr.names.contains("states")
             assertEquals 1, ogr.layers.size()
             int i = 0
             layer.eachFeature{f ->
@@ -165,7 +165,7 @@ class OGRTestCase {
             assertTrue ogr.toString().startsWith("OGR (Driver = GeoJSON, Dataset = ")
             assertTrue ogr.toString().endsWith("states.geojson)")
             assertEquals 1, ogr.names.size()
-            assertTrue ogr.names.contains("OGRGeoJSON")
+            assertTrue ogr.names.contains("states")
             assertEquals 1, ogr.layers.size()
             int i = 0
             layer.eachFeature{f ->
