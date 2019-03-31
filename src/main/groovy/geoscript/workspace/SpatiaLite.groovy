@@ -1,42 +1,54 @@
 package geoscript.workspace
 
+import geoscript.feature.Schema
+import geoscript.layer.Cursor
+import geoscript.layer.Layer
 import org.geotools.data.DataStore
-import org.geotools.data.spatialite.SpatiaLiteDataStoreFactory
-import org.geotools.jdbc.JDBCDataStore
+import org.geotools.data.ogr.OGRDataStore
 
 /**
  * A SpatiaLite Workspace connects to a SpatiaLite database.
  * <p><blockquote><pre>
- * SpatiaLite spatialite = new SpatiaLite("db.sqlite", "databases")
+ * SpatiaLite spatialite = new SpatiaLite("db.sqlite")
  * </pre></blockquote></p>
  * @author Jared Erickson
  */
-class SpatiaLite extends Database {
+class SpatiaLite extends OGR {
 
-    /**
-     * Create a new SpatiaLite Workspace from a name and directory
-     * @param name The name of the database
-     * @param dir The File directory containing the database
-     */
-    SpatiaLite(String name, File dir) {
-        super(createDataStore(name, dir))
+    SpatiaLite(File file) {
+        this(file.absolutePath)
     }
 
-    /**
-     * Create a new SpatiaLite Workspace from a name and directory
-     * @param name The name of the database
-     * @param dir The directory name containing the database
-     */
-    SpatiaLite(String name, String dir) {
-        this(name, new File(dir).absoluteFile)
+    SpatiaLite(String fileName) {
+        super("SQLite", fileName)
     }
 
-    /**
-     * Create a new SpatiaLite Workspace from a GeoTools JDBCDataStore
-     * @param ds The GeoTools JDBCDataStore
-     */
-    SpatiaLite(JDBCDataStore ds) {
-        super(ds)
+    protected SpatiaLite(OGRDataStore dataStore) {
+        super(dataStore)
+    }
+
+    @Override
+    Layer create(Map options, Schema schema, boolean write) {
+        (options.get("options",[]) as List).add("SPATIALITE=YES")
+        super.create(options, schema, write)
+    }
+
+    @Override
+    Layer create(Map options = [:], Cursor c) {
+        (options.get("options",[]) as List).add("SPATIALITE=YES")
+        super.create(options, c)
+    }
+
+    @Override
+    Layer add(Map options, Layer layer) {
+        (options.get("options",[]) as List).add("SPATIALITE=YES")
+        super.add(options, layer)
+    }
+
+    @Override
+    Layer add(Map options, Layer layer, String name, int chunk=1000) {
+        (options.get("options",[]) as List).add("SPATIALITE=YES")
+        super.add(options, layer, name, chunk)
     }
 
     /**
@@ -48,14 +60,12 @@ class SpatiaLite extends Database {
     }
 
     /**
-     * Create a new SpatiaLite DataStore from a name and directory
+     * The String representation
+     * @return A String representation
      */
-    private static DataStore createDataStore(String name, File dir) {
-        Map params = [:]
-        params.put("database", new File(dir,name).absolutePath)
-        params.put("dbtype", "spatialite")
-        SpatiaLiteDataStoreFactory f = new SpatiaLiteDataStoreFactory()
-        f.createDataStore(params)
+    @Override
+    String toString() {
+        "SpatiaLite(${dataset})"
     }
 
     /**
@@ -67,8 +77,8 @@ class SpatiaLite extends Database {
         Map getParametersFromString(String str) {
             Map params = [:]
             if (!str.contains("=") && (str.endsWith(".sqlite") || str.endsWith(".spatialite"))) {
-                params.put("dbtype", "spatialite")
-                params.put("database", new File(str).absolutePath)
+                params.put("DriverName", "SQLite")
+                params.put("DatasourceName", new File(str).absolutePath)
             } else {
                 params = super.getParametersFromString(str)
             }
@@ -78,12 +88,13 @@ class SpatiaLite extends Database {
         @Override
         SpatiaLite create(String type, Map params) {
             if (type.equalsIgnoreCase('spatialite')) {
-                params['dbtype'] = 'spatialite'
+                params.put("DriverName", "SQLite")
                 if (params.containsKey('file')) {
-                    params['database'] = params['file']
+                    Object file = params["file"]
+                    params.put("DatasourceName", file instanceof File ? file.absolutePath: new File(file.toString()).absolutePath)
                 }
                 if (params['database'] instanceof File) {
-                    params['database'] = (params['database'] as File).absolutePath
+                    params['DatasourceName'] = (params['database'] as File).absolutePath
                 }
                 super.create(params)
             } else {
@@ -94,11 +105,10 @@ class SpatiaLite extends Database {
         @Override
         SpatiaLite create(DataStore dataStore) {
             SpatiaLite spatialite = null
-            if (dataStore instanceof org.geotools.jdbc.JDBCDataStore) {
-                def jdbcds = dataStore as org.geotools.jdbc.JDBCDataStore
-                if (jdbcds.dataStoreFactory instanceof org.geotools.data.spatialite.SpatiaLiteDataStoreFactory ||
-                    jdbcds.dataStoreFactory instanceof org.geotools.data.spatialite.SpatiaLiteJNDIDataStoreFactory) {
-                    spatialite = new SpatiaLite(dataStore)
+            if (dataStore instanceof org.geotools.data.ogr.OGRDataStore) {
+                def ogrDataSource = dataStore as org.geotools.data.ogr.OGRDataStore
+                if (ogrDataSource.@ogrDriver.equalsIgnoreCase("SQLite")) {
+                    spatialite = new SpatiaLite(ogrDataSource)
                 }
             }
             spatialite

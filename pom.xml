@@ -101,11 +101,6 @@
             <version>${gt.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.geotools.jdbc</groupId>
-            <artifactId>gt-jdbc-spatialite</artifactId>
-            <version>20.0</version>
-        </dependency>
-        <dependency>
             <groupId>org.geotools.xsd</groupId>
             <artifactId>gt-xsd-wfs</artifactId>
             <version>${gt.version}</version>
@@ -268,24 +263,9 @@
             <version>${gt.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.gdal</groupId>
-            <artifactId>gdal</artifactId>
-            <version>1.11.2</version>
-        </dependency>
-        <dependency>
             <groupId>org.geotools</groupId>
             <artifactId>gt-ogr-jni</artifactId>
             <version>${gt.version}</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.geotools</groupId>
-                    <artifactId>gt-data</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.gdal</groupId>
-                    <artifactId>gdal</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.codehaus.groovy</groupId>
@@ -399,15 +379,10 @@
                 <version>2.22.0</version>
                 <configuration>
                     <forkMode>once</forkMode>
-                    <argLine>-Xms512m -Xmx1024m -XX:PermSize=256m -XX:MaxPermSize=1024m -Djava.library.path="${env.GEOSCRIPT_GDAL_HOME}"</argLine>
+                    <argLine>-Xms512m -Xmx1024m -XX:PermSize=256m -XX:MaxPermSize=1024m</argLine>
                     <systemPropertyVariables>
                         <org.geotools.referencing.forceXY>true</org.geotools.referencing.forceXY>
                     </systemPropertyVariables>
-                    <environmentVariables>
-                        <PATH>${env.GEOSCRIPT_GDAL_HOME}${path.sepatator}${env.PATH}</PATH>
-                        <DYLD_LIBRARY_PATH>${env.GEOSCRIPT_GDAL_HOME}${path.sepatator}${env.DYLD_LIBRARY_PATH}</DYLD_LIBRARY_PATH>
-                        <LD_LIBRARY_PATH>${env.GEOSCRIPT_GDAL_HOME}${path.sepatator}${env.LD_LIBRARY_PATH}</LD_LIBRARY_PATH>
-                    </environmentVariables>
                 </configuration>
             </plugin>
             <plugin>

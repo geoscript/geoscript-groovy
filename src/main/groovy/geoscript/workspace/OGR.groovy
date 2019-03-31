@@ -28,12 +28,12 @@ class OGR extends Workspace {
     /**
      * The driver string (http://www.gdal.org/ogr/ogr_formats.html)
      */
-    private String driver
+    protected String driver
 
     /**
      * The dataset string (see individual formats)
      */
-    private String dataset
+    protected String dataset
 
     /**
      * Create a new OGR Workspace
