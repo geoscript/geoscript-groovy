@@ -9,3 +9,4 @@ geoscript.geom.io.WkbReader
 geoscript.geom.io.WktReader
 geoscript.geom.io.GeoPackageReader
 geoscript.geom.io.GooglePolylineEncoder
+geoscript.geom.io.TWkbReader
