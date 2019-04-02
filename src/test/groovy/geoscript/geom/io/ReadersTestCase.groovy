@@ -19,6 +19,12 @@ class ReadersTestCase {
         Reader reader = Readers.find("wkt")
         assertNotNull reader
 
+        reader = Readers.find("wkb")
+        assertNotNull reader
+
+        reader = Readers.find("twkb")
+        assertNotNull reader
+
         reader = Readers.find("asdf")
         assertNull reader
     }
