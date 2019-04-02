@@ -9,9 +9,9 @@ import org.locationtech.jts.io.WKBReader
  * Read a {@link geoscript.geom.Geometry Geometry} from a TWKB hex String or byte array.
  * <p><blockquote><pre>
  * TWkbReader reader = new TWkbReader()
- * {@link geoscript.geom.Point Point} pt = reader.read("0000000001405BC00000000000C047800000000000")
+ * {@link geoscript.geom.Point Point} pt = reader.read("01000204")
  *
- * POINT (111 -47)
+ * POINT (1 2)
  * </pre></blockquote></p>
  * @author Jared Erickson
  */
