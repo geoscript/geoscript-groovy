@@ -3,11 +3,11 @@ package geoscript.workspace
 import geoscript.GeoScript
 import geoscript.layer.Layer
 import org.geotools.data.DataStore
-import org.geotools.data.DataUtilities
 import org.geotools.data.directory.DirectoryDataStore
 import org.geotools.data.shapefile.ShapefileDataStore
 import org.geotools.data.shapefile.ShapefileDataStoreFactory
 import org.geotools.data.shapefile.files.ShpFileType
+import org.geotools.util.URLs
 
 /**
  * A Directory Workspace can contain one or more Shapefiles.
@@ -133,9 +133,9 @@ class Directory extends Workspace {
             Map params = [:]
             if (!str.contains("=") && str.endsWith(".shp")) {
                 if (str.startsWith("file:/")) {
-                    params.put("url", DataUtilities.fileToURL(DataUtilities.urlToFile(new URL(str)).getAbsoluteFile().getParentFile()))
+                    params.put("url", URLs.fileToUrl(URLs.urlToFile(new URL(str)).getAbsoluteFile().getParentFile()))
                 } else {
-                    params.put("url", DataUtilities.fileToURL(new File(str).getAbsoluteFile().getParentFile()))
+                    params.put("url", URLs.fileToUrl(new File(str).getAbsoluteFile().getParentFile()))
                 }
             } else if (!str.contains("=") && new File(str).isDirectory()) {
                 params.put("url", new File(str).toURL())
@@ -149,7 +149,7 @@ class Directory extends Workspace {
         Directory create(String type, Map params) {
             if (type.equalsIgnoreCase('shapefile') && params.containsKey('file')) {
                 File file = params.get('file') instanceof File ? params.get('file') : new File(params.get('file'))
-                super.create([url: DataUtilities.fileToURL(file.absoluteFile)])
+                super.create([url: URLs.fileToUrl(file.absoluteFile)])
             } else if (type.equalsIgnoreCase('shapefile') && params.containsKey('url') && params.containsKey("dir")) {
                 URL url = params.get('url') instanceof URL ? params.get('url') : new URL(params.get('url'))
                 File dir = params.get('dir') instanceof File ? params.get('dir') : new File(params.get('dir'))
@@ -159,7 +159,7 @@ class Directory extends Workspace {
                 File file = File.createTempFile("download",".zip")
                 GeoScript.download(url, file, overwrite: params.get("overwrite", true) as boolean)
                 GeoScript.unzip(file, dir)
-                super.create([url: DataUtilities.fileToURL(dir.absoluteFile)])
+                super.create([url: URLs.fileToUrl(dir.absoluteFile)])
             } else {
                 null
             }

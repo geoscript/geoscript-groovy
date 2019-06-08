@@ -160,7 +160,7 @@ class Database extends Workspace {
         if (primaryKeyFields != null && primaryKeyFields.size() > 0) {
             vt.setPrimaryKeyColumns(primaryKeyFields[0] instanceof Field ? primaryKeyFields.collect{fld->fld.name} : primaryKeyFields)
         }
-        (ds as JDBCDataStore).addVirtualTable(vt)
+        (ds as JDBCDataStore).createVirtualTable(vt)
     }
 
     /**

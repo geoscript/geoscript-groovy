@@ -7,10 +7,10 @@ import geoscript.feature.Schema
 import geoscript.layer.Cursor
 import geoscript.layer.Layer
 import org.geotools.data.DataStore
-import org.geotools.data.DataUtilities
 import org.geotools.feature.FeatureCollection
 import org.geotools.data.collection.ListFeatureCollection
 import org.geotools.data.DataStoreFinder
+import org.geotools.util.URLs
 
 /**
  * A Workspace is a container of Layers.
@@ -319,9 +319,9 @@ class Workspace {
                     try {
                         // URLs with a protocol (file: http:)
                         value = new URL(value)
-                        File file = DataUtilities.urlToFile(value)
+                        File file = URLs.urlToFile(value)
                         if (file != null) {
-                            value = DataUtilities.fileToURL(file.absoluteFile)
+                            value = URLs.fileToUrl(file.absoluteFile)
                         } else {
                             value = new URL(value)
                         }

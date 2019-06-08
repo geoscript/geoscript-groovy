@@ -351,7 +351,7 @@ class Symbolizer implements Style, Cloneable {
                 ftbl.keySet().each{Filter fil ->
                     List syms = ftbl[fil]
                     Rule rule = styleFactory.createRule()
-                    fts.addRule(rule)
+                    fts.rules().add(rule)
                     if (scale[0] > -1) {
                         rule.minScaleDenominator = scale.min
                     }

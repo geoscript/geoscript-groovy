@@ -2,9 +2,9 @@ package geoscript.layer
 
 import geoscript.GeoScript
 import geoscript.workspace.Directory
-import org.geotools.data.DataUtilities
 import org.geotools.data.shapefile.files.ShpFileType
 import org.geotools.data.shapefile.ShapefileDumper
+import org.geotools.util.URLs
 
 /**
  * A Shapefile Layer.
@@ -37,7 +37,7 @@ class Shapefile extends Layer {
      * @return The Shapefile's File
      */
     File getFile() {
-        DataUtilities.urlToFile(new URL(fs.dataStore.shpFiles.get(ShpFileType.SHP)))
+        URLs.urlToFile(new URL(fs.dataStore.shpFiles.get(ShpFileType.SHP)))
     }
 
     /**
