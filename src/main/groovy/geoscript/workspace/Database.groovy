@@ -78,7 +78,7 @@ class Database extends Workspace {
      * @param name The name of the SQL View Layer
      */
     void deleteView(String name) {
-        (ds as JDBCDataStore).removeVirtualTable(name)
+        (ds as JDBCDataStore).dropVirtualTable(name)
     }
 
     /**
