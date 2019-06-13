@@ -75,8 +75,13 @@ class OSM extends ImageTileLayer {
         ImageTile tile = new ImageTile(z, x, y)
         String baseUrl = getBaseUrl()
         URL url = new URL("${baseUrl}/${z}/${x}/${y}.${imageType}")
-        url.withInputStream {input ->
-            tile.data = input.bytes
+        URLConnection urlConnection = url.openConnection()
+        urlConnection.setRequestProperty("User-Agent", "GeoScript Groovy")
+        InputStream inputStream = urlConnection.inputStream
+        try {
+            tile.data = inputStream.bytes
+        } finally {
+            inputStream.close()
         }
         tile
     }
