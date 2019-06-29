@@ -2,6 +2,7 @@ package geoscript.geom
 
 import org.locationtech.jts.geom.LineString as JtsLineString
 import org.locationtech.jts.geom.Coordinate
+import org.locationtech.jts.linearref.LengthIndexedLine
 
 /**
  * A LineString Geometry.
@@ -234,6 +235,24 @@ class LineString extends Geometry {
         def indexedLine = new org.locationtech.jts.linearref.LengthIndexedLine(g)
         def length = length
         Geometry.wrap(indexedLine.extractLine(start * length, end * length))
+    }
+
+    /**
+     * Create Points along the LineString with the given interval distance.
+     * @param distance The interval distance of distance between points.
+     * @return A MultiPoint
+     */
+    MultiPoint createPointsAlong(double distance) {
+        LengthIndexedLine lengthIndexedLine = new LengthIndexedLine(this.g)
+        List<Point> points = []
+        points.add(this.startPoint)
+        double distanceAlongLine = distance
+        while (distanceAlongLine < this.length) {
+            Coordinate coordinate = lengthIndexedLine.extractPoint(distanceAlongLine)
+            points.add(new Point(coordinate.x, coordinate.y))
+            distanceAlongLine = distanceAlongLine + distance
+        }
+        new MultiPoint(points)
     }
 
     /**

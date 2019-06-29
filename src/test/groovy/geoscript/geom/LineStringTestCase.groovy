@@ -135,6 +135,16 @@ class LineStringTestCase {
         assertEquals "LINESTRING (1156010.153864557 649246.3016361536, 1175115.6870342216 648021.5879714314)", subLine.wkt
     }
 
+    @Test void createPointsAlong() {
+        def line = new LineString([
+            [1137466.548141059, 650434.9943107369],
+            [1175272.4129268457, 648011.541439853],
+            [1185935.6055587344, 632986.1336403737]
+        ])
+        MultiPoint points = line.createPointsAlong(2000)
+        assertEquals(29, points.numGeometries)
+    }
+
     @Test void addPoint() {
         def line = new LineString([new Point(0,0), new Point(5,5)])
         def newLine = line.addPoint(1, new Point(3,3))

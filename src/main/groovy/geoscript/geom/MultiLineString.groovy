@@ -143,6 +143,30 @@ class MultiLineString extends GeometryCollection {
     }
 
     /**
+     * Create Points along this MultiLineString with the given interval distance.
+     * @param distance The interval distance of distance between points.
+     * @return A MultiPoint
+     */
+    MultiPoint createPointsAlong(double distance) {
+        createPointsAlongGeometry(this, distance)
+    }
+
+    private MultiPoint createPointsAlongGeometry(Geometry geometry, double distance) {
+        List<Point> points = []
+        geometry.geometries.each { Geometry subGeometry ->
+            if (subGeometry instanceof MultiLineString) {
+                MultiLineString multiLineString = subGeometry as MultiLineString
+                points.addAll(createPointsAlongGeometry(multiLineString, distance).points)
+            } else if (subGeometry instanceof LineString) {
+                LineString lineString = subGeometry as LineString
+                points.addAll(lineString.createPointsAlong(distance).points)
+            }
+        }
+        new MultiPoint(points)
+    }
+
+
+    /**
      * Create a MultiLineString from a List of List of Doubles
      */
     private static JtsMultiLineString create(List<List<Double>>... lineStrings) {

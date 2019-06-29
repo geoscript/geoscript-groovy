@@ -85,4 +85,15 @@ class MultiLineStringTestCase {
         assertTrue results.invalidRingLines.empty
     }
 
+    @Test void createPointsAlong() {
+        def lines = new MultiLineString(
+                new LineString ([-5.70068359375, 45.1416015625], [2.47314453125, 53.9306640625]),
+                new LineString ([-1.21826171875, 53.9306640625], [8.88916015625, 46.1962890625]),
+                new LineString ([0.71533203125, 42.63671875], [7.13134765625, 50.37109375]),
+                new LineString ([-5.83251953125, 46.943359375], [4.45068359375, 42.98828125])
+        )
+        MultiPoint points = lines.createPointsAlong(1)
+        assertEquals(49, points.numGeometries)
+    }
+
 }
