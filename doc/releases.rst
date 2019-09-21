@@ -3,6 +3,27 @@
 GeoScript Groovy Releases
 =========================
 
+1.14.0
+------
+The 1.14 release of GeoScript is build on Groovy 2.5.8, GeoTools 22.0, and the Java Topology Suite 1.16.1 and requires Java 8.
+
+The SpatiaLite Workspace in now based on OGR.
+
+Added a Geometry TWKB Reader.
+
+Set user agent for OSM tile requests.
+
+Added a LineString and MultiLineString createPointsAlong(double distance) method.
+
+Fixed WMSLayer getBounds method.
+
+Added Band.getDescription() method.
+
+Added an example for creating a geopackage database from natural earth data.
+
+Added an example for creating a MBTiles file from natural earth data.
+
+
 1.13.0
 ------
 The 1.13 release of GeoScript is built on Groovy 2.5.6, GeoTools 21.0, and the Java Topology Suite 1.16.0 and requires Java 8.

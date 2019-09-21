@@ -33,16 +33,16 @@ Install GeoScript
 
 #. Unpack the GeoScript tarball::
 
-     unzip geoscript-groovy-1.13.0.zip
+     unzip geoscript-groovy-1.14.0.zip
 
-#. Add the geoscript-groovy-1.13.0/bin directory to your path::
+#. Add the geoscript-groovy-1.14.0/bin directory to your path::
 
      export PATH=$(cd bin; pwd):$PATH
 
 That's it. GeoScript Groovy should now be installed on the system. To verify the install execute the :command:`geoscript-groovysh` command::
 
       % geoscript-groovysh
-      Groovy Shell (1.13.0, JVM: 1.8.0_17)
+      Groovy Shell (1.14.0, JVM: 1.8.0_17)
       Type 'help' or '\h' for help.
       -----------------------------------------------------------------------------------------------
       groovy:000> import geoscript.geom.Point
