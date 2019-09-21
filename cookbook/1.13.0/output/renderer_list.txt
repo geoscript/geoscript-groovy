@@ -1,0 +1,8 @@
+ASCII
+Base64
+GeoTIFF
+GIF
+JPEG
+Pdf
+PNG
+Svg

@@ -1,0 +1,1 @@
+Band = red Min = 0.0 Max = 255.0 No Data = 255.0

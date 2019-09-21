@@ -1,0 +1,21 @@
+{
+    "name": "cities",
+    "projection": "EPSG:4326",
+    "geometry": "geom",
+    "fields": [
+        {
+            "name": "geom",
+            "type": "Point",
+            "geometry": true,
+            "projection": "EPSG:4326"
+        },
+        {
+            "name": "id",
+            "type": "Integer"
+        },
+        {
+            "name": "name",
+            "type": "String"
+        }
+    ]
+}

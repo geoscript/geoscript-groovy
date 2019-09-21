@@ -1,0 +1,13 @@
+PRGn
+PuOr
+RdGy
+Spectral
+RdYlGn
+RdBu
+RdYlBu
+PiYG
+BrBG
+BlueToOrange
+GreenToOrange
+BlueToRed
+GreenToRedOrange

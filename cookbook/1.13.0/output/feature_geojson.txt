@@ -1,0 +1,1 @@
+{"type":"Feature","geometry":{"type":"Point","coordinates":[-122.3204,47.6024]},"properties":{"id":1,"name":"Seattle"},"id":"city.1"}

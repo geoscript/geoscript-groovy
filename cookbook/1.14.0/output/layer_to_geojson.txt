@@ -1,0 +1,1 @@
+{"type":"FeatureCollection","features":[{"type":"Feature","geometry":{"type":"Point","coordinates":[-122.3204,47.6024]},"properties":{"id":1,"name":"Seattle"},"id":"fid--4a607ab2_15e97adfb0e_-7fff"},{"type":"Feature","geometry":{"type":"Point","coordinates":[-122.4842,47.2619]},"properties":{"id":2,"name":"Tacoma"},"id":"fid--4a607ab2_15e97adfb0e_-7ffd"}]}

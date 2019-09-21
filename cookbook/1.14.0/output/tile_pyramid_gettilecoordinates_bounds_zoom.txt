@@ -1,0 +1,4 @@
+Min X = 2
+Min Y = 9
+Max X = 5
+Max Y = 10

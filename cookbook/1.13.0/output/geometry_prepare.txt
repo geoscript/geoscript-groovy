@@ -1,0 +1,2 @@
+Time with Geometry         = 851571831 nanoseconds      
+Time with PreparedGeometry = 524107525 nanoseconds

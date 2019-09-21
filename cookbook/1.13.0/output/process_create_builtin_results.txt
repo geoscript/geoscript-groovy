@@ -1,0 +1,1 @@
+[bounds:class geoscript.geom.Bounds]

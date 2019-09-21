@@ -1,0 +1,3 @@
+Does POINT (-121.915 47.39) equal POINT (-121.915 47.39)? Yes
+Does POINT (-121.915 47.39) equal POINT (-121.409 47.413)? No
+Does POINT (-121.915 47.39) equal POINT (-121.409 47.413)? No

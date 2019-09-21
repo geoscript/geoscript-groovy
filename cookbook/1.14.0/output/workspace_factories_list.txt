@@ -1,0 +1,12 @@
+geoscript.workspace.Directory$Factory@5c90e579
+geoscript.workspace.Geobuf$Factory@58ea606c
+geoscript.workspace.GeoPackage$Factory@6f45df59
+geoscript.workspace.H2$Factory@38e79ae3
+geoscript.workspace.Memory$Factory@63070bab
+geoscript.workspace.MySQL$Factory@68e5eea7
+geoscript.workspace.Sqlite$Factory@291b4bf5
+geoscript.workspace.OGR$Factory@2d2ffcb7
+geoscript.workspace.PostGIS$Factory@762ef0ea
+geoscript.workspace.Property$Factory@31f9b85e
+geoscript.workspace.SpatiaLite$Factory@424e1977
+geoscript.workspace.WFS$Factory@10d68fcd

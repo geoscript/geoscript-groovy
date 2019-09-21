@@ -1,0 +1,3 @@
+business geom: Point(EPSG:4326), id1: Integer, name1: String, id2: Integer, name2: String, address2: String
+[geom:geom, id:id1, name:name1]
+[id:id2, name:name2, address:address2]

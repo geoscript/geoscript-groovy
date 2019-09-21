@@ -1,0 +1,1 @@
+[ the_geom dwithin POINT (-100 47), distance: 10.2 ]

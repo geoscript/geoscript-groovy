@@ -1,0 +1,14 @@
+# of Places = 326
+Mininum Elevation = 0.0
+Maximum Elevation = 2320.0
+Average Elevation = 30.085889570552148 
+Zürich
+Zibo
+Zhengzhou
+Zagreb
+Yerevan
+Yaounde
+Yamoussoukro
+Xian
+Wuhan
+Windhoek

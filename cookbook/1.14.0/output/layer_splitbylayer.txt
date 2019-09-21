@@ -1,0 +1,6 @@
+countries_1_1 has 6 features
+countries_1_2 has 6 features
+countries_2_1 has 44 features
+countries_2_2 has 74 features
+countries_3_1 has 13 features
+countries_3_2 has 70 features

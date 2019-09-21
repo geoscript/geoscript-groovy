@@ -1,0 +1,1 @@
+<gml:Point><gml:coordinates>-123.15,46.237</gml:coordinates></gml:Point>

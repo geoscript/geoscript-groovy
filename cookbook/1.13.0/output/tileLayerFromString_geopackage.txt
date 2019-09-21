@@ -1,0 +1,1 @@
+world EPSG:4326 (-179.99,-89.99,179.99,89.99,EPSG:4326) geoscript.layer.Pyramid(proj:EPSG:4326, bounds:(-179.99,-89.99,179.99,89.99,EPSG:4326), origin:TOP_LEFT, tileWidth:256, tileHeight:256)
