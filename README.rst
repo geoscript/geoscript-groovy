@@ -169,6 +169,8 @@ Versions
 API Groovy Docs
 ---------------
 
+`1.15-SNAPSHOT <http://geoscript.github.io/geoscript-groovy/api/1.15-SNAPSHOT/index.html>`_
+
 `1.14.0 <http://geoscript.github.io/geoscript-groovy/api/1.14.0/index.html>`_
 
 `1.13.0 <http://geoscript.github.io/geoscript-groovy/api/1.13.0/index.html>`_
