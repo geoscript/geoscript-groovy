@@ -49,6 +49,27 @@ class Graticule {
     }
 
     /**
+     * Creates a oval polygon graticule.
+     * @param options The optional named parameters:
+     * <ul>
+     *     <li> workspace = The Workspace (defaults to Memory)</li>
+     *     <li> layer = The new layer name (defaults to graticule)</li>
+     *     <li> schema = The Schema (defaults to Polygon geometry and integer id attribute)</li>
+     *     <li> setAttributes = A Closure that takes a GridElement and Map of attributes which you can use to set
+     *     custom attributes</li>
+     *     <li> createFeature = A Closure that takes a GridElement and return a boolean value whether the Feature should
+     *     be created or not</li>
+     * </ul>
+     * @param bounds The Bounds
+     * @param length The square cell width and height
+     * @return A Layer
+     */
+    static Layer createOvals(Map options = [:], Bounds bounds, double length) {
+        SimpleFeatureSource fs = Grids.createOvalGrid(bounds.env, length, createGridFeatureBuilder("Polygon", options))
+        createLayer(fs, options)
+    }
+
+    /**
      * Creates a hexagon polygon graticule.
      * @param options The optional named parameters:
      * <ul>
