@@ -59,6 +59,23 @@ class GraticuleTestCase {
         }
     }
 
+    @Test void createOvalsToShapefile() {
+        File dir = temporaryFolder.newFolder("ovals")
+        Workspace workspace = new Directory(dir)
+        Layer layer = Graticule.createOvals(new Bounds(110.0, -45.0, 160.0, -5.0, "EPSG:4326"), 10,
+                workspace: workspace, layer: "ovals")
+        assertEquals 20, layer.count
+        assertEquals "ovals", layer.name
+        assertTrue layer.schema.has("the_geom")
+        assertEquals "MultiPolygon", layer.schema["the_geom"].typ
+        assertTrue layer.schema.has("id")
+        assertEquals "Integer", layer.schema["id"].typ
+        layer.eachFeature { Feature f ->
+            assertFalse f.geom.empty
+            assertTrue f["id"] >= 0 && f["id"] <= 20
+        }
+    }
+
     @Test void createHexagonsToMemory() {
         Layer layer = Graticule.createHexagons(new Bounds(0, 0, 100, 100), 5.0, -1, "flat")
         assertEquals 143, layer.count
