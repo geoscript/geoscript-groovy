@@ -1,5 +1,6 @@
 geoscript.workspace.Directory$Factory
 geoscript.workspace.Geobuf$Factory
+geoscript.workspace.FlatGeobuf$Factory
 geoscript.workspace.GeoPackage$Factory
 geoscript.workspace.H2$Factory
 geoscript.workspace.Memory$Factory
