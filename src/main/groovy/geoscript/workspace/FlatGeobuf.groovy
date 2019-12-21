@@ -67,7 +67,6 @@ class FlatGeobuf extends Workspace {
 
         @Override
         Map getParametersFromString(String str) {
-            println "FlatGeobuf.getParametersFromString"
             Map params = [:]
             if (!str.contains("=") && str.endsWith(".fgb")) {
                 File file = new File(str).absoluteFile
@@ -78,7 +77,6 @@ class FlatGeobuf extends Workspace {
             } else {
                 params = super.getParametersFromString(str)
             }
-            println "   ${params}"
             params
         }
 
