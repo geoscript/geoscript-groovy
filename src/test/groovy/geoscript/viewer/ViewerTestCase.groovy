@@ -43,6 +43,13 @@ class ViewerTestCase {
         ImageAssert.assertEquals(expectedFile, image, 100)
     }
 
+    @Test void drawToBase64EncodedString() {
+        def geom = Geometry.fromWKT("POINT (-111 45.7)").buffer(10)
+        String str = Viewer.drawToBase64EncodedString(geom)
+        assertNotNull(str)
+        assertTrue(str.startsWith("image/png;base64,"))
+    }
+
     @Test void drawToFile() {
         def file = folder.newFile("viewer_drawtofile.png")
         def geom = Geometry.fromWKT("POINT (-111 45.7)").buffer(10)

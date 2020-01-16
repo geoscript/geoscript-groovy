@@ -109,6 +109,38 @@ class Viewer {
     }
 
     /**
+     * Draw Geometry (or List of Geometries) to a Base64 Encoded String
+     * @param options A Map of options or named parameters
+     * <ul>
+     *  <li>size = The size of the image</li>
+     *  <li>bounds = The Bounds</li>
+     *  <li>strokeColor = The stroke color</li>
+     *  <li>fillColor = The fill color</li>
+     *  <li>markerShape = The marker shape (circle, square, cross, ect...)</li>
+     *  <li>markerSize = The marker size</li>
+     *  <li>opacity = The opacity</li>
+     *  <li>strokeWidth = The stroke width</li>
+     *  <li>drawCoords = Whether to draw coordinates or not (true | false)</li>
+     *  <li>includePrefix = Whether to include the base 64 prefix</li>
+     *  <li>imageType = The image type (PNG or JPEG)</li>
+     * </ul>
+     * @param geom A Geometry or a List of Geometries
+     * @return A Base64 Encoded String
+     */
+    static String drawToBase64EncodedString(java.util.Map options = [:], def geom) {
+        BufferedImage image = drawToImage(options, geom)
+        ByteArrayOutputStream out = new ByteArrayOutputStream()
+        String imageType = options.get("imageType", "png")
+        ImageIO.write(image, imageType, out)
+        byte[] bytes = org.apache.commons.codec.binary.Base64.encodeBase64(out.toByteArray())
+        String str = new String(bytes, "UTF-8")
+        if (options.get("includePrefix", true)) {
+            str = "image/${imageType};base64,${str}"
+        }
+        str
+    }
+
+    /**
      * Save a drawing of the Geometry (or List of Geometries) to a File
      * @param options A Map of options or named parameters
      * @param geom A Geometry or a List of Geometries
