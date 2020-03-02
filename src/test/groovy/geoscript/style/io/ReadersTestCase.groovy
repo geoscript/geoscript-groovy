@@ -1,5 +1,8 @@
 package geoscript.style.io
 
+import geoscript.style.io.CSSReader.CSSStyle
+import geoscript.style.io.YSLDReader.YsldStyle
+import geoscript.style.io.SLDReader.SLDStyle
 import geoscript.style.Style
 import org.junit.Test
 import static org.junit.Assert.*
@@ -59,7 +62,7 @@ class ReadersTestCase {
             }
         """)
         assertNotNull style
-        assertTrue style instanceof CSSReader.CSSStyle
+        assertTrue style instanceof CSSStyle
     }
 
     @Test void readYsldString() {
@@ -76,7 +79,7 @@ feature-styles:
         stroke-width: 1
 """)
         assertNotNull style
-        assertTrue style instanceof YSLDReader.YsldStyle
+        assertTrue style instanceof YsldStyle
     }
 
     @Test void readSldString() {
@@ -133,6 +136,6 @@ feature-styles:
                 </sld:UserLayer>
             </sld:StyledLayerDescriptor>""")
         assertNotNull style
-        assertTrue style instanceof SLDReader.SLDStyle
+        assertTrue style instanceof SLDStyle
     }
 }
