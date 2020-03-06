@@ -3,10 +3,8 @@ package geoscript.carto
 import org.junit.Test
 
 import java.awt.*
-import java.text.SimpleDateFormat
 
-import static org.junit.Assert.assertEquals
-import static org.junit.Assert.assertTrue
+import static org.junit.Assert.*
 
 class TextItemTest {
 
@@ -31,10 +29,9 @@ class TextItemTest {
         assertEquals(VerticalAlign.MIDDLE, item.verticalAlign)
         assertEquals(HorizontalAlign.CENTER, item.horizontalAlign)
         assertEquals("Map Title", item.text)
-        assertEquals("TextItem(x = 10, y = 20, width = 300, height = 400, " +
-                "text = Map Title, color = java.awt.Color[r=0,g=0,b=255], " +
-                "font = java.awt.Font[family=Verdana,name=Verdana,style=bold,size=14], " +
-                "horizontal-align = CENTER, vertical-align = MIDDLE)", item.toString())
+        assertTrue(item.toString().startsWith("TextItem(x = 10, y = 20, width = 300, height = 400, " +
+                "text = Map Title, color = java.awt.Color[r=0,g=0,b=255], font = "))
+        assertTrue(item.toString().endsWith("horizontal-align = CENTER, vertical-align = MIDDLE)"))
     }
 
 

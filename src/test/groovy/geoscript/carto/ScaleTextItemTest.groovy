@@ -5,10 +5,8 @@ import geoscript.render.Map
 import org.junit.Test
 
 import java.awt.*
-import java.text.SimpleDateFormat
 
-import static org.junit.Assert.assertEquals
-import static org.junit.Assert.assertTrue
+import static org.junit.Assert.*
 
 class ScaleTextItemTest {
 
@@ -42,9 +40,8 @@ class ScaleTextItemTest {
         assertEquals("Scale: ", item.prefixText)
         assertEquals("#", item.format)
         assertTrue(item.toString().startsWith("ScaleTextItem(x = 10, y = 20, width = 300, height = 400, " +
-                "prefixText = Scale: , color = java.awt.Color[r=0,g=0,b=255], " +
-                "font = java.awt.Font[family=Verdana,name=Verdana,style=bold,size=14], " +
-                "horizontal-align = CENTER, vertical-align = MIDDLE, map = "))
+                "prefixText = Scale: , color = java.awt.Color[r=0,g=0,b=255], font = "))
+        assertTrue(item.toString().contains("horizontal-align = CENTER, vertical-align = MIDDLE, map = "))
         assertTrue(item.toString().endsWith(", format = #)"))
     }
 
