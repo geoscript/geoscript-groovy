@@ -1,5 +1,9 @@
 package geoscript.carto
 
+/**
+ * Get registered CartoFactories
+ * @author Jared Erickson
+ */
 class CartoFactories {
 
     static List<CartoFactory> list() {

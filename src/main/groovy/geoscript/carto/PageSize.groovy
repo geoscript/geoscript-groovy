@@ -1,5 +1,9 @@
 package geoscript.carto
 
+/**
+ * The PageSize controls the width and height of the cartographic document.
+ * @author Jared Erickson
+ */
 class PageSize {
 
     /**
@@ -56,6 +60,11 @@ class PageSize {
 
     final int height;
 
+    /**
+     * Create a new PageSize with a width and height
+     * @param width The width
+     * @param height The height
+     */
     PageSize(int width, int height) {
         this.width = width
         this.height = height

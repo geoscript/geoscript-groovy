@@ -5,6 +5,10 @@ import java.awt.Graphics2D
 import java.awt.RenderingHints
 import java.awt.image.BufferedImage
 
+/**
+ * Build a cartographic document as an Image
+ * @author Jared Erickson
+ */
 class ImageCartoBuilder implements CartoBuilder {
 
     private final Java2DCartoBuilder java2DCartoBuilder
@@ -13,6 +17,11 @@ class ImageCartoBuilder implements CartoBuilder {
 
     private final ImageType imageType
 
+    /**
+     * Create a ImageCartoBuilder
+     * @param pageSize The PageSize
+     * @param imageType The ImageType
+     */
     ImageCartoBuilder(PageSize pageSize, ImageType imageType) {
         this.imageType = imageType
         this.image = new BufferedImage(pageSize.width, pageSize.height, imageType.bufferedImageType)
@@ -90,6 +99,10 @@ class ImageCartoBuilder implements CartoBuilder {
         ImageIO.write(image, imageType.name, outputStream)
     }
 
+    /**
+     * Get the cartographic document as a BufferedImage
+     * @return A BufferedImage
+     */
     BufferedImage getImage() {
         image
     }

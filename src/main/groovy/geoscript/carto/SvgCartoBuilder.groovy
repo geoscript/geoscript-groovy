@@ -5,16 +5,27 @@ import org.apache.batik.svggen.SVGGraphics2D
 import org.w3c.dom.DOMImplementation
 import org.w3c.dom.Document
 
+/**
+ * Build a cartographic document as a SVG document
+ * @author Jared Erickson
+ */
 class SvgCartoBuilder implements CartoBuilder {
 
     private final SVGGraphics2D g
 
     private final Java2DCartoBuilder java2DCartoBuilder
 
+    /**
+     * Create a SvgCartoBuilder with a landscape letter page size
+     */
     SvgCartoBuilder() {
         this(PageSize.LETTER_LANDSCAPE)
     }
 
+    /**
+     * Create a SvgCartoBilder with the given PageSize
+     * @param pageSize The PageSize
+     */
     SvgCartoBuilder(PageSize pageSize) {
         DOMImplementation impl = SVGDOMImplementation.getDOMImplementation()
         String svgNS = SVGDOMImplementation.SVG_NAMESPACE_URI

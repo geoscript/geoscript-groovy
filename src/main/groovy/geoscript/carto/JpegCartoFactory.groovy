@@ -1,5 +1,9 @@
 package geoscript.carto
 
+/**
+ * A CartoFactory that creates a CartoBuilder that produces JPEG images.
+ * @author Jared Erickson
+ */
 class JpegCartoFactory implements CartoFactory {
 
     @Override

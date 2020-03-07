@@ -1,5 +1,9 @@
 package geoscript.carto
 
+/**
+ * A CartoFactory that creates a CartoBuilder that produces PDF documents.
+ * @author Jared Erickson
+ */
 class PdfCartoFactory implements CartoFactory {
 
     @Override

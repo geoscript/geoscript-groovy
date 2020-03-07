@@ -8,6 +8,10 @@ import org.apache.commons.io.IOUtils
 
 import java.awt.Graphics2D
 
+/**
+ * Build a cartographic document as a PDF document
+ * @author Jared Erickson
+ */
 class PdfCartoBuilder implements CartoBuilder {
 
     private final Document document
@@ -16,10 +20,17 @@ class PdfCartoBuilder implements CartoBuilder {
 
     private final ByteArrayOutputStream outputStream
 
+    /**
+     * Create a PdfCartoBuilder with a landscape letter page size
+     */
     PdfCartoBuilder() {
         this(PageSize.LETTER_LANDSCAPE)
     }
 
+    /**
+     * Create a PdfCartoBuilder with the given PageSize
+     * @param pageSize The PageSize
+     */
     PdfCartoBuilder(PageSize pageSize) {
         this.document = new Document(new Rectangle(pageSize.width as float, pageSize.height as float))
         this.outputStream = new ByteArrayOutputStream()

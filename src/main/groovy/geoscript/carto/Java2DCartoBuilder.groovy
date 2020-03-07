@@ -16,12 +16,21 @@ import java.text.AttributedString
 import java.text.DecimalFormat
 import java.text.SimpleDateFormat
 
+/**
+ * A CartoBuilder that draws Items using Java2D.
+ * @author Jared Erickson
+ */
 class Java2DCartoBuilder implements CartoBuilder {
 
     protected final Graphics2D graphics
 
     protected final PageSize pageSize
 
+    /**
+     * Create a new Java2DCartoBuilder with a Graphics2D context and PageSize
+     * @param graphics The Graphics2D context
+     * @param pageSize The PageSize
+     */
     Java2DCartoBuilder(Graphics2D graphics, PageSize pageSize) {
         this.graphics = graphics
         this.pageSize = pageSize
@@ -198,6 +207,10 @@ class Java2DCartoBuilder implements CartoBuilder {
     }
 
     private void drawString(String text, Rectangle rectangle, HorizontalAlign horizontalAlign, VerticalAlign verticalAlign) {
+      drawString(text, rectangle, horizontalAlign, verticalAlign, false)
+    }
+
+    private void drawString(String text, Rectangle rectangle, HorizontalAlign horizontalAlign, VerticalAlign verticalAlign, boolean debug) {
         FontMetrics fontMetrics = graphics.getFontMetrics(graphics.font)
         int x
         if (horizontalAlign == HorizontalAlign.LEFT) {
@@ -215,12 +228,12 @@ class Java2DCartoBuilder implements CartoBuilder {
         } else if (verticalAlign == VerticalAlign.BOTTOM) {
             y = rectangle.y + rectangle.height - fontMetrics.descent
         }
-        // graphics.drawRect(rectangle.x as int, rectangle.y as int, rectangle.width as int, rectangle.height as int)
-        // graphics.drawRect(x, y - fontMetrics.height + fontMetrics.descent, fontMetrics.stringWidth(text), fontMetrics.height)
+        if (debug) {
+            graphics.drawRect(rectangle.x as int, rectangle.y as int, rectangle.width as int, rectangle.height as int)
+            graphics.drawRect(x, y - fontMetrics.height + fontMetrics.descent, fontMetrics.stringWidth(text), fontMetrics.height)
+        }
         graphics.drawString(text, x, y)
     }
-
-
 
     @Override
     void build(OutputStream outputStream) {
