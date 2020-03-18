@@ -81,7 +81,7 @@ class NorthArrowItem extends Item {
 
     @Override
     String toString() {
-        "NorthArrowItem(x = ${x}, y = ${y}, width = ${width}, height = ${height}, fill-color1 = ${fillColor1}, stroke-color1 = ${strokeColor1}), fill-color2 = ${fillColor2}, stroke-color2 = ${strokeColor2}, stroke-width = ${strokeWidth}"
+        "NorthArrowItem(x = ${x}, y = ${y}, width = ${width}, height = ${height}, fill-color1 = ${fillColor1}, stroke-color1 = ${strokeColor1}, fill-color2 = ${fillColor2}, stroke-color2 = ${strokeColor2}, stroke-width = ${strokeWidth})"
     }
 
 }
