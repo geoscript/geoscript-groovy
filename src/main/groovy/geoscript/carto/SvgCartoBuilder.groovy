@@ -95,6 +95,12 @@ class SvgCartoBuilder implements CartoBuilder {
     }
 
     @Override
+    CartoBuilder overViewMap(OverviewMapItem overviewMapItem) {
+        java2DCartoBuilder.overViewMap(overviewMapItem)
+        this
+    }
+
+    @Override
     void build(OutputStream outputStream) {
         g.stream(new OutputStreamWriter(outputStream))
         java2DCartoBuilder.graphics.dispose()

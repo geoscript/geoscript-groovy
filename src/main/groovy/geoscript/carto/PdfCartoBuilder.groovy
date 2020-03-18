@@ -102,6 +102,12 @@ class PdfCartoBuilder implements CartoBuilder {
     }
 
     @Override
+    CartoBuilder overViewMap(OverviewMapItem overviewMapItem) {
+        java2DCartoBuilder.overViewMap(overviewMapItem)
+        this
+    }
+
+    @Override
     void build(OutputStream outputStream) {
         java2DCartoBuilder.graphics.dispose()
         document.close()

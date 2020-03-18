@@ -35,6 +35,13 @@ interface CartoBuilder {
     CartoBuilder map(MapItem mapItem)
 
     /**
+     * Add an overview Map
+     * @param overviewMapItem The OverviewMapItem
+     * @return The CartoBuilder
+     */
+    CartoBuilder overViewMap(OverviewMapItem overviewMapItem)
+
+    /**
      * Add a north arrow
      * @param northArrowItem The NorthArrowItem
      * @return The CartoBuilder

@@ -1,5 +1,6 @@
 package geoscript.carto
 
+import geoscript.layer.GeoTIFF
 import geoscript.layer.Shapefile
 import geoscript.render.Map
 import org.junit.Rule
@@ -18,6 +19,10 @@ class PdfCartoBuilderTest {
 
         Map map = new Map(layers: [
             new Shapefile(new File(getClass().getClassLoader().getResource("states.shp").toURI()))
+        ])
+
+        Map overViewMap = new Map(layers: [
+            new GeoTIFF(new File(getClass().getClassLoader().getResource("raster.tif").toURI())).read()
         ])
 
         File file = temporaryFolder.newFile("map.pdf")
@@ -44,6 +49,8 @@ all copies or substantial portions of the Software.
                 .northArrow(new NorthArrowItem(720, 30, 40, 60))
                 .rectangle(new RectangleItem(20, 110, 752, 480))
                 .map(new MapItem(30, 120, 742, 470).map(map))
+                .overViewMap(new OverviewMapItem(30, 490, 100, 90).overviewMap(overViewMap).linkedMap(map))
+                .overViewMap(new OverviewMapItem(150, 490, 100, 90).overviewMap(overViewMap).linkedMap(map).zoomIntoBounds(true).scaleFactor(3.0))
                 .build(outputStream)
         }
     }

@@ -1,6 +1,9 @@
 package geoscript.carto
 
+import geoscript.feature.Schema
+import geoscript.layer.Layer
 import geoscript.render.Map
+import geoscript.workspace.Memory
 
 import javax.imageio.ImageIO
 import java.awt.BasicStroke
@@ -66,6 +69,22 @@ class Java2DCartoBuilder implements CartoBuilder {
         mapItem.map.width = mapItem.width
         mapItem.map.height = mapItem.height
         graphics.drawImage(mapItem.map.renderToImage(), mapItem.x, mapItem.y, null)
+        this
+    }
+
+    @Override
+    CartoBuilder overViewMap(OverviewMapItem overviewMapItem) {
+        overviewMapItem.overviewMap.width = overviewMapItem.width
+        overviewMapItem.overviewMap.height = overviewMapItem.height
+        if (overviewMapItem.zoomIntoBounds) {
+            overviewMapItem.overviewMap.bounds = overviewMapItem.linkedMap.bounds.scale(overviewMapItem.scaleFactor)
+        }
+        Layer areaLayer = new Memory().create(new Schema("area","geom:Polygon:srid=4326"))
+        areaLayer.add([geom: overviewMapItem.linkedMap.bounds.geometry])
+        areaLayer.style = overviewMapItem.areaStyle
+        overviewMapItem.overviewMap.addLayer(areaLayer)
+        graphics.drawImage(overviewMapItem.overviewMap.renderToImage(), overviewMapItem.x, overviewMapItem.y, null)
+        overviewMapItem.overviewMap.layers.remove(areaLayer)
         this
     }
 
