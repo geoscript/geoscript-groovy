@@ -1,23 +1,15 @@
 package geoscript.layer
 
-import com.xebialabs.restito.server.StubServer
+import geoscript.ServerTestUtil
 import geoscript.layer.io.GeoJSONWriter
 import geoscript.proj.Projection
-import org.glassfish.grizzly.http.Method
-import org.glassfish.grizzly.http.util.HttpStatus
-import org.junit.After
-import org.junit.Before
+import okhttp3.HttpUrl
+import okhttp3.mockwebserver.MockResponse
+import okhttp3.mockwebserver.MockWebServer
 import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.TemporaryFolder
 
-import static com.xebialabs.restito.builder.stub.StubHttp.whenHttp
-import static com.xebialabs.restito.builder.verify.VerifyHttp.verifyHttp
-import static com.xebialabs.restito.semantics.Action.resourceContent
-import static com.xebialabs.restito.semantics.Action.status
-import static com.xebialabs.restito.semantics.Condition.get
-import static com.xebialabs.restito.semantics.Condition.method
-import static com.xebialabs.restito.semantics.Condition.uri
 import static org.junit.Assert.*
 
 /**
@@ -29,73 +21,61 @@ class VectorTilesTestCase {
     @Rule
     public TemporaryFolder folder = new TemporaryFolder()
 
-    protected StubServer server
+    @Test
+    void getGeoJsonTilesFromUrl() {
+        ServerTestUtil.withServer { MockWebServer server ->
+            server.enqueue(new MockResponse().setBody(ServerTestUtil.fileToBytes(ServerTestUtil.getResource("tile.json"))))
+            server.enqueue(new MockResponse().setBody(ServerTestUtil.fileToBytes(ServerTestUtil.getResource("tile.json"))))
+            server.enqueue(new MockResponse().setBody(ServerTestUtil.fileToBytes(ServerTestUtil.getResource("tile.json"))))
+            server.enqueue(new MockResponse().setBody(ServerTestUtil.fileToBytes(ServerTestUtil.getResource("tile.json"))))
+            server.start()
+            HttpUrl url = server.url("")
 
-    @Before
-    void start() {
-        server = new StubServer(8888).run()
-    }
+            Pyramid pyramid = Pyramid.createGlobalMercatorPyramid()
+            pyramid.origin = Pyramid.Origin.TOP_LEFT
+            VectorTiles vectorTiles = new VectorTiles(
+                    "States",
+                    url.url(),
+                    pyramid,
+                    "json",
+                    proj: new Projection("EPSG:4326")
+            )
+            List<Layer> layers = vectorTiles.getLayers(new TileCursor<Tile>(vectorTiles, 1))
+            assertEquals(1, layers.size())
 
-    @After
-    void stop() {
-        server.stop()
-        // Hack for Windows, which isn't shutting dow the server
-        // fast enough
-        try {
-            Thread.sleep(200)
-        } catch (InterruptedException e) {
-            e.printStackTrace()
+            assertEquals("/1/0/0.json", server.takeRequest().getPath())
+            assertEquals("/1/1/0.json", server.takeRequest().getPath())
+            assertEquals("/1/0/1.json", server.takeRequest().getPath())
+            assertEquals("/1/1/1.json", server.takeRequest().getPath())
         }
     }
 
     @Test
-    void getGeoJsonTilesFromUrl() {
-        whenHttp(server).match(get("/1/0/0.json")).then(resourceContent("tile.json"), status(HttpStatus.OK_200))
-        whenHttp(server).match(get("/1/1/0.json")).then(resourceContent("tile.json"), status(HttpStatus.OK_200))
-        whenHttp(server).match(get("/1/0/1.json")).then(resourceContent("tile.json"), status(HttpStatus.OK_200))
-        whenHttp(server).match(get("/1/1/1.json")).then(resourceContent("tile.json"), status(HttpStatus.OK_200))
-
-
-        Pyramid pyramid = Pyramid.createGlobalMercatorPyramid()
-        pyramid.origin = Pyramid.Origin.TOP_LEFT
-        VectorTiles vectorTiles = new VectorTiles(
-                "States",
-                new URL("http://00.0.0.0:8888"),
-                pyramid,
-                "json",
-                proj: new Projection("EPSG:4326")
-        )
-        List<Layer> layers = vectorTiles.getLayers(new TileCursor<Tile>(vectorTiles, 1))
-        assertEquals(1, layers.size())
-
-        verifyHttp(server).once(method(Method.GET), uri("/1/0/0.json"))
-        verifyHttp(server).once(method(Method.GET), uri("/1/1/0.json"))
-        verifyHttp(server).once(method(Method.GET), uri("/1/0/1.json"))
-        verifyHttp(server).once(method(Method.GET), uri("/1/1/1.json"))
-    }
-
-    @Test
     void getPbfTilesFromUrl() {
-        whenHttp(server).match(get("/1/0/0.pbf")).then(resourceContent("pbf/1/0/0.pbf"), status(HttpStatus.OK_200))
-        whenHttp(server).match(get("/1/1/0.pbf")).then(resourceContent("pbf/1/1/0.pbf"), status(HttpStatus.OK_200))
-        whenHttp(server).match(get("/1/0/1.pbf")).then(resourceContent("pbf/1/0/1.pbf"), status(HttpStatus.OK_200))
-        whenHttp(server).match(get("/1/1/1.pbf")).then(resourceContent("pbf/1/1/1.pbf"), status(HttpStatus.OK_200))
+        ServerTestUtil.withServer { MockWebServer server ->
+            server.enqueue(new MockResponse().setBody(ServerTestUtil.fileToBytes(ServerTestUtil.getResource("pbf/1/0/0.pbf"))))
+            server.enqueue(new MockResponse().setBody(ServerTestUtil.fileToBytes(ServerTestUtil.getResource("pbf/1/1/0.pbf"))))
+            server.enqueue(new MockResponse().setBody(ServerTestUtil.fileToBytes(ServerTestUtil.getResource("pbf/1/0/1.pbf"))))
+            server.enqueue(new MockResponse().setBody(ServerTestUtil.fileToBytes(ServerTestUtil.getResource("pbf/1/1/1.pbf"))))
+            server.start()
+            HttpUrl url = server.url("")
 
-        Pyramid pyramid = Pyramid.createGlobalMercatorPyramid()
-        pyramid.origin = Pyramid.Origin.TOP_LEFT
-        VectorTiles vectorTiles = new VectorTiles(
-                "World",
-                new URL("http://00.0.0.0:8888"),
-                pyramid,
-                "pbf"
-        )
-        List<Layer> layers = vectorTiles.getLayers(new TileCursor<Tile>(vectorTiles, 1))
-        assertEquals(2, layers.size())
+            Pyramid pyramid = Pyramid.createGlobalMercatorPyramid()
+            pyramid.origin = Pyramid.Origin.TOP_LEFT
+            VectorTiles vectorTiles = new VectorTiles(
+                    "World",
+                    url.url(),
+                    pyramid,
+                    "pbf"
+            )
+            List<Layer> layers = vectorTiles.getLayers(new TileCursor<Tile>(vectorTiles, 1))
+            assertEquals(2, layers.size())
 
-        verifyHttp(server).once(method(Method.GET), uri("/1/0/0.pbf"))
-        verifyHttp(server).once(method(Method.GET), uri("/1/1/0.pbf"))
-        verifyHttp(server).once(method(Method.GET), uri("/1/0/1.pbf"))
-        verifyHttp(server).once(method(Method.GET), uri("/1/1/1.pbf"))
+            assertEquals("/1/0/0.pbf", server.takeRequest().getPath())
+            assertEquals("/1/1/0.pbf", server.takeRequest().getPath())
+            assertEquals("/1/0/1.pbf", server.takeRequest().getPath())
+            assertEquals("/1/1/1.pbf", server.takeRequest().getPath())
+        }
     }
 
     @Test

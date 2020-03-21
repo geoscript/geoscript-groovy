@@ -251,7 +251,8 @@ class VectorTiles extends TileLayer<Tile> implements Renderable {
         @Override
         Tile get(long z, long x, long y) {
             Tile tile = new Tile(z, x, y)
-            URL tileUrl = new URL("${url.toString()}/${z}/${x}/${y}.${type}")
+            String urlString = url.toString()
+            URL tileUrl = new URL("${urlString}${urlString.endsWith("/") ? '' : '/'}${z}/${x}/${y}.${type}")
             tileUrl.withInputStream { input ->
                 tile.data = input.bytes
             }

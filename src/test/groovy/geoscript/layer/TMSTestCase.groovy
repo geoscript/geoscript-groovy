@@ -1,21 +1,15 @@
 package geoscript.layer
 
-import com.xebialabs.restito.server.StubServer
+import geoscript.ServerTestUtil
 import geoscript.style.Fill
 import geoscript.style.Stroke
-import org.glassfish.grizzly.http.Method
-import org.glassfish.grizzly.http.util.HttpStatus
-import org.junit.After
-import org.junit.Before
+import okhttp3.HttpUrl
+import okhttp3.mockwebserver.MockResponse
+import okhttp3.mockwebserver.MockWebServer
 import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.TemporaryFolder
 
-import static com.xebialabs.restito.builder.stub.StubHttp.whenHttp
-import static com.xebialabs.restito.builder.verify.VerifyHttp.verifyHttp
-import static com.xebialabs.restito.semantics.Action.resourceContent
-import static com.xebialabs.restito.semantics.Action.status
-import static com.xebialabs.restito.semantics.Condition.*
 import static org.junit.Assert.*
 
 /**
@@ -26,25 +20,6 @@ class TMSTestCase {
 
     @Rule
     public TemporaryFolder folder = new TemporaryFolder()
-
-    protected StubServer server
-
-    @Before
-    public void start() {
-        server = new StubServer(8888).run()
-    }
-
-    @After
-    public void stop() {
-        server.stop()
-        // Hack for Windows, which isn't shutting dow the server
-        // fast enough
-        try {
-            Thread.sleep(200)
-        } catch (InterruptedException e) {
-            e.printStackTrace()
-        }
-    }
 
     @Test
     void generate() {
@@ -94,38 +69,48 @@ class TMSTestCase {
 
     @Test
     void getTile() {
-        whenHttp(server).match(get("/1/2/3.png")).then(resourceContent("0.png"), status(HttpStatus.OK_200))
+        ServerTestUtil.withServer { MockWebServer server ->
+            server.enqueue(new MockResponse().setBody(ServerTestUtil.fileToBytes(ServerTestUtil.getResource("0.png"))))
+            server.start()
+            HttpUrl url = server.url("")
 
-        TMS tms = new TMS("World", "png", "http://00.0.0.0:8888", Pyramid.createGlobalMercatorPyramid())
-        Tile tile = tms.get(1, 2, 3)
-        assertEquals 1, tile.z
-        assertEquals 2, tile.x
-        assertEquals 3, tile.y
-        assertNotNull tile.data
+            TMS tms = new TMS("World", "png", url.url(), Pyramid.createGlobalMercatorPyramid())
+            Tile tile = tms.get(1, 2, 3)
+            assertEquals 1, tile.z
+            assertEquals 2, tile.x
+            assertEquals 3, tile.y
+            assertNotNull tile.data
 
-        verifyHttp(server).once(method(Method.GET), uri("/1/2/3.png"))
+            assertEquals("/1/2/3.png", server.takeRequest().getPath())
+        }
     }
+
+
 
     @Test
     void getTiles() {
-        whenHttp(server).match(get("/1/0/0.png")).then(resourceContent("0.png"), status(HttpStatus.OK_200))
-        whenHttp(server).match(get("/1/0/1.png")).then(resourceContent("0.png"), status(HttpStatus.OK_200))
-        whenHttp(server).match(get("/1/1/0.png")).then(resourceContent("0.png"), status(HttpStatus.OK_200))
-        whenHttp(server).match(get("/1/1/1.png")).then(resourceContent("0.png"), status(HttpStatus.OK_200))
+        ServerTestUtil.withServer { MockWebServer server ->
+            server.enqueue(new MockResponse().setBody(ServerTestUtil.fileToBytes(ServerTestUtil.getResource("0.png"))))
+            server.enqueue(new MockResponse().setBody(ServerTestUtil.fileToBytes(ServerTestUtil.getResource("0.png"))))
+            server.enqueue(new MockResponse().setBody(ServerTestUtil.fileToBytes(ServerTestUtil.getResource("0.png"))))
+            server.enqueue(new MockResponse().setBody(ServerTestUtil.fileToBytes(ServerTestUtil.getResource("0.png"))))
+            server.start()
+            HttpUrl url = server.url("")
 
-        TMS tms = new TMS("World", "png", "http://00.0.0.0:8888", Pyramid.createGlobalMercatorPyramid())
-        TileCursor c = tms.tiles(1)
-        c.each { Tile t ->
-            assertTrue t.z == 1
-            assertTrue t.x in [0l, 1l]
-            assertTrue t.y in [0l, 1l]
-            assertNotNull t.data
+            TMS tms = new TMS("World", "png", url.url(), Pyramid.createGlobalMercatorPyramid())
+            TileCursor c = tms.tiles(1)
+            c.each { Tile t ->
+                assertTrue t.z == 1
+                assertTrue t.x in [0l, 1l]
+                assertTrue t.y in [0l, 1l]
+                assertNotNull t.data
+            }
+
+            assertEquals("/1/0/0.png", server.takeRequest().getPath())
+            assertEquals("/1/1/0.png", server.takeRequest().getPath())
+            assertEquals("/1/0/1.png", server.takeRequest().getPath())
+            assertEquals("/1/1/1.png", server.takeRequest().getPath())
         }
-
-        verifyHttp(server).once(method(Method.GET), uri("/1/0/0.png"))
-        verifyHttp(server).once(method(Method.GET), uri("/1/0/1.png"))
-        verifyHttp(server).once(method(Method.GET), uri("/1/1/0.png"))
-        verifyHttp(server).once(method(Method.GET), uri("/1/1/1.png"))
     }
 
     @Test

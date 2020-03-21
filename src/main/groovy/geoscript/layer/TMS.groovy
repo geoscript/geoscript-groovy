@@ -95,7 +95,8 @@ class TMS extends ImageTileLayer {
                 tile.data = file.bytes
             }
         } else {
-            URL tileUrl = new URL("${url.toString()}/${z}/${x}/${y}.${imageType}")
+            String urlString = url.toString()
+            URL tileUrl = new URL("${urlString}${urlString.endsWith("/") ? '' : '/'}${z}/${x}/${y}.${imageType}")
             tileUrl.withInputStream {input ->
                 tile.data = input.bytes
             }
