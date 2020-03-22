@@ -1,7 +1,9 @@
 package geoscript.carto
 
 import geoscript.feature.Schema
+import geoscript.geom.Geometry
 import geoscript.layer.Layer
+import geoscript.proj.Projection
 import geoscript.render.Map
 import geoscript.workspace.Memory
 
@@ -79,8 +81,11 @@ class Java2DCartoBuilder implements CartoBuilder {
         if (overviewMapItem.zoomIntoBounds) {
             overviewMapItem.overviewMap.bounds = overviewMapItem.linkedMap.bounds.scale(overviewMapItem.scaleFactor)
         }
-        Layer areaLayer = new Memory().create(new Schema("area","geom:Polygon:srid=4326"))
-        areaLayer.add([geom: overviewMapItem.linkedMap.bounds.geometry])
+        Projection overviewMapProjection = overviewMapItem.overviewMap.proj ?: new Projection("EPSG:4326")
+        Projection linkedMapProjection = overviewMapItem.linkedMap.proj ?: new Projection("EPSG:4326")
+        Layer areaLayer = new Memory().create(new Schema("area","geom:Polygon:srid=${overviewMapProjection.epsg}"))
+        Geometry geometry = Projection.transform(overviewMapItem.linkedMap.bounds.geometry, linkedMapProjection, overviewMapProjection)
+        areaLayer.add([geom: geometry])
         areaLayer.style = overviewMapItem.areaStyle
         overviewMapItem.overviewMap.addLayer(areaLayer)
         graphics.drawImage(overviewMapItem.overviewMap.renderToImage(), overviewMapItem.x, overviewMapItem.y, null)
