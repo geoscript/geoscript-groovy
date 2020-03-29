@@ -108,6 +108,12 @@ class PdfCartoBuilder implements CartoBuilder {
     }
 
     @Override
+    CartoBuilder table(TableItem tableItem) {
+        java2DCartoBuilder.table(tableItem)
+        this
+    }
+
+    @Override
     void build(OutputStream outputStream) {
         java2DCartoBuilder.graphics.dispose()
         document.close()

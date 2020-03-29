@@ -84,6 +84,13 @@ interface CartoBuilder {
     CartoBuilder grid(GridItem gridItem)
 
     /**
+     * Add a table
+     * @param tableItem The TableItem
+     * @return The CartoBuilder
+     */
+    CartoBuilder table(TableItem tableItem)
+
+    /**
      * Write the cartographic document to the OutputStream
      * @param outputStream The OutputStream
      */

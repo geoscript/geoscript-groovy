@@ -230,6 +230,69 @@ class Java2DCartoBuilder implements CartoBuilder {
         this
     }
 
+    @Override
+    CartoBuilder table(TableItem tableItem) {
+
+        // Draw Headers
+        (0..<tableItem.columns.size()).each { int c ->
+
+            graphics.font = tableItem.columnRowStyle.font
+            FontMetrics fontMetrics = graphics.fontMetrics
+            int columnWidth = tableItem.width / tableItem.columns.size()
+            int lastColumnWidth = columnWidth + (tableItem.width - (columnWidth * tableItem.columns.size() - 1)) - 1
+            int rowHeight = fontMetrics.height + 4
+
+            Rectangle rectangle = new Rectangle(
+                tableItem.x + columnWidth * c,
+                tableItem.y,
+                c == tableItem.columns.size() - 1 ? lastColumnWidth : columnWidth,
+                rowHeight
+            )
+
+            graphics.color = tableItem.columnRowStyle.backGroundColor
+            graphics.fillRect(rectangle.x as int, rectangle.y as int, rectangle.width as int, rectangle.height as int)
+
+            graphics.color = tableItem.columnRowStyle.strokeColor
+            graphics.drawRect(rectangle.x as int, rectangle.y as int, rectangle.width as int, rectangle.height as int)
+
+            graphics.color = tableItem.columnRowStyle.textColor
+            drawString(" ${tableItem.columns[c]}", rectangle, HorizontalAlign.LEFT, VerticalAlign.MIDDLE)
+        }
+        // Draw rows
+        (0..<tableItem.rows.size()).each { int r ->
+
+            boolean isEven = r % 2
+            graphics.font = isEven ? tableItem.evenRowStyle.font : tableItem.oddRowStyle.font
+            FontMetrics fontMetrics = graphics.fontMetrics
+            int columnWidth = tableItem.width / tableItem.columns.size()
+            int lastColumnWidth = columnWidth + (tableItem.width - (columnWidth * tableItem.columns.size() - 1)) - 1
+            int rowHeight = fontMetrics.height + 4
+
+            int rowY = (tableItem.y + rowHeight * r) + rowHeight
+            java.util.Map values = tableItem.rows[r]
+
+            (0..<tableItem.columns.size()).each { int c ->
+
+                Rectangle rectangle = new Rectangle(
+                    tableItem.x + columnWidth * c,
+                    rowY,
+                    c == tableItem.columns.size() - 1 ? lastColumnWidth : columnWidth,
+                    rowHeight
+                )
+
+                graphics.color = isEven ? tableItem.evenRowStyle.backGroundColor : tableItem.oddRowStyle.backGroundColor
+                graphics.fillRect(rectangle.x as int, rectangle.y as int, rectangle.width as int, rectangle.height as int)
+
+                graphics.color = isEven ? tableItem.evenRowStyle.strokeColor : tableItem.oddRowStyle.strokeColor
+                graphics.drawRect(rectangle.x as int, rectangle.y as int, rectangle.width as int, rectangle.height as int)
+
+                graphics.color = isEven ? tableItem.evenRowStyle.textColor : tableItem.oddRowStyle.textColor
+                drawString(" ${values[tableItem.columns[c]]}", rectangle, HorizontalAlign.LEFT, VerticalAlign.MIDDLE)
+            }
+        }
+        this
+    }
+
     private void drawString(String text, Rectangle rectangle, HorizontalAlign horizontalAlign, VerticalAlign verticalAlign) {
       drawString(text, rectangle, horizontalAlign, verticalAlign, false)
     }

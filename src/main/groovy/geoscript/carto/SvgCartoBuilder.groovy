@@ -101,6 +101,12 @@ class SvgCartoBuilder implements CartoBuilder {
     }
 
     @Override
+    CartoBuilder table(TableItem tableItem) {
+        java2DCartoBuilder.table(tableItem)
+        this
+    }
+
+    @Override
     void build(OutputStream outputStream) {
         g.stream(new OutputStreamWriter(outputStream))
         java2DCartoBuilder.graphics.dispose()

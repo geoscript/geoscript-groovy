@@ -100,6 +100,12 @@ class ImageCartoBuilder implements CartoBuilder {
     }
 
     @Override
+    CartoBuilder table(TableItem tableItem) {
+        java2DCartoBuilder.table(tableItem)
+        this
+    }
+
+    @Override
     void build(OutputStream outputStream) {
         java2DCartoBuilder.graphics.dispose()
         ImageIO.write(image, imageType.name, outputStream)

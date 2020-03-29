@@ -51,6 +51,12 @@ all copies or substantial portions of the Software.
                 .map(new MapItem(30, 120, 742, 470).map(map))
                 .overViewMap(new OverviewMapItem(30, 490, 100, 90).overviewMap(overViewMap).linkedMap(map))
                 .overViewMap(new OverviewMapItem(150, 490, 100, 90).overviewMap(overViewMap).linkedMap(map).zoomIntoBounds(true).scaleFactor(3.0))
+                .table(new TableItem(460, 510, 300, 200)
+                    .columns(["ID","Name"])
+                    .row([[ID: 1, Name: "One"]])
+                    .row([[ID: 2, Name: "Two"]])
+                    .row([[ID: 3, Name: "Three"]])
+                )
                 .build(outputStream)
         }
     }
