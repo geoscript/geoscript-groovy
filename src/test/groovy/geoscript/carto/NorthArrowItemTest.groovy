@@ -4,7 +4,7 @@ import org.junit.Test
 
 import java.awt.*
 
-import static org.junit.Assert.assertEquals
+import static org.junit.Assert.*
 
 class NorthArrowItemTest {
 
@@ -17,6 +17,9 @@ class NorthArrowItemTest {
             .fillColor2(Color.YELLOW)
             .strokeColor2(Color.RED)
             .strokeWidth(1.2)
+            .drawText(true)
+            .font(new Font("Arial", Font.BOLD, 52))
+            .textColor(Color.BLUE)
 
         assertEquals(10, item.x)
         assertEquals(20, item.y)
@@ -27,10 +30,12 @@ class NorthArrowItemTest {
         assertEquals(Color.RED, item.strokeColor2)
         assertEquals(Color.YELLOW, item.fillColor2)
         assertEquals(1.2f, item.strokeWidth, 0.1)
-        assertEquals("NorthArrowItem(x = 10, y = 20, width = 300, height = 400, " +
+        assertTrue(item.drawText)
+        assertEquals(Color.BLUE, item.textColor)
+        assertTrue(item.toString().startsWith("NorthArrowItem(x = 10, y = 20, width = 300, height = 400, " +
                 "fill-color1 = java.awt.Color[r=255,g=255,b=255], stroke-color1 = java.awt.Color[r=0,g=0,b=255], " +
                 "fill-color2 = java.awt.Color[r=255,g=255,b=0], stroke-color2 = java.awt.Color[r=255,g=0,b=0], " +
-                "stroke-width = 1.2)", item.toString())
+                "stroke-width = 1.2"))
     }
 
 

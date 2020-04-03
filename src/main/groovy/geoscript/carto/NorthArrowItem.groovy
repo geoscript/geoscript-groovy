@@ -1,6 +1,7 @@
 package geoscript.carto
 
 import java.awt.Color
+import java.awt.Font
 
 /**
  * Add a north arrow to a cartographic document.
@@ -17,6 +18,12 @@ class NorthArrowItem extends Item {
     Color strokeColor2 = Color.BLACK
 
     float strokeWidth = 1
+
+    boolean drawText = false
+
+    Font font = new Font("Arial", Font.BOLD, 48)
+
+    Color textColor = Color.BLACK
 
     /**
      * Create a north arrow from the top left with the given width and height.
@@ -79,9 +86,42 @@ class NorthArrowItem extends Item {
         this
     }
 
+    /**
+     * Set whether to draw text or not
+     * @param drawText Whether to draw text or not
+     * @return The NorthArrowItem
+     */
+    NorthArrowItem drawText(boolean drawText) {
+        this.drawText = drawText
+        this
+    }
+
+    /**
+     * Set the Font
+     * @param font The Font
+     * @return The NorthArrowItem
+     */
+    NorthArrowItem font(Font font) {
+        this.font = font
+        this
+    }
+
+    /**
+     * Set the text Color
+     * @param textColor The text color
+     * @return The NorthArrowItem
+     */
+    NorthArrowItem textColor(Color textColor) {
+        this.textColor = textColor
+        this
+    }
+
     @Override
     String toString() {
-        "NorthArrowItem(x = ${x}, y = ${y}, width = ${width}, height = ${height}, fill-color1 = ${fillColor1}, stroke-color1 = ${strokeColor1}, fill-color2 = ${fillColor2}, stroke-color2 = ${strokeColor2}, stroke-width = ${strokeWidth})"
+        "NorthArrowItem(x = ${x}, y = ${y}, width = ${width}, height = ${height}, " +
+                "fill-color1 = ${fillColor1}, stroke-color1 = ${strokeColor1}, " +
+                "fill-color2 = ${fillColor2}, stroke-color2 = ${strokeColor2}, stroke-width = ${strokeWidth}, " +
+                "draw-text = ${drawText}, font = ${font}, text-color = ${textColor})"
     }
 
 }

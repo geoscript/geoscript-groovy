@@ -95,6 +95,11 @@ class Java2DCartoBuilder implements CartoBuilder {
 
     @Override
     CartoBuilder northArrow(NorthArrowItem northArrowItem) {
+        drawNorthArrow(northArrowItem)
+        this
+    }
+
+    private void drawNorthArrow(NorthArrowItem northArrowItem) {
 
         int x = northArrowItem.x
         int y = northArrowItem.y
@@ -105,6 +110,16 @@ class Java2DCartoBuilder implements CartoBuilder {
         Color fillColor2 = northArrowItem.fillColor2
         Color strokeColor1 = northArrowItem.strokeColor1
         Color strokeColor2 = northArrowItem.strokeColor2
+
+        if (northArrowItem.drawText) {
+            graphics.color = northArrowItem.textColor
+            graphics.font = northArrowItem.font
+            FontMetrics fontMetrics = graphics.fontMetrics
+            String text = "N"
+            int textHeight = fontMetrics.height
+            drawString(text, new Rectangle(0, height - textHeight, width, textHeight), HorizontalAlign.CENTER, VerticalAlign.BOTTOM)
+            height = height - textHeight
+        }
 
         def path1 = new GeneralPath()
         path1.moveTo((x + width/2) as double, y)
@@ -129,8 +144,6 @@ class Java2DCartoBuilder implements CartoBuilder {
         graphics.fill(path2)
         graphics.color = strokeColor2
         graphics.draw(path2)
-
-        this
     }
 
     @Override
@@ -324,6 +337,5 @@ class Java2DCartoBuilder implements CartoBuilder {
 
     @Override
     void build(OutputStream outputStream) {
-        build()
     }
 }
