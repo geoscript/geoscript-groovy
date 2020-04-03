@@ -25,6 +25,8 @@ class NorthArrowItem extends Item {
 
     Color textColor = Color.BLACK
 
+    NorthArrowStyle style = NorthArrowStyle.North
+
     /**
      * Create a north arrow from the top left with the given width and height.
      * @param x The number of pixels from the left
@@ -34,6 +36,16 @@ class NorthArrowItem extends Item {
      */
     NorthArrowItem(int x, int y, int width, int height) {
         super(x, y, width, height)
+    }
+
+    /**
+     * Set the NorthArrowStyle
+     * @param northArrowStyle The NorthArrowStyle
+     * @return The NorthArrowItem
+     */
+    NorthArrowItem style(NorthArrowStyle northArrowStyle) {
+        this.style = northArrowStyle
+        this
     }
 
     /**
@@ -121,7 +133,7 @@ class NorthArrowItem extends Item {
         "NorthArrowItem(x = ${x}, y = ${y}, width = ${width}, height = ${height}, " +
                 "fill-color1 = ${fillColor1}, stroke-color1 = ${strokeColor1}, " +
                 "fill-color2 = ${fillColor2}, stroke-color2 = ${strokeColor2}, stroke-width = ${strokeWidth}, " +
-                "draw-text = ${drawText}, font = ${font}, text-color = ${textColor})"
+                "draw-text = ${drawText}, font = ${font}, text-color = ${textColor}, style = ${style.toString()})"
     }
 
 }

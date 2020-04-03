@@ -3,6 +3,9 @@ package geoscript.carto
 import org.junit.Rule;
 import org.junit.Test
 import org.junit.rules.TemporaryFolder
+
+import java.awt.Font
+
 import static org.junit.Assert.*
 
 import javax.imageio.ImageIO
@@ -19,8 +22,33 @@ class Java2DCartoBuilderTest {
 
     @Test
     void drawNorthArrow() {
-        draw(new PageSize(80, 140), "northarrow.png", { Java2DCartoBuilder builder ->
-            builder.northArrow(new NorthArrowItem(0,0,80,140).drawText(true))
+        draw(new PageSize(80, 140), "northarrow.png", { PageSize pageSize, Java2DCartoBuilder builder ->
+            builder.northArrow(new NorthArrowItem(0,0,pageSize.width, pageSize.height))
+        })
+    }
+
+    @Test
+    void drawNorthArrowWithText() {
+        draw(new PageSize(80, 140), "northarrow_text.png", { PageSize pageSize, Java2DCartoBuilder builder ->
+            builder.northArrow(new NorthArrowItem(0,0,pageSize.width, pageSize.height).drawText(true))
+        })
+    }
+
+    @Test
+    void drawNESWArrow() {
+        draw(new PageSize(200, 200), "northarrow_nesw.png", { PageSize pageSize, Java2DCartoBuilder builder ->
+            builder.northArrow(new NorthArrowItem(0, 0, pageSize.width, pageSize.height).style(NorthArrowStyle.NorthEastSouthWest))
+        })
+    }
+
+    @Test
+    void drawNESWArrowWithText() {
+        draw(new PageSize(200, 200), "northarrow_nesw_text.png", { PageSize pageSize, Java2DCartoBuilder builder ->
+            builder.northArrow(new NorthArrowItem(0, 0, pageSize.width, pageSize.height)
+                .style(NorthArrowStyle.NorthEastSouthWest)
+                .drawText(true)
+                .font(new Font("Arial", Font.BOLD, 24))
+            )
         })
     }
 
@@ -32,7 +60,7 @@ class Java2DCartoBuilderTest {
                 (RenderingHints.KEY_TEXT_ANTIALIASING): RenderingHints.VALUE_TEXT_ANTIALIAS_ON
         ]
         Java2DCartoBuilder builder = new Java2DCartoBuilder(graphics, pageSize)
-        closure.call(builder)
+        closure.call(pageSize, builder)
         File file = getTempFile(fileName)
         ImageIO.write(image, "png", file)
         assertTrue(file.exists())

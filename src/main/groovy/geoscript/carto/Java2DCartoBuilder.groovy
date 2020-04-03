@@ -13,6 +13,7 @@ import java.awt.Color
 import java.awt.Font
 import java.awt.FontMetrics
 import java.awt.Graphics2D
+import java.awt.Point
 import java.awt.Rectangle
 import java.awt.font.LineBreakMeasurer
 import java.awt.font.TextAttribute
@@ -95,7 +96,11 @@ class Java2DCartoBuilder implements CartoBuilder {
 
     @Override
     CartoBuilder northArrow(NorthArrowItem northArrowItem) {
-        drawNorthArrow(northArrowItem)
+        if(northArrowItem.style == NorthArrowStyle.North) {
+            drawNorthArrow(northArrowItem)
+        } else if(northArrowItem.style == NorthArrowStyle.NorthEastSouthWest) {
+            drawNESWArrow(northArrowItem)
+        }
         this
     }
 
@@ -144,6 +149,93 @@ class Java2DCartoBuilder implements CartoBuilder {
         graphics.fill(path2)
         graphics.color = strokeColor2
         graphics.draw(path2)
+    }
+
+    private void drawNESWArrow(NorthArrowItem northArrowItem) {
+
+        int x = northArrowItem.x
+        int y = northArrowItem.y
+        int width = northArrowItem.width
+        int height = northArrowItem.height
+
+        if (northArrowItem.drawText) {
+            graphics.color = northArrowItem.textColor
+            graphics.font = northArrowItem.font
+            FontMetrics fontMetrics = graphics.fontMetrics
+            int textWidth = [fontMetrics.stringWidth("N"), fontMetrics.stringWidth("E"), fontMetrics.stringWidth("S"), fontMetrics.stringWidth("W")].max()
+            int textHeight = fontMetrics.height
+            drawString("N", new Rectangle((width / 2 - textWidth / 2) as int, 0, textWidth, textHeight), HorizontalAlign.CENTER, VerticalAlign.TOP)
+            drawString("E", new Rectangle(width - textWidth, (height / 2 - textHeight / 2) as int, textWidth, textHeight), HorizontalAlign.RIGHT, VerticalAlign.MIDDLE)
+            drawString("S", new Rectangle((width / 2 - textWidth / 2) as int, height - textHeight, textWidth, textHeight), HorizontalAlign.CENTER, VerticalAlign.TOP)
+            drawString("W", new Rectangle(0, (height / 2 - textHeight / 2) as int, textWidth, textHeight), HorizontalAlign.LEFT, VerticalAlign.MIDDLE)
+            x = x + textWidth
+            y = y + textHeight
+            width = width - (textWidth * 2)
+            height = height - (textHeight * 2)
+        }
+
+        Point north = new Point((x + (width / 2) as int) - 2, y)
+        Point east  = new Point(x + width, y + (height / 2) as int)
+        Point south = new Point((x + (width / 2) as int) - 2, y + height)
+        Point west  = new Point(x, y + (height / 2) as int)
+
+        Point mid = new Point(x + (width / 2) as int, y + (height / 2) as int)
+
+        Point northEast = new Point(x + (width * 2/3) as int, y + (height * 1/3) as int)
+        Point southEast  = new Point(x + (width * 2/3) as int, y + (height * 2/3) as int)
+        Point southWest  = new Point(x + (width * 1/3) as int, y + (height * 2/3) as int)
+        Point northWest  = new Point(x + (width * 1/3) as int, y + (height * 1/3) as int)
+
+        // Fill
+        graphics.color = northArrowItem.fillColor1
+        graphics.fill(createPolygon(north, northEast, mid))
+        graphics.color = northArrowItem.fillColor2
+        graphics.fill(createPolygon(north, northWest, mid))
+
+        graphics.color = northArrowItem.fillColor1
+        graphics.fill(createPolygon(east, southEast, mid))
+        graphics.color = northArrowItem.fillColor2
+        graphics.fill(createPolygon(east, northEast, mid))
+
+        graphics.color = northArrowItem.fillColor1
+        graphics.fill(createPolygon(south, southWest, mid))
+        graphics.color = northArrowItem.fillColor2
+        graphics.fill(createPolygon(south, southEast, mid))
+
+        graphics.color = northArrowItem.fillColor1
+        graphics.fill(createPolygon(west, northWest, mid))
+        graphics.color = northArrowItem.fillColor2
+        graphics.fill(createPolygon(west, southWest, mid))
+
+        // Stroke
+        graphics.color = northArrowItem.strokeColor1
+        graphics.draw(createPolygon(north, northEast, mid))
+        graphics.color = northArrowItem.strokeColor2
+        graphics.draw(createPolygon(north, northWest, mid))
+
+        graphics.color = northArrowItem.strokeColor1
+        graphics.draw(createPolygon(east, southEast, mid))
+        graphics.color = northArrowItem.strokeColor2
+        graphics.draw(createPolygon(east, northEast, mid))
+
+        graphics.color = northArrowItem.strokeColor1
+        graphics.draw(createPolygon(south, southWest, mid))
+        graphics.color = northArrowItem.strokeColor2
+        graphics.draw(createPolygon(south, southEast, mid))
+
+        graphics.color = northArrowItem.strokeColor1
+        graphics.draw(createPolygon(west, northWest, mid))
+        graphics.color = northArrowItem.strokeColor2
+        graphics.draw(createPolygon(west, southWest, mid))
+    }
+
+    private GeneralPath createPolygon(Point point1, Point point2, Point point3) {
+        GeneralPath path = new GeneralPath(GeneralPath.WIND_EVEN_ODD, 3)
+        path.moveTo(point1.x as int, point1.y as int)
+        path.lineTo(point2.x as int, point2.y as int)
+        path.lineTo(point3.x as int, point3.y as int)
+        path.closePath()
+        path
     }
 
     @Override
