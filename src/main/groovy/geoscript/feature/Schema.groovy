@@ -449,6 +449,7 @@ class Schema {
             ("org.locationtech.jts.geom.Point".toLowerCase()) : "Point",
             ("org.locationtech.jts.geom.Polygon".toLowerCase()) : "Polygon",
             ("org.locationtech.jts.geom.Geometry".toLowerCase()) : "Geometry",
+            ("org.locationtech.jts.geom.GeometryCollection".toLowerCase()) : "GeometryCollection",
             ("org.geotools.geometry.jts.CircularRing".toLowerCase()) : "CircularRing",
             ("org.geotools.geometry.jts.CircularString".toLowerCase()) : "CircularString",
             ("org.geotools.geometry.jts.CompoundCurve".toLowerCase()) : "CompoundCurve",
