@@ -1964,4 +1964,50 @@ class Layer implements Renderable {
 
         outLayer
     }
+
+    /**
+     * Create a Layer from a Geometry
+     * @param options Optional named parameters:
+     * <ul>
+     *     <li>proj = The Projection (defaults to EPSg:4326)</li>
+     *     <li>style = A Symbolizer</li>
+     * </ul>
+     * @param name The name of the new Layer
+     * @param geometry The Geometry
+     * @return The Layer
+     */
+    static Layer fromGeometry(Map options = [:], String name, Geometry geometry) {
+        String geometryType = geometry.geometryType
+        String epsg = options.get("proj", new Projection("EPSG:4326")).epsg
+        Symbolizer symbolizer = options.get("style", Symbolizer.getDefault(geometryType))
+        Layer layer = new Layer(name, new Schema(name, "geom:${geometryType}:srid=${epsg}"))
+        layer.add([geom: geometry])
+        layer.style = symbolizer
+        layer
+    }
+
+    /**
+     * Create a Layer from a List of Geometries
+     * @param options Optional named parameters:
+     * <ul>
+     *     <li>proj = The Projection (defaults to EPSg:4326)</li>
+     *     <li>style = A Symbolizer</li>
+     * </ul>
+     * @param name The name of the new Layer
+     * @param geometries The List of Geometries
+     * @return The Layer
+     */
+    static Layer fromGeometries(Map options = [:], String name, List<Geometry> geometries) {
+        List<String> geometryTypes = geometries.collect{ Geometry geometry -> geometry.geometryType}.unique()
+        String geometryType = geometryTypes.size() > 1 ? "GeometryCollection" : geometryTypes[0]
+        String epsg = options.get("proj", new Projection("EPSG:4326")).epsg
+        Symbolizer symbolizer = options.get("style", Symbolizer.getDefault(geometryType))
+        Layer layer = new Layer(name, new Schema(name, "geom:${geometryType}:srid=${epsg}"))
+        geometries.each { Geometry geometry ->
+            layer.add([geom: geometry])
+        }
+        layer.style = symbolizer
+        layer
+    }
+
 }

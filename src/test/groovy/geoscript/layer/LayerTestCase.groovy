@@ -2,6 +2,7 @@ package geoscript.layer
 
 import geoscript.AssertUtil
 import geoscript.filter.Expression
+import geoscript.style.Stroke
 import geoscript.workspace.Directory
 import groovy.json.JsonSlurper
 import org.junit.Rule
@@ -37,6 +38,38 @@ class LayerTestCase {
         assertEquals "cities", layer3.name
         Layer layer4 = new Layer("stations")
         assertEquals "stations", layer4.name
+    }
+
+    @Test void fromGeometry() {
+        Layer layer = Layer.fromGeometry("world", new Bounds(-180,-90,180,90).geometry)
+        assertEquals("world", layer.name)
+        assertEquals(1, layer.count)
+        assertEquals("EPSG:4326", layer.proj.id)
+
+        layer = Layer.fromGeometry("world", new Bounds(-180,-85,180,85, "EPSG:4326").reproject("EPSG:3857").geometry,
+                proj: new Projection("EPSG:3857"),
+                style: new Stroke("black", 0.50)
+        )
+        assertEquals("world", layer.name)
+        assertEquals(1, layer.count)
+        assertEquals("EPSG:3857", layer.proj.id)
+    }
+
+    @Test void fromGeometries() {
+        Layer layer = Layer.fromGeometries("testPits", Geometry.createRandomPoints(new Bounds(-180,-90,180,90).geometry, 10).geometries)
+        assertEquals("testPits", layer.name)
+        assertEquals("Point", layer.schema.geom.typ)
+        assertEquals(10, layer.count)
+        assertEquals("EPSG:4326", layer.proj.id)
+
+        layer = Layer.fromGeometries("geometries", [new Point(1,2), new LineString([1,2],[3,4])],
+            proj: new Projection("EPSG:4326"),
+            style: new Stroke("blue", 1)
+        )
+        assertEquals("geometries", layer.name)
+        assertEquals("GeometryCollection", layer.schema.geom.typ)
+        assertEquals(2, layer.count)
+        assertEquals("EPSG:4326", layer.proj.id)
     }
 
     @Test void eachFeature() {
