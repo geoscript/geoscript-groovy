@@ -378,7 +378,7 @@
                     <dependency>
                         <groupId>org.codehaus.groovy</groupId>
                         <artifactId>groovy-eclipse-batch</artifactId>
-                        <version>3.0.1-01</version>
+                        <version>3.0.2-02</version>
                     </dependency>
                 </dependencies>
             </plugin>
@@ -514,7 +514,7 @@
     </reporting>
     <properties>
         <gt.version>23-SNAPSHOT</gt.version>
-        <groovy.version>3.0.2</groovy.version>
+        <groovy.version>3.0.3</groovy.version>
     </properties>
     <name>geoscript groovy</name>
     <description>A groovy implementation of geoscript.</description>
