@@ -1970,7 +1970,7 @@ class Layer implements Renderable {
      * @param options Optional named parameters:
      * <ul>
      *     <li>proj = The Projection (defaults to EPSg:4326)</li>
-     *     <li>style = A Symbolizer</li>
+     *     <li>style = A Style</li>
      * </ul>
      * @param name The name of the new Layer
      * @param geometry The Geometry
@@ -1979,10 +1979,10 @@ class Layer implements Renderable {
     static Layer fromGeometry(Map options = [:], String name, Geometry geometry) {
         String geometryType = geometry.geometryType
         String epsg = options.get("proj", new Projection("EPSG:4326")).epsg
-        Symbolizer symbolizer = options.get("style", Symbolizer.getDefault(geometryType))
+        Style style = options.get("style", Symbolizer.getDefault(geometryType))
         Layer layer = new Layer(name, new Schema(name, "geom:${geometryType}:srid=${epsg}"))
         layer.add([geom: geometry])
-        layer.style = symbolizer
+        layer.style = style
         layer
     }
 
@@ -1991,7 +1991,7 @@ class Layer implements Renderable {
      * @param options Optional named parameters:
      * <ul>
      *     <li>proj = The Projection (defaults to EPSg:4326)</li>
-     *     <li>style = A Symbolizer</li>
+     *     <li>style = A Style</li>
      * </ul>
      * @param name The name of the new Layer
      * @param geometries The List of Geometries
@@ -2001,12 +2001,12 @@ class Layer implements Renderable {
         List<String> geometryTypes = geometries.collect{ Geometry geometry -> geometry.geometryType}.unique()
         String geometryType = geometryTypes.size() > 1 ? "GeometryCollection" : geometryTypes[0]
         String epsg = options.get("proj", new Projection("EPSG:4326")).epsg
-        Symbolizer symbolizer = options.get("style", Symbolizer.getDefault(geometryType))
+        Style style = options.get("style", Symbolizer.getDefault(geometryType))
         Layer layer = new Layer(name, new Schema(name, "geom:${geometryType}:srid=${epsg}"))
         geometries.each { Geometry geometry ->
             layer.add([geom: geometry])
         }
-        layer.style = symbolizer
+        layer.style = style
         layer
     }
 
