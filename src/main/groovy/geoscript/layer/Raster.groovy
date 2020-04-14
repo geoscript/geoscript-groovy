@@ -330,6 +330,21 @@ class Raster implements Renderable {
     }
 
     /**
+     * Get a BufferedImage
+     * @return A BufferedImage
+     */
+    BufferedImage getBufferedImage() {
+        RenderedImage image = getImage()
+        ColorModel colorModel = image.colorModel
+        WritableRaster writableRaster = colorModel.createCompatibleWritableRaster(image.width, image.height)
+        boolean isAlphaPremultiplied = colorModel.isAlphaPremultiplied()
+        Hashtable properties = new Hashtable()
+        BufferedImage result = new BufferedImage(colorModel, writableRaster, isAlphaPremultiplied, properties)
+        image.copyData(writableRaster)
+        result
+    }
+
+    /**
      * Get the value of the Raster at the given geographic Location.
      * If the Raster contains multiple bands a Collection of values, one for
      * each band, will be returned.

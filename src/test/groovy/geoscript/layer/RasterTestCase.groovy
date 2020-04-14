@@ -35,6 +35,7 @@ class RasterTestCase {
 
         assertNotNull raster.data
         assertNotNull raster.image
+        assertNotNull raster.bufferedImage
 
         Bounds bounds = raster.bounds
         assertEquals(1166191.0260847565, bounds.minX, 0.0000000001)
