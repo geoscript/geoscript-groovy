@@ -108,18 +108,19 @@ Generating tiles::
 
 See the `web site <http://geoscript.org>`_, the `groovy docs <http://geoscript.github.io/geoscript-groovy/api/1.13.0/index.html>`_ or the `cook book <https://jericks.github.io/geoscript-groovy-cookbook/>`_ or the `examples directory <https://github.com/jericks/geoscript-groovy/tree/master/examples>`_ for more examples.
 
-You can also use GeoScript Groovy as a library. If you use Maven you will need to add the Boundless Maven Repository::
+You can also use GeoScript Groovy as a library. If you use Maven you will need to add the OSGeo Maven Repository::
 
-    <repositories>
-        <repository>
-            <id>boundless</id>
-            <name>Boundless Maven Repository</name>
-            <url>https://repo.boundlessgeo.com/main</url>
-            <snapshots>
-                <enabled>true</enabled>
-            </snapshots>
-        </repository>
-    </repositories>
+    <repository>
+        <id>osgeo-releases</id>
+        <name>OSGeo Nexus Release Repository</name>
+        <url>https://repo.osgeo.org/repository/release/</url>
+        <snapshots>
+            <enabled>false</enabled>
+        </snapshots>
+        <releases>
+            <enabled>true</enabled>
+        </releases>
+    </repository>
 
 and then include the GeoScript Groovy dependency::
 
@@ -210,6 +211,13 @@ Presentations
 `Scripting GeoServer (CUGOS 2012) <http://www.slideshare.net/JaredErickson/scripting-geoserver>`_
 
 `GeoScript: Spatial Capabilities for Scripting Languages (FOSS4G 2011) <http://www.slideshare.net/jdeolive/geoscript-spatial-capabilities-for-scripting-languages>`_
+
+Build Servers
+-------------
+
+https://travis-ci.org/github/geoscript/geoscript-groovy
+
+https://build.geoserver.org/job/geoscript-groovy/
 
 License
 -------
