@@ -27,7 +27,8 @@ class ImageCartoBuilderTest {
             new GeoTIFF(new File(getClass().getClassLoader().getResource("raster.tif").toURI())).read()
         ])
 
-        File file = temporaryFolder.newFile("map.png")
+        boolean saveToTarget = false
+        File file = saveToTarget ? new File("target/map.png") : temporaryFolder.newFile("map.png")
         file.withOutputStream { OutputStream outputStream ->
             new ImageCartoBuilder(PageSize.LETTER_LANDSCAPE, ImageCartoBuilder.ImageType.PNG)
                 .rectangle(new RectangleItem(0, 0, 792, 612).strokeColor(Color.WHITE).fillColor(Color.WHITE))
@@ -53,12 +54,13 @@ all copies or substantial portions of the Software.
                 .map(new MapItem(30, 120, 742, 470).map(map))
                 .overViewMap(new OverviewMapItem(30, 490, 100, 90).overviewMap(overViewMap).linkedMap(map))
                 .overViewMap(new OverviewMapItem(150, 490, 100, 90).overviewMap(overViewMap).linkedMap(map).zoomIntoBounds(true).scaleFactor(3.0))
-                .table(new TableItem(460, 510, 300, 200)
+                .table(new TableItem(460, 120, 300, 200)
                     .columns(["ID","Name"])
                     .row([[ID: 1, Name: "One"]])
                     .row([[ID: 2, Name: "Two"]])
                     .row([[ID: 3, Name: "Three"]])
                 )
+                .legend(new LegendItem(640, 500, 120,80).addMap(map))
                 .build(outputStream)
         }
     }

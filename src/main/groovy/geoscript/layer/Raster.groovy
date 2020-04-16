@@ -169,6 +169,14 @@ class Raster implements Renderable {
     }
 
     /**
+     * Get the Raster's name
+     * @return The name
+     */
+    String getName() {
+        this.coverage.name.toString()
+    }
+
+    /**
      * Get the Projection
      * @return The Projection
      */

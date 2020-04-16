@@ -107,6 +107,12 @@ class SvgCartoBuilder implements CartoBuilder {
     }
 
     @Override
+    CartoBuilder legend(LegendItem legendItem) {
+        java2DCartoBuilder.legend(legendItem)
+        this
+    }
+
+    @Override
     void build(OutputStream outputStream) {
         g.stream(new OutputStreamWriter(outputStream))
         java2DCartoBuilder.graphics.dispose()

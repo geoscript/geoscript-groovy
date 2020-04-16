@@ -106,6 +106,12 @@ class ImageCartoBuilder implements CartoBuilder {
     }
 
     @Override
+    CartoBuilder legend(LegendItem legendItem) {
+        java2DCartoBuilder.legend(legendItem)
+        this
+    }
+
+    @Override
     void build(OutputStream outputStream) {
         java2DCartoBuilder.graphics.dispose()
         ImageIO.write(image, imageType.name, outputStream)

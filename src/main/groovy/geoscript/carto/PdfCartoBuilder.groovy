@@ -114,6 +114,12 @@ class PdfCartoBuilder implements CartoBuilder {
     }
 
     @Override
+    CartoBuilder legend(LegendItem legendItem) {
+        java2DCartoBuilder.legend(legendItem)
+        this
+    }
+
+    @Override
     void build(OutputStream outputStream) {
         java2DCartoBuilder.graphics.dispose()
         document.close()

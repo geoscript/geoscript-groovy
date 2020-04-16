@@ -91,6 +91,13 @@ interface CartoBuilder {
     CartoBuilder table(TableItem tableItem)
 
     /**
+     * Add a legend
+     * @param legendItem The LegendItem
+     * @return The CartoBuilder
+     */
+    CartoBuilder legend(LegendItem legendItem)
+
+    /**
      * Write the cartographic document to the OutputStream
      * @param outputStream The OutputStream
      */

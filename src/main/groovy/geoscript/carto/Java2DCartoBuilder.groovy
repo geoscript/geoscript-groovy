@@ -1,10 +1,13 @@
 package geoscript.carto
 
 import geoscript.feature.Schema
+import geoscript.geom.Bounds
 import geoscript.geom.Geometry
+import geoscript.geom.LineString
 import geoscript.layer.Layer
 import geoscript.proj.Projection
 import geoscript.render.Map
+import geoscript.style.ColorMap
 import geoscript.workspace.Memory
 
 import javax.imageio.ImageIO
@@ -20,6 +23,7 @@ import java.awt.font.TextAttribute
 import java.awt.geom.GeneralPath
 import java.text.AttributedString
 import java.text.DecimalFormat
+import java.text.NumberFormat
 import java.text.SimpleDateFormat
 
 /**
@@ -122,7 +126,7 @@ class Java2DCartoBuilder implements CartoBuilder {
             FontMetrics fontMetrics = graphics.fontMetrics
             String text = "N"
             int textHeight = fontMetrics.height
-            drawString(text, new Rectangle(0, height - textHeight, width, textHeight), HorizontalAlign.CENTER, VerticalAlign.BOTTOM)
+            drawString(text, new Rectangle(x, y + (height - textHeight), width, textHeight), HorizontalAlign.CENTER, VerticalAlign.BOTTOM)
             height = height - textHeight
         }
 
@@ -164,10 +168,10 @@ class Java2DCartoBuilder implements CartoBuilder {
             FontMetrics fontMetrics = graphics.fontMetrics
             int textWidth = [fontMetrics.stringWidth("N"), fontMetrics.stringWidth("E"), fontMetrics.stringWidth("S"), fontMetrics.stringWidth("W")].max()
             int textHeight = fontMetrics.height
-            drawString("N", new Rectangle((width / 2 - textWidth / 2) as int, 0, textWidth, textHeight), HorizontalAlign.CENTER, VerticalAlign.TOP)
-            drawString("E", new Rectangle(width - textWidth, (height / 2 - textHeight / 2) as int, textWidth, textHeight), HorizontalAlign.RIGHT, VerticalAlign.MIDDLE)
-            drawString("S", new Rectangle((width / 2 - textWidth / 2) as int, height - textHeight, textWidth, textHeight), HorizontalAlign.CENTER, VerticalAlign.TOP)
-            drawString("W", new Rectangle(0, (height / 2 - textHeight / 2) as int, textWidth, textHeight), HorizontalAlign.LEFT, VerticalAlign.MIDDLE)
+            drawString("N", new Rectangle(x + (width / 2 - textWidth / 2) as int, y, textWidth, textHeight), HorizontalAlign.CENTER, VerticalAlign.TOP)
+            drawString("E", new Rectangle(x + (width - textWidth), y + (height / 2 - textHeight / 2) as int, textWidth, textHeight), HorizontalAlign.RIGHT, VerticalAlign.MIDDLE)
+            drawString("S", new Rectangle(x + (width / 2 - textWidth / 2) as int, y + (height - textHeight), textWidth, textHeight), HorizontalAlign.CENTER, VerticalAlign.TOP)
+            drawString("W", new Rectangle(x, y + (height / 2 - textHeight / 2) as int, textWidth, textHeight), HorizontalAlign.LEFT, VerticalAlign.MIDDLE)
             x = x + textWidth
             y = y + textHeight
             width = width - (textWidth * 2)
@@ -396,6 +400,170 @@ class Java2DCartoBuilder implements CartoBuilder {
             }
         }
         this
+    }
+
+    @Override
+    CartoBuilder legend(LegendItem legendItem) {
+
+        // Draw background
+        if(legendItem.backgroundColor) {
+            graphics.color = legendItem.backgroundColor
+            graphics.fillRect(legendItem.x, legendItem.y, legendItem.width, legendItem.height)
+        }
+
+        // Draw title
+        graphics.font = legendItem.titleFont
+        graphics.color = legendItem.titleColor
+        FontMetrics fm = graphics.fontMetrics
+        int titleHeight = fm.height
+        drawString(legendItem.title, new Rectangle(legendItem.x, legendItem.y, legendItem.width, titleHeight), HorizontalAlign.LEFT, VerticalAlign.MIDDLE)
+
+        // Draw Entries
+        graphics.font = legendItem.textFont
+        graphics.color = legendItem.textColor
+        fm = graphics.fontMetrics
+
+        // Keep track of the entry x and y
+        int entryX = legendItem.x
+        int entryY = legendItem.y + titleHeight + legendItem.gapBetweenEntries
+        int maxTextWidth = -1
+
+        legendItem.entries.eachWithIndex { LegendItem.LegendEntry entry, int i ->
+
+            if (entry.type == LegendItem.LegendEntryType.COLORMAP) {
+
+                // Draw title
+                graphics.color = legendItem.textColor
+                Rectangle titleRectangle = new Rectangle(entryX, entryY, legendItem.legendEntryWidth * 2, fm.height)
+                drawString(entry.title, titleRectangle, HorizontalAlign.LEFT, VerticalAlign.MIDDLE)
+                entryY += fm.height + legendItem.gapBetweenEntries
+
+                NumberFormat numberFormat = new DecimalFormat(legendItem.numberFormat)
+                ColorMap colorMap = entry.symbolizer as ColorMap
+                colorMap.values.each { java.util.Map value ->
+
+                    String title = numberFormat.format(value.quantity)
+                    String colorHex = "${value.color}"
+
+                    Rectangle symbolRectangle = new Rectangle(
+                            entryX,
+                            entryY,
+                            legendItem.legendEntryWidth,
+                            legendItem.legendEntryHeight
+                    )
+                    graphics.color = Color.decode(colorHex)
+                    graphics.fill(symbolRectangle)
+
+                    Rectangle textRectangle = new Rectangle(
+                            entryX + legendItem.legendEntryWidth + legendItem.gapBetweenEntries,
+                            entryY,
+                            legendItem.legendEntryWidth,
+                            legendItem.legendEntryHeight
+                    )
+                    maxTextWidth = Math.max(maxTextWidth, fm.stringWidth(title) + legendItem.gapBetweenEntries)
+                    graphics.color = legendItem.textColor
+                    drawString(title, textRectangle, HorizontalAlign.LEFT, VerticalAlign.MIDDLE)
+
+                    entryY += legendItem.legendEntryHeight
+                }
+
+                entryY += legendItem.gapBetweenEntries
+
+            } else if (entry.type == LegendItem.LegendEntryType.IMAGE) {
+
+                // Draw Image
+                Rectangle imageRectangle = new Rectangle(entryX, entryY, legendItem.legendEntryWidth, legendItem.legendEntryHeight)
+                graphics.drawImage(entry.image, imageRectangle.x as int, imageRectangle.y  as int, imageRectangle.width  as int, imageRectangle.height  as int, null)
+
+                // Draw title
+                graphics.color = legendItem.textColor
+                Rectangle titleRectangle = new Rectangle(
+                    entryX + legendItem.legendEntryWidth + legendItem.gapBetweenEntries,
+                    entryY,
+                    legendItem.legendEntryWidth,
+                    legendItem.legendEntryHeight
+                )
+                drawString(entry.title, titleRectangle, HorizontalAlign.LEFT, VerticalAlign.MIDDLE)
+
+                entryY += legendItem.legendEntryHeight + legendItem.gapBetweenEntries
+
+            } else if (entry.type == LegendItem.LegendEntryType.GROUP) {
+
+                // Draw title
+                graphics.color = legendItem.textColor
+                Rectangle titleRectangle = new Rectangle(entryX, entryY, legendItem.legendEntryWidth * 2, fm.height)
+                drawString(entry.title, titleRectangle, HorizontalAlign.LEFT, VerticalAlign.MIDDLE)
+                entryY += fm.height + legendItem.gapBetweenEntries
+
+            } else /* POINT, LINE, POLYGON */ {
+
+                Rectangle symbolRectangle = new Rectangle(
+                        entryX,
+                        entryY,
+                        legendItem.legendEntryWidth,
+                        legendItem.legendEntryHeight
+                )
+
+                Geometry geometry
+                if (entry.type == LegendItem.LegendEntryType.POLYGON) {
+                    geometry = new Bounds(2, 2, legendItem.legendEntryWidth - 2, legendItem.legendEntryHeight - 2).geometry
+                } else if (entry.type == LegendItem.LegendEntryType.LINE) {
+                    geometry = new LineString([[0, legendItem.legendEntryHeight / 2], [legendItem.legendEntryWidth, legendItem.legendEntryHeight / 2]])
+                } else if (entry.type == LegendItem.LegendEntryType.POINT) {
+                    geometry = new geoscript.geom.Point((legendItem.legendEntryWidth / 2) as int, (legendItem.legendEntryHeight / 2) as int)
+                }
+
+                Layer layer = Layer.fromGeometry("polygon", geometry, style: entry.symbolizer)
+                Map map = new Map(
+                        width: legendItem.legendEntryWidth,
+                        height: legendItem.legendEntryHeight,
+                        fixAspectRatio: false,
+                        bounds: new Bounds(0, 0, legendItem.legendEntryWidth, legendItem.legendEntryHeight),
+                        layers: [layer]
+                )
+                graphics.drawImage(map.renderToImage(), symbolRectangle.x as int, symbolRectangle.y as int, null)
+
+                Rectangle textRectangle = new Rectangle(
+                        entryX + legendItem.legendEntryWidth + legendItem.gapBetweenEntries,
+                        entryY,
+                        legendItem.legendEntryWidth,
+                        legendItem.legendEntryHeight
+                )
+                maxTextWidth = Math.max(maxTextWidth, fm.stringWidth(entry.title) + legendItem.gapBetweenEntries)
+                drawString(entry.title, textRectangle, HorizontalAlign.LEFT, VerticalAlign.MIDDLE)
+
+                entryY += legendItem.legendEntryHeight + legendItem.gapBetweenEntries
+            }
+
+            // Are there more entries?
+            if (i < (legendItem.entries.size() - 1)) {
+                // Check to make sure the next entry can fit in the remaining space
+                int nextHeight = getLegendItemHeight(legendItem, legendItem.entries[i + 1])
+                if ((entryY + nextHeight) > legendItem.height) {
+                    // Move the entry x over to the right to a separate column
+                    entryX += legendItem.legendEntryWidth + legendItem.gapBetweenEntries + maxTextWidth
+                    // Reset the entry y to the top
+                    entryY = legendItem.y + titleHeight + legendItem.gapBetweenEntries
+                    // Reset the max text width
+                    maxTextWidth = -1
+                }
+            }
+        }
+        this
+    }
+
+    private int getLegendItemHeight(LegendItem item, LegendItem.LegendEntry entry) {
+        int height
+        if (entry.type == LegendItem.LegendEntryType.COLORMAP) {
+            graphics.font = item.textFont
+            height = graphics.fontMetrics.height + item.gapBetweenEntries + (entry.symbolizer.values.size() * item.legendEntryHeight) + item.gapBetweenEntries
+        } else if (entry.type == LegendItem.LegendEntryType.GROUP) {
+            graphics.font = item.textFont
+            height = graphics.fontMetrics.height + item.gapBetweenEntries
+        } else {
+            height = item.legendEntryHeight + item.gapBetweenEntries
+        }
+        height
     }
 
     private void drawString(String text, Rectangle rectangle, HorizontalAlign horizontalAlign, VerticalAlign verticalAlign) {
