@@ -1,0 +1,2 @@
+# of points in original geometry = 8
+# of points in densified geometry = 50

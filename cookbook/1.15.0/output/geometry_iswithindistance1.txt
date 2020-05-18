@@ -1,0 +1,1 @@
+Is POINT (-88.945 41.771) within 26.0 of POINT (-113.906 37.16)? Yes

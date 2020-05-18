@@ -1,0 +1,1 @@
+[ the_geom crosses LINESTRING (-104 45, -95 45) ]

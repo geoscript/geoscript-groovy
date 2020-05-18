@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?><feed xmlns:georss="http://www.georss.org/georss" xmlns="http://www.w3.org/2005/Atom">
+<title>cities</title>
+<subtitle>cities geom: Point(EPSG:4326), id: Integer, name: String</subtitle>
+<link>http://geoscript.org/feature</link>
+<entry>
+<title>fid-59fc717f_1722a208e9e_-68ce</title>
+<summary>[geom:POINT (-122.3204 47.6024), id:1, name:Seattle]</summary>
+<updated>Mon May 18 16:31:40 PDT 2020</updated>
+<georss:point>47.6024 -122.3204</georss:point>
+</entry>
+<entry>
+<title>fid-59fc717f_1722a208e9e_-68cc</title>
+<summary>[geom:POINT (-122.48416 47.2619), id:2, name:Tacoma]</summary>
+<updated>Mon May 18 16:31:40 PDT 2020</updated>
+<georss:point>47.2619 -122.48416</georss:point>
+</entry>
+</feed>

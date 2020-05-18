@@ -1,0 +1,1 @@
+cities_guid geom: Point(EPSG:4326), guid: String, name: String

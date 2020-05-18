@@ -1,0 +1,29 @@
+
+Zoom Level: 4
+# of tiles: 20
+Bounds: (-1.5027296360910986E7,-1.0018735602568535E7,-5009098.786970329,2504683.900642129,EPSG:3857)
+Width / # Columns: 4
+Height / # Rows: 5
+MinX: 2, MinY: 4, MaxX: 5, MaxY: 8
+
+Tiles:
+Tile(x:2, y:4, z:4)
+Tile(x:3, y:4, z:4)
+Tile(x:4, y:4, z:4)
+Tile(x:5, y:4, z:4)
+Tile(x:2, y:5, z:4)
+Tile(x:3, y:5, z:4)
+Tile(x:4, y:5, z:4)
+Tile(x:5, y:5, z:4)
+Tile(x:2, y:6, z:4)
+Tile(x:3, y:6, z:4)
+Tile(x:4, y:6, z:4)
+Tile(x:5, y:6, z:4)
+Tile(x:2, y:7, z:4)
+Tile(x:3, y:7, z:4)
+Tile(x:4, y:7, z:4)
+Tile(x:5, y:7, z:4)
+Tile(x:2, y:8, z:4)
+Tile(x:3, y:8, z:4)
+Tile(x:4, y:8, z:4)
+Tile(x:5, y:8, z:4)

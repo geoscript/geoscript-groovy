@@ -1,0 +1,13 @@
+
+Zoom Level: 1
+# of tiles: 4
+Bounds: (-2.0036395147881314E7,-2.0037471205137067E7,2.0036395147881314E7,2.003747120513706E7,EPSG:3857)
+Width / # Columns: 2
+Height / # Rows: 2
+MinX: 0, MinY: 0, MaxX: 1, MaxY: 1
+
+Tiles:
+Tile(x:0, y:0, z:1)
+Tile(x:1, y:0, z:1)
+Tile(x:0, y:1, z:1)
+Tile(x:1, y:1, z:1)

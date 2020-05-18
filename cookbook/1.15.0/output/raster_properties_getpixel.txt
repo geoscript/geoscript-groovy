@@ -1,0 +1,1 @@
+Pixel coordinates at POINT (-176.625 85.7249984741211) is 7.0, 9.0

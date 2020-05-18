@@ -1,0 +1,10 @@
+Accents
+Paired
+Set3
+Set2
+Set1
+Dark2
+Pastel2
+Pastel1
+BoldLandUse
+MutedTerrain
