@@ -3,6 +3,65 @@
 GeoScript Groovy Releases
 =========================
 
+1.15.0 (In progress)
+--------------------
+The 1.15 release of GeoScript is build on Groovy 3.0.3, GeoTools 23.0, and the Java Topology Suite 1.16.1 and requires Java 8.
+
+Add geoscript.carto package for building maps with cartographic elements like north arrows, text, and neatlines::
+
+    File file = new File("map.png")
+    file.withOutputStream { OutputStream outputStream ->
+        PageSize pageSize = PageSize.LETTER_LANDSCAPE
+
+        CartoFactories.findByName("png")
+            .create(pageSize)
+            .rectangle(new RectangleItem(0, 0, pageSize.width - 1, pageSize.height - 1)
+                .fillColor(Color.WHITE)
+            )
+            .map(new MapItem(20, 20, pageSize.width - 40, pageSize.height - 40).map(map))
+            .northArrow(new NorthArrowItem(pageSize.width - 60, pageSize.height - 100, 40, 80)
+                .font(new Font("Arial", Font.BOLD, 24))
+                .drawText(true))
+            .build(outputStream)
+
+    }
+
+.. image:: images/carto.png
+
+Raster.getBufferedImage()::
+
+    File file = new File("alki.tif")
+    GeoTIFF geoTIFF = new GeoTIFF(file)
+    Raster raster = geoTIFF.read()
+    BufferedImage image = raster.bufferedImage
+
+Add Schema alias for GeometryCollection.
+
+Add static Layer methods to create Layer from a Geometry or a List of Geometries::
+
+    Layer layer = Layer.fromGeometry("world", new Bounds(-180,-90,180,90).geometry)
+
+    Layer layer = Layer.fromGeometries("testPits", Geometry.createRandomPoints(new Bounds(-180,-90,180,90).geometry, 10).geometries)
+
+Update GeoDB dependency to for Java 8 compatability.
+
+Add Viewer.drawBase64String method::
+
+    def geom = Geometry.fromWKT("POINT (-111 45.7)").buffer(10)
+    String str = Viewer.drawToBase64EncodedString(geom)
+
+Add Flatgeobuf Workspace::
+
+    Workspace workspace = new FlatGeobuf(new File("flatgeobuf/files"))
+
+Create oval Vector grids::
+
+    Bounds bounds = new Bounds(-180,-90,180,90,"EPSG:4326")
+    double length = 20
+    Layer layer = Graticule.createOvals(bounds, length)
+
+.. image:: images/layer_graticule_oval.png
+
 1.14.0
 ------
 The 1.14 release of GeoScript is build on Groovy 2.5.8, GeoTools 22.0, and the Java Topology Suite 1.16.1 and requires Java 8.
