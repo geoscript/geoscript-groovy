@@ -3,8 +3,8 @@
 GeoScript Groovy Releases
 =========================
 
-1.15.0 (In progress)
---------------------
+1.15.0
+------
 The 1.15 release of GeoScript is build on Groovy 3.0.3, GeoTools 23.0, and the Java Topology Suite 1.16.1 and requires Java 8.
 
 Add geoscript.carto package for building maps with cartographic elements like north arrows, text, and neatlines::

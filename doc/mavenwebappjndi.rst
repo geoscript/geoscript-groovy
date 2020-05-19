@@ -1,4 +1,4 @@
-.. _mavenwebappjndi:
+    .. _mavenwebappjndi:
 
 Create GeoScript Web App with JNDI and Maven
 ============================================
@@ -42,7 +42,7 @@ Add geoscript as a dependency in the **pom.xml** file:
         <dependency>
             <groupId>org.geoscript</groupId>
             <artifactId>geoscript-groovy</artifactId>
-            <version>1.14.0</version>
+            <version>1.15.0</version>
         </dependency>
     <depenencies>
 

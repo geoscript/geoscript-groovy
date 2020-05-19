@@ -5,7 +5,7 @@
     <groupId>org.geoscript</groupId>
     <artifactId>geoscript-groovy</artifactId>
     <packaging>jar</packaging>
-    <version>1.15-SNAPSHOT</version>
+    <version>1.15.0</version>
     <repositories>
         <repository>
             <id>osgeo-releases</id>
@@ -513,7 +513,7 @@
         </plugins>
     </reporting>
     <properties>
-        <gt.version>23-SNAPSHOT</gt.version>
+        <gt.version>23.0</gt.version>
         <groovy.version>3.0.3</groovy.version>
     </properties>
     <name>geoscript groovy</name>

@@ -127,7 +127,7 @@ and then include the GeoScript Groovy dependency::
     <dependency>
         <groupId>org.geoscript</groupId>
         <artifactId>geoscript-groovy</artifactId>
-        <version>1.14.0</version>
+        <version>1.15.0</version>
     </dependency>
 
 Versions
@@ -136,7 +136,7 @@ Versions
 +-----------+----------+-----------+--------+----------+
 | GeoScript | GeoTools | GeoServer | JTS    | Groovy   |
 +-----------+----------+-----------+--------+----------+
-| 1.15      | 23       | 2.17      | 1.16.1 | 3.0.1    |
+| 1.15      | 23       | 2.17      | 1.16.1 | 3.0.3    |
 +-----------+----------+-----------+--------+----------+
 | 1.14      | 22       | 2.16      | 1.16.1 | 2.5.8    |
 +-----------+----------+-----------+--------+----------+
@@ -172,7 +172,7 @@ Versions
 API Groovy Docs
 ---------------
 
-`1.15-SNAPSHOT <http://geoscript.github.io/geoscript-groovy/api/1.15-SNAPSHOT/index.html>`_
+`1.15.0 <http://geoscript.github.io/geoscript-groovy/api/1.15.0/index.html>`_
 
 `1.14.0 <http://geoscript.github.io/geoscript-groovy/api/1.14.0/index.html>`_
 
