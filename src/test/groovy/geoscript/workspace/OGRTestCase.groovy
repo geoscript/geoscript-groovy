@@ -7,6 +7,7 @@ import geoscript.layer.Layer
 import geoscript.layer.Shapefile
 import org.geotools.data.ogr.OGRDataStore
 import org.geotools.data.ogr.jni.JniOGRDataStoreFactory
+import org.junit.Ignore
 import org.junit.Rule
 import org.junit.rules.TemporaryFolder
 
@@ -17,6 +18,7 @@ import org.junit.Test
  * The OGR Workspace Unit Test
  * @author Jared Erickson
  */
+@Ignore
 class OGRTestCase {
 
     @Rule
