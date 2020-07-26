@@ -1,24 +1,14 @@
 package geoscript.layer.io
 
-import org.locationtech.jts.algorithm.CGAlgorithms
+import no.ecc.vectortile.VectorTileDecoder
+import no.ecc.vectortile.VectorTileEncoder
+import org.geotools.geometry.jts.JTS
+import org.geotools.referencing.operation.transform.ProjectiveTransform
+import org.geotools.renderer.lite.RendererUtilities
 import org.locationtech.jts.geom.Coordinate
 import org.locationtech.jts.geom.Envelope
 import org.locationtech.jts.geom.Geometry as JtsGeometry
 import org.locationtech.jts.geom.GeometryFactory
-import org.locationtech.jts.geom.LinearRing
-import org.locationtech.jts.geom.Polygon
-import com.wdtinc.mapbox_vector_tile.VectorTile
-import com.wdtinc.mapbox_vector_tile.adapt.jts.IGeometryFilter
-import com.wdtinc.mapbox_vector_tile.adapt.jts.JtsAdapter
-import com.wdtinc.mapbox_vector_tile.adapt.jts.TagKeyValueMapConverter
-import com.wdtinc.mapbox_vector_tile.adapt.jts.TileGeomResult
-import com.wdtinc.mapbox_vector_tile.adapt.jts.UserDataKeyValueMapConverter
-import com.wdtinc.mapbox_vector_tile.adapt.jts.model.JtsLayer
-import com.wdtinc.mapbox_vector_tile.adapt.jts.model.JtsMvt
-import com.wdtinc.mapbox_vector_tile.adapt.jts.MvtReader as JtsMvtReader
-import com.wdtinc.mapbox_vector_tile.build.MvtLayerBuild
-import com.wdtinc.mapbox_vector_tile.build.MvtLayerParams
-import com.wdtinc.mapbox_vector_tile.build.MvtLayerProps
 import geoscript.feature.Feature
 import geoscript.feature.Field
 import geoscript.feature.Schema
@@ -30,6 +20,9 @@ import geoscript.proj.Projection
 import geoscript.workspace.Memory
 import org.geotools.renderer.crs.ProjectionHandler
 import org.geotools.renderer.crs.ProjectionHandlerFinder
+import org.opengis.referencing.operation.MathTransform
+
+import java.awt.Rectangle
 
 /**
  * A MapBox Vector Tile Reader and Writer
@@ -47,42 +40,39 @@ class Pbf {
      * @param b The Bounds
      */
     static List<Layer> read(Map options = [:], byte[] bytes, Bounds b) {
+
+        ProjectionHandler projectionHandler = ProjectionHandlerFinder.getHandler(b.env, b.proj.crs, true)
         Projection proj = options.get("proj", new Projection("EPSG:3857"))
         int tileSize = options.get("tileSize", 256)
         int extent = options.get("extent", 4096)
-        List<Layer> layers = []
-        GeometryFactory geometryFactory = new GeometryFactory()
-        ByteArrayInputStream inputStream = new ByteArrayInputStream(bytes)
-        JtsMvt jtsMvt = JtsMvtReader.loadMvt(inputStream, geometryFactory, new TagKeyValueMapConverter(), new NonValidatingRingClassifier())
 
-        jtsMvt.layers.each { JtsLayer jtsLayer ->
-            String name = jtsLayer.name
-            Layer layer
-            Schema schema
-            jtsLayer.geometries.eachWithIndex { JtsGeometry jtsGeometry, int i ->
-                Geometry geometry = fromPixel(Geometry.wrap(jtsGeometry), b, tileSize, extent)
-                ProjectionHandler projectionHandler = ProjectionHandlerFinder.getHandler(b.env, b.proj.crs, true)
+        Map<String, Layer> layers = [:]
+        VectorTileDecoder vectorTileDecoder = new VectorTileDecoder()
+        VectorTileDecoder.FeatureIterable  features = vectorTileDecoder.decode(bytes)
+        features.iterator().each { VectorTileDecoder.Feature vectorTileFeature ->
+            String layerName = vectorTileFeature.layerName
+            Geometry geometry = fromPixel(Geometry.wrap(vectorTileFeature.geometry), b, tileSize, extent)
+            if (!geometry.isEmpty()) {
                 if (projectionHandler) {
                     JtsGeometry processedGeom = projectionHandler.preProcess(geometry.g)
                     if (processedGeom) {
                         geometry = Geometry.wrap(processedGeom)
                     }
                 }
-                Map properties = jtsGeometry.userData as Map
-                properties.put("geometry", geometry)
-                Feature feature
-                if (!schema) {
-                    feature = new Feature(properties, "1")
-                    schema = new Schema(name, feature.schema.fields).reproject(proj)
-                    layer = new Memory().create(schema)
-                } else {
-                    feature = schema.feature(properties)
+                Map<String, Object> attributes = [geometry: geometry]
+                attributes.putAll(vectorTileFeature.attributes)
+                if (!layers.containsKey(layerName)) {
+                    Feature feature = new Feature(attributes, "1")
+                    Schema schema = new Schema(layerName, feature.schema.fields).reproject(proj)
+                    layers[layerName] = new Memory().create(schema)
                 }
+                Layer layer = layers[layerName]
+                Feature feature = layer.schema.feature(attributes)
                 layer.add(feature)
             }
-            layers.add(layer)
         }
-        layers
+
+        layers.values().toList()
     }
 
     /**
@@ -126,27 +116,19 @@ class Pbf {
         final double bufferHeight = b.env.height * 0.1f
         clipEnvelope.expandBy(bufferWidth, bufferHeight)
 
-        VectorTile.Tile.Builder tileBuilder = VectorTile.Tile.newBuilder()
-        MvtLayerParams mvtParams = MvtLayerParams.DEFAULT
-        GeometryFactory geometryFactory = new GeometryFactory()
-        IGeometryFilter geometryFilter = new IGeometryFilter() {
-            @Override
-            boolean accept(org.locationtech.jts.geom.Geometry geometry) {
-                true
-            }
-        }
-
+        VectorTileEncoder encoder = new VectorTileEncoder()
         layers.each { Layer layer ->
             Bounds projectedBounds = b.reproject(layer.proj)
             projectedBounds.expandBy(projectedBounds.width * 0.1f)
             Geometry boundsGeom = projectedBounds.geometry
             boolean isPoint = layer.schema.geom.typ.equalsIgnoreCase("point")
-            VectorTile.Tile.Layer.Builder layerBuilder = MvtLayerBuild.newLayerBuilder(layer.name, mvtParams)
-            MvtLayerProps layerProps = new MvtLayerProps()
+            // Intersects
             List<JtsGeometry> geometries = []
             layer.eachFeature(Filter.intersects(layer.schema.geom.name, boundsGeom), { Feature f ->
+                // Clip
                 Geometry geom = isPoint ? f.geom : f.geom.intersection(boundsGeom)
                 if (!geom.empty) {
+                    // Process
                     ProjectionHandler projectionHandler = ProjectionHandlerFinder.getHandler(b.env, layer.proj.crs, true)
                     if (projectionHandler) {
                         JtsGeometry processedGeom = projectionHandler.preProcess(geom.g)
@@ -154,6 +136,7 @@ class Pbf {
                             geom = Geometry.wrap(processedGeom)
                         }
                     }
+                    // Reproject
                     JtsGeometry geometry = Projection.transform(geom, layer.proj, b.proj).g
                     Map attributes = [:]
                     layer.schema.fields.each { Field fld ->
@@ -168,72 +151,16 @@ class Pbf {
                         }
                     }
                     geometry.userData = attributes
-
-                    TileGeomResult tileGeom = JtsAdapter.createTileGeom([geometry], b.env, clipEnvelope, geometryFactory, mvtParams, geometryFilter);
-                    geometries.addAll(tileGeom.mvtGeoms)
+                    // To Screen
+                    MathTransform worldToScreenTransform = ProjectiveTransform.create(RendererUtilities.worldToScreenTransform(b.env, new Rectangle(0,0, tileSize, tileSize)))
+                    geometry = JTS.transform(geometry, worldToScreenTransform)
+                    //Encode
+                    encoder.addFeature(layer.name, attributes, geometry)
                 }
             })
-
-            List<VectorTile.Tile.Feature> features = JtsAdapter.toFeatures(geometries, layerProps, new UserDataKeyValueMapConverter())
-            layerBuilder.addAllFeatures(features);
-            MvtLayerBuild.writeProps(layerBuilder, layerProps);
-
-            VectorTile.Tile.Layer vtLayer = layerBuilder.build()
-            tileBuilder.addLayers(vtLayer)
         }
 
-        VectorTile.Tile tile = tileBuilder.build()
-        byte[] bytes = tile.toByteArray()
-        bytes
-    }
-
-    private static final class NonValidatingRingClassifier implements com.wdtinc.mapbox_vector_tile.adapt.jts.MvtReader.RingClassifier {
-
-        @Override
-        public List<Polygon> classifyRings(List<LinearRing> rings, GeometryFactory geomFactory) {
-
-            final List<Polygon> polygons = new ArrayList<>();
-            final List<LinearRing> holes = new ArrayList<>();
-
-            double outerArea = 0d;
-            LinearRing outerPoly = null;
-
-            for(LinearRing r : rings) {
-
-                double area = CGAlgorithms.signedArea(r.getCoordinates());
-
-                if(area == 0d) {
-                    continue; // zero-area
-                }
-
-                if(area > 0d) {
-                    if(outerPoly != null) {
-                        polygons.add(geomFactory.createPolygon(outerPoly, holes.toArray(new LinearRing[holes.size()])));
-                        holes.clear();
-                    }
-
-                    // Pos --> CCW, Outer
-                    outerPoly = r;
-                    outerArea = area;
-                } else {
-
-                    if(Math.abs(outerArea) < Math.abs(area)) {
-                        continue; // Holes must have less area, could probably be handled in a isSimple() check
-                    }
-
-                    // Neg --> CW, Hole
-                    holes.add(r);
-                }
-            }
-
-            if(outerPoly != null) {
-                holes.toArray();
-                polygons.add(geomFactory.createPolygon(outerPoly, holes.toArray(new LinearRing[holes.size()])));
-            }
-
-            return polygons;
-        }
-
+        encoder.encode()
     }
 
 }
