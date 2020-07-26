@@ -1,5 +1,6 @@
 package geoscript.layer.io
 
+import geoscript.feature.Feature
 import geoscript.feature.Field
 import geoscript.feature.Schema
 import geoscript.geom.Bounds
@@ -20,6 +21,16 @@ import static org.junit.Assert.*
  * @author Jared Erickson
  */
 class PbfTestCase {
+
+    @Test void read() {
+        URL url = getClass().getClassLoader().getResource("pbf/1/1/0.pbf")
+
+        Pyramid pyramid = Pyramid.createGlobalMercatorPyramid()
+        Bounds bounds = pyramid.bounds(new Tile(1, 1, 0))
+
+        List<Layer> layers = Pbf.read(url.bytes, bounds)
+        assertTrue layers.size() > 0
+    }
 
     @Test void writeRead() {
         URL url = getClass().getClassLoader().getResource("states.shp")

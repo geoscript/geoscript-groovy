@@ -12,9 +12,10 @@ import static geoscript.GeoScript.unzip
 
 // Download data from natural earth
 File dataDir = new File("naturalearth")
+dataDir.mkdir()
 [
-        [name: "countries", url: "http://www.naturalearthdata.com/http//www.naturalearthdata.com/download/110m/cultural/ne_110m_admin_0_countries.zip"],
-        [name: "ocean",     url: "http://www.naturalearthdata.com/http//www.naturalearthdata.com/download/110m/physical/ne_110m_ocean.zip"]
+        [name: "countries", url: "https://www.naturalearthdata.com/http//www.naturalearthdata.com/download/110m/cultural/ne_110m_admin_0_countries.zip"],
+        [name: "ocean",     url: "https://www.naturalearthdata.com/http//www.naturalearthdata.com/download/110m/physical/ne_110m_ocean.zip"]
 ].each { Map item ->
     unzip(download(new URL(item.url), new File(dataDir, "${item.name}.zip"), overwrite: false))
 }
