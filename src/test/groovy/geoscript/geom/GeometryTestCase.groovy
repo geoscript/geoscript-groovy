@@ -506,7 +506,19 @@ class GeometryTestCase {
         assertTrue octalEnvelope.isValid()
         assertFalse octalEnvelope.isEmpty()
     }
-    
+
+    @Test void getMaximumInscribedCircle() {
+        Geometry g = Geometry.fromWKT("POLYGON ((-122.38855361938475 47.5805786829606, -122.38636493682861 47.5783206388176, " +
+                "-122.38700866699219 47.5750491969984, -122.38177299499512 47.57502024527343, " +
+                "-122.38481998443604 47.5780600889959, -122.38151550292969 47.5805786829606, " +
+                "-122.38855361938475 47.5805786829606))")
+        Geometry circle = g.getMaximumInscribedCircle(1.0)
+        assertNotNull circle
+        assertTrue circle.isValid()
+        assertFalse circle.isEmpty()
+        assertTrue(circle instanceof Polygon)
+    }
+
     /*@Test void createFromText() {
         Geometry g = Geometry.createFromText("B")
         assertEquals "Polygon", g.geometryType
