@@ -10,6 +10,7 @@ import org.locationtech.jts.geom.util.AffineTransformation
 import org.locationtech.jts.operation.buffer.BufferParameters
 import org.locationtech.jts.operation.buffer.BufferOp
 import org.locationtech.jts.awt.FontGlyphReader
+import org.locationtech.jts.operation.buffer.VariableBuffer
 import org.locationtech.jts.operation.overlay.snap.GeometrySnapper
 import geoscript.geom.io.Reader
 import geoscript.geom.io.Readers
@@ -86,6 +87,21 @@ class Geometry {
         params.quadrantSegments = quadrantSegments
         params.endCapStyle = endCapStyle
         wrap(BufferOp.bufferOp(g, distance, params))
+    }
+
+    /**
+     * Buffer the Geometry with variable sizes
+     * @param distances A List of buffer distances
+     * @return A variable width buffer
+     */
+    Geometry variableBuffer(List<Double> distances) {
+        if (distances.size() == 2) {
+            Geometry.wrap(VariableBuffer.buffer(g, distances[0], distances[1]))
+        } else if (distances.size() == 3) {
+            Geometry.wrap(VariableBuffer.buffer(g, distances[0], distances[1], distances[2]))
+        }  else {
+            Geometry.wrap(VariableBuffer.buffer(g, distances as double[]))
+        }
     }
 
     /**
