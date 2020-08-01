@@ -1,5 +1,6 @@
 package geoscript.geom
 
+import org.locationtech.jts.algorithm.construct.MaximumInscribedCircle
 import org.locationtech.jts.geom.Geometry as JtsGeometry
 import org.locationtech.jts.geom.GeometryFactory
 import org.locationtech.jts.geom.Coordinate
@@ -510,6 +511,18 @@ class Geometry {
     Geometry getOctagonalEnvelope() {
         def oct = new org.locationtech.jts.geom.OctagonalEnvelope(g)
         Geometry.wrap(oct.toGeometry(factory))
+    }
+
+    /**
+     * Get the maximum inscribed circle for this Geometry
+     * @param tolerance The tolerance which defaults to 1.0
+     * @return The maximum inscribed circle
+     */
+    Geometry getMaximumInscribedCircle(double tolerance = 1.0) {
+        MaximumInscribedCircle algorithm = new MaximumInscribedCircle(g, tolerance)
+        def radiusLineString = algorithm.getRadiusLine()
+        def centerPoint = radiusLineString.getStartPoint()
+        Geometry.wrap(centerPoint.buffer(radiusLineString.getLength()))
     }
 
     /**
