@@ -1,5 +1,6 @@
 package geoscript.geom
 
+import org.locationtech.jts.algorithm.construct.LargestEmptyCircle
 import org.locationtech.jts.algorithm.construct.MaximumInscribedCircle
 import org.locationtech.jts.geom.Geometry as JtsGeometry
 import org.locationtech.jts.geom.GeometryFactory
@@ -520,6 +521,18 @@ class Geometry {
      */
     Geometry getMaximumInscribedCircle(double tolerance = 1.0) {
         MaximumInscribedCircle algorithm = new MaximumInscribedCircle(g, tolerance)
+        def radiusLineString = algorithm.getRadiusLine()
+        def centerPoint = radiusLineString.getStartPoint()
+        Geometry.wrap(centerPoint.buffer(radiusLineString.getLength()))
+    }
+
+    /**
+     * Get the largest empty circle for this Geometry
+     * @param tolerance The tolerance which defaults to 1.0
+     * @return The largest empty circle
+     */
+    Geometry getLargestEmptyCircle(double tolerance = 1.0) {
+        LargestEmptyCircle algorithm = new LargestEmptyCircle(g, tolerance)
         def radiusLineString = algorithm.getRadiusLine()
         def centerPoint = radiusLineString.getStartPoint()
         Geometry.wrap(centerPoint.buffer(radiusLineString.getLength()))
