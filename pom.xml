@@ -507,7 +507,7 @@
         </plugins>
     </reporting>
     <properties>
-        <gt.version>24-SNAPSHOT</gt.version>
+        <gt.version>24.0</gt.version>
         <groovy.version>3.0.5</groovy.version>
     </properties>
     <name>geoscript groovy</name>

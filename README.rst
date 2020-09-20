@@ -136,7 +136,7 @@ Versions
 +-----------+----------+-----------+--------+----------+
 | GeoScript | GeoTools | GeoServer | JTS    | Groovy   |
 +-----------+----------+-----------+--------+----------+
-| 1.16      | 24       | 2.18      | 1.17.0 | 3.0.5    |
+| 1.16      | 24       | 2.18      | 1.17.1 | 3.0.5    |
 +-----------+----------+-----------+--------+----------+
 | 1.15      | 23       | 2.17      | 1.16.1 | 3.0.3    |
 +-----------+----------+-----------+--------+----------+
@@ -174,7 +174,7 @@ Versions
 API Groovy Docs
 ---------------
 
-`1.16-SNAPSHOT <http://geoscript.github.io/geoscript-groovy/api/1.16-SNAPSHOT/index.html>`_
+`1.16.0 <http://geoscript.github.io/geoscript-groovy/api/1.16.0/index.html>`_
 
 `1.15.0 <http://geoscript.github.io/geoscript-groovy/api/1.15.0/index.html>`_
 

@@ -3,6 +3,18 @@
 GeoScript Groovy Releases
 =========================
 
+1.16.0
+------
+The 1.16 release of GeoScript is build on Groovy 3.0.5, GeoTools 24.0, and the Java Topology Suite 1.17.1 and requires Java 8.
+
+HPRtree Spatial Index.
+
+Geometry largest empty circle.
+
+Geometry maximum inscribed circle
+
+Geometry variable buffer
+
 1.15.0
 ------
 The 1.15 release of GeoScript is build on Groovy 3.0.3, GeoTools 23.0, and the Java Topology Suite 1.16.1 and requires Java 8.
