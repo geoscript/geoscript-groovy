@@ -5,7 +5,7 @@
     <groupId>org.geoscript</groupId>
     <artifactId>geoscript-groovy</artifactId>
     <packaging>jar</packaging>
-    <version>1.16-SNAPSHOT</version>
+    <version>1.16.0</version>
     <repositories>
         <repository>
             <id>osgeo-releases</id>
