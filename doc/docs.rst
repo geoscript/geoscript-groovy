@@ -8,6 +8,8 @@ Cookbook
 API Docs
 ========
 
+`1.16.0 <http://geoscript.github.io/geoscript-groovy/api/1.16.0/index.html>`_
+
 `1.15.0 <http://geoscript.github.io/geoscript-groovy/api/1.15.0/index.html>`_
 
 `1.14.0 <http://geoscript.github.io/geoscript-groovy/api/1.14.0/index.html>`_
