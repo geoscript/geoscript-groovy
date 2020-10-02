@@ -1,0 +1,4 @@
+CsvPyramidReader
+GdalTmsPyramidReader
+JsonPyramidReader
+XmlPyramidReader

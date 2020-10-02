@@ -1,0 +1,4 @@
+
+The Washington Layer  has 50 features 
+The Oregon Layer  has 50 features
+The merged Layer has 100 features

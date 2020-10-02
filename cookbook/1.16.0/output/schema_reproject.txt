@@ -1,0 +1,1 @@
+cities_spws geom: Point(EPSG:2927), id: Integer, name: String

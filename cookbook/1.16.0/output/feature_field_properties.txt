@@ -1,0 +1,4 @@
+Name = geom
+Type = Point
+Projection = "EPSG:4326
+Is Geometry = true

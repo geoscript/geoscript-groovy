@@ -1,0 +1,29 @@
+RED_BAND
+  Min = 0.0
+  Max = 255.0
+  No Data = [0.0]
+  Is No Data = false
+  Unit = null
+  Scale = 1.0
+  Offset = 0.0
+  Type = byte
+
+GREEN_BAND
+  Min = 0.0
+  Max = 255.0
+  No Data = [0.0]
+  Is No Data = false
+  Unit = null
+  Scale = 1.0
+  Offset = 0.0
+  Type = byte
+
+BLUE_BAND
+  Min = 0.0
+  Max = 255.0
+  No Data = [0.0]
+  Is No Data = false
+  Unit = null
+  Scale = 1.0
+  Offset = 0.0
+  Type = byte

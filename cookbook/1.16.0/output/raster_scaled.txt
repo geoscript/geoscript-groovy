@@ -1,0 +1,2 @@
+Original Raster Size = 800x400
+Scaled Raster Size = 400x200

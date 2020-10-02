@@ -1,0 +1,1 @@
+feature.city.1 name: Seattle, id: 1, geom: POINT (-122.3204 47.6024)

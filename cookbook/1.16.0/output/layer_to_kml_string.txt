@@ -1,0 +1,67 @@
+<kml:kml xmlns:kml="http://www.opengis.net/kml/2.2">
+  <kml:Document>
+    <kml:Folder>
+      <kml:name>
+        cities
+      </kml:name>
+      <kml:Schema kml:name="cities" kml:id="cities">
+        <kml:SimpleField kml:name="id" kml:type="Integer"/>
+        <kml:SimpleField kml:name="name" kml:type="String"/>
+      </kml:Schema>
+      <kml:Placemark>
+        <kml:name>
+          fid-10697b4f_174e16454b5_-59ea
+        </kml:name>
+        <kml:Style>
+          <kml:IconStyle>
+            <kml:color>
+              ff0000ff
+            </kml:color>
+          </kml:IconStyle>
+        </kml:Style>
+        <kml:ExtendedData>
+          <kml:SchemaData kml:schemaUrl="#cities">
+            <kml:SimpleData kml:name="id">
+              1
+            </kml:SimpleData>
+            <kml:SimpleData kml:name="name">
+              Seattle
+            </kml:SimpleData>
+          </kml:SchemaData>
+        </kml:ExtendedData>
+        <kml:Point>
+          <kml:coordinates>
+            -122.3204,47.6024
+          </kml:coordinates>
+        </kml:Point>
+      </kml:Placemark>
+      <kml:Placemark>
+        <kml:name>
+          fid-10697b4f_174e16454b5_-59e8
+        </kml:name>
+        <kml:Style>
+          <kml:IconStyle>
+            <kml:color>
+              ff0000ff
+            </kml:color>
+          </kml:IconStyle>
+        </kml:Style>
+        <kml:ExtendedData>
+          <kml:SchemaData kml:schemaUrl="#cities">
+            <kml:SimpleData kml:name="id">
+              2
+            </kml:SimpleData>
+            <kml:SimpleData kml:name="name">
+              Tacoma
+            </kml:SimpleData>
+          </kml:SchemaData>
+        </kml:ExtendedData>
+        <kml:Point>
+          <kml:coordinates>
+            -122.48416,47.2619
+          </kml:coordinates>
+        </kml:Point>
+      </kml:Placemark>
+    </kml:Folder>
+  </kml:Document>
+</kml:kml>

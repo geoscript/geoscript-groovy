@@ -1,0 +1,11 @@
+name: Default Styler
+feature-styles:
+- name: name
+  rules:
+  - scale: [min, max]
+    symbolizers:
+    - polygon:
+        fill-color: '#FFFFFF'
+    - line:
+        stroke-color: '#000000'
+        stroke-width: 0.5

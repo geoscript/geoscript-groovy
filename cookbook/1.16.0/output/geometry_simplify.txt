@@ -1,0 +1,2 @@
+# of points in original geometry = 13
+# of points in simplified geometry = 5
