@@ -262,15 +262,15 @@ class WorkspaceTestCase {
     }
 
     @Test void withWorkspace() {
-        Workspace.withWorkspace(["dbtype": "h2", "database": folder.newFile("roads.db").absolutePath]) { Workspace w ->
+        Workspace.withWorkspace(["dbtype": "h2", "database": folder.newFile("roads_1.db").absolutePath]) { Workspace w ->
             assertNotNull w
             assertEquals "H2", w.format
         }
-        Workspace.withWorkspace("dbtype=h2 database=" + folder.newFile("roads.db").absolutePath) { Workspace w ->
+        Workspace.withWorkspace("dbtype=h2 database=" + folder.newFile("roads_2.db").absolutePath) { Workspace w ->
             assertNotNull w
             assertEquals "H2", w.format
         }
-        Workspace.withWorkspace(new H2(folder.newFile("roads.db").absolutePath)) { Workspace w ->
+        Workspace.withWorkspace(new H2(folder.newFile("roads_3.db").absolutePath)) { Workspace w ->
             assertNotNull w
             assertEquals "H2", w.format
         }

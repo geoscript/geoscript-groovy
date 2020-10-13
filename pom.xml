@@ -333,7 +333,7 @@
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
-            <version>4.7</version>
+            <version>4.13.1</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -475,7 +475,7 @@
                             <goal>shade</goal>
                         </goals>
                         <configuration>
-                            <finalName>geoscript-app-${project.version}</finalName>
+                            <finalName>geoscript-groovy-app-${project.version}</finalName>
                             <transformers>
                                 <transformer implementation="org.apache.maven.plugins.shade.resource.GroovyResourceTransformer">
                                     <extModuleName>groovy-module</extModuleName>

@@ -29,7 +29,7 @@ class NorthArrowItemTest {
         assertEquals(Color.WHITE, item.fillColor1)
         assertEquals(Color.RED, item.strokeColor2)
         assertEquals(Color.YELLOW, item.fillColor2)
-        assertEquals(1.2f, item.strokeWidth, 0.1)
+        assertEquals(1.2f, item.strokeWidth, 0.1f)
         assertTrue(item.drawText)
         assertEquals(Color.BLUE, item.textColor)
         assertTrue(item.toString().startsWith("NorthArrowItem(x = 10, y = 20, width = 300, height = 400, " +

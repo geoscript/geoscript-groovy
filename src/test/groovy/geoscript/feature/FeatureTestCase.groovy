@@ -119,16 +119,16 @@ class FeatureTestCase {
 
         Feature f2 = s1.feature([geom: new Point(121,-49), price: 15.6, name: "Test"])
         f1.set(f2)
-        assertEquals f2['price'], f1['price'], 0.1
+        assertEquals f2['price'], f1['price'], 0.1f
         assertEquals f2['name'], f1['name']
         assertEquals f2.geom.wkt, f1.geom.wkt
         // Values from map
         f1.set([price: 1200.5, name: "Car"])
-        assertEquals 1200.5, f1['price'], 0.1
+        assertEquals 1200.5f, f1['price'], 0.1f
         assertEquals "Car", f1['name']
         // Values from named parameters
         f1.set(price: 12.2, name: "Book")
-        assertEquals 12.2, f1['price'], 0.1
+        assertEquals 12.2f, f1['price'], 0.1f
         assertEquals "Book", f1['name']
     }
 

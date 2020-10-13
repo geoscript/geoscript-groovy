@@ -78,7 +78,7 @@ class GradientTestCase {
         assertNotNull(sym1)
         assertEquals(5, sym1.parts.size())
 
-        File imgFile1 = folder.newFile("states.png")
+        File imgFile1 = folder.newFile("states1.png")
         shapefile.style = sym1
         map.render(imgFile1)
 
@@ -86,7 +86,7 @@ class GradientTestCase {
         assertNotNull(sym2)
         assertEquals(7, sym2.parts.size())
 
-        File imgFile2 = folder.newFile("states.png")
+        File imgFile2 = folder.newFile("states2.png")
         shapefile.style = sym2
         map.render(imgFile2)
     }

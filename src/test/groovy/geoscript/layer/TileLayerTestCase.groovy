@@ -10,6 +10,7 @@ import org.junit.Test
 import org.junit.rules.TemporaryFolder
 
 import javax.imageio.ImageIO
+import java.nio.file.Files
 
 import static junit.framework.Assert.*
 
@@ -328,25 +329,25 @@ class TileLayerTestCase {
     @Test
     void getTileLayerFromString() {
         // MBTiles params
-        File file = folder.newFile('test.mbtiles')
+        File file = folder.newFile('test48.mbtiles')
         file.delete()
         TileLayer tileLayer = TileLayer.getTileLayer("type=mbtiles file=${file.absolutePath}")
         assertNotNull(tileLayer)
         assertTrue(tileLayer instanceof MBTiles)
         // MBTiles file
-        file = folder.newFile('test.mbtiles')
+        file = folder.newFile('test10.mbtiles')
         file.delete()
         tileLayer = TileLayer.getTileLayer(file.absolutePath)
         assertNotNull(tileLayer)
         assertTrue(tileLayer instanceof MBTiles)
         // GeoPackage params
-        file = folder.newFile('test.gpkg')
+        file = folder.newFile('test69.gpkg')
         file.delete()
         tileLayer = TileLayer.getTileLayer("type=geopackage file=${file.absolutePath}")
         assertNotNull(tileLayer)
         assertTrue(tileLayer instanceof GeoPackage)
         // GeoPackage file
-        file = folder.newFile('test.gpkg')
+        file = folder.newFile('test19.gpkg')
         file.delete()
         tileLayer = TileLayer.getTileLayer(file.absolutePath)
         assertNotNull(tileLayer)
@@ -414,24 +415,24 @@ class TileLayerTestCase {
     @Test
     void getTileLayerFromParams() {
         // MBTiles (file doesn't exist)
-        File file = folder.newFile('test.mbtiles')
+        File file = folder.newFile('test45.mbtiles')
         file.delete()
         TileLayer tileLayer = TileLayer.getTileLayer([type: 'mbtiles', file: file])
         assertNotNull(tileLayer)
         assertTrue(tileLayer instanceof MBTiles)
         // MBTiles (empty file)
-        file = folder.newFile('test.mbtiles')
+        file = folder.newFile('test23.mbtiles')
         tileLayer = TileLayer.getTileLayer([type: 'mbtiles', file: file])
         assertNotNull(tileLayer)
         assertTrue(tileLayer instanceof MBTiles)
         // GeoPackage (file doesn't exist)
-        file = folder.newFile('test.gpkg')
+        file = folder.newFile('test67.gpkg')
         file.delete()
         tileLayer = TileLayer.getTileLayer([type: 'geopackage', file: file])
         assertNotNull(tileLayer)
         assertTrue(tileLayer instanceof GeoPackage)
         // GeoPackage (empty file)
-        file = folder.newFile('test.gpkg')
+        file = folder.newFile('test34.gpkg')
         file.delete()
         tileLayer = TileLayer.getTileLayer([type: 'geopackage', file: file])
         assertNotNull(tileLayer)
@@ -476,21 +477,21 @@ class TileLayerTestCase {
         File file
         Layer layer = new Shapefile(new File(getClass().getClassLoader().getResource("states.mbtiles").toURI()))
         // MBTiles
-        file = folder.newFile('test.mbtiles')
+        file = folder.newFile('test1.mbtiles')
         file.delete()
         tileLayer = TileLayer.getTileLayer("type=mbtiles file=${file.absolutePath}")
         tileRenderer = TileLayer.getTileRenderer(tileLayer, layer)
         assertNotNull(tileRenderer)
         assertTrue(tileRenderer instanceof ImageTileRenderer)
         // GeoPackage params
-        file = folder.newFile('test.gpkg')
+        file = folder.newFile('test1.gpkg')
         file.delete()
         tileLayer = TileLayer.getTileLayer("type=geopackage file=${file.absolutePath}")
         tileRenderer = TileLayer.getTileRenderer(tileLayer, layer)
         assertNotNull(tileRenderer)
         assertTrue(tileRenderer instanceof ImageTileRenderer)
         // GeoPackage file
-        file = folder.newFile('test.gpkg')
+        file = folder.newFile('test2.gpkg')
         file.delete()
         tileLayer = TileLayer.getTileLayer(file.absolutePath)
         tileRenderer = TileLayer.getTileRenderer(tileLayer, layer)

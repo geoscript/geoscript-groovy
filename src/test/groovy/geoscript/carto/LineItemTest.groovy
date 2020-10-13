@@ -20,7 +20,7 @@ class LineItemTest {
         assertEquals(300, item.width)
         assertEquals(400, item.height)
         assertEquals(Color.BLUE, item.strokeColor)
-        assertEquals(2f, item.strokeWidth, 0.1)
+        assertEquals(2f, item.strokeWidth, 0.1f)
         assertEquals("LineItem(x = 10, y = 20, width = 300, height = 400, " +
                 "stroke-color = java.awt.Color[r=0,g=0,b=255], stroke-width = 2.0)", item.toString())
     }

@@ -50,13 +50,6 @@ class H2TestCase {
         l.add([new Point(3,3), "three"])
         assertEquals 3, l.count()
         h2.close()
-
-        h2 = new H2(folder.newFile("h2.db"))
-        assertEquals "H2", h2.format
-        assertTrue h2.names.contains("widgets")
-        l = h2.get("widgets")
-        assertEquals 3, l.count()
-        h2.close()
     }
 
     @Test void add() {

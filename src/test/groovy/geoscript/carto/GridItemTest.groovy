@@ -3,10 +3,8 @@ package geoscript.carto
 import org.junit.Test
 
 import java.awt.*
-import java.text.SimpleDateFormat
 
 import static org.junit.Assert.assertEquals
-import static org.junit.Assert.assertTrue
 
 class GridItemTest {
 
@@ -24,7 +22,7 @@ class GridItemTest {
         assertEquals(400, item.height)
         assertEquals(20, item.size)
         assertEquals(Color.BLUE, item.strokeColor)
-        assertEquals(2f, item.strokeWidth, 0.1)
+        assertEquals(2f, item.strokeWidth, 0.1f)
         assertEquals("GridItem(x = 10, y = 20, width = 300, height = 400, size = 20, " +
                 "stroke-color = java.awt.Color[r=0,g=0,b=255], stroke-width = 2.0)", item.toString())
     }
