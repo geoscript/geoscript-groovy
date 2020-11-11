@@ -166,5 +166,12 @@ class ProjectionTestCase {
     @Test void hasEpsgExtension() {
         assertNotNull new Projection("EPSG:104905")
     }
+
+    @Test void toMeters() {
+        Projection p = new Projection("EPSG:2927")
+        double meters = p.toMeters(5280)
+        assertEquals(1609.3472, meters, 0.001)
+    }
+
 }
 

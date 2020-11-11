@@ -5,6 +5,7 @@ import geoscript.geom.Bounds
 import org.geotools.geometry.jts.GeometryCoordinateSequenceTransformer
 import org.geotools.metadata.iso.citation.Citations
 import org.geotools.referencing.CRS
+import org.geotools.renderer.lite.RendererUtilities
 import org.opengis.referencing.crs.CoordinateReferenceSystem
 import org.opengis.referencing.operation.MathTransform
 
@@ -126,6 +127,15 @@ class Projection {
         } else {
             null
         }
+    }
+
+    /**
+     * Convert a distance in the Projection's native units to meters.
+     * @param distance A distance in the Projection's native units
+     * @return The distance in meters
+     */
+    double toMeters(double distance) {
+        RendererUtilities.toMeters(distance, crs)
     }
 
     /**
