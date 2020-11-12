@@ -15,8 +15,6 @@ class ServerTestUtil {
         }
     }
 
-
-
     static File getResource(String resource) {
         new File(ServerTestUtil.getClassLoader().getResource(resource).toURI())
     }
