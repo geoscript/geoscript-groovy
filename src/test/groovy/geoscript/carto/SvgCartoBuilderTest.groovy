@@ -35,7 +35,6 @@ class SvgCartoBuilderTest {
                 .rectangle(new RectangleItem(20, 20, 752, 80))
                 .text(new TextItem(30, 50, 200, 20).text("Map Title").font(new Font("Arial", Font.BOLD, 36)))
                 .dateText(new DateTextItem(30, 85, 200, 10).font(new Font("Arial", Font.ITALIC, 18)))
-                .scaleText(new ScaleTextItem(150, 85, 200, 10).map(map).font(new Font("Arial", Font.ITALIC, 18)))
                 .paragraph(new ParagraphItem(250, 30, 380, 70).text("""Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
 in the Software without restriction, including without limitation the rights
@@ -59,6 +58,8 @@ all copies or substantial portions of the Software.
                     .row([[ID: 3, Name: "Three"]])
                 )
                 .legend(new LegendItem(640, 500, 120,80).addMap(map))
+                .scaleText(new ScaleTextItem(150, 85, 200, 10).map(map).font(new Font("Arial", Font.ITALIC, 18)))
+                .scaleBar(new ScaleBarItem(50, 125, 200, 20).map(map))
                 .build(outputStream)
         }
     }

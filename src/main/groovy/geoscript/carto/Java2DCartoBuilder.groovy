@@ -340,6 +340,56 @@ class Java2DCartoBuilder implements CartoBuilder {
     }
 
     @Override
+    CartoBuilder scaleBar(ScaleBarItem scaleBarItem) {
+
+        int x = scaleBarItem.x
+        int y = scaleBarItem.y
+        int width = scaleBarItem.width
+        int height = scaleBarItem.height
+        int border = 5
+        Font font = scaleBarItem.font
+        Color strokeColor = scaleBarItem.strokeColor
+        Color fillColor = scaleBarItem.fillColor
+        int strokeWidth = scaleBarItem.strokeWidth
+        int ticHeight = 10
+
+        ScaleBarItem.ScaleBarInfo scaleBarInfo = scaleBarItem.calculateScaleBarInfo()
+
+        // Check if the scalebar width matches the item width
+        int padding = 0
+        if (scaleBarInfo.widthInPixels == scaleBarItem.width) {
+            padding = 5
+        }
+
+        Rectangle r = new Rectangle(x,y,width,height)
+        int lineXStart = (int)((r.x + r.width / 2) - scaleBarInfo.widthInPixels / 2) + padding
+        int lineXEnd = (int)(lineXStart + scaleBarInfo.widthInPixels)
+        int lineY = y + height - border
+
+        if (fillColor) {
+            graphics.color = fillColor
+            graphics.fillRect(lineXStart - border, y, lineXEnd - lineXStart + border * 2, height)
+        }
+        graphics.color = strokeColor
+        graphics.stroke = new BasicStroke(strokeWidth)
+        graphics.drawRect(lineXStart - border, y, lineXEnd - lineXStart + border * 2, height)
+
+        graphics.drawLine(lineXStart, lineY, lineXEnd, lineY)
+        graphics.drawLine(lineXStart, y + height - border, lineXStart, y + height - border - ticHeight)
+        graphics.drawLine(lineXEnd, y + height - border, lineXEnd, y + height - border - ticHeight)
+        graphics.font = font
+        String scaleText = "${(int) scaleBarInfo.widthInUnits} ${scaleBarInfo.unitForScaleText}"
+        drawString(scaleText, new Rectangle(
+            lineXStart,
+            y + border,
+            (int) scaleBarInfo.widthInPixels,
+            height - border * 2
+        ), HorizontalAlign.CENTER, VerticalAlign.MIDDLE)
+
+        this
+    }
+
+    @Override
     CartoBuilder table(TableItem tableItem) {
 
         // Draw Headers

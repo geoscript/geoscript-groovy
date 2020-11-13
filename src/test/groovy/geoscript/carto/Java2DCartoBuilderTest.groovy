@@ -28,7 +28,31 @@ class Java2DCartoBuilderTest {
     @Rule
     public TemporaryFolder temporaryFolder = new TemporaryFolder()
 
-    boolean showInTarget = true
+    boolean showInTarget = false
+
+    @Test
+    void drawScaleBarMiles() {
+        File fileForShapefile = new File(getClass().getClassLoader().getResource("states.shp").toURI())
+        Shapefile shapefile = new Shapefile(fileForShapefile)
+        Map map = new Map(layers: [shapefile])
+        draw(new PageSize(400, 300), "scalebar_miles.png", { PageSize pageSize, Java2DCartoBuilder builder ->
+            builder
+                .map(new MapItem(0,0,400,300).map(map))
+                .scaleBar(new ScaleBarItem(10,10,200,20).map(map).units(ScaleBarItem.Units.US))
+        })
+    }
+
+    @Test
+    void drawScaleBarMetric() {
+        File fileForShapefile = new File(getClass().getClassLoader().getResource("states.shp").toURI())
+        Shapefile shapefile = new Shapefile(fileForShapefile)
+        Map map = new Map(layers: [shapefile])
+        draw(new PageSize(400, 300), "scalebar_metric.png", { PageSize pageSize, Java2DCartoBuilder builder ->
+            builder
+                .map(new MapItem(0,0,400,300).map(map))
+                .scaleBar(new ScaleBarItem(10,10,200,20).map(map).units(ScaleBarItem.Units.METRIC))
+        })
+    }
 
     @Test
     void drawNorthArrow() {

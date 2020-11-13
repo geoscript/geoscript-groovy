@@ -77,6 +77,13 @@ interface CartoBuilder {
     CartoBuilder scaleText(ScaleTextItem scaleTextItem)
 
     /**
+     * Add scale bar
+     * @param scaleBarItem The ScaleBarItem
+     * @return The CartoBuilder
+     */
+    CartoBuilder scaleBar(ScaleBarItem scaleBarItem)
+
+    /**
      * Add a grid (usually for visually placing other items)
      * @param gridItem The GridItem
      * @return The CartoBuilder

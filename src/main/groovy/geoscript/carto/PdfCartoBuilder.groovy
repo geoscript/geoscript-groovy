@@ -96,6 +96,12 @@ class PdfCartoBuilder implements CartoBuilder {
     }
 
     @Override
+    CartoBuilder scaleBar(ScaleBarItem scaleBarItem) {
+        java2DCartoBuilder.scaleBar(scaleBarItem)
+        this
+    }
+
+    @Override
     CartoBuilder grid(GridItem gridItem) {
         java2DCartoBuilder.grid(gridItem)
         this
