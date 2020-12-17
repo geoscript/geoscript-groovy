@@ -39,7 +39,6 @@ class JsonMapReader implements MapReader {
             type: values.get("type", "png"),
             backgroundColor: values.get("backgroundColor"),
             fixAspectRatio: values.get("fixAspectRation", true),
-            proj: values.get("proj"),
             layers: Renderables.getRenderables(values.get("layers"))
         )
         if (values.get("proj")) {
