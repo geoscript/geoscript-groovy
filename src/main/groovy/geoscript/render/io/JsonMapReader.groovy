@@ -33,13 +33,22 @@ class JsonMapReader implements MapReader {
     GMap read(String str) {
         JsonSlurper jsonSlurper = new JsonSlurper()
         Map values = jsonSlurper.parseText(str)
+        read(values)
+    }
+
+    /**
+     * Read a GeoScript Map from a map of values
+     * @param values A Map of values
+     * @return A GeoScript Map
+     */
+    GMap read(Map values) {
         GMap map = new GMap(
-            width: values.get("width", 600),
-            height: values.get("height", 400),
-            type: values.get("type", "png"),
-            backgroundColor: values.get("backgroundColor"),
-            fixAspectRatio: values.get("fixAspectRation", true),
-            layers: Renderables.getRenderables(values.get("layers"))
+                width: values.get("width", 600),
+                height: values.get("height", 400),
+                type: values.get("type", "png"),
+                backgroundColor: values.get("backgroundColor"),
+                fixAspectRatio: values.get("fixAspectRation", true),
+                layers: Renderables.getRenderables(values.get("layers"))
         )
         if (values.get("proj")) {
             map.proj = values.get("proj")

@@ -4,6 +4,7 @@ import geoscript.geom.Bounds
 import geoscript.layer.Renderables
 import geoscript.render.Map as GMap
 import groovy.xml.XmlSlurper
+import groovy.xml.slurpersupport.GPathResult
 
 /**
  * Read a Map from an XML String.
@@ -38,24 +39,28 @@ class XmlMapReader implements MapReader {
     @Override
     GMap read(String str) {
         XmlSlurper xmlSlurper = new XmlSlurper()
-        def xml = xmlSlurper.parseText(str)
+        GPathResult xml = xmlSlurper.parseText(str)
+        read(xml)
+    }
+
+    GMap read(GPathResult xml) {
         GMap map = new GMap(
-            width: getInt(xml.width?.text()?.toString(), 600),
-            height: getInt(xml.height?.text()?.toString(), 400),
-            type: xml.type?.text() ?: "png",
-            backgroundColor: xml.backgroundColor?.text(),
-            fixAspectRatio: getBoolean(xml.fixAspectRatio?.text(), true),
-            layers: Renderables.getRenderables(getLayerMaps(xml.layers))
+                width: getInt(xml.width?.text()?.toString(), 600),
+                height: getInt(xml.height?.text()?.toString(), 400),
+                type: xml.type?.text() ?: "png",
+                backgroundColor: xml.backgroundColor?.text(),
+                fixAspectRatio: getBoolean(xml.fixAspectRatio?.text(), true),
+                layers: Renderables.getRenderables(getLayerMaps(xml.layers))
         )
         if (xml.proj?.text()) {
             map.proj = xml.proj.text()
         }
         if (xml.bounds?.text()) {
             Map bounds = [
-                minX: xml.bounds.minX.text() as double,
-                minY: xml.bounds.minY.text() as double,
-                maxX: xml.bounds.maxX.text() as double,
-                maxY: xml.bounds.maxY.text() as double
+                    minX: xml.bounds.minX.text() as double,
+                    minY: xml.bounds.minY.text() as double,
+                    maxX: xml.bounds.maxX.text() as double,
+                    maxY: xml.bounds.maxY.text() as double
             ]
             map.bounds = new Bounds(bounds.minX, bounds.minY, bounds.maxX, bounds.maxY, bounds?.proj)
         }
