@@ -1,6 +1,3 @@
-.. image:: https://travis-ci.org/geoscript/geoscript-groovy.svg?branch=master
-    :target: https://travis-ci.org/geoscript/geoscript-groovy
-
 .. image:: https://github.com/geoscript/geoscript-groovy/workflows/Maven%20Build/badge.svg
     :target: https://github.com/geoscript/geoscript-groovy/actions
 
@@ -226,7 +223,7 @@ Presentations
 Build Servers
 -------------
 
-https://travis-ci.org/github/geoscript/geoscript-groovy
+https://github.com/geoscript/geoscript-groovy/actions
 
 https://build.geoserver.org/job/geoscript-groovy/
 
