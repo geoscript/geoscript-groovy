@@ -6,6 +6,11 @@ import static org.junit.Assert.*
 
 class JsonMapReaderTestCase {
 
+    @Test void getName() {
+        MapReader mapReader = new JsonMapReader()
+        assertEquals("json", mapReader.name)
+    }
+
     @Test void readWithOptions() {
         MapReader mapReader = new JsonMapReader()
         String dir = new File("src/test/resources").absolutePath

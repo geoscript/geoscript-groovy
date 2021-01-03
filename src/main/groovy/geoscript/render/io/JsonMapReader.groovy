@@ -30,6 +30,11 @@ import groovy.json.JsonSlurper
 class JsonMapReader implements MapReader {
 
     @Override
+    String getName() {
+        "json"
+    }
+
+    @Override
     GMap read(String str) {
         JsonSlurper jsonSlurper = new JsonSlurper()
         Map values = jsonSlurper.parseText(str)

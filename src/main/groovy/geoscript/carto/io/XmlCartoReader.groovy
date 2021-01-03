@@ -36,6 +36,11 @@ import java.text.SimpleDateFormat
 class XmlCartoReader implements CartoReader {
 
     @Override
+    String getName() {
+        "xml"
+    }
+
+    @Override
     CartoBuilder read(String str) {
         XmlSlurper xmlSlurper = new XmlSlurper()
         def xml = xmlSlurper.parseText(str)

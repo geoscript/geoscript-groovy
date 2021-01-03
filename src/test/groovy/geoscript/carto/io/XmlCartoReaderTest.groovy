@@ -2,8 +2,14 @@ package geoscript.carto.io
 
 import geoscript.carto.CartoBuilder
 import org.junit.Test
+import static org.junit.Assert.assertEquals
 
 class XmlCartoReaderTest {
+
+    @Test void getName() {
+        CartoReader cartoReader = new XmlCartoReader()
+        assertEquals("xml", cartoReader.name)
+    }
 
     @Test void readCarto() {
         String xml = """<carto>

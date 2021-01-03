@@ -35,6 +35,11 @@ import java.text.SimpleDateFormat
 class JsonCartoReader implements CartoReader {
 
     @Override
+    String getName() {
+        "json"
+    }
+
+    @Override
     CartoBuilder read(String str) {
         JsonSlurper jsonSlurper = new JsonSlurper()
         Map config = jsonSlurper.parseText(str)

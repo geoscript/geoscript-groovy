@@ -37,6 +37,11 @@ import groovy.xml.slurpersupport.GPathResult
 class XmlMapReader implements MapReader {
 
     @Override
+    String getName() {
+        "xml"
+    }
+
+    @Override
     GMap read(String str) {
         XmlSlurper xmlSlurper = new XmlSlurper()
         GPathResult xml = xmlSlurper.parseText(str)

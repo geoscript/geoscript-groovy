@@ -2,8 +2,14 @@ package geoscript.carto.io
 
 import geoscript.carto.CartoBuilder
 import org.junit.Test
+import static org.junit.Assert.assertEquals
 
 class JsonCartoReaderTest {
+
+    @Test void getName() {
+        CartoReader cartoReader = new JsonCartoReader()
+        assertEquals("json", cartoReader.name)
+    }
 
     @Test void readCarto() {
         String json = """{

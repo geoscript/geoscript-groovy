@@ -7,6 +7,11 @@ import static org.junit.Assert.assertEquals
 
 class XmlMapReaderTestCase {
 
+    @Test void getName() {
+        MapReader mapReader = new XmlMapReader()
+        assertEquals("xml", mapReader.name)
+    }
+
     @Test void readWithOptions() {
         MapReader mapReader = new XmlMapReader()
         String dir = new File("src/test/resources").absolutePath

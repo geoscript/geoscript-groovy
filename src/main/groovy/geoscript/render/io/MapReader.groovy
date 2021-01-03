@@ -9,6 +9,12 @@ import geoscript.render.Map as GMap
 interface MapReader {
 
     /**
+     * The name of the MapReader
+     * @return The name
+     */
+    String getName()
+
+    /**
      * Read a Map from a configuration string.
      * @param str The string
      * @return A Map
