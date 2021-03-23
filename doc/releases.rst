@@ -16,7 +16,7 @@ Added Project.toMeters to convert measurements in the projection's native units 
     Projection p = new Projection("EPSG:2927")
     double meters = p.toMeters(5280)
 
-Added a ScaleBarItem to the carto package::
+Added a ScaleBarItem to the carto package.
 
 .. image:: images/carto_scalebar.png
 
