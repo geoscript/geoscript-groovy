@@ -1,0 +1,6 @@
+Z = 2
+X = 1
+Y = 3
+Tile = Tile(x:1, y:3, z:2)
+# bytes = 11738
+Data as base64 encoded string = iVBORw0KGgoAAAANSUhEUgAAAQAAAAEACAYAAABccqhmAAAtoU...

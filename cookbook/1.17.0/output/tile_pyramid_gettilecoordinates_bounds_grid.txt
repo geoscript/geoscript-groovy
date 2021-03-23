@@ -1,0 +1,4 @@
+Min X = 571
+Min Y = 623
+Max X = 576
+Max Y = 626

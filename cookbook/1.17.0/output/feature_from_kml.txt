@@ -1,0 +1,1 @@
+placemark.city.1 name: Seattle, description: null, Geometry: POINT (-122.3204 47.6024)

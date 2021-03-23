@@ -1,0 +1,4 @@
+POINT (30 30)
+POINT (32 32)
+POINT (5 5)
+POINT (4 4)

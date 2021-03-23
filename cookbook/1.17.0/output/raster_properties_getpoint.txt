@@ -1,0 +1,1 @@
+Geographic location at pixel 7,9 is POINT (-176.625 85.7249984741211)
