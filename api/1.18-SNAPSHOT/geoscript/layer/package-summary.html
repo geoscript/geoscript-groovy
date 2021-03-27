@@ -1,0 +1,754 @@
+<!--
+
+     Licensed to the Apache Software Foundation (ASF) under one
+     or more contributor license agreements.  See the NOTICE file
+     distributed with this work for additional information
+     regarding copyright ownership.  The ASF licenses this file
+     to you under the Apache License, Version 2.0 (the
+     "License"); you may not use this file except in compliance
+     with the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+     Unless required by applicable law or agreed to in writing,
+     software distributed under the License is distributed on an
+     "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+     KIND, either express or implied.  See the License for the
+     specific language governing permissions and limitations
+     under the License.
+
+-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+
+<title>geoscript.layer (GeoScript Groovy API)</title>
+<meta name="keywords" content="geoscript.layer package">
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<link rel ="stylesheet" TYPE="text/css" HREF="../../stylesheet.css" title="Style">
+<link href="../../groovy.ico" type="image/x-icon" rel="shortcut icon">
+<link href="../../groovy.ico" type="image/x-icon" rel="icon">
+<script type="text/javascript">
+function windowTitle()
+{
+    parent.document.title="geoscript.layer (GeoScript Groovy API)";
+}
+</script>
+<noscript>
+</noscript>
+
+</head>
+
+<body class="center" onload="windowTitle();">
+
+<!-- ========= START OF TOP NAVBAR ======= -->
+<div class="topNav"><a name="navbar_top">
+    <!--   -->
+</a><a href="#skip-navbar_top" title="Skip navigation links"></a><a name="navbar_top_firstrow">
+    <!--   -->
+</a>
+<a name="navbar_top_firstrow"><!-- --></a>
+<ul class="navList" title="Navigation">
+    <li><a href="../../overview-summary.html">Overview</a></li>
+    <li class="navBarCell1Rev">Package</li>
+    <li>Class</li>
+    <li><a href="../../deprecated-list.html">Deprecated</a></li>
+    <li><a href="../../index-all.html">Index</a></li>
+    <li><a href="../../help-doc.html">Help</a></li>
+</ul>
+</div>
+
+<div class="subNav">
+    <ul class="navList">
+        <li><a href="../../index.html?geoscript/layer/package-summary.html" target="_top">Frames</a></li>
+        <li><a href="package-summary.html" target="_top">No Frames</a></li>
+    </ul>
+</div>
+
+<!-- ========= END OF TOP NAVBAR ========= -->
+
+<div class="header">
+    <h1 class="title">Package geoscript.layer</h1>
+</div>
+
+
+<h2 title="Package geoscript.layer Description" class="title">Package geoscript.layer Description</h2>
+<div class="header">GeoScript's Layer API </div>
+
+
+<div class="contentContainer">
+
+
+    <div class="summary">
+        <ul class="blockList">
+            <li class="blockList">
+                <table border="0" cellpadding="3" cellspacing="0" summary="Interface Summary">
+                    <caption><span>Interface Summary</span><span class="tabEnd">&nbsp;</span></caption>
+                    <tbody>
+                    <tr>
+                        <th class="colFirst" scope="col">Interface</th>
+                        <th class="colLast" scope="col">Description</th>
+                    </tr>
+<tr class="altColor">
+                            <td class="colOne">
+                                <strong><a href="Renderable.html" title="class in geoscript/layer">
+                                    Renderable
+                                </a></strong>
+                            </td>
+                            <td>An interface for marking a class as Renderable.</td>
+                        </tr>
+<tr class="altColor">
+                            <td class="colOne">
+                                <strong><a href="TileRenderer.html" title="class in geoscript/layer">
+                                    TileRenderer
+                                </a></strong>
+                            </td>
+                            <td>A TileRenderer can generate a Tile's data for a given Bounds</td>
+                        </tr>
+
+                    </tbody>
+                </table>
+            </li>
+            </ul>
+        </div>
+    
+
+
+
+    <div class="summary">
+        <ul class="blockList">
+            <li class="blockList">
+                <table border="0" cellpadding="3" cellspacing="0" summary="Class Summary">
+                    <caption><span>Class Summary</span><span class="tabEnd">&nbsp;</span></caption>
+                    <tbody>
+                    <tr>
+                        <th class="colFirst" scope="col">Class</th>
+                        <th class="colLast" scope="col">Description</th>
+                    </tr>
+<tr class="altColor">
+                            <td class="colOne">
+                                <strong><a href="ArcGrid.html" title="class in geoscript/layer">
+                                    ArcGrid
+                                </a></strong>
+                            </td>
+                            <td>A Format that can read and write ArcGrids</td>
+                        </tr>
+<tr class="altColor">
+                            <td class="colOne">
+                                <strong><a href="ArcGrid.Factory.html" title="class in geoscript/layer">
+                                    ArcGrid.Factory
+                                </a></strong>
+                            </td>
+                            <td>The ArcGrid FormatFactory</td>
+                        </tr>
+<tr class="altColor">
+                            <td class="colOne">
+                                <strong><a href="Band.html" title="class in geoscript/layer">
+                                    Band
+                                </a></strong>
+                            </td>
+                            <td>A Band of Raster Data that represents a single band/channel/layer.</td>
+                        </tr>
+<tr class="altColor">
+                            <td class="colOne">
+                                <strong><a href="Cursor.html" title="class in geoscript/layer">
+                                    Cursor
+                                </a></strong>
+                            </td>
+                            <td>A Cursor is a Iterator over a Feature objects.</td>
+                        </tr>
+<tr class="altColor">
+                            <td class="colOne">
+                                <strong><a href="DBTiles.html" title="class in geoscript/layer">
+                                    DBTiles
+                                </a></strong>
+                            </td>
+                            <td>The DBTiles TileLayer stores tiles like MBTiles but in any JDBC database.
+ </td>
+                        </tr>
+<tr class="altColor">
+                            <td class="colOne">
+                                <strong><a href="DBTiles.Factory.html" title="class in geoscript/layer">
+                                    DBTiles.Factory
+                                </a></strong>
+                            </td>
+                            <td>The DBTiles TileLayerFactory</td>
+                        </tr>
+<tr class="altColor">
+                            <td class="colOne">
+                                <strong><a href="Format.html" title="class in geoscript/layer">
+                                    Format
+                                </a></strong>
+                            </td>
+                            <td>A Raster Format can read and write Rasters</td>
+                        </tr>
+<tr class="altColor">
+                            <td class="colOne">
+                                <strong><a href="FormatFactories.html" title="class in geoscript/layer">
+                                    FormatFactories
+                                </a></strong>
+                            </td>
+                            <td>A Utility for getting a List of all FormatFactories</td>
+                        </tr>
+<tr class="altColor">
+                            <td class="colOne">
+                                <strong><a href="FormatFactory.html" title="class in geoscript/layer">
+                                    FormatFactory
+                                </a></strong>
+                            </td>
+                            <td>A FormatFactory creates a Format from an input source which is
+ usually a File, URL, or InputStream</td>
+                        </tr>
+<tr class="altColor">
+                            <td class="colOne">
+                                <strong><a href="GTopo30.html" title="class in geoscript/layer">
+                                    GTopo30
+                                </a></strong>
+                            </td>
+                            <td>A Format that can read and write GTopo30 Rasters.</td>
+                        </tr>
+<tr class="altColor">
+                            <td class="colOne">
+                                <strong><a href="GTopo30.Factory.html" title="class in geoscript/layer">
+                                    GTopo30.Factory
+                                </a></strong>
+                            </td>
+                            <td>The GTopo30 FormatFactory</td>
+                        </tr>
+<tr class="altColor">
+                            <td class="colOne">
+                                <strong><a href="GeneratingTileLayer.html" title="class in geoscript/layer">
+                                    GeneratingTileLayer
+                                </a></strong>
+                            </td>
+                            <td>A TileLayer that can generate Tiles on demand as a client tries to get them.</td>
+                        </tr>
+<tr class="altColor">
+                            <td class="colOne">
+                                <strong><a href="GeoPackage.html" title="class in geoscript/layer">
+                                    GeoPackage
+                                </a></strong>
+                            </td>
+                            <td>A GeoPackage TileLayer</td>
+                        </tr>
+<tr class="altColor">
+                            <td class="colOne">
+                                <strong><a href="GeoPackage.Factory.html" title="class in geoscript/layer">
+                                    GeoPackage.Factory
+                                </a></strong>
+                            </td>
+                            <td>The GeoPackage TileLayerFactory</td>
+                        </tr>
+<tr class="altColor">
+                            <td class="colOne">
+                                <strong><a href="GeoTIFF.html" title="class in geoscript/layer">
+                                    GeoTIFF
+                                </a></strong>
+                            </td>
+                            <td>A Format that can read and write GeoTIFFs.</td>
+                        </tr>
+<tr class="altColor">
+                            <td class="colOne">
+                                <strong><a href="GeoTIFF.Factory.html" title="class in geoscript/layer">
+                                    GeoTIFF.Factory
+                                </a></strong>
+                            </td>
+                            <td>The GeoTIFF FormatFactory</td>
+                        </tr>
+<tr class="altColor">
+                            <td class="colOne">
+                                <strong><a href="Grass.html" title="class in geoscript/layer">
+                                    Grass
+                                </a></strong>
+                            </td>
+                            <td>A Format that can read and write Grass Rasters.</td>
+                        </tr>
+<tr class="altColor">
+                            <td class="colOne">
+                                <strong><a href="Grass.Factory.html" title="class in geoscript/layer">
+                                    Grass.Factory
+                                </a></strong>
+                            </td>
+                            <td>The Grass FormatFactory</td>
+                        </tr>
+<tr class="altColor">
+                            <td class="colOne">
+                                <strong><a href="Graticule.html" title="class in geoscript/layer">
+                                    Graticule
+                                </a></strong>
+                            </td>
+                            <td>Create graticule or grid Layers.</td>
+                        </tr>
+<tr class="altColor">
+                            <td class="colOne">
+                                <strong><a href="Graticule.1.html" title="class in geoscript/layer">
+                                    Graticule.1
+                                </a></strong>
+                            </td>
+                            <td></td>
+                        </tr>
+<tr class="altColor">
+                            <td class="colOne">
+                                <strong><a href="Grid.html" title="class in geoscript/layer">
+                                    Grid
+                                </a></strong>
+                            </td>
+                            <td>A Tile Grid.</td>
+                        </tr>
+<tr class="altColor">
+                            <td class="colOne">
+                                <strong><a href="Histogram.html" title="class in geoscript/layer">
+                                    Histogram
+                                </a></strong>
+                            </td>
+                            <td>A Histogram.</td>
+                        </tr>
+<tr class="altColor">
+                            <td class="colOne">
+                                <strong><a href="ImagePyramid.html" title="class in geoscript/layer">
+                                    ImagePyramid
+                                </a></strong>
+                            </td>
+                            <td>A Format that can read and write ImagePyramids.</td>
+                        </tr>
+<tr class="altColor">
+                            <td class="colOne">
+                                <strong><a href="ImagePyramid.Factory.html" title="class in geoscript/layer">
+                                    ImagePyramid.Factory
+                                </a></strong>
+                            </td>
+                            <td>The ImagePyramid FormatFactory</td>
+                        </tr>
+<tr class="altColor">
+                            <td class="colOne">
+                                <strong><a href="ImageTile.html" title="class in geoscript/layer">
+                                    ImageTile
+                                </a></strong>
+                            </td>
+                            <td>A Tile that is an image.</td>
+                        </tr>
+<tr class="altColor">
+                            <td class="colOne">
+                                <strong><a href="ImageTileLayer.html" title="class in geoscript/layer">
+                                    ImageTileLayer
+                                </a></strong>
+                            </td>
+                            <td>A TileLayer that is made up of ImageTiles.</td>
+                        </tr>
+<tr class="altColor">
+                            <td class="colOne">
+                                <strong><a href="ImageTileRenderer.html" title="class in geoscript/layer">
+                                    ImageTileRenderer
+                                </a></strong>
+                            </td>
+                            <td>An Image TileRenderer that uses a geoscript.render.Map</td>
+                        </tr>
+<tr class="altColor">
+                            <td class="colOne">
+                                <strong><a href="Layer.html" title="class in geoscript/layer">
+                                    Layer
+                                </a></strong>
+                            </td>
+                            <td>A Layer is a source of spatial data that contains a collection of Features.  </td>
+                        </tr>
+<tr class="altColor">
+                            <td class="colOne">
+                                <strong><a href="MBTiles.html" title="class in geoscript/layer">
+                                    MBTiles
+                                </a></strong>
+                            </td>
+                            <td>The MBTiles TileLayer</td>
+                        </tr>
+<tr class="altColor">
+                            <td class="colOne">
+                                <strong><a href="MBTiles.Factory.html" title="class in geoscript/layer">
+                                    MBTiles.Factory
+                                </a></strong>
+                            </td>
+                            <td>The MBTiles TileLayerFactory</td>
+                        </tr>
+<tr class="altColor">
+                            <td class="colOne">
+                                <strong><a href="MapAlgebra.html" title="class in geoscript/layer">
+                                    MapAlgebra
+                                </a></strong>
+                            </td>
+                            <td>The MapAlgebra uses Jiffle to perform Map Algebra for Rasters.</td>
+                        </tr>
+<tr class="altColor">
+                            <td class="colOne">
+                                <strong><a href="Mosaic.html" title="class in geoscript/layer">
+                                    Mosaic
+                                </a></strong>
+                            </td>
+                            <td>A Format that can read and write image Mosaics.</td>
+                        </tr>
+<tr class="altColor">
+                            <td class="colOne">
+                                <strong><a href="Mosaic.Factory.html" title="class in geoscript/layer">
+                                    Mosaic.Factory
+                                </a></strong>
+                            </td>
+                            <td>The Mosaic FormatFactory</td>
+                        </tr>
+<tr class="altColor">
+                            <td class="colOne">
+                                <strong><a href="MrSID.html" title="class in geoscript/layer">
+                                    MrSID
+                                </a></strong>
+                            </td>
+                            <td>A Format that can read and write MrSID Rasters.</td>
+                        </tr>
+<tr class="altColor">
+                            <td class="colOne">
+                                <strong><a href="MrSID.Factory.html" title="class in geoscript/layer">
+                                    MrSID.Factory
+                                </a></strong>
+                            </td>
+                            <td>The MrSID FormatFactory</td>
+                        </tr>
+<tr class="altColor">
+                            <td class="colOne">
+                                <strong><a href="NetCDF.html" title="class in geoscript/layer">
+                                    NetCDF
+                                </a></strong>
+                            </td>
+                            <td>The NetCDF Format to read and write NetCFD Rasters.</td>
+                        </tr>
+<tr class="altColor">
+                            <td class="colOne">
+                                <strong><a href="NetCDF.Factory.html" title="class in geoscript/layer">
+                                    NetCDF.Factory
+                                </a></strong>
+                            </td>
+                            <td>The NetCDF FormatFactory</td>
+                        </tr>
+<tr class="altColor">
+                            <td class="colOne">
+                                <strong><a href="OSM.html" title="class in geoscript/layer">
+                                    OSM
+                                </a></strong>
+                            </td>
+                            <td>A Open Street Map TileLayer that is ready only.</td>
+                        </tr>
+<tr class="altColor">
+                            <td class="colOne">
+                                <strong><a href="OSM.Factory.html" title="class in geoscript/layer">
+                                    OSM.Factory
+                                </a></strong>
+                            </td>
+                            <td>The OSM TileLayerFactory</td>
+                        </tr>
+<tr class="altColor">
+                            <td class="colOne">
+                                <strong><a href="PbfVectorTileRenderer.html" title="class in geoscript/layer">
+                                    PbfVectorTileRenderer
+                                </a></strong>
+                            </td>
+                            <td>A TileRenderer that creates MapBox PBF Vector Tiles</td>
+                        </tr>
+<tr class="altColor">
+                            <td class="colOne">
+                                <strong><a href="Property.html" title="class in geoscript/layer">
+                                    Property
+                                </a></strong>
+                            </td>
+                            <td>A Property Layer.</td>
+                        </tr>
+<tr class="altColor">
+                            <td class="colOne">
+                                <strong><a href="Pyramid.html" title="class in geoscript/layer">
+                                    Pyramid
+                                </a></strong>
+                            </td>
+                            <td>The Tile Pyramid</td>
+                        </tr>
+<tr class="altColor">
+                            <td class="colOne">
+                                <strong><a href="Raster.html" title="class in geoscript/layer">
+                                    Raster
+                                </a></strong>
+                            </td>
+                            <td>A Raster</td>
+                        </tr>
+<tr class="altColor">
+                            <td class="colOne">
+                                <strong><a href="Raster.Divide.html" title="class in geoscript/layer">
+                                    Raster.Divide
+                                </a></strong>
+                            </td>
+                            <td></td>
+                        </tr>
+<tr class="altColor">
+                            <td class="colOne">
+                                <strong><a href="Raster.Subtract.html" title="class in geoscript/layer">
+                                    Raster.Subtract
+                                </a></strong>
+                            </td>
+                            <td></td>
+                        </tr>
+<tr class="altColor">
+                            <td class="colOne">
+                                <strong><a href="Renderables.html" title="class in geoscript/layer">
+                                    Renderables
+                                </a></strong>
+                            </td>
+                            <td>Get map layers or Rendables from a List of Maps or Strings.</td>
+                        </tr>
+<tr class="altColor">
+                            <td class="colOne">
+                                <strong><a href="Shapefile.html" title="class in geoscript/layer">
+                                    Shapefile
+                                </a></strong>
+                            </td>
+                            <td>A Shapefile Layer.</td>
+                        </tr>
+<tr class="altColor">
+                            <td class="colOne">
+                                <strong><a href="TMS.html" title="class in geoscript/layer">
+                                    TMS
+                                </a></strong>
+                            </td>
+                            <td>A Tile Map Service (TMS) TileLayer.  </td>
+                        </tr>
+<tr class="altColor">
+                            <td class="colOne">
+                                <strong><a href="TMS.Factory.html" title="class in geoscript/layer">
+                                    TMS.Factory
+                                </a></strong>
+                            </td>
+                            <td>The TMS TileLayerFactory</td>
+                        </tr>
+<tr class="altColor">
+                            <td class="colOne">
+                                <strong><a href="Tile.html" title="class in geoscript/layer">
+                                    Tile
+                                </a></strong>
+                            </td>
+                            <td>A Tile</td>
+                        </tr>
+<tr class="altColor">
+                            <td class="colOne">
+                                <strong><a href="TileCursor.html" title="class in geoscript/layer">
+                                    TileCursor
+                                </a></strong>
+                            </td>
+                            <td>A TileCursor provides an easy way to iterate through Tiles.</td>
+                        </tr>
+<tr class="altColor">
+                            <td class="colOne">
+                                <strong><a href="TileGenerator.html" title="class in geoscript/layer">
+                                    TileGenerator
+                                </a></strong>
+                            </td>
+                            <td>A TileGenerator</td>
+                        </tr>
+<tr class="altColor">
+                            <td class="colOne">
+                                <strong><a href="TileLayer.html" title="class in geoscript/layer">
+                                    TileLayer
+                                </a></strong>
+                            </td>
+                            <td>A TileLayer</td>
+                        </tr>
+<tr class="altColor">
+                            <td class="colOne">
+                                <strong><a href="TileLayerFactories.html" title="class in geoscript/layer">
+                                    TileLayerFactories
+                                </a></strong>
+                            </td>
+                            <td>A Utility for getting all TileLayerFactories.</td>
+                        </tr>
+<tr class="altColor">
+                            <td class="colOne">
+                                <strong><a href="TileLayerFactory.html" title="class in geoscript/layer">
+                                    TileLayerFactory
+                                </a></strong>
+                            </td>
+                            <td></td>
+                        </tr>
+<tr class="altColor">
+                            <td class="colOne">
+                                <strong><a href="UTFGrid.html" title="class in geoscript/layer">
+                                    UTFGrid
+                                </a></strong>
+                            </td>
+                            <td>A UTFGrid TileLayer</td>
+                        </tr>
+<tr class="altColor">
+                            <td class="colOne">
+                                <strong><a href="UTFGrid.Factory.html" title="class in geoscript/layer">
+                                    UTFGrid.Factory
+                                </a></strong>
+                            </td>
+                            <td>The UTFGrid TileLayerFactory</td>
+                        </tr>
+<tr class="altColor">
+                            <td class="colOne">
+                                <strong><a href="UTFGridTileRenderer.html" title="class in geoscript/layer">
+                                    UTFGridTileRenderer
+                                </a></strong>
+                            </td>
+                            <td>A UTFGrid TileRenderer</td>
+                        </tr>
+<tr class="altColor">
+                            <td class="colOne">
+                                <strong><a href="VectorTileRenderer.html" title="class in geoscript/layer">
+                                    VectorTileRenderer
+                                </a></strong>
+                            </td>
+                            <td>A Vector TileRenderer that can write a single Layer using any gesocript.layer.io.Writer</td>
+                        </tr>
+<tr class="altColor">
+                            <td class="colOne">
+                                <strong><a href="VectorTiles.html" title="class in geoscript/layer">
+                                    VectorTiles
+                                </a></strong>
+                            </td>
+                            <td>A TileLayer for VectorTiles</td>
+                        </tr>
+<tr class="altColor">
+                            <td class="colOne">
+                                <strong><a href="VectorTiles.Factory.html" title="class in geoscript/layer">
+                                    VectorTiles.Factory
+                                </a></strong>
+                            </td>
+                            <td>The VectorTiles TileLayerFactory</td>
+                        </tr>
+<tr class="altColor">
+                            <td class="colOne">
+                                <strong><a href="WMS.html" title="class in geoscript/layer">
+                                    WMS
+                                </a></strong>
+                            </td>
+                            <td>The Web Map Server (WMS) module is a connection to a remote WMS server.</td>
+                        </tr>
+<tr class="altColor">
+                            <td class="colOne">
+                                <strong><a href="WMS.Layer.html" title="class in geoscript/layer">
+                                    WMS.Layer
+                                </a></strong>
+                            </td>
+                            <td>A WMS.Layer</td>
+                        </tr>
+<tr class="altColor">
+                            <td class="colOne">
+                                <strong><a href="WMSLayer.html" title="class in geoscript/layer">
+                                    WMSLayer
+                                </a></strong>
+                            </td>
+                            <td>A WMSLayer is a way to draw one or more WMS layers on a Map.</td>
+                        </tr>
+<tr class="altColor">
+                            <td class="colOne">
+                                <strong><a href="WMSMapExtensionModule.html" title="class in geoscript/layer">
+                                    WMSMapExtensionModule
+                                </a></strong>
+                            </td>
+                            <td>A Groovy Extension Module that adds WMS methods to the Map.</td>
+                        </tr>
+<tr class="altColor">
+                            <td class="colOne">
+                                <strong><a href="WorldFile.html" title="class in geoscript/layer">
+                                    WorldFile
+                                </a></strong>
+                            </td>
+                            <td>Read and write world files</td>
+                        </tr>
+<tr class="altColor">
+                            <td class="colOne">
+                                <strong><a href="WorldImage.html" title="class in geoscript/layer">
+                                    WorldImage
+                                </a></strong>
+                            </td>
+                            <td>A Format that can read and write WorldImage Rasters.  </td>
+                        </tr>
+<tr class="altColor">
+                            <td class="colOne">
+                                <strong><a href="WorldImage.Factory.html" title="class in geoscript/layer">
+                                    WorldImage.Factory
+                                </a></strong>
+                            </td>
+                            <td>The WorldImage FormatFactory</td>
+                        </tr>
+<tr class="altColor">
+                            <td class="colOne">
+                                <strong><a href="Writer.html" title="class in geoscript/layer">
+                                    Writer
+                                </a></strong>
+                            </td>
+                            <td>The Writer allows for adding batches of Features to a Layer
+ within a Transaction.</td>
+                        </tr>
+
+                    </tbody>
+                </table>
+            </li>
+            </ul>
+        </div>
+    
+
+
+    <div class="summary">
+        <ul class="blockList">
+            <li class="blockList">
+                <table border="0" cellpadding="3" cellspacing="0" summary="Enum Summary">
+                    <caption><span>Enum Summary</span><span class="tabEnd">&nbsp;</span></caption>
+                    <tbody>
+                    <tr>
+                        <th class="colFirst" scope="col">Enum</th>
+                        <th class="colLast" scope="col">Description</th>
+                    </tr>
+<tr class="altColor">
+                            <td class="colOne">
+                                <strong><a href="Pyramid.Origin.html" title="class in geoscript/layer">
+                                    Pyramid.Origin
+                                </a></strong>
+                            </td>
+                            <td>The Origin enumeration</td>
+                        </tr>
+
+                    </tbody>
+                </table>
+            </li>
+            </ul>
+        </div>
+    
+
+
+
+
+
+</div>
+
+<!-- ======= START OF BOTTOM NAVBAR ====== -->
+<div class="bottomNav"><a name="navbar_bottom">
+    <!--   -->
+</a><a href="#skip-navbar_bottom" title="Skip navigation links"></a><a name="navbar_bottom_firstrow">
+    <!--   -->
+</a>
+    <ul class="navList" title="Navigation">
+        <li><a href="overview-summary.html">Overview</a></li>
+        <li class="navBarCell1Rev">Package</li>
+        <li>Class</li>
+        <li><a href="deprecated-list.html">Deprecated</a></li>
+        <li><a href="index-all.html">Index</a></li>
+        <li><a href="help-doc.html">Help</a></li>
+    </ul>
+</div>
+<div class="subNav">
+    <div>
+        <ul class="navList">
+            <li><a href="index.html?deprecated-list.html" target="_top">Frames</a></li>
+            <li><a href="deprecated-list.html" target="_top">No Frames</a></li>
+        </ul>
+    </div>
+
+    <div class="aboutLanguage"><em>Groovy Documentation</em></div>
+    <a name="skip-navbar_bottom">
+        <!--   -->
+    </a></div>
+<!-- ======== END OF BOTTOM NAVBAR ======= -->
+
+</body>
+</html>
