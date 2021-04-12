@@ -130,6 +130,21 @@ and then include the GeoScript Groovy dependency::
         <version>1.17.0</version>
     </dependency>
 
+Docker
+------
+
+If you want to give GeoScript Groovy a spin with Docker use the following image::
+
+    https://hub.docker.com/repository/docker/jarederickson/geoscript-groovy
+
+To run the image use::
+
+    docker image build -t jarederickson/geoscript-groovy:latest .
+
+To build the image locally::
+
+    docker run -it --rm --name geoscript-groovy jarederickson/geoscript-groovy:latest
+
 Versions
 --------
 
