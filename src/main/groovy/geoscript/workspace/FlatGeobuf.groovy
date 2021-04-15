@@ -1,8 +1,9 @@
 package geoscript.workspace
 
 import org.geotools.data.DataStore
-import org.geotools.data.flatgeobuf.FlatgeobufDataStoreFactory
-import org.geotools.data.flatgeobuf.FlatgeobufDirectoryDataStore
+import org.geotools.data.flatgeobuf.FlatGeobufDataStoreFactory
+import org.geotools.data.flatgeobuf.FlatGeobufDirectoryDataStore
+import org.geotools.util.URLs
 
 /**
  * A FlatGeobuf Workspace.
@@ -25,10 +26,10 @@ class FlatGeobuf extends Workspace {
     }
 
     /**
-     * Create a new FlatGeobuf Workspace from a FlatgeobufDirectoryDataStore
-     * @param ds The FlatgeobufDirectoryDataStore
+     * Create a new FlatGeobuf Workspace from a FlatGeobufDirectoryDataStore
+     * @param ds The FlatGeobufDirectoryDataStore
      */
-    FlatGeobuf(FlatgeobufDirectoryDataStore ds) {
+    FlatGeobuf(FlatGeobufDirectoryDataStore ds) {
         super(ds)
     }
 
@@ -55,8 +56,8 @@ class FlatGeobuf extends Workspace {
 
     private static DataStore createDataStore(File directory) {
         Map params = new java.util.HashMap()
-        params.put("flatgeobuf-file", directory.absolutePath)
-        FlatgeobufDataStoreFactory factory = new FlatgeobufDataStoreFactory()
+        params.put("url", URLs.fileToUrl(directory))
+        FlatGeobufDataStoreFactory factory = new FlatGeobufDataStoreFactory()
         factory.createDataStore(params)
     }
 
@@ -73,11 +74,22 @@ class FlatGeobuf extends Workspace {
                 if (!file.isDirectory()) {
                     file = file.parentFile
                 }
-                params.put("flatgeobuf-file", file.absolutePath)
+                params.put("url", URLs.fileToUrl(file))
             } else {
                 params = super.getParametersFromString(str)
             }
             params
+        }
+
+        @Override
+        FlatGeobuf create(String type) {
+            if (!type.contains("=") && type.endsWith(".fgb")) {
+                File file = new File(type)
+                println "File = ${file.absolutePath}"
+                new FlatGeobuf(file.isDirectory() ? file : file.getParentFile())
+            } else {
+                null
+            }
         }
 
         @Override
@@ -87,7 +99,13 @@ class FlatGeobuf extends Workspace {
                 if (!file.isDirectory()) {
                     file = file.parentFile
                 }
-                super.create(['flatgeobuf-file': file])
+                new FlatGeobuf(file)
+            } else if (params.containsKey('url') && params["url"]?.toString().endsWith(".fgb")) {
+                File file = params.get('url') instanceof File ? params.get('url') : new File(params.get('url'))
+                if (!file.isDirectory()) {
+                    file = file.parentFile
+                }
+                new FlatGeobuf(file)
             } else {
                 null
             }
@@ -95,7 +113,7 @@ class FlatGeobuf extends Workspace {
 
         @Override
         FlatGeobuf create(DataStore dataStore) {
-            if (dataStore != null && dataStore instanceof org.geotools.data.flatgeobuf.FlatgeobufDirectoryDataStore) {
+            if (dataStore != null && dataStore instanceof org.geotools.data.flatgeobuf.FlatGeobufDirectoryDataStore) {
                 new FlatGeobuf(dataStore)
             } else {
                 null
