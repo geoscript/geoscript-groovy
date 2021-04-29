@@ -273,10 +273,10 @@ class Color extends Expression {
         else if (color instanceof String && color.startsWith("rgb(") && color.endsWith(")")) {
             color = color.substring(color.indexOf("(") + 1, color.lastIndexOf(")"))
             String[] parts = color.split(",")
-            int r = parts[0] as int
-            int g = parts[1] as int
-            int b =  parts[2] as int
-            int a = parts.length > 3 ? parts[3] as int : 0
+            int r = parts[0].toInteger()
+            int g = parts[1].toInteger()
+            int b =  parts[2].toInteger()
+            int a = parts.length > 3 ? parts[3].toInteger() : 0
             return new java.awt.Color(r, g, b, a)
         }
         // HSL as String: "hsl(0,1,0.5)"
@@ -292,28 +292,28 @@ class Color extends Expression {
         // RGB as String: "255,255,255"
         else if (color instanceof String && color.split(",").length >= 3 && allItemsAreInegers(color.split(","))) {
             String[] parts = color.split(",")
-            int r = parts[0] as int
-            int g = parts[1] as int
-            int b =  parts[2] as int
-            int a = parts.length > 3 ? parts[3] as int : 0
+            int r = parts[0].toInteger()
+            int g = parts[1].toInteger()
+            int b =  parts[2].toInteger()
+            int a = parts.length > 3 ? parts[3].toInteger() : 0
             return new java.awt.Color(r, g, b, a)
         }
         // RGB as String: "255:255:255"
         else if (color instanceof String && color.split(":").length >= 3 && allItemsAreInegers(color.split(":"))) {
             String[] parts = color.split(":")
-            int r = parts[0] as int
-            int g = parts[1] as int
-            int b =  parts[2] as int
-            int a = parts.length > 3 ? parts[3] as int : 0
+            int r = parts[0].toInteger()
+            int g = parts[1].toInteger()
+            int b =  parts[2].toInteger()
+            int a = parts.length > 3 ? parts[3].toInteger() : 0
             return new java.awt.Color(r, g, b, a)
         }
         // RGB as String: "255 255 255"
         else if (color instanceof String && color.split(" ").length >= 3 && allItemsAreInegers(color.split(" "))) {
             String[] parts = color.split(" ")
-            int r = parts[0] as int
-            int g = parts[1] as int
-            int b =  parts[2] as int
-            int a = parts.length > 3 ? parts[3] as int : 0
+            int r = parts[0].toInteger()
+            int g = parts[1].toInteger()
+            int b =  parts[2].toInteger()
+            int a = parts.length > 3 ? parts[3].toInteger() : 0
             return new java.awt.Color(r, g, b, a)
         }
         // geoscript.filter.Color
@@ -342,18 +342,18 @@ class Color extends Expression {
         }
         // RGB as List: [255,255,255,0.1]
         else if (color instanceof List && color.size() >= 3) {
-            int r = color[0] as int
-            int g = color[1] as int
-            int b =  color[2] as int
-            int a = color.size > 3 ? color[3] as int : 0
+            int r = color[0].toInteger()
+            int g = color[1].toInteger()
+            int b =  color[2].toInteger()
+            int a = color.size > 3 ? color[3].toInteger() : 0
             return new java.awt.Color(r, g, b, a)
         }
         // RGB as Map [r:255,g:255,b:0,a:125]
         else if (color instanceof Map && color.containsKey("r") && color.containsKey("g") && color.containsKey("b")) {
-            int r = color.r as int
-            int g = color.g as int
-            int b =  color.b as int
-            int a = color.containsKey('a') ? color.a as int : 0
+            int r = color.r.toInteger()
+            int g = color.g.toInteger()
+            int b =  color.b.toInteger()
+            int a = color.containsKey('a') ? color.a.toInteger() : 0
             return new java.awt.Color(r, g, b, a)
         }
         // HSL as Map [h:0-1,s:0-1,l:0-1]

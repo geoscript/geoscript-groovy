@@ -572,7 +572,7 @@
     </reporting>
     <properties>
         <gt.version>26-SNAPSHOT</gt.version>
-        <groovy.version>3.0.7</groovy.version>
+        <groovy.version>3.0.8</groovy.version>
     </properties>
     <name>geoscript groovy</name>
     <description>A groovy implementation of geoscript.</description>
