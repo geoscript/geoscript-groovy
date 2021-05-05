@@ -2,9 +2,9 @@ package geoscript.layer
 
 import geoscript.geom.Bounds
 import geoscript.proj.Projection
-import org.geotools.data.ows.HTTPClient
+import org.geotools.http.HTTPClient
 import org.geotools.ows.wms.Layer as GtLayer
-import org.geotools.data.ows.SimpleHttpClient
+import org.geotools.http.SimpleHttpClient
 import org.geotools.ows.wms.StyleImpl
 import org.geotools.ows.wms.WMSCapabilities
 import org.geotools.ows.wms.WebMapServer
