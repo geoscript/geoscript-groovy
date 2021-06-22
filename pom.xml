@@ -366,7 +366,7 @@
             <plugin>
                 <groupId>org.codehaus.groovy</groupId>
                 <artifactId>groovy-eclipse-compiler</artifactId>
-                <version>3.6.0-03</version>
+                <version>3.7.0</version>
                 <extensions>true</extensions>
             </plugin>
             <plugin>
@@ -381,12 +381,12 @@
                     <dependency>
                         <groupId>org.codehaus.groovy</groupId>
                         <artifactId>groovy-eclipse-compiler</artifactId>
-                        <version>3.6.0-03</version>
+                        <version>3.7.0</version>
                     </dependency>
                     <dependency>
                         <groupId>org.codehaus.groovy</groupId>
                         <artifactId>groovy-eclipse-batch</artifactId>
-                        <version>3.0.5-01</version>
+                        <version>3.0.8-01</version>
                     </dependency>
                 </dependencies>
             </plugin>
