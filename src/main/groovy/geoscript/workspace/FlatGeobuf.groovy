@@ -74,6 +74,7 @@ class FlatGeobuf extends Workspace {
                 if (!file.isDirectory()) {
                     file = file.parentFile
                 }
+                params.put("type", "flatgeobuf")
                 params.put("url", URLs.fileToUrl(file))
             } else {
                 params = super.getParametersFromString(str)
@@ -85,7 +86,6 @@ class FlatGeobuf extends Workspace {
         FlatGeobuf create(String type) {
             if (!type.contains("=") && type.endsWith(".fgb")) {
                 File file = new File(type)
-                println "File = ${file.absolutePath}"
                 new FlatGeobuf(file.isDirectory() ? file : file.getParentFile())
             } else {
                 null

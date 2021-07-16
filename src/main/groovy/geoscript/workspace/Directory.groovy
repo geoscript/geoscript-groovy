@@ -133,12 +133,15 @@ class Directory extends Workspace {
             Map params = [:]
             if (!str.contains("=") && str.endsWith(".shp")) {
                 if (str.startsWith("file:/")) {
-                    params.put("url", URLs.fileToUrl(URLs.urlToFile(new URL(str)).getAbsoluteFile().getParentFile()))
+                    params.put("type","shapefile")
+                    params.put("file", URLs.urlToFile(new URL(str)).getAbsoluteFile().getParentFile())
                 } else {
-                    params.put("url", URLs.fileToUrl(new File(str).getAbsoluteFile().getParentFile()))
+                    params.put("type","shapefile")
+                    params.put("file",new File(str).getAbsoluteFile().getParentFile())
                 }
             } else if (!str.contains("=") && new File(str).isDirectory()) {
-                params.put("url", new File(str).toURL())
+                params.put("type","shapefile")
+                params.put("file", new File(str))
             } else {
                 params = super.getParametersFromString(str)
             }
@@ -149,7 +152,10 @@ class Directory extends Workspace {
         Directory create(String type, Map params) {
             if (type.equalsIgnoreCase('shapefile') && params.containsKey('file')) {
                 File file = params.get('file') instanceof File ? params.get('file') : new File(params.get('file'))
-                super.create([url: URLs.fileToUrl(file.absoluteFile)])
+                if (!file.isDirectory()) {
+                    file = file.parentFile
+                }
+                new Directory(file)
             } else if (type.equalsIgnoreCase('shapefile') && params.containsKey('url') && params.containsKey("dir")) {
                 URL url = params.get('url') instanceof URL ? params.get('url') : new URL(params.get('url'))
                 File dir = params.get('dir') instanceof File ? params.get('dir') : new File(params.get('dir'))
@@ -159,7 +165,7 @@ class Directory extends Workspace {
                 File file = File.createTempFile("download",".zip")
                 GeoScript.download(url, file, overwrite: params.get("overwrite", true) as boolean)
                 GeoScript.unzip(file, dir)
-                super.create([url: URLs.fileToUrl(dir.absoluteFile)])
+                new Directory(dir)
             } else {
                 null
             }

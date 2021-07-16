@@ -1,6 +1,5 @@
 package geoscript.workspace
 
-import geoscript.GeoScript
 import geoscript.feature.Feature
 import geoscript.feature.Field
 import geoscript.feature.Schema

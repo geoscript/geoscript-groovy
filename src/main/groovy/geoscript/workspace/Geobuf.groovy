@@ -92,6 +92,7 @@ class Geobuf extends Workspace {
                 if (!file.isDirectory()) {
                     file = file.parentFile
                 }
+                params.put("type", "geobuf")
                 params.put("file", file.absolutePath)
             } else {
                 params = super.getParametersFromString(str)
@@ -106,7 +107,7 @@ class Geobuf extends Workspace {
                 if (!file.isDirectory()) {
                     file = file.parentFile
                 }
-                super.create([file: file])
+                new Geobuf(file)
             } else {
                 null
             }

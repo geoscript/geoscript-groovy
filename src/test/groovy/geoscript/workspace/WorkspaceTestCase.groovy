@@ -95,9 +95,10 @@ class WorkspaceTestCase {
 
         // Shapefile
         params = Workspace.getParametersFromString("/my/states.shp")
-        assertTrue(params.containsKey("url"))
-        assertTrue(params["url"] instanceof URL)
-        assertTrue(params["url"].toString().endsWith("my"))
+        assertEquals("shapefile", params.type)
+        assertTrue(params.containsKey("file"))
+        assertTrue(params["file"] instanceof File)
+        assertTrue(params["file"].toString().endsWith("my"))
 
         params = Workspace.getParametersFromString("url='/my/states.shp' 'create spatial index'=true")
         assertTrue(params.containsKey("url"))
