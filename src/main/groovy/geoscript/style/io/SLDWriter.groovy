@@ -2,6 +2,7 @@ package geoscript.style.io
 
 import geoscript.style.Style
 import org.geotools.factory.CommonFactoryFinder
+import org.geotools.styling.NamedLayer
 import org.geotools.xml.styling.SLDTransformer
 import org.geotools.styling.StyleFactory
 import org.geotools.styling.StyledLayerDescriptor
@@ -27,6 +28,7 @@ class SLDWriter implements Writer {
      * Write the Style to the OutputStream
      * @param options Optional named parameters
      * <ol>
+     *     <li>type = Whether to export UserLayer (default) or NamedLayer </li>
      *     <li>exportDefaultValues = Whether to export default values or not (defaults to false) </li>
      *     <li>indentation = The number of spaces to use when indenting (defaults to 2) </li>
      * </ol>
@@ -35,10 +37,16 @@ class SLDWriter implements Writer {
      */
     void write(Map options = [:], Style style, OutputStream out) {
         StyleFactory sf = CommonFactoryFinder.getStyleFactory(null)
-        UserLayer userLayer = sf.createUserLayer()
-        userLayer.addUserStyle(style.gtStyle)
         StyledLayerDescriptor sld = sf.createStyledLayerDescriptor()
-        sld.addStyledLayer(userLayer)
+        if (options.get("type", "UserLayer").equalsIgnoreCase("UserLayer")) {
+            UserLayer userLayer = sf.createUserLayer()
+            userLayer.addUserStyle(style.gtStyle)
+            sld.addStyledLayer(userLayer)
+        } else {
+            NamedLayer namedLayer = sf.createNamedLayer()
+            namedLayer.addStyle(style.gtStyle)
+            sld.addStyledLayer(namedLayer)
+        }
         def transformer = new SLDTransformer()
         transformer.exportDefaultValues = options.get("exportDefaultValues", false)
         if (format) {
