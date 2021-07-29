@@ -165,7 +165,16 @@ class Raster implements Renderable {
 
     @Override
     List getMapLayers(Bounds bounds, List size) {
-        [new GridCoverageLayer(this.coverage, this.style.gtStyle)]
+        List rasterSize = this.size
+        // Resample large rasters
+        if (rasterSize[0] > 3000 || rasterSize[1] > 3000) {
+            Raster resampledRaster = this.resample(bbox: bounds, size: size)
+            [new GridCoverageLayer(resampledRaster.coverage, this.style.gtStyle)]
+        }
+        // Leave small rasters alone
+        else {
+            [new GridCoverageLayer(this.coverage, this.style.gtStyle)]
+        }
     }
 
     /**
