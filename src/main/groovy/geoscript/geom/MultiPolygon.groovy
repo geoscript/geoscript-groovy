@@ -118,9 +118,13 @@ class MultiPolygon extends GeometryCollection {
      * Create a JTS MultiPolygon from a List of Polygons 
      */
     private static create(Polygon... polygons) {
-        Geometry.factory.createMultiPolygon(polygons.collect{
+        if (polygons.size() == 0) {
+            Geometry.factory.createMultiPolygon()
+        } else {
+            Geometry.factory.createMultiPolygon(polygons.collect {
                 polygon -> polygon.g
             }.toArray() as JtsPolygon[])
+        }
     }
 
     /**
@@ -133,7 +137,7 @@ class MultiPolygon extends GeometryCollection {
         if (p.size() > 0) {
             create(*p)
         } else {
-            create(new Polygon())
+            Geometry.factory.createMultiPolygon()
         }
     }
 
@@ -141,9 +145,13 @@ class MultiPolygon extends GeometryCollection {
      * Create a JTS MultiPolygon from a List of Polygons or a List of List of Doubles
      */
     private static create(List polygons) {
-        List<Polygon> p = polygons.collect{poly ->
-            (poly instanceof Polygon) ? poly : new Polygon(poly)
+        if (polygons.isEmpty()) {
+            Geometry.factory.createMultiPolygon()
+        } else {
+            List<Polygon> p = polygons.collect { poly ->
+                (poly instanceof Polygon) ? poly : new Polygon(poly)
+            }
+            create(*p)
         }
-        create(*p)
     }
 }
