@@ -9,6 +9,7 @@ import org.locationtech.jts.geom.prep.PreparedGeometryFactory
 import org.locationtech.jts.geom.Envelope
 import org.locationtech.jts.geom.IntersectionMatrix
 import org.locationtech.jts.geom.util.AffineTransformation
+import org.locationtech.jts.geom.util.GeometryFixer
 import org.locationtech.jts.operation.buffer.BufferParameters
 import org.locationtech.jts.operation.buffer.BufferOp
 import org.locationtech.jts.awt.FontGlyphReader
@@ -476,6 +477,14 @@ class Geometry {
      */
     Geometry union(Geometry other) {
         wrap(this.g.union(other.g))
+    }
+
+    /**
+     * Fix an invalid Geometry
+     * @return A new fixed Geometry
+     */
+    Geometry fix() {
+        wrap(GeometryFixer.fix(this.g))
     }
 
     /**

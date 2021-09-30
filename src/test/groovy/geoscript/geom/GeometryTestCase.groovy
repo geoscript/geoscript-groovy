@@ -1351,4 +1351,11 @@ class GeometryTestCase {
         assertTrue(preparedGeom instanceof PreparedGeometry)
         assertEquals(geom.toString(), preparedGeom.toString())
     }
+
+    @Test void fix() {
+        Geometry invalidLine = new LineString([[0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [1, 1]])
+        Geometry fixedLine = invalidLine.fix()
+        assertEquals("LINESTRING (0 0, 1 1)", fixedLine.wkt)
+    }
+
 }
