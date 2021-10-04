@@ -176,6 +176,8 @@ class OSM extends ImageTileLayer {
                     "http://otile3.mqcdn.com/tiles/1.0.0/sat",
                     "http://otile4.mqcdn.com/tiles/1.0.0/sat"
             ])
+        } else if (name.equalsIgnoreCase("wikimedia")) {
+            new OSM("WikiMedia", ["https://maps.wikimedia.org/osm-intl"])
         } else if (name.equalsIgnoreCase("osm")) {
             new OSM()
         } else {
@@ -230,4 +232,5 @@ class OSM extends ImageTileLayer {
             null
         }
     }
+
 }

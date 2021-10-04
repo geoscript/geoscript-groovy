@@ -38,6 +38,8 @@ class OSMTestCase {
         assertEquals "MapQuest Street", osm.name
         osm = OSM.getWellKnownOSM("mapquest-satellite")
         assertEquals "MapQuest Satellite", osm.name
+        osm = OSM.getWellKnownOSM("wikimedia")
+        assertEquals "WikiMedia", osm.name
         assertNull OSM.getWellKnownOSM("N/A")
         assertNull OSM.getWellKnownOSM("")
         assertNull OSM.getWellKnownOSM(null)
