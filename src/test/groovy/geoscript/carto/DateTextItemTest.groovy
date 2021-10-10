@@ -1,11 +1,11 @@
 package geoscript.carto
 
-import org.junit.Test
+import org.junit.jupiter.api.Test
 
 import java.awt.Color
 import java.awt.Font
 import java.text.SimpleDateFormat
-import static org.junit.Assert.*
+import static org.junit.jupiter.api.Assertions.*
 
 class DateTextItemTest {
 

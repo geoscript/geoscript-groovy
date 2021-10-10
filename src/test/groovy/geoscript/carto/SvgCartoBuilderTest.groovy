@@ -1,18 +1,18 @@
 package geoscript.carto
 
+import geoscript.FileUtil
 import geoscript.layer.GeoTIFF
 import geoscript.layer.Shapefile
 import geoscript.render.Map
-import org.junit.Rule
-import org.junit.Test
-import org.junit.rules.TemporaryFolder
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.io.TempDir
 
 import java.awt.*
 
 class SvgCartoBuilderTest {
 
-    @Rule
-    public TemporaryFolder temporaryFolder = new TemporaryFolder()
+    @TempDir
+    File folder
 
     @Test
     void build() {
@@ -26,7 +26,7 @@ class SvgCartoBuilderTest {
         ])
 
         boolean saveToTarget = false
-        File file = saveToTarget ? new File("target/map.svg") : temporaryFolder.newFile("map.svg")
+        File file = saveToTarget ? new File("target/map.svg") : new File(folder, "map.svg")
         file.withOutputStream { OutputStream outputStream ->
             new SvgCartoBuilder(PageSize.LETTER_LANDSCAPE)
                 .rectangle(new RectangleItem(0, 0, 792, 612).strokeColor(Color.WHITE).fillColor(Color.WHITE))

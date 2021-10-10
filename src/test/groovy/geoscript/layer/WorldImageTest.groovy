@@ -1,10 +1,9 @@
 package geoscript.layer
 
-import org.junit.Rule
-import org.junit.Test
-import org.junit.rules.TemporaryFolder
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.io.TempDir
 
-import static org.junit.Assert.*
+import static org.junit.jupiter.api.Assertions.*
 
 /**
  * The WorldImage Unit Test
@@ -12,8 +11,8 @@ import static org.junit.Assert.*
  */
 class WorldImageTest {
 
-    @Rule
-    public TemporaryFolder folder = new TemporaryFolder()
+    @TempDir
+    File folder
 
     @Test void readWrite() {
 
@@ -21,21 +20,21 @@ class WorldImageTest {
         Raster gtRaster = geotiff.read()
 
         // GeoTIFF to TIFF + WorldFile
-        File worldTiffFile = folder.newFile("raster.tif")
+        File worldTiffFile = new File(folder,"raster.tif")
         WorldImage worldImage = new WorldImage(worldTiffFile)
         worldImage.write(gtRaster)
         Raster tifRaster = worldImage.read()
         assertNotNull(tifRaster)
 
         // GeoTIFF to JPEG + WorldFile
-        File worldJpegfFile = folder.newFile("raster.jpeg")
+        File worldJpegfFile = new File(folder,"raster.jpeg")
         worldImage = new WorldImage(worldJpegfFile)
         worldImage.write(gtRaster)
         Raster jpgRaster = worldImage.read()
         assertNotNull(jpgRaster)
 
         // GeoTIFF to PNG + WorldFile
-        File worldPngfFile = folder.newFile("raster.png")
+        File worldPngfFile = new File(folder,"raster.png")
         worldImage = new WorldImage(worldPngfFile)
         worldImage.write(gtRaster)
         Raster pngRaster = worldImage.read()

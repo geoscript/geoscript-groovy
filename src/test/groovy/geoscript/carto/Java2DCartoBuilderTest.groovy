@@ -10,13 +10,12 @@ import geoscript.style.Fill
 import geoscript.style.Shape
 import geoscript.style.Stroke
 import geoscript.style.UniqueValues
-import org.junit.Rule;
-import org.junit.Test
-import org.junit.rules.TemporaryFolder
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.io.TempDir
 
 import java.awt.Font
 
-import static org.junit.Assert.*
+import static org.junit.jupiter.api.Assertions.*
 
 import javax.imageio.ImageIO
 import java.awt.Graphics2D
@@ -25,8 +24,8 @@ import java.awt.image.BufferedImage;
 
 class Java2DCartoBuilderTest {
 
-    @Rule
-    public TemporaryFolder temporaryFolder = new TemporaryFolder()
+    @TempDir
+    private File folder
 
     boolean showInTarget = false
 
@@ -266,7 +265,13 @@ class Java2DCartoBuilderTest {
     }
 
     private File getDirectory() {
-        showInTarget ? new File("target") : temporaryFolder.newFolder("carto")
+        if (showInTarget) {
+            new File("target")
+        } else {
+            File dir = new File(folder, "carto")
+            dir.mkdir()
+            dir
+        }
     }
 
 }

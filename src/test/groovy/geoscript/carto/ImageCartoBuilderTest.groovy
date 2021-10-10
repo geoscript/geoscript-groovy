@@ -3,18 +3,17 @@ package geoscript.carto
 import geoscript.layer.GeoTIFF
 import geoscript.layer.Shapefile
 import geoscript.render.Map
+import org.junit.jupiter.api.io.TempDir
 
 import java.awt.Color
-import org.junit.Rule
-import org.junit.Test
-import org.junit.rules.TemporaryFolder
+import org.junit.jupiter.api.Test
 
 import java.awt.Font
 
 class ImageCartoBuilderTest {
 
-    @Rule
-    public TemporaryFolder temporaryFolder = new TemporaryFolder()
+    @TempDir
+    private File folder
 
     @Test
     void build() {
@@ -28,7 +27,7 @@ class ImageCartoBuilderTest {
         ])
 
         boolean saveToTarget = false
-        File file = saveToTarget ? new File("target/map.png") : temporaryFolder.newFile("map.png")
+        File file = saveToTarget ? new File("target/map.png") : new File(folder, "map.png")
         file.withOutputStream { OutputStream outputStream ->
             new ImageCartoBuilder(PageSize.LETTER_LANDSCAPE, ImageCartoBuilder.ImageType.PNG)
                 .rectangle(new RectangleItem(0, 0, 792, 612).strokeColor(Color.WHITE).fillColor(Color.WHITE))

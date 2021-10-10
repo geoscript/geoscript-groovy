@@ -3,16 +3,15 @@ package geoscript.carto
 import geoscript.layer.GeoTIFF
 import geoscript.layer.Shapefile
 import geoscript.render.Map
-import org.junit.Rule
-import org.junit.Test
-import org.junit.rules.TemporaryFolder
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.io.TempDir
 
 import java.awt.*
 
 class PdfCartoBuilderTest {
 
-    @Rule
-    public TemporaryFolder temporaryFolder = new TemporaryFolder()
+    @TempDir
+    private File temporaryFolder
 
     @Test
     void build() {
@@ -26,7 +25,7 @@ class PdfCartoBuilderTest {
         ])
 
         boolean saveToTarget = false
-        File file = saveToTarget ? new File("target/map.pdf") : temporaryFolder.newFile("map.pdf")
+        File file = saveToTarget ? new File("target/map.pdf") : new File(temporaryFolder, "map.pdf")
         file.withOutputStream { OutputStream outputStream ->
             new PdfCartoBuilder(PageSize.LETTER_LANDSCAPE)
                 .rectangle(new RectangleItem(0, 0, 792, 612).strokeColor(Color.WHITE).fillColor(Color.WHITE))

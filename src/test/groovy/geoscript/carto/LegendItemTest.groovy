@@ -6,11 +6,11 @@ import geoscript.style.Fill
 import geoscript.style.Shape
 import geoscript.style.Stroke
 import java.awt.Color
-import org.junit.Test
+import org.junit.jupiter.api.Test
 
 import java.awt.Font
 
-import static org.junit.Assert.*
+import static org.junit.jupiter.api.Assertions.*
 
 class LegendItemTest {
 

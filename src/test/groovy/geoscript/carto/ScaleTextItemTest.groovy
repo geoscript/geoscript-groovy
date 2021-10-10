@@ -2,11 +2,11 @@ package geoscript.carto
 
 import geoscript.layer.Shapefile
 import geoscript.render.Map
-import org.junit.Test
+import org.junit.jupiter.api.Test
 
 import java.awt.*
 
-import static org.junit.Assert.*
+import static org.junit.jupiter.api.Assertions.*
 
 class ScaleTextItemTest {
 

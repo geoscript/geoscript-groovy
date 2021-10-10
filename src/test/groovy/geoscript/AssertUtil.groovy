@@ -1,7 +1,7 @@
 package geoscript
 
 import geoscript.geom.Bounds
-import static org.junit.Assert.*
+import static org.junit.jupiter.api.Assertions.*
 
 /**
  * A collection of assertion utilities.
@@ -17,7 +17,7 @@ class AssertUtil {
         StringReader actualReader = new StringReader(actual)
         List<String> expectedLines = expectedReader.readLines()
         List<String> actualLines = actualReader.readLines()
-        assertEquals("The number of lines should be equal", expectedLines.size(), actualLines.size())
+        assertEquals(expectedLines.size(), actualLines.size(), "The number of lines should be equal")
         expectedLines.eachWithIndex { String exp, int i ->
             String act = actualLines[i]
             if (trim) {
@@ -32,7 +32,7 @@ class AssertUtil {
                 println "Expected: ${exp}"
                 println "Actual  : ${act}"
             }
-            assertEquals("Lines should match", exp, act)
+            assertEquals(exp, act, "Lines should match")
         }
     }
 
