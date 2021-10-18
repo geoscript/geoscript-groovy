@@ -31,7 +31,7 @@ Add geoscript as a dependency in pom.xml.
         <dependency>
             <groupId>org.geoscript</groupId>
             <artifactId>geoscript-groovy</artifactId>
-            <version>1.17.0</version>
+            <version>1.18.0</version>
         </dependency>
     </dependencies>
 

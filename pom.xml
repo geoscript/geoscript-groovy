@@ -200,11 +200,6 @@
         </dependency>
         <dependency>
             <groupId>org.geotools</groupId>
-            <artifactId>gt-gtopo30</artifactId>
-            <version>${gt.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.geotools</groupId>
             <artifactId>gt-imagepyramid</artifactId>
             <version>${gt.version}</version>
         </dependency>
@@ -571,7 +566,7 @@
         </plugins>
     </reporting>
     <properties>
-        <gt.version>26-SNAPSHOT</gt.version>
+        <gt.version>26.0</gt.version>
         <groovy.version>3.0.9</groovy.version>
     </properties>
     <name>geoscript groovy</name>

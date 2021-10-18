@@ -3,6 +3,59 @@
 GeoScript Groovy Releases
 =========================
 
+1.18.0
+------
+The 1.18 release of GeoScript is build on Groovy 3.0.9, GeoTools 26.0, and the Java Topology Suite 1.18.2 and requires Java 8.
+
+Added a WikiMedia OSM Layer::
+
+    OSM osm = OSM.getWellKnownOSM("wikimedia")
+
+Add a Geometry method to fix invalid Geometries::
+
+    Geometry invalidLine = new LineString([[0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [1, 1]])
+    Geometry fixedLine = invalidLine.fix()
+    println fixedLine.wkt
+    >>> LINESTRING (0 0, 1 1)
+
+Removed GTopo30 Raster Format.
+
+When drawing maps, resample large raster for better performance.
+
+Added a RasterTileRenderer that creates Tiles from a Single Raster::
+
+    File file = new File("world.tif")
+    GeoTIFF geoTIFF = new GeoTIFF(file)
+    Raster raster = geoTIFF.read()
+
+    RasterTileRenderer tileRenderer = new RasterTileRenderer(raster)
+    Pyramid pyramid = Pyramid.createGlobalMercatorPyramid()
+    byte[] bytes = tileRenderer.render(pyramid.bounds(new Tile(0,0,0)), size: [256,256])
+
+Added StyleRepository for files (flat and nested directories) and databases (h2, sqlite, and postgres)::
+
+    Sql sql = Sql.newInstance("jdbc:sqlite:styles.db", "org.sqlite.JDBC")
+    StyleRepository styleRepository = DatabaseStyleRepository.forSqlite(sql)
+
+    // Save
+    File file = new File("states.sld")
+    styleRepository.save("states", "states", file.text)
+
+    // Get
+    String sld = styleRepository.getDefaultForLayer("states")
+
+    // Delete (layer, style)
+    styleRepository.delete("states", "states")
+
+Add support for exporting SLDs with NamedLayer elements::
+
+    Symbolizer sym = new Fill("wheat") + new Stroke("brown")
+    SLDWriter writer = new SLDWriter();
+    ByteArrayOutputStream out = new ByteArrayOutputStream()
+    writer.write(sym, out, type: "NamedLayer")
+
+Upgraded JUnit from 4 to 5 and refactored tests.
+
 1.17.0
 ------
 The 1.17 release of GeoScript is build on Groovy 3.0.7, GeoTools 25.0, and the Java Topology Suite 1.18.1 and requires Java 8.
