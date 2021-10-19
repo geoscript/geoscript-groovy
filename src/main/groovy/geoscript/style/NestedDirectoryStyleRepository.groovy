@@ -41,7 +41,7 @@ class NestedDirectoryStyleRepository implements StyleRepository {
         if (layerDirectory.exists()) {
             layerDirectory.listFiles(new StyleFileNameFilter()).collect { File file ->
                 [
-                        layerName: FilenameUtils.getBaseName(file.name),
+                        layerName: layerName,
                         styleName: FilenameUtils.getBaseName(file.name),
                         style    : file.text
                 ]
@@ -57,7 +57,7 @@ class NestedDirectoryStyleRepository implements StyleRepository {
         this.directory.listFiles(new DirectoryFileFilter()).each { File dir ->
             dir.listFiles(new StyleFileNameFilter()).each { File file ->
                 styles.add([
-                        layerName: FilenameUtils.getBaseName(file.name),
+                        layerName: dir.name,
                         styleName: FilenameUtils.getBaseName(file.name),
                         style    : file.text
                 ])
