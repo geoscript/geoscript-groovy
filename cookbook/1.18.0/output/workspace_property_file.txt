@@ -1,0 +1,4 @@
+Property
+------
+places (10)
+circles (10)

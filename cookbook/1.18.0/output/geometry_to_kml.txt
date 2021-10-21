@@ -1,0 +1,1 @@
+<Point><coordinates>-123.15,46.237</coordinates></Point>

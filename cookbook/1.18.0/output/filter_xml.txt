@@ -1,0 +1,6 @@
+<ogc:Filter xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:gml="http://www.opengis.net/gml" xmlns:ogc="http://www.opengis.net/ogc">
+<ogc:PropertyIsEqualTo>
+<ogc:PropertyName>name</ogc:PropertyName>
+<ogc:Literal>Seattle</ogc:Literal>
+</ogc:PropertyIsEqualTo>
+</ogc:Filter>

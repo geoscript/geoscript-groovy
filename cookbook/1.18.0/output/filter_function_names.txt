@@ -1,0 +1,11 @@
+There are 313 Functions:
+And
+Area
+Categorize
+Collection_Average
+Collection_Bounds
+Collection_Count
+Collection_Max
+Collection_Median
+Collection_Min
+Collection_Nearest

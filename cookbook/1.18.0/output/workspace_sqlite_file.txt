@@ -1,0 +1,7 @@
+Sqlite
+------
+countries (177)
+ocean (2)
+places (326)
+rivers (460)
+states (52)

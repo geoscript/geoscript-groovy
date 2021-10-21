@@ -1,0 +1,15 @@
+
+Zoom Level: 7
+# of tiles: 6
+Bounds: (-1.1583540944868885E7,5635538.7764447965,-1.0644334922311949E7,6261709.751605329,EPSG:3857)
+Width / # Columns: 3
+Height / # Rows: 2
+MinX: 27, MinY: 82, MaxX: 29, MaxY: 83
+
+Tiles:
+Tile(x:27, y:82, z:7)
+Tile(x:28, y:82, z:7)
+Tile(x:29, y:82, z:7)
+Tile(x:27, y:83, z:7)
+Tile(x:28, y:83, z:7)
+Tile(x:29, y:83, z:7)

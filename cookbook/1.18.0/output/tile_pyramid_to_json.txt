@@ -1,0 +1,51 @@
+{
+    "proj": "EPSG:3857",
+    "bounds": {
+        "minX": -2.0036395147881314E7,
+        "minY": -2.0037471205137067E7,
+        "maxX": 2.0036395147881314E7,
+        "maxY": 2.003747120513706E7
+    },
+    "origin": "BOTTOM_LEFT",
+    "tileSize": {
+        "width": 256,
+        "height": 256
+    },
+    "grids": [
+        {
+            "z": 0,
+            "width": 1,
+            "height": 1,
+            "xres": 156412.0,
+            "yres": 156412.0
+        },
+        {
+            "z": 1,
+            "width": 2,
+            "height": 2,
+            "xres": 78206.0,
+            "yres": 78206.0
+        },
+        {
+            "z": 2,
+            "width": 4,
+            "height": 4,
+            "xres": 39103.0,
+            "yres": 39103.0
+        },
+        {
+            "z": 3,
+            "width": 8,
+            "height": 8,
+            "xres": 19551.5,
+            "yres": 19551.5
+        },
+        {
+            "z": 4,
+            "width": 16,
+            "height": 16,
+            "xres": 9775.75,
+            "yres": 9775.75
+        }
+    ]
+}

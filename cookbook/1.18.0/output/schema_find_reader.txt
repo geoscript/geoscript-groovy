@@ -1,0 +1,1 @@
+layer geom: Point(EPSG:4326), id: Integer, name: String
