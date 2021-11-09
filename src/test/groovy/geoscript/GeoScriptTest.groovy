@@ -29,6 +29,13 @@ class GeoScriptTest {
     @TempDir
     private File folder
 
+    @Test void getVersion() {
+        Properties properties = new Properties()
+        properties.load(GeoScript.getClassLoader().getResourceAsStream("application.properties"))
+        String version = properties.getProperty("geoscript.version")
+        assertEquals(version, GeoScript.version)
+    }
+
     @Test void wrap() {
         assertTrue GeoScript.wrap(new Feature([the_geom: "POINT (1 1)"],"pt").f) instanceof Feature
         assertTrue GeoScript.wrap(new Schema("widgets", "geom:Point:srid=4326").featureType) instanceof Schema

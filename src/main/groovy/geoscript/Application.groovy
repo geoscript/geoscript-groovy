@@ -3,6 +3,7 @@ package geoscript
 import groovy.ui.GroovyMain as Script
 import groovy.ui.Console
 import org.codehaus.groovy.tools.shell.Main as Shell
+import org.geotools.util.factory.GeoTools
 
 /**
  * The GeoScript Application that can run scripts, shell, or console.
@@ -17,7 +18,7 @@ class Application {
      */
     static void main(String[] args) {
         if (args.length < 1) {
-            println "Please provide a command (script, shell, or console)"
+            println "Please provide a command (script, shell, or console, version)"
             return
         }
         String command = args[0]
@@ -30,6 +31,9 @@ class Application {
         }
         else if (command.equalsIgnoreCase("console")) {
             Console.main(argsWithoutCommand)
+        }
+        else if (command.equalsIgnoreCase("version")) {
+            println "GeoScript = ${GeoScript.version} Groovy = ${GroovySystem.getVersion()} GeoTools = ${GeoTools.getVersion()}"
         }
         else {
             println "Unknown command '${command}'"

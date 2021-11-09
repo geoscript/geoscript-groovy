@@ -356,7 +356,12 @@
         </pluginRepository>
     </pluginRepositories>
     <build>
-        <!-- <sourceDirectory>src/main/groovy</sourceDirectory> -->
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+                <filtering>true</filtering>
+            </resource>
+        </resources>
         <plugins>
             <plugin>
                 <groupId>org.codehaus.groovy</groupId>

@@ -40,6 +40,16 @@ import java.util.zip.ZipOutputStream
 class GeoScript {
 
     /**
+     * Get the GeoScript version
+     * @return The GeoScript version
+     */
+    static String getVersion() {
+        Properties properties = new Properties()
+        properties.load(this.getClassLoader().getResourceAsStream("application.properties"))
+        properties.getProperty("geoscript.version")
+    }
+
+    /**
      * Convert a List of numbers to a GeoScript Geometry.
      * @param list A List of numbers
      * @param type The Geometry Class
