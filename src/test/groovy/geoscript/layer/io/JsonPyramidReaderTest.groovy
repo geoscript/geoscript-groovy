@@ -2,6 +2,8 @@ package geoscript.layer.io
 
 import geoscript.layer.Pyramid
 import org.junit.jupiter.api.Test
+
+import static geoscript.AssertUtil.assertPyramidsAreEquals
 import static org.junit.jupiter.api.Assertions.assertEquals
 
 /**
@@ -168,7 +170,8 @@ class JsonPyramidReaderTest {
     ]
 }
 """
-        Pyramid p = new JsonPyramidReader().read(json)
-        assertEquals Pyramid.createGlobalMercatorPyramid(), p
+        Pyramid actual = new JsonPyramidReader().read(json)
+        Pyramid expected = Pyramid.createGlobalMercatorPyramid()
+        assertPyramidsAreEquals(expected, actual, 0.0000001)
     }
 }

@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
 
 import static org.junit.jupiter.api.Assertions.*
+import static geoscript.AssertUtil.assertBoundsEquals
 
 /**
  * The Tile Pyramid Unit Test
@@ -83,9 +84,9 @@ class PyramidTest {
     void tileBounds() {
         Pyramid pyramid = Pyramid.createGlobalMercatorPyramid()
         Bounds bounds = pyramid.bounds(new Tile(0, 0, 0))
-        assertEquals bounds, new Bounds(-2.0036395147881314E7, -2.0037471205137067E7, 2.0036395147881314E7, 2.003747120513706E7, 'EPSG:3857')
+        assertBoundsEquals(bounds, new Bounds(-2.0036395147881314E7, -2.0037471205137067E7, 2.0036395147881314E7, 2.003747120513706E7, 'EPSG:3857'), 0.000001)
         bounds = pyramid.bounds(new Tile(1, 0, 0))
-        assertEquals bounds, new Bounds(-2.0036395147881314E7, -2.0037471205137067E7, 0.0, -3.725290298461914E-9, 'EPSG:3857')
+        assertBoundsEquals(bounds, new Bounds(-2.0036395147881314E7, -2.0037471205137067E7, 0.0, -3.725290298461914E-9, 'EPSG:3857'), 0.0000001)
     }
 
     @Test
@@ -95,7 +96,7 @@ class PyramidTest {
         Tile tile = new Tile(7, 28, 45)
         Bounds b1 = new Bounds(-1.127047227068324E7, 5635538.776444796, -1.0957403596497595E7, 5948624.264025062, "EPSG:3857")
         Bounds b2 = pyramid.bounds(tile)
-        assertEquals(b1, b2)
+        assertBoundsEquals(b1, b2, 0.0000001)
     }
 
     @Test
@@ -103,7 +104,7 @@ class PyramidTest {
         Pyramid pyramid = Pyramid.createGlobalMercatorPyramid()
         pyramid.origin = Pyramid.Origin.TOP_LEFT
         Bounds bounds = pyramid.bounds(Projection.transform(new Point(-100.81,46.81),"EPSG:4326","EPSG:3857"), 8, 400, 300)
-        assertEquals(new Bounds(-1.1344314741869908E7,5819468.535791107,-1.1099920991869908E7,6002763.848291107, "EPSG:3857"), bounds)
+        assertBoundsEquals(new Bounds(-1.1344314741869908E7,5819468.535791107,-1.1099920991869908E7,6002763.848291107, "EPSG:3857"), bounds, 0.000001)
     }
 
     @Test
