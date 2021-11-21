@@ -3,6 +3,7 @@ package geoscript.layer.io
 import geoscript.layer.Pyramid
 import org.junit.jupiter.api.Test
 import static org.junit.jupiter.api.Assertions.assertEquals
+import static geoscript.AssertUtil.assertPyramidsAreEquals
 
 /**
  * The CsvPyramidReader Unit Test
@@ -36,7 +37,8 @@ BOTTOM_LEFT
 18,262144,262144,0.5966644287109375,0.5966644287109375
 19,524288,524288,0.29833221435546875,0.29833221435546875
 """.denormalize()
-        Pyramid p = new CsvPyramidReader().read(csv)
-        assertEquals Pyramid.createGlobalMercatorPyramid(), p
+        Pyramid actual = new CsvPyramidReader().read(csv)
+        Pyramid expected = Pyramid.createGlobalMercatorPyramid()
+        assertPyramidsAreEquals(expected, actual, 0.0000001)
     }
 }

@@ -2,7 +2,7 @@ package geoscript.layer.io
 
 import geoscript.layer.Pyramid
 import org.junit.jupiter.api.Test
-import static org.junit.jupiter.api.Assertions.assertEquals
+import static org.junit.jupiter.api.Assertions.assertTrue
 
 /**
  * The JsonPyramidWriter Unit Test
@@ -12,8 +12,8 @@ class JsonPyramidWriterTest {
 
     @Test void write() {
         Pyramid p = Pyramid.createGlobalMercatorPyramid()
-        String json = new JsonPyramidWriter().write(p)
-        assertEquals """{
+        String actual = new JsonPyramidWriter().write(p)
+        String expected = """{
     "proj": "EPSG:3857",
     "bounds": {
         "minX": -2.0036395147881314E7,
@@ -168,6 +168,8 @@ class JsonPyramidWriterTest {
             "yres": 0.29833221435546875
         }
     ]
-}""", json
+}"""
+        assertTrue(actual.startsWith(expected.substring(0, expected.indexOf('"bounds": {'))))
+        assertTrue(actual.endsWith(expected.substring(expected.indexOf('"origin": "BOTTOM_LEFT"'))))
     }
 }

@@ -3,8 +3,8 @@ package geoscript.proj
 import org.geotools.referencing.CRS
 import org.junit.jupiter.api.Test
 import static org.junit.jupiter.api.Assertions.*
+import static geoscript.AssertUtil.assertPointsAreEqual
 import geoscript.geom.Point
-
 import geoscript.geom.Bounds
 
 /**
@@ -120,9 +120,9 @@ class ProjectionTest {
         Projection src = new Projection("EPSG:2927")
         Projection dest = new Projection("EPSG:4326")
         Point projectedPoint = src.transform(point, dest)
-        assertEquals "POINT (-122.34427530579649 47.10678696848592)", projectedPoint.toString()
+        assertPointsAreEqual(new Point(-122.34427530579649, 47.10678696848592), projectedPoint, 0.0000000001)
         projectedPoint = src.transform(point, "EPSG:4326")
-        assertEquals "POINT (-122.34427530579649 47.10678696848592)", projectedPoint.toString()
+        assertPointsAreEqual(new Point(-122.34427530579649, 47.10678696848592), projectedPoint, 0.0000000001)
     }
 
     @Test void testToString() {
@@ -146,13 +146,13 @@ class ProjectionTest {
         Projection src = new Projection("EPSG:2927")
         Projection dest = new Projection("EPSG:4326")
         Point projectedPoint = Projection.transform(point, src, dest)
-        assertEquals "POINT (-122.34427530579649 47.10678696848592)", projectedPoint.toString()
+        assertPointsAreEqual(new Point(-122.34427530579649,47.10678696848592), projectedPoint, 0.000000001)
     }
 
     @Test void transform26916To4326() {
         Point point = new Point(776041.0, 3386618.0)
         Point projectedPoint = Projection.transform(point, "EPSG:26916", "EPSG:4326")
-        assertEquals "POINT (-84.121611219545 30.580286157377163)", projectedPoint.wkt
+        assertPointsAreEqual(new Point(-84.121611219545, 30.580286157377163), projectedPoint, 0.000000001)
     }
 
     @Test void projections() {

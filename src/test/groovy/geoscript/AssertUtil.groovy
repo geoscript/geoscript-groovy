@@ -1,6 +1,9 @@
 package geoscript
 
 import geoscript.geom.Bounds
+import geoscript.geom.Point
+import geoscript.layer.Pyramid
+
 import static org.junit.jupiter.api.Assertions.*
 
 /**
@@ -42,6 +45,20 @@ class AssertUtil {
         assertEquals expected.maxX, actual.maxX, delta
         assertEquals expected.maxY, actual.maxY, delta
         assertEquals expected.proj, actual.proj
+    }
+
+    static void assertPyramidsAreEquals(Pyramid expected, Pyramid actual, double deltaForBounds) {
+        assertBoundsEquals(expected.bounds ,actual.bounds, deltaForBounds)
+        assertEquals(expected.proj, actual.proj)
+        assertEquals(expected.origin, actual.origin)
+        assertEquals(expected.tileWidth, actual.tileWidth)
+        assertEquals(expected.tileHeight, actual.tileHeight)
+        assertEquals(expected.grids, actual.grids)
+    }
+
+    static void assertPointsAreEqual(Point expected, Point actual, double delta) {
+        assertEquals(expected.x, actual.x, delta)
+        assertEquals(expected.y, actual.y, delta)
     }
 
 }

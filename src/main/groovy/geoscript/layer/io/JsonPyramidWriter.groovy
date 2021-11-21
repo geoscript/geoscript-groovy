@@ -4,6 +4,8 @@ import geoscript.layer.Grid
 import geoscript.layer.Pyramid
 import groovy.json.JsonBuilder
 
+import java.text.DecimalFormat
+
 /**
  * Write a Pyramid to a JSON String.
  * @author Jared Erickson

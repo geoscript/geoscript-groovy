@@ -4,6 +4,8 @@ import geoscript.layer.Grid
 import geoscript.layer.Pyramid
 import groovy.xml.MarkupBuilder
 
+import java.text.DecimalFormat
+
 /**
  * Write a Pyramid to an XML String.
  * @author Jared Erickson

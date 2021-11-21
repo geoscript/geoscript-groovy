@@ -3,6 +3,8 @@ package geoscript.layer.io
 import geoscript.layer.Grid
 import geoscript.layer.Pyramid
 
+import java.text.DecimalFormat
+
 /**
  * Write a Pyramid to a CSV String.
  * @author Jared Erickson

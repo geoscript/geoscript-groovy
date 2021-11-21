@@ -6,6 +6,7 @@ import geoscript.layer.Pyramid
 import geoscript.layer.TMS
 import org.junit.jupiter.api.Test
 import static org.junit.jupiter.api.Assertions.*
+import static geoscript.AssertUtil.assertBoundsEquals
 
 /**
  * The GdalTmsPyramidReader Unit Test
@@ -40,7 +41,7 @@ class GdalTmsPyramidReaderTest {
 """)
         assertEquals "EPSG:3857", pyramid.proj.id
         Bounds b = new Bounds(-179.99, -85.0511, 179.99, 85.0511, "EPSG:4326").reproject("EPSG:3857")
-        assertEquals b, pyramid.bounds
+        assertBoundsEquals b, pyramid.bounds, 0.000001
         assertEquals 256, pyramid.tileWidth
         assertEquals 256, pyramid.tileHeight
         assertEquals Pyramid.Origin.BOTTOM_LEFT, pyramid.origin

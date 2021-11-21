@@ -4,6 +4,8 @@ import geoscript.layer.Pyramid
 import geoscript.layer.TMS
 import groovy.xml.MarkupBuilder
 
+import java.text.DecimalFormat
+
 /**
  * Write a Pyramid to a GDAL MiniDriver XML File
  * @author Jared Erickson
@@ -15,7 +17,6 @@ class GdalTmsPyramidWriter implements PyramidWriter {
      * @param pyramid The Pyramid
      * @return A String
      */
-
     @Override
     String write(Pyramid pyramid) {
         write([:], pyramid)
