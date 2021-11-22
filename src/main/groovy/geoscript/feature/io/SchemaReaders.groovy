@@ -10,7 +10,7 @@ class SchemaReaders {
      * Get a List of all SchemaReaders
      * @return A List of SchemaReaders
      */
-    public static List<SchemaReader> list() {
+    static List<SchemaReader> list() {
         ServiceLoader.load(SchemaReader.class).iterator().collect()
     }
 
@@ -19,7 +19,7 @@ class SchemaReaders {
      * @param name The name (string, json)
      * @return A SchemaReader or null
      */
-    public static SchemaReader find(String name) {
+    static SchemaReader find(String name) {
         list().find{ SchemaReader reader ->
             String readerName = reader.class.simpleName
             readerName.toLowerCase().startsWith(name.toLowerCase())

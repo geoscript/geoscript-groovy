@@ -10,7 +10,7 @@ class SchemaWriters {
      * Get a List of all SchemaWriters
      * @return A List of SchemaWriters
      */
-    public static List<SchemaWriter> list() {
+    static List<SchemaWriter> list() {
         ServiceLoader.load(SchemaWriter.class).iterator().collect()
     }
 
@@ -19,7 +19,7 @@ class SchemaWriters {
      * @param name The name (csv, geojson, kml)
      * @return A SchemaWriter or null
      */
-    public static SchemaWriter find(String name) {
+    static SchemaWriter find(String name) {
         list().find{ SchemaWriter writer ->
             String writerName = writer.class.simpleName
             writerName.toLowerCase().startsWith(name.toLowerCase())

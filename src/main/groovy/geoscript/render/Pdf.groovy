@@ -28,7 +28,7 @@ class Pdf extends Renderer<Document> {
      * @return The PDF Document
      */
     @Override
-    public Document render(Map map) {
+    Document render(Map map) {
         OutputStream out = new ByteArrayOutputStream()
         return renderAndReturn(map, out)
     }
@@ -39,7 +39,7 @@ class Pdf extends Renderer<Document> {
      * @param out The OutputStream
      */
     @Override
-    public void render(Map map, OutputStream out) {
+    void render(Map map, OutputStream out) {
         renderAndReturn(map, out)
     }
 

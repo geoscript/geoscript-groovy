@@ -5,7 +5,7 @@ import org.geotools.styling.Style as GtStyle
 /**
  * The Style interface
  */
-public interface Style {
+interface Style {
 
     /**
      * Get a GeoTools Style

@@ -55,7 +55,7 @@ class GeometryCollection extends Geometry {
      * @return A new GeometryCollection constructed of the Geometries in this
      * GeometryCollection and the new Geometry
      */
-    public GeometryCollection plus(Geometry geometry) {
+    GeometryCollection plus(Geometry geometry) {
         List<Geometry> geometries = []
         if (!empty) {
             (0..numGeometries-1).each{index ->

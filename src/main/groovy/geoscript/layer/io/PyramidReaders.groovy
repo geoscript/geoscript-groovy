@@ -10,7 +10,7 @@ class PyramidReaders {
      * Get a List of all PyramidReaders
      * @return A List of PyramidReaders
      */
-    public static List<PyramidReader> list() {
+    static List<PyramidReader> list() {
         ServiceLoader.load(PyramidReader.class).iterator().collect()
     }
 
@@ -19,7 +19,7 @@ class PyramidReaders {
      * @param name The name (csv, geojson, kml)
      * @return A PyramidReader or null
      */
-    public static PyramidReader find(String name) {
+    static PyramidReader find(String name) {
         list().find{ PyramidReader reader ->
             String readerName = reader.class.simpleName
             readerName.toLowerCase().startsWith(name.toLowerCase())

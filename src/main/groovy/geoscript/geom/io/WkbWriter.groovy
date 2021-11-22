@@ -22,12 +22,12 @@ class WkbWriter implements Writer {
     /**
      * The big endian byte order constant
      */
-    public static final int BIG_ENDIAN = 1
+    static final int BIG_ENDIAN = 1
 
     /**
      * The little endian byte order constant
      */
-    public static final int LITTLE_ENDIAN = 2
+    static final int LITTLE_ENDIAN = 2
 
     /**
      * Create a new WkbWriter with an output dimension of 2 and big endian byte order.

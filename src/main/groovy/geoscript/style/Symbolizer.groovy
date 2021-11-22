@@ -459,7 +459,7 @@ class Symbolizer implements Style, Cloneable {
         }
 
         @Override
-        public boolean equals(Object obj) {
+        boolean equals(Object obj) {
             if (obj == null) {
                 return false;
             }
@@ -477,7 +477,7 @@ class Symbolizer implements Style, Cloneable {
         }
 
         @Override
-        public int hashCode() {
+        int hashCode() {
             int hash = 7;
             hash = 47 * hash + (int) (Double.doubleToLongBits(this.min) ^ (Double.doubleToLongBits(this.min) >>> 32));
             hash = 47 * hash + (int) (Double.doubleToLongBits(this.max) ^ (Double.doubleToLongBits(this.max) >>> 32));

@@ -10,7 +10,7 @@ class Writers {
      * Get a List of all Feature Writers
      * @return A List of Feature Writers
      */
-    public static List<Writer> list() {
+    static List<Writer> list() {
         ServiceLoader.load(Writer.class).iterator().collect()
     }
 
@@ -19,7 +19,7 @@ class Writers {
      * @param name The name (csv, geojson, kml)
      * @return A Writer or null
      */
-    public static Writer find(String name) {
+    static Writer find(String name) {
         list().find{ Writer writer ->
             String writerName = writer.class.simpleName
             writerName.toLowerCase().startsWith(name.toLowerCase())

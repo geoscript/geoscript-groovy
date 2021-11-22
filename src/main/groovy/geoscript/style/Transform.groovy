@@ -34,7 +34,7 @@ class Transform extends Symbolizer {
     /**
      * The Type enumeration
      */
-    public static enum Type {
+    static enum Type {
         NORMAL,
         RENDERING
     }
@@ -42,8 +42,8 @@ class Transform extends Symbolizer {
     /**
      * Type constants for ease of use
      */
-    public static final Type NORMAL = Type.NORMAL
-    public static final Type RENDERING = Type.RENDERING
+    static final Type NORMAL = Type.NORMAL
+    static final Type RENDERING = Type.RENDERING
 
     /**
      * Create a new Transform from a Function.

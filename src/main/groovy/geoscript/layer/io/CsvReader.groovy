@@ -34,7 +34,7 @@ class CsvReader implements Reader {
     /**
      * The geometry encoding type.
      */
-    public static enum Type {
+    static enum Type {
         WKT, WKB, GEOJSON, KML, GML2, GML3, XY, DMS, DMSChar, DDM, DDMChar
     }
 

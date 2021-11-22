@@ -29,7 +29,7 @@ class GpxReader implements Reader {
      * @param node The XML Node
      * @return A Geometry or null
      */
-    public Geometry read(Node node) {
+    Geometry read(Node node) {
         Geometry geom = null
         String name = node.name()
         if (name.equals("wpt")) {

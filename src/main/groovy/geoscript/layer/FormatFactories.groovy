@@ -10,7 +10,7 @@ class FormatFactories {
      * Get a List of FormatFactories
      * @return A List of FormatFactories
      */
-    public static List<FormatFactory> list() {
+    static List<FormatFactory> list() {
         ServiceLoader.load(FormatFactory.class).iterator().collect()
     }
 

@@ -31,7 +31,7 @@ class GIF extends Image {
      * @param delay The delay between images in milliseconds
      * @param loop Whether to loop continuously or not
      */
-    public void renderAnimated(List<BufferedImage> images, File file, int delay = 300, boolean loop = false) {
+    void renderAnimated(List<BufferedImage> images, File file, int delay = 300, boolean loop = false) {
         file.withOutputStream { OutputStream out ->
             renderAnimatedToOutputStream(images, out, delay, loop)
         }
@@ -44,7 +44,7 @@ class GIF extends Image {
      * @param loop Whether to loop continuously or not
      * @return The byte array of the animated GIF
      */
-    public byte[] renderAnimated(List<BufferedImage> images, int delay = 300, boolean loop = false) {
+    byte[] renderAnimated(List<BufferedImage> images, int delay = 300, boolean loop = false) {
         ByteArrayOutputStream out = new ByteArrayOutputStream()
         try {
             renderAnimatedToOutputStream(images, out, delay, loop)

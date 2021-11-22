@@ -47,7 +47,7 @@ class Image extends Renderer<BufferedImage> {
      * @return A BufferedImage
      */
     @Override
-    public BufferedImage render(Map map) {
+    BufferedImage render(Map map) {
         int type = (imageType.equalsIgnoreCase("jpeg") || imageType.equalsIgnoreCase("jpeg") ? BufferedImage.TYPE_INT_RGB : BufferedImage.TYPE_INT_ARGB)
         BufferedImage image = new BufferedImage(map.width, map.height, type)
         Graphics2D g = (Graphics2D) image.createGraphics()
@@ -62,7 +62,7 @@ class Image extends Renderer<BufferedImage> {
      * @param out The OuptuStream
      */
     @Override
-    public void render(Map map, OutputStream out) {
+    void render(Map map, OutputStream out) {
         def image = render(map)
         ImageIO.write(image, imageType, out)
     }

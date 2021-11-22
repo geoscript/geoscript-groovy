@@ -27,7 +27,7 @@ class GpxReader implements Reader {
     /**
      * GPX Data Types
      */
-    public static enum Type {
+    static enum Type {
         WayPoints,
         Routes,
         Tracks,

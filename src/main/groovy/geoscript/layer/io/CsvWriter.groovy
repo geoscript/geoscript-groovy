@@ -26,7 +26,7 @@ class CsvWriter implements Writer {
     /**
      * How to encode the geometry
      */
-    public static enum Type {
+    static enum Type {
         WKT, WKB, GEOJSON, KML, GML2, GML3, XY, DMS, DMSChar, DDM, DDMChar
     }
 

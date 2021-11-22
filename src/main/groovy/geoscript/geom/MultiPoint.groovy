@@ -72,7 +72,7 @@ class MultiPoint extends GeometryCollection {
      * @param point The other Point
      * @return A new MultiPoint constructed of this Point and the other Point
      */
-    public MultiPoint plus(Point point) {
+    MultiPoint plus(Point point) {
         List<Point> points = []
         if (!empty) {
             (0..numGeometries-1).each{index ->
