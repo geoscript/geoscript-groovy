@@ -3,7 +3,9 @@ package geoscript
 import groovy.ui.GroovyMain as Script
 import groovy.ui.Console
 import org.codehaus.groovy.tools.shell.Main as Shell
+import org.geotools.geometry.jts.JTS
 import org.geotools.util.factory.GeoTools
+import org.locationtech.jts.JTSVersion
 
 /**
  * The GeoScript Application that can run scripts, shell, or console.
@@ -33,7 +35,7 @@ class Application {
             Console.main(argsWithoutCommand)
         }
         else if (command.equalsIgnoreCase("version")) {
-            println "GeoScript = ${GeoScript.version} Groovy = ${GroovySystem.getVersion()} GeoTools = ${GeoTools.getVersion()}"
+            println "GeoScript = ${GeoScript.version} Groovy = ${GroovySystem.getVersion()} GeoTools = ${GeoTools.getVersion()} JTS = ${JTSVersion.CURRENT_VERSION.toString()}"
         }
         else {
             println "Unknown command '${command}'"
