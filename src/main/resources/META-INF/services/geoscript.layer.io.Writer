@@ -6,3 +6,4 @@ geoscript.layer.io.GmlWriter
 geoscript.layer.io.GpxWriter
 geoscript.layer.io.KmlWriter
 geoscript.layer.io.MvtWriter
+geoscript.layer.io.YamlWriter

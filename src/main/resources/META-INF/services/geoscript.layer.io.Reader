@@ -6,3 +6,4 @@ geoscript.layer.io.GmlReader
 geoscript.layer.io.GpxReader
 geoscript.layer.io.KmlReader
 geoscript.layer.io.MvtReader
+geoscript.layer.io.YamlReader

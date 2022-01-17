@@ -4,3 +4,4 @@ geoscript.feature.io.GeoRSSReader
 geoscript.feature.io.GmlReader
 geoscript.feature.io.GpxReader
 geoscript.feature.io.KmlReader
+geoscript.feature.io.YamlReader

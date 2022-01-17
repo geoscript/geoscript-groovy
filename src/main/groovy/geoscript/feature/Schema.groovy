@@ -504,6 +504,7 @@ class Schema {
             ("Short".toLowerCase()) : "java.lang.Integer",
             ("Long".toLowerCase()) : "java.lang.Long",
             ("Double".toLowerCase()) : "java.lang.Double",
+            ("BigDecimal".toLowerCase()) : "java.lang.Double",
             ("Date".toLowerCase()) : "java.util.Date"    
         ]
         map.get(alias.toLowerCase(), alias)
