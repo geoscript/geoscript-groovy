@@ -260,6 +260,28 @@ class GeometryTest {
         assertEquals "POINT (111 -47)", g.wkt
     }
 
+    @Test void getYaml() {
+        Geometry g = Geometry.fromWKT("POINT (111 -47)")
+        assertEquals """---
+geometry:
+  type: "Point"
+  coordinates:
+  - 111.0
+  - -47.0
+""", g.yaml
+    }
+
+    @Test void fromYaml() {
+        Geometry g = Geometry.fromYaml("""---
+geometry:
+  type: "Point"
+  coordinates:
+  - -122.23
+  - 45.67
+""")
+        assertEquals "POINT (-122.23 45.67)", g.wkt
+    }
+
     @Test void getCoordinates() {
         Geometry g = Geometry.fromWKT("POINT (111 -47)")
         def coordinates = g.coordinates

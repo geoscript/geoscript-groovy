@@ -138,4 +138,14 @@ class FeatureExtensionModule {
         writer.writeBytes(feature)
     }
 
+    /**
+     * Get this Feature as a Yaml string
+     * @param feature The Feature
+     * @return A Yaml string
+     */
+    static String getYaml(Feature feature) {
+        def writer = new geoscript.feature.io.YamlWriter()
+        writer.write(feature)
+    }
+
 }

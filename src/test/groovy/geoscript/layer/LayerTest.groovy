@@ -421,6 +421,39 @@ class LayerTest {
         AssertUtil.assertStringsEqual(expected.trim(), kml.trim(), trim: true)
     }
 
+    @Test void toYaml() {
+        Schema s1 = new Schema("facilities", [new Field("geom","Point", "EPSG:2927"), new Field("name","string"), new Field("price","float")])
+        Layer layer1 = new Layer("facilities", s1)
+        layer1.add(new Feature([new Point(-122.444,47.2528), "House", 12.5], "house1", s1))
+
+        String expected = """---
+type: "FeatureCollection"
+features:
+- properties:
+    name: "House"
+    price: 12.5
+  geometry:
+    type: "Point"
+    coordinates:
+    - -122.444
+    - 47.2528
+"""
+        // OutputStream
+        def out = new java.io.ByteArrayOutputStream()
+        layer1.toYaml(out)
+        String yaml = out.toString()
+        assertEquals(expected, yaml)
+
+        // String
+        yaml = layer1.toYamlString()
+        assertEquals(expected, yaml)
+
+        // File
+        File file = new File(folder,"test.yaml")
+        layer1.toYamlFile(file)
+        assertEquals(expected, file.text)
+    }
+
     @Test void reproject() {
         // With Layer Projection
         Schema s1 = new Schema("facilities", [new Field("geom","Point", "EPSG:4326"), new Field("name","string"), new Field("price","float")])

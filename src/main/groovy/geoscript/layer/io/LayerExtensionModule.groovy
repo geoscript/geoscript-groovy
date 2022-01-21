@@ -217,4 +217,34 @@ class LayerExtensionModule {
         out.close()
     }
 
+    /**
+     * Write the Layer as a YAML String
+     * @param layer The Layer
+     * @return The GeoYaml String
+     */
+    static String toYamlString(Layer layer) {
+        YamlWriter yamlWriter = new YamlWriter()
+        yamlWriter.write(layer)
+    }
+
+    /**
+     * Write the Layer as YAML to an OutputStream
+     * @param layer The Layer
+     * @param out The OutputStream (defaults to System.out)
+     */
+    static void toYaml(Layer layer, OutputStream out = System.out) {
+        YamlWriter yamlWriter = new YamlWriter()
+        yamlWriter.write(layer, out)
+    }
+
+    /**
+     * Write the Layer as YAML to a File
+     * @param layer The Layer
+     * @param file The File
+     */
+    static void toYamlFile(Layer layer, File file) {
+        YamlWriter yamlWriter = new YamlWriter()
+        yamlWriter.write(layer, file)
+    }
+
 }

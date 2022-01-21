@@ -319,5 +319,39 @@ class FeatureTest {
         assertEquals("House", f["name"])
         assertEquals(12.5, f["price"] as double, 0.1)
     }
+
+    @Test void getYaml() {
+        Schema s1 = new Schema("houses", [new Field("geom","Point"), new Field("name","string"), new Field("price","float")])
+        Feature f1 = new Feature([new Point(111,-47), "House", 12.5], "house1", s1)
+        assertEquals("""---
+type: "Feature"
+properties:
+  name: "House"
+  price: 12.5
+geometry:
+  type: "Point"
+  coordinates:
+  - 111.0
+  - -47.0
+""", f1.yaml)
+    }
+
+    @Test void fromYaml() {
+        Feature f = Feature.fromYaml("""---
+type: "Feature"
+properties:
+  name: "House"
+  price: 12.5
+geometry:
+  type: "Point"
+  coordinates:
+  - 111.0
+  - -47.0""")
+        assertNotNull f
+        assertEquals(111, f.geom.x, 0.1)
+        assertEquals(-47, f.geom.y, 0.1)
+        assertEquals("House", f["name"])
+        assertEquals(12.5, f["price"] as double, 0.1)
+    }
 }
 

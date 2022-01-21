@@ -108,4 +108,14 @@ class StaticGeometryExtensionModule {
         new GeobufReader().read(geobuf)
     }
 
+    /**
+     * Get a Geometry from a GeoYaml string
+     * @param geometry The Geometry
+     * @param yaml The GeoYaml String
+     * @return A Geometry
+     */
+    static Geometry fromYaml(Geometry geometry, String yaml) {
+        new YamlReader().read(yaml)
+    }
+
 }

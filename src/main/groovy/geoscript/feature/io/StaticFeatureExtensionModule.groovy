@@ -90,4 +90,14 @@ class StaticFeatureExtensionModule {
     static Feature fromGeobuf(Feature feature, InputStream inputStream) {
         new GeobufReader().read(inputStream)
     }
+
+    /**
+     * Read a Feature from a Yaml String
+     * @param feature The Feature
+     * @param str The Yaml String
+     * @return A Feature
+     */
+    static Feature fromYaml(Feature feature, String str) {
+        new YamlReader().read(str)
+    }
 }

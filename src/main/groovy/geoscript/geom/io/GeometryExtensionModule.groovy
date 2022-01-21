@@ -102,4 +102,13 @@ class GeometryExtensionModule {
         new GeobufWriter().writeBytes(geometry)
     }
 
+    /**
+     * Get a GeoYaml String for this Geometry
+     * @param geometry The Geometry
+     * @return A GeoYaml String
+     */
+    static String getYaml(Geometry geometry) {
+        return new YamlWriter().write(geometry)
+    }
+
 }
