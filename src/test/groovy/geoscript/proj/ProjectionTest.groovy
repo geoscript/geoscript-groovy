@@ -34,6 +34,7 @@ class ProjectionTest {
         assertNotNull(new Projection("WagnerIV"))
         assertNotNull(new Projection("WagnerV"))
         assertNotNull(new Projection("WorldVanderGrintenI"))
+        assertNotNull(new Projection("EqualEarth"))
     }
 
     @Test void parseError() {
