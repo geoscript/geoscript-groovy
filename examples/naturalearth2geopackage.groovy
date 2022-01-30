@@ -14,11 +14,12 @@ import static geoscript.GeoScript.unzip
 // Download data from natural earth
 File dataDir = new File("naturalearth")
 [
-        [name: "countries", url: "http://www.naturalearthdata.com/http//www.naturalearthdata.com/download/110m/cultural/ne_110m_admin_0_countries.zip"],
-        [name: "ocean",     url: "http://www.naturalearthdata.com/http//www.naturalearthdata.com/download/110m/physical/ne_110m_ocean.zip"],
-        [name: "places",    url: "http://www.naturalearthdata.com/http//www.naturalearthdata.com/download/110m/cultural/ne_110m_populated_places.zip"],
-        [name: "rivers",    url: "http://www.naturalearthdata.com/http//www.naturalearthdata.com/download/110m/physical/ne_110m_rivers_lake_centerlines.zip"],
-        [name: "states",    url: "http://www.naturalearthdata.com/http//www.naturalearthdata.com/download/110m/cultural/ne_110m_admin_1_states_provinces.zip"]
+        [name: "countries",  url: "https://www.naturalearthdata.com/http//www.naturalearthdata.com/download/110m/cultural/ne_110m_admin_0_countries.zip"],
+        [name: "ocean",      url: "https://www.naturalearthdata.com/http//www.naturalearthdata.com/download/110m/physical/ne_110m_ocean.zip"],
+        [name: "graticules", url: "https://www.naturalearthdata.com/http//www.naturalearthdata.com/download/110m/physical/ne_110m_graticules_20.zip"],
+        [name: "places",     url: "https://www.naturalearthdata.com/http//www.naturalearthdata.com/download/110m/cultural/ne_110m_populated_places.zip"],
+        [name: "rivers",     url: "https://www.naturalearthdata.com/http//www.naturalearthdata.com/download/110m/physical/ne_110m_rivers_lake_centerlines.zip"],
+        [name: "states",     url: "https://www.naturalearthdata.com/http//www.naturalearthdata.com/download/110m/cultural/ne_110m_admin_1_states_provinces.zip"]
 
 ].each { Map item ->
     println "Downloading ${item.name} from ${item.url}..."
@@ -37,6 +38,7 @@ GeoPackage geopackage = new GeoPackage(file)
 [
   "ne_110m_admin_0_countries": "countries",
   "ne_110m_ocean": "ocean",
+  "ne_110m_graticules_20": "graticules",
   "ne_110m_populated_places": "places",
   "ne_110m_rivers_lake_centerlines": "rivers",
   "ne_110m_admin_1_states_provinces": "states"
