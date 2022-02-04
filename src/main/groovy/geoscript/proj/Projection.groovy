@@ -2,6 +2,7 @@ package geoscript.proj
 
 import geoscript.geom.Geometry
 import geoscript.geom.Bounds
+import geoscript.geom.Point
 import org.geotools.geometry.jts.GeometryCoordinateSequenceTransformer
 import org.geotools.metadata.iso.citation.Citations
 import org.geotools.referencing.CRS
@@ -60,6 +61,25 @@ class Projection {
      */
     Projection(String str) {
         this(parse(str))
+    }
+
+    /**
+     * Create an AUTO Projection centered on the Point.
+     * <p>AUTO Projection Keys:</p>
+     * <ol>
+     * <li>42001: Universal Transverse Mercator</li>
+     * <li>42002: Transverse Mercator</li>
+     * <li>42003: Orthographic</li>
+     * <li>42004: Equidistant Cylindrical</li>
+     * <li>97001: Gnonomic</li>
+     * <li>97002: Stereographic</li>
+     * <li>97003: Azimuthal Equidistant</li>
+     * </ol>
+     * @param key The auto projection key
+     * @param point The Point to center the Projecion on.
+     */
+    Projection(int key, Point point) {
+        this("AUTO:${key},${point.x},${point.y}")
     }
 
     /**

@@ -26,6 +26,9 @@ class ProjectionTest {
         Projection p4 = new Projection(p1)
         assertEquals "EPSG:2927", p4.id
 
+        Projection p5 = new Projection(42001, new Point(-102.304688,39.250413))
+        assertEquals "EPSG:32613", p5.id
+
     }
 
     @Test void createFromWellKnownName() {
