@@ -3,7 +3,6 @@ package geoscript
 import groovy.ui.GroovyMain as Script
 import groovy.ui.Console
 import org.codehaus.groovy.tools.shell.Main as Shell
-import org.geotools.geometry.jts.JTS
 import org.geotools.util.factory.GeoTools
 import org.locationtech.jts.JTSVersion
 
