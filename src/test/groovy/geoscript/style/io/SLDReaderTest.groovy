@@ -94,4 +94,10 @@ class SLDReaderTest {
         assertNotNull(style.gtStyle)
     }
 
+    @Test void readFromNullOrEmpty() {
+        SLDReader reader = new SLDReader()
+        assertNull(reader.read(null as String))
+        assertNull(reader.read(""))
+    }
+
 }

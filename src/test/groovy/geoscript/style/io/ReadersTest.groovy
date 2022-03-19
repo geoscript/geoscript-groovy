@@ -138,4 +138,10 @@ feature-styles:
         assertNotNull style
         assertTrue style instanceof SLDStyle
     }
+
+    @Test
+    void readFromNullOrEmpty() {
+        assertNull(Readers.read(null as String))
+        assertNull(Readers.read(""))
+    }
 }

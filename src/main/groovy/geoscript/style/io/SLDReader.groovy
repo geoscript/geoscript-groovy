@@ -47,7 +47,11 @@ class SLDReader implements Reader {
      * @return A GeoScript Style
      */
     Style read(String str) {
-        read(new ByteArrayInputStream(str.getBytes("UTF-8")))
+        if (str == null || str.isEmpty()) {
+            null
+        } else {
+            read(new ByteArrayInputStream(str.getBytes("UTF-8")))
+        }
     }
 
     /**

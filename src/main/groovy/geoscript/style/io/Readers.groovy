@@ -35,14 +35,16 @@ class Readers {
      */
     static Style read(String str) {
         Style style = null
-        for(Reader reader : list()) {
-            try {
-                style = reader.read(str)
-                if (style) {
-                    break
+        if (str != null && !str.isEmpty()) {
+            for (Reader reader : list()) {
+                try {
+                    style = reader.read(str)
+                    if (style) {
+                        break
+                    }
+                } catch (Exception ex) {
+                    // Just try the next reader
                 }
-            } catch (Exception ex) {
-                // Just try the next reader
             }
         }
         style
