@@ -1,5 +1,6 @@
 package geoscript.style
 
+import geoscript.style.io.Readers
 import org.apache.commons.io.FilenameUtils
 
 /**
@@ -24,42 +25,67 @@ class NestedDirectoryStyleRepository implements StyleRepository {
     String getForLayer(String layerName, String styleName) {
         File layerDirectory = new File(directory, layerName)
         if (layerDirectory.exists()) {
-            ["sld", "css"].findResult { String ext ->
-                File file = new File(layerDirectory, "${styleName}.${ext}")
-                if (file.exists()) {
-                    return file.text
-                }
-            }
+            getStyleAndContents(styleName, layerDirectory)?.contents
         } else {
-            ""
+            null
         }
     }
 
     @Override
-    List<Map<String, String>> getForLayer(String layerName) {
+    Style getDefaultStyleForLayer(String layerName) {
+        getStyleForLayer(layerName, layerName)
+    }
+
+    @Override
+    Style getStyleForLayer(String layerName, String styleName) {
+        File layerDirectory = new File(directory, layerName)
+        if (layerDirectory.exists()) {
+            getStyleAndContents(styleName, layerDirectory)?.style
+        } else {
+            null
+        }
+    }
+
+    private Map<String,Object> getStyleAndContents(String styleName, File layerDirectory) {
+        ["sld", "css", "ysld"].findResult { String ext ->
+            File file = new File(layerDirectory, "${styleName}.${ext}")
+            if (file.exists()) {
+                [style: Readers.find(ext).read(file.text), contents: file.text, type: ext]
+            }
+        } ?: [:]
+    }
+
+    @Override
+    List<Map<String, Object>> getForLayer(String layerName) {
         File layerDirectory = new File(directory, layerName)
         if (layerDirectory.exists()) {
             layerDirectory.listFiles(new StyleFileNameFilter()).collect { File file ->
+                String ext = FilenameUtils.getExtension(file.name)
                 [
                         layerName: layerName,
                         styleName: FilenameUtils.getBaseName(file.name),
-                        style    : file.text
+                        style    : Readers.find(ext).read(file.text),
+                        styleStr: file.text,
+                        type: ext
                 ]
             }
         } else {
-            []
+            null
         }
     }
 
     @Override
-    List<Map<String, String>> getAll() {
+    List<Map<String, Object>> getAll() {
         List styles = []
         this.directory.listFiles(new DirectoryFileFilter()).each { File dir ->
             dir.listFiles(new StyleFileNameFilter()).each { File file ->
+                String ext = FilenameUtils.getExtension(file.name)
                 styles.add([
                         layerName: dir.name,
                         styleName: FilenameUtils.getBaseName(file.name),
-                        style    : file.text
+                        style    : Readers.find(ext).read(file.text),
+                        styleStr: file.text,
+                        type: ext
                 ])
             }
         }
@@ -78,7 +104,7 @@ class NestedDirectoryStyleRepository implements StyleRepository {
     void delete(String layerName, String styleName) {
         File layerDirectory = new File(directory, layerName)
         if (layerDirectory.exists()) {
-            ["sld", "css"].each { String ext ->
+            ["sld", "css", "ysld"].each { String ext ->
                 File file = new File(layerDirectory, "${styleName}.${ext}")
                 if (file.exists()) {
                     file.delete()
@@ -90,7 +116,7 @@ class NestedDirectoryStyleRepository implements StyleRepository {
     private static class StyleFileNameFilter implements FilenameFilter {
         @Override
         boolean accept(File dir, String name) {
-            name.endsWith(".sld") || name.endsWith(".css")
+            name.endsWith(".sld") || name.endsWith(".css") || name.endsWith(".ysld")
         }
     }
 

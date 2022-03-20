@@ -14,6 +14,13 @@ interface StyleRepository {
     String getDefaultForLayer(String layerName)
 
     /**
+     * Get the default style for a Layer by name
+     * @param layerName The layer name
+     * @return The default style
+     */
+    Style getDefaultStyleForLayer(String layerName)
+
+    /**
      * Get a style by Layer name and Style name
      * @param layerName The Layer name
      * @param styleName The Style name
@@ -22,17 +29,25 @@ interface StyleRepository {
     String getForLayer(String layerName, String styleName)
 
     /**
+     * Get a style by Layer name and Style name
+     * @param layerName The Layer name
+     * @param styleName The Style name
+     * @return The Style
+     */
+    Style getStyleForLayer(String layerName, String styleName)
+
+    /**
      * Get all of the styles for a Layer Name.
      * @param layerName The Layer name
      * @return A List of style maps with layerName, styleName, and style keys.
      */
-    List<Map<String, String>> getForLayer(String layerName)
+    List<Map<String, Object>> getForLayer(String layerName)
 
     /**
      * Get all styles
      * @return A List of style maps with layerName, styleName, and style keys.
      */
-    List<Map<String, String>> getAll()
+    List<Map<String, Object>> getAll()
 
     /**
      * Save a style for a Layer with a given name

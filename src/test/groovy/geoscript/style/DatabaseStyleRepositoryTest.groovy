@@ -46,21 +46,25 @@ class DatabaseStyleRepositoryTest {
         styleRepository.save("cities", "cities", createStyle(new Color("gray")))
         styleRepository.save("cities", "cities_black", createStyle(new Color("black")))
 
-        String sld = styleRepository.getDefaultForLayer("states")
-        assertNotNull(sld)
-        assertTrue(sld.startsWith("<?xml version=\"1.0\" encoding=\"UTF-8\"?>"))
+        Style style = styleRepository.getDefaultStyleForLayer("states")
+        assertNotNull(style)
+        assertTrue(style.sld.startsWith("<?xml version=\"1.0\" encoding=\"UTF-8\"?>"))
 
-        List<Map<String, String>> styles = styleRepository.getForLayer("states")
+        String styleStr = styleRepository.getDefaultForLayer("states")
+        assertNotNull(styleStr)
+        assertTrue(styleStr.startsWith("<?xml version=\"1.0\" encoding=\"UTF-8\"?>"))
+
+        List<Map<String, Object>> styles = styleRepository.getForLayer("states")
         assertEquals(3, styles.size())
         assertEquals("states", styles[0].layerName)
         assertEquals("states", styles[0].styleName)
-        assertTrue(styles[0].style.startsWith("<?xml version=\"1.0\" encoding=\"UTF-8\"?>"))
+        assertTrue(styles[0].style.sld.startsWith("<?xml version=\"1.0\" encoding=\"UTF-8\"?>"))
 
         styles = styleRepository.getAll()
         assertEquals(5, styles.size())
         assertEquals("states", styles[0].layerName)
         assertEquals("states", styles[0].styleName)
-        assertTrue(styles[0].style.startsWith("<?xml version=\"1.0\" encoding=\"UTF-8\"?>"))
+        assertTrue(styles[0].style.sld.startsWith("<?xml version=\"1.0\" encoding=\"UTF-8\"?>"))
 
         styleRepository.delete("states", "states")
         assertEquals(4, styleRepository.getAll().size())

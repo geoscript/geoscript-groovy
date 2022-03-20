@@ -1,5 +1,6 @@
 package geoscript.style
 
+import geoscript.style.io.Readers
 import groovy.sql.GroovyRowResult
 import groovy.sql.Sql
 
@@ -42,6 +43,11 @@ class DatabaseStyleRepository implements StyleRepository {
     }
 
     @Override
+    Style getDefaultStyleForLayer(String layerName) {
+        getStyleForLayer(layerName, layerName)
+    }
+
+    @Override
     String getForLayer(String layerName, String styleName) {
         List results = sql.rows(
             "SELECT stylesld FROM layer_styles WHERE f_table_name = :name AND styleName = :styleName",
@@ -55,7 +61,13 @@ class DatabaseStyleRepository implements StyleRepository {
     }
 
     @Override
-    List<Map<String, String>> getForLayer(String layerName) {
+    Style getStyleForLayer(String layerName, String styleName) {
+        String styleString = getForLayer(layerName, styleName)
+        Readers.find("sld").read(styleString)
+    }
+
+    @Override
+    List<Map<String, Object>> getForLayer(String layerName) {
         sql.rows(
             """SELECT 
                     id,
@@ -79,7 +91,7 @@ class DatabaseStyleRepository implements StyleRepository {
     }
 
     @Override
-    List<Map<String, String>> getAll() {
+    List<Map<String, Object>> getAll() {
         sql.rows(
         """SELECT
                 id,
@@ -157,10 +169,12 @@ class DatabaseStyleRepository implements StyleRepository {
     }
 
     private Map mapRow(GroovyRowResult result) {
+        String styleStr = getText(result.stylesld)
         [
             layerName: result.f_table_name,
             styleName: result.stylename,
-            style: getText(result.stylesld),
+            style: Readers.find("sld").read(styleStr),
+            styleStr: styleStr,
             id: result.id,
             f_table_catalog: result.f_table_catalog,
             f_table_schema: result.f_table_schema,
