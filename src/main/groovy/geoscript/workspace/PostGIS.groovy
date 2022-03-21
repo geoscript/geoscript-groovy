@@ -1,5 +1,10 @@
 package geoscript.workspace
 
+import geoscript.layer.Layer
+import geoscript.style.DatabaseStyleRepository
+import geoscript.style.Style
+import geoscript.style.StyleRepository
+import geoscript.style.io.Readers
 import org.geotools.data.DataStore
 import org.geotools.data.postgis.PostgisNGDataStoreFactory
 import org.geotools.data.postgis.PostgisNGJNDIDataStoreFactory
@@ -65,6 +70,12 @@ class PostGIS extends Database {
      */
     String getFormat() {
         return "PostGIS"
+    }
+
+    @Override
+    Style getStyle(Layer layer, String name = "") {
+        StyleRepository styleRepository = DatabaseStyleRepository.forPostgres(getSql())
+        styleRepository.getStyleForLayer(layer.name, name ?: layer.name) ?: super.getStyle(layer, name)
     }
 
     /**

@@ -1,5 +1,9 @@
 package geoscript.workspace
 
+import geoscript.layer.Layer
+import geoscript.style.DatabaseStyleRepository
+import geoscript.style.Style
+import geoscript.style.StyleRepository
 import org.geotools.data.DataStore
 import org.geotools.geopkg.GeoPkgDataStoreFactory
 import org.geotools.jdbc.JDBCDataStore
@@ -45,6 +49,12 @@ class GeoPackage extends Database {
     @Override
     String getFormat() {
         return "GeoPackage"
+    }
+
+    @Override
+    Style getStyle(Layer layer, String name = "") {
+        StyleRepository styleRepository = DatabaseStyleRepository.forSqlite(getSql())
+        styleRepository.getStyleForLayer(layer.name, name ?: layer.name) ?: super.getStyle(layer, name)
     }
 
     /**

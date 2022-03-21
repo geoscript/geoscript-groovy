@@ -1,6 +1,10 @@
 package geoscript.workspace
 
 import geoscript.layer.Layer
+import geoscript.style.DirectoryStyleRepository
+import geoscript.style.Style
+import geoscript.style.StyleRepository
+import geoscript.style.io.Readers
 import org.geotools.data.DataStore
 import org.geotools.data.property.PropertyDataStore
 import org.geotools.data.property.PropertyDataStoreFactory
@@ -91,6 +95,12 @@ class Property extends Workspace {
         if (file.exists()) {
             file.delete()
         }
+    }
+
+    @Override
+    Style getStyle(Layer layer, String name = "") {
+        StyleRepository styleRepository = new DirectoryStyleRepository(this.getFile().absoluteFile)
+        styleRepository.getStyleForLayer(layer.name, name ?: layer.name) ?: super.getStyle(layer, name)
     }
 
     /**

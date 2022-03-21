@@ -2,6 +2,10 @@ package geoscript.workspace
 
 import geoscript.GeoScript
 import geoscript.layer.Layer
+import geoscript.style.DirectoryStyleRepository
+import geoscript.style.Style
+import geoscript.style.StyleRepository
+import geoscript.style.io.Readers
 import org.geotools.data.DataStore
 import org.geotools.data.directory.DirectoryDataStore
 import org.geotools.data.shapefile.ShapefileDataStore
@@ -101,6 +105,12 @@ class Directory extends Workspace {
      */
     String toString() {
         "Directory[${getFile().absolutePath}]"
+    }
+
+    @Override
+    Style getStyle(Layer layer, String name = "") {
+        StyleRepository styleRepository = new DirectoryStyleRepository(getFile().absoluteFile)
+        styleRepository.getStyleForLayer(layer.name, name ?: layer.name) ?: super.getStyle(layer, name)
     }
 
     /**

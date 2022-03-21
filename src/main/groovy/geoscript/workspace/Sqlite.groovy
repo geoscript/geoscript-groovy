@@ -1,5 +1,11 @@
 package geoscript.workspace
 
+import geoscript.layer.Layer
+import geoscript.style.DatabaseStyleRepository
+import geoscript.style.DirectoryStyleRepository
+import geoscript.style.Style
+import geoscript.style.StyleRepository
+import geoscript.style.io.Readers
 import org.locationtech.jts.geom.Envelope
 import org.locationtech.jts.geom.Geometry
 import org.locationtech.jts.geom.GeometryCollection
@@ -75,6 +81,12 @@ class Sqlite extends Database {
     @Override
     String getFormat() {
         return "Sqlite"
+    }
+
+    @Override
+    Style getStyle(Layer layer, String name = "") {
+        StyleRepository styleRepository = DatabaseStyleRepository.forSqlite(getSql())
+        styleRepository.getStyleForLayer(layer.name, name ?: layer.name) ?: super.getStyle(layer, name)
     }
 
     /**

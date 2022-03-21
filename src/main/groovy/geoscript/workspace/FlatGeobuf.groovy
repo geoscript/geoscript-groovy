@@ -1,5 +1,11 @@
 package geoscript.workspace
 
+import geoscript.layer.Layer
+import geoscript.style.DirectoryStyleRepository
+import geoscript.style.Style
+import geoscript.style.StyleRepository
+import geoscript.style.io.Reader
+import geoscript.style.io.Readers
 import org.geotools.data.DataStore
 import org.geotools.data.flatgeobuf.FlatGeobufDataStoreFactory
 import org.geotools.data.flatgeobuf.FlatGeobufDirectoryDataStore
@@ -40,6 +46,12 @@ class FlatGeobuf extends Workspace {
     @Override
     String getFormat() {
         return "FlatGeobuf"
+    }
+
+    @Override
+    Style getStyle(Layer layer, String name = "") {
+        StyleRepository styleRepository = new DirectoryStyleRepository(this.directory)
+        styleRepository.getStyleForLayer(layer.name, name ?: layer.name) ?: super.getStyle(layer, name)
     }
 
     /**

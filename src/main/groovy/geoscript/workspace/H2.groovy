@@ -1,5 +1,10 @@
 package geoscript.workspace
 
+import geoscript.layer.Layer
+import geoscript.style.DatabaseStyleRepository
+import geoscript.style.Style
+import geoscript.style.StyleRepository
+import geoscript.style.io.Readers
 import org.geotools.data.DataStore
 import org.geotools.data.h2.H2DataStoreFactory
 import org.geotools.data.h2.H2JNDIDataStoreFactory
@@ -89,6 +94,12 @@ class H2 extends Database {
     @Override
     String getFormat() {
         return "H2"
+    }
+
+    @Override
+    Style getStyle(Layer layer, String name = "") {
+        StyleRepository styleRepository = DatabaseStyleRepository.forH2(getSql())
+        styleRepository.getStyleForLayer(layer.name, name ?: layer.name) ?: super.getStyle(layer, name)
     }
 
     /**

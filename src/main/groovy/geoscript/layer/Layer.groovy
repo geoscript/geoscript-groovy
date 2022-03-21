@@ -108,7 +108,6 @@ class Layer implements Renderable {
         if (fs.schema.coordinateReferenceSystem != null) {
             this.projection = new Projection(fs.schema.coordinateReferenceSystem)
         }
-        setDefaultSymbolizer(this.schema.geom?.typ)
     }
 
     /**
@@ -125,8 +124,6 @@ class Layer implements Renderable {
         }
         if (layer.style) {
             this.style = layer.style
-        } else {
-            setDefaultSymbolizer(this.schema.geom?.typ)
         }
     }
 
@@ -145,7 +142,6 @@ class Layer implements Renderable {
         if (fs.schema.coordinateReferenceSystem != null) {
             this.projection = new Projection(fs.schema.coordinateReferenceSystem)
         }
-        setDefaultSymbolizer(this.schema.geom?.typ)
     }
 
     /**
@@ -171,7 +167,6 @@ class Layer implements Renderable {
         if (fs.schema.coordinateReferenceSystem != null) {
             this.projection = new Projection(fs.schema.coordinateReferenceSystem)
         }
-        setDefaultSymbolizer(this.schema.geom?.typ)
     }
 
     /**
@@ -188,7 +183,6 @@ class Layer implements Renderable {
         if (fs.schema.coordinateReferenceSystem != null) {
             this.projection = new Projection(fs.schema.coordinateReferenceSystem)
         }
-        setDefaultSymbolizer(this.schema.geom?.typ)
     }
 
     /**
@@ -236,59 +230,11 @@ class Layer implements Renderable {
         layer
     }
 
-    /**
-     * Set the default Symbolizer based on the geometry type
-     * @param geometryType The geometry type
-     * @return A default Symbolizer
-     */
-    protected void setDefaultSymbolizer(String geometryType) {
-        if(!this.style) {
-            File file
-            if (this.workspace.format.equalsIgnoreCase("Directory")) {
-                file = this.workspace.file
-            } else if (this.workspace.format.equalsIgnoreCase("org.geotools.data.shapefile.ShapefileDataStore")) {
-                file = Eval.me("workspace", this.workspace, "new File(workspace.ds.shpFiles.get(org.geotools.data.shapefile.files.ShpFileType.SHP))")
-            } else if (this.workspace.format.equalsIgnoreCase("org.geotools.data.directory.DirectoryDataStore")) {
-                file = new File(this.workspace.ds.info.source.path)
-            } else if (this.workspace.format.equalsIgnoreCase("Property")) {
-                file = this.workspace.file
-            } else if (this.workspace.format.equalsIgnoreCase("org.geotools.data.property.PropertyDataStore")) {
-                file = new File(this.workspace.ds.info.source.path)
-            }
-            if (file) {
-                File dir = file.isDirectory() ? file : file.parentFile
-                def fileName = this.name
-                // Check for SLD
-                if (geoscript.style.io.Readers.find("sld")) {
-                    File f = new File(dir, "${fileName}.sld")
-                    if (f.exists()) {
-                        try {
-                            def reader = geoscript.style.io.Readers.find("sld")
-                            this.style = reader.read(f)
-                        } catch (Exception ignore) {
-                        }
-                    }
-                }
-                // Check for CSS but only if the style is still falsey
-                if (!this.style) {
-                    if (geoscript.style.io.Readers.find("css")) {
-                        File f = new File(dir, "${fileName}.css")
-                        if (f.exists()) {
-                            try {
-                                def reader = geoscript.style.io.Readers.find("css")
-                                this.style = reader.read(f)
-                            } catch (Exception ignore) {
-                            }
-                        }
-                    }
-                }
-            }
-            // If the Layer isn't a Shapefile or if the Shapefile didn't
-            // have a companion SLD or CSS file
-            if (!this.style) {
-                this.style = Symbolizer.getDefault(geometryType ?: "geometry")
-            }
+    Style getStyle() {
+        if (!this.style) {
+            this.style = this.workspace.getStyle(this)
         }
+        this.style
     }
 
     /**
@@ -1461,7 +1407,7 @@ class Layer implements Renderable {
      * @return
      */
     List getMapLayers(Bounds bounds, List size) {
-        [new FeatureLayer(this.fs, this.style.gtStyle)]
+        [new FeatureLayer(this.fs, getStyle().gtStyle)]
     }
 
     /**

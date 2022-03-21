@@ -5,6 +5,8 @@ import geoscript.feature.Field
 import geoscript.feature.Schema
 import geoscript.layer.Cursor
 import geoscript.layer.Layer
+import geoscript.style.Style
+import geoscript.style.Symbolizer
 import org.geotools.data.DataStore
 import org.geotools.feature.FeatureCollection
 import org.geotools.data.collection.ListFeatureCollection
@@ -212,6 +214,16 @@ class Workspace {
             i++
         }
         features
+    }
+
+    /**
+     * Get a Style for a Layer
+     * @param layer The Layer
+     * @param name The optional Style name
+     * @return A Style
+     */
+    Style getStyle(Layer layer, String name = "") {
+        Symbolizer.getDefault(layer?.schema?.geom?.typ ?: "geometry")
     }
 
     /**
