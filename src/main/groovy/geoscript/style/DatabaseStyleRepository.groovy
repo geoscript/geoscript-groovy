@@ -63,7 +63,7 @@ class DatabaseStyleRepository implements StyleRepository {
     @Override
     Style getStyleForLayer(String layerName, String styleName) {
         String styleString = getForLayer(layerName, styleName)
-        Readers.find("sld").read(styleString)
+        Readers.find("sld").read(styleString as String)
     }
 
     @Override
@@ -173,7 +173,7 @@ class DatabaseStyleRepository implements StyleRepository {
         [
             layerName: result.f_table_name,
             styleName: result.stylename,
-            style: Readers.find("sld").read(styleStr),
+            style: Readers.find("sld").read(styleStr as String),
             styleStr: styleStr,
             id: result.id,
             f_table_catalog: result.f_table_catalog,
