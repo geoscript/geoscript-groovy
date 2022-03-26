@@ -4,7 +4,7 @@ import geoscript.proj.Projection
 
 // Read
 def geoTiffFormat = new GeoTIFF(new File("raster.tif"))
-def raster = geoTiffFormat.read(new Projection("urn:ogc:def:crs:EPSG::EPSG:4326"))
+def raster = geoTiffFormat.read(new Projection("urn:ogc:def:crs:EPSG:4326"))
 
 // Crop
 def geom = Geometry.createFromText("CUGOS", "Arial", 60).translate(-50,-50)
