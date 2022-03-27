@@ -6,7 +6,8 @@ import geoscript.layer.TileRenderer
 import geoscript.style.Fill
 import geoscript.style.Stroke
 import geoscript.workspace.Directory
-import geoscript.workspace.GeoPackage
+import geoscript.workspace.GeoPackage as GeoPackageWorkspace
+import geoscript.layer.GeoPackage as GeoPackageTiles
 
 import static geoscript.GeoScript.download
 import static geoscript.GeoScript.unzip
@@ -29,11 +30,11 @@ File dataDir = new File("naturalearth")
 // Add Shapefiles to a GeoPackage
 Directory directory = new Directory("naturalearth")
 
-File file = new File("data.gpkg")
+File file = new File("naturalearth.gpkg")
 if (file.exists()) {
     file.delete()
 }
-GeoPackage geopackage = new GeoPackage(file)
+GeoPackageWorkspace workspace = new GeoPackageWorkspace(file)
 
 [
   "ne_110m_admin_0_countries": "countries",
@@ -44,26 +45,23 @@ GeoPackage geopackage = new GeoPackage(file)
   "ne_110m_admin_1_states_provinces": "states"
 ].each { String name, String alias ->
     println "Adding ${name} as ${alias}"
-    geopackage.add(directory.get(name), alias)
-    new Directory(new File("shapefiles")).add(directory.get(name), alias)
+    workspace.add(directory.get(name), alias)
 }
 
 // Generate Tiles
-Layer countries = geopackage.get("countries")
+Layer countries = workspace.get("countries")
 countries.style = new Fill("#ffffff") + new Stroke("#b2b2b2", 0.5)
-Layer ocean = geopackage.get("ocean")
+Layer ocean = workspace.get("ocean")
 ocean.style = new Fill("#a5bfdd")
 
 TileGenerator generator = new TileGenerator(verbose: true)
 
-// world
-geoscript.layer.GeoPackage gpkg = new geoscript.layer.GeoPackage(file, "world", Pyramid.createGlobalGeodeticPyramid(origin: Pyramid.Origin.TOP_LEFT))
-TileRenderer renderer = new ImageTileRenderer(gpkg, [ocean, countries])
+GeoPackageTiles geodeticTiles = new GeoPackageTiles(file, "world", Pyramid.createGlobalGeodeticPyramid(origin: Pyramid.Origin.TOP_LEFT))
+TileRenderer geodeticRenderer = new ImageTileRenderer(geodeticTiles, [ocean, countries])
 println "Generating world global geodetic tiles..."
-generator.generate(gpkg, renderer, 0, 3)
+generator.generate(geodeticTiles, geodeticRenderer, 0, 3)
 
-
-gpkg = new geoscript.layer.GeoPackage(file, "world_mercator", Pyramid.createGlobalMercatorPyramid(origin: Pyramid.Origin.TOP_LEFT))
-renderer = new ImageTileRenderer(gpkg, [ocean, countries])
+GeoPackageTiles mercatorTiles = new GeoPackageTiles(file, "world_mercator", Pyramid.createGlobalMercatorPyramid(origin: Pyramid.Origin.TOP_LEFT))
+TileRenderer mercatorRenderer = new ImageTileRenderer(mercatorTiles, [ocean, countries])
 println "Generating world_mercator global mercator tiles..."
-generator.generate(gpkg, renderer, 0, 3)
+generator.generate(mercatorTiles, mercatorRenderer, 0, 3)
