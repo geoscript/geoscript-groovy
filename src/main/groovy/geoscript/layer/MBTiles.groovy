@@ -81,6 +81,7 @@ class MBTiles extends ImageTileLayer {
      *     <li>version = The version number (1.0 is the default)</li>
      *     <li>format = The image format (png is the default or jpeg)</li>
      *     <li>attribution = The attributes</li>
+     *     <li>bounds = The metadata Bounds</li>
      * </ul>
      * @param file The new File
      * @param name The name of the layer
@@ -98,6 +99,7 @@ class MBTiles extends ImageTileLayer {
         String version = options.get("version", "1.0")
         String format = options.get("format", "png")
         String attribution = options.get("attribution","Created with GeoScript")
+        Bounds metadataBounds = options.get("bounds", latLonBounds)
 
         tiles.init()
         MBTilesMetadata metadata = new MBTilesMetadata()
@@ -106,7 +108,7 @@ class MBTiles extends ImageTileLayer {
         metadata.formatStr = format
         metadata.version = version
         metadata.typeStr = type
-        metadata.bounds = latLonBounds.env
+        metadata.bounds = metadataBounds.env
         metadata.attribution = attribution
         tiles.saveMetaData(metadata)
     }
@@ -119,6 +121,7 @@ class MBTiles extends ImageTileLayer {
      *     <li>version = The version number (1.0 is the default)</li>
      *     <li>format = The image format (png is the default or jpeg)</li>
      *     <li>attribution = The attributes</li>
+     *     <li>bounds = The metadata Bounds</li>
      * </ul>
      * @param file The new File name
      * @param name The name of the layer
