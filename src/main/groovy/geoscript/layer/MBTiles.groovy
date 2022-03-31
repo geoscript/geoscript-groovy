@@ -88,29 +88,17 @@ class MBTiles extends ImageTileLayer {
      * @param description The description of the layer
      */
     MBTiles(java.util.Map options = [:], File file, String name, String description) {
-
         this.file = file
         this.tiles = new MBTilesFile(file)
         this.bounds = mercatorBounds
         this.proj = mercatorProj
         this.name = name
 
-        String type = options.get("type", "base_layer")
-        String version = options.get("version", "1.0")
-        String format = options.get("format", "png")
-        String attribution = options.get("attribution","Created with GeoScript")
-        Bounds metadataBounds = options.get("bounds", latLonBounds)
-
         tiles.init()
-        MBTilesMetadata metadata = new MBTilesMetadata()
-        metadata.name = name
-        metadata.description = description
-        metadata.formatStr = format
-        metadata.version = version
-        metadata.typeStr = type
-        metadata.bounds = metadataBounds.env
-        metadata.attribution = attribution
-        tiles.saveMetaData(metadata)
+
+        Map metadataOptions = [name: name, description: description]
+        metadataOptions.putAll(options)
+        setMetadata(metadataOptions)
     }
 
     /**
@@ -201,8 +189,50 @@ class MBTiles extends ImageTileLayer {
                 format: metadata.formatStr,
                 version: metadata.version,
                 attribution: metadata.attribution,
-                bounds: metadata.boundsStr
+                bounds: metadata.boundsStr,
+                minZoom: metadata.minZoom,
+                maxZoom: metadata.maxZoom
         ]
+    }
+
+    MBTiles setMetadata(Map values) {
+
+        MBTilesMetadata existingMetadata = tiles.loadMetaData()
+
+        String name = values.get("name", existingMetadata.name ?: this.name)
+        String description = values.get("description", existingMetadata.description ?: "MBTiles")
+        String type = values.get("type", existingMetadata.typeStr ?: "base_layer")
+        String version = values.get("version", existingMetadata.version ?: "1.0")
+        String format = values.get("format", existingMetadata.formatStr ?: "png")
+        String attribution = values.get("attribution", existingMetadata.attribution ?: "Created with GeoScript")
+        String minZoom = values.get("minZoom", existingMetadata.minZoom ?: "0")
+        String maxZoom = values.get("maxZoom", existingMetadata.maxZoom ?: "19")
+        Bounds metadataBounds = getBounds(values.get("bounds", existingMetadata.bounds ? new Bounds(existingMetadata.bounds) : latLonBounds))
+        if (!metadataBounds.proj) {
+            metadataBounds.proj = new Projection("EPSG:4326")
+        }
+
+        MBTilesMetadata metadata = new MBTilesMetadata()
+        metadata.name = name
+        metadata.description = description
+        metadata.formatStr = format
+        metadata.version = version
+        metadata.typeStr = type
+        metadata.bounds = metadataBounds.env
+        metadata.attribution = attribution
+        metadata.minZoomStr = minZoom
+        metadata.maxZoomStr = maxZoom
+        tiles.saveMetaData(metadata)
+
+        this
+    }
+
+    private Bounds getBounds(def value) {
+        if (value instanceof Bounds) {
+            value
+        } else {
+            Bounds.fromString(value)
+        }
     }
 
     /**
@@ -274,7 +304,9 @@ class MBTiles extends ImageTileLayer {
                 File file = params.get("file") instanceof File ? params.get("file") as File : new File(params.get("file"))
                 if (!file.exists() || file.length() == 0 || (params.get("name") && params.get("description"))) {
                     String name = file.name.replaceAll(".mbtiles","")
-                    new MBTiles(file, params.get("name", name), params.get("description", name))
+                    Map options = params.findAll { String key, value -> !(key in ["file","name","description","type"]) }
+                    options.type = params.mbtilesType ?: "base_layer"
+                    new MBTiles(options, file, params.get("name", name), params.get("description", name))
                 } else {
                     new MBTiles(file)
                 }

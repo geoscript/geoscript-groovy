@@ -344,6 +344,79 @@ class MBTilesTest {
     }
 
     @Test
+    void setMetadata() {
+        // Create a new MBTiles
+        File file = new File(folder, "world.mbtiles")
+        MBTiles layer = new MBTiles(file, "World", "The world in tiles")
+        Map metadata = layer.metadata
+        assertEquals "base_layer", metadata.type
+        assertEquals "World", metadata.name
+        assertEquals "The world in tiles", metadata.description
+        assertEquals "png", metadata.format
+        assertEquals "1.0", metadata.version
+        assertEquals "Created with GeoScript", metadata.attribution
+        assertEquals "-179.99,-85.0511,179.99,85.0511", metadata.bounds
+        assertEquals 0, metadata.minZoom
+        assertEquals 19, metadata.maxZoom
+
+        // Opening the same file shouldn't change the metadata
+        layer = new MBTiles(file)
+        metadata = layer.metadata
+        assertEquals "base_layer", metadata.type
+        assertEquals "World", metadata.name
+        assertEquals "The world in tiles", metadata.description
+        assertEquals "png", metadata.format
+        assertEquals "1.0", metadata.version
+        assertEquals "Created with GeoScript", metadata.attribution
+        assertEquals "-179.99,-85.0511,179.99,85.0511", metadata.bounds
+        assertEquals 0, metadata.minZoom
+        assertEquals 19, metadata.maxZoom
+
+        // Change the metadata
+        layer.setMetadata([
+                name: "world",
+                version: "2.0",
+                attribution: "GeoScript",
+                minZoom: 1,
+                maxZoom: 6
+        ])
+        metadata = layer.metadata
+        assertEquals "base_layer", metadata.type
+        assertEquals "world", metadata.name
+        assertEquals "The world in tiles", metadata.description
+        assertEquals "png", metadata.format
+        assertEquals "2.0", metadata.version
+        assertEquals "GeoScript", metadata.attribution
+        assertEquals "-179.99,-85.0511,179.99,85.0511", metadata.bounds
+        assertEquals 1, metadata.minZoom
+        assertEquals 6, metadata.maxZoom
+    }
+
+    @Test
+    void createWithMetadata() {
+        File file = new File(folder, "test.mbtiles")
+        MBTiles layer = new MBTiles.Factory().create([
+                type: "mbtiles",
+                file: file,
+                name: "states",
+                mbtilesType: "overlay",
+                description: "USA States",
+                attribution: "Groovy",
+                version: "3.0",
+                format: "JPEG",
+                bounds: "-135.648049,20.93138,-56.898049,52.355946"
+        ])
+        Map metadata = layer.metadata
+        assertEquals "overlay", metadata.type
+        assertEquals "states", metadata.name
+        assertEquals "USA States", metadata.description
+        assertEquals "jpeg", metadata.format
+        assertEquals "3.0", metadata.version
+        assertEquals "Groovy", metadata.attribution
+        assertEquals "-135.648049,20.93138,-56.898049,52.355946", metadata.bounds
+    }
+
+    @Test
     void tileCounts() {
         File file = new File(getClass().getClassLoader().getResource("states.mbtiles").toURI())
         MBTiles layer = new MBTiles(file)
