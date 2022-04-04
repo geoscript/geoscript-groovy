@@ -234,6 +234,7 @@ class Pyramid {
 
     /**
      * Create a Pyramid with Grids for common global web mercator tile sets.
+     * http://wiki.openstreetmap.org/wiki/Zoom_levels
      * @param options The optional named parameters:
      * <ul>
      *     <li>origin = The Pyramid Origin (defaults to bottom left)</li>
@@ -254,12 +255,7 @@ class Pyramid {
             tileHeight: 256
         )
         int maxZoom = options.get("maxZoom", 19)
-        p.grids = (0..maxZoom).collect { int z ->
-            int n = Math.pow(2, z)
-            // http://wiki.openstreetmap.org/wiki/Zoom_levels
-            double res = 156412.0 / n
-            new Grid(z, n, n, res, res)
-        }
+        p.grids = Grid.createGlobalMercatorGrids(maxZoom)
         p
     }
 
@@ -283,12 +279,7 @@ class Pyramid {
                 tileHeight: 256
         )
         int maxZoom = options.get("maxZoom", 19)
-        p.grids = (0..maxZoom).collect { int z ->
-            int col = Math.pow(2, z + 1)
-            int row = Math.pow(2, z)
-            double res = 0.703125 / Math.pow(2, z)
-            new Grid(z, col, row, res, res)
-        }
+        p.grids = Grid.createGlobalGeodeticGrids(maxZoom)
         p
     }
 }

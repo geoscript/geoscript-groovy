@@ -57,4 +57,33 @@ class Grid {
         this.yResolution = yResolution
         this.size = this.width * this.height
     }
+
+    /**
+     * Create Grids for a Global Geodetic Pyramid as defined by
+     * http://wiki.osgeo.org/wiki/Tile_Map_Service_Specification#global-geodetic
+     * @param maxZoomLevel The max zoom level
+     * @return A List of Grids
+     */
+    static createGlobalGeodeticGrids(int maxZoomLevel) {
+        (0..maxZoomLevel).collect { int z ->
+            int col = Math.pow(2, z + 1)
+            int row = Math.pow(2, z)
+            double res = 0.703125 / Math.pow(2, z)
+            new Grid(z, col, row, res, res)
+        }
+    }
+
+    /**
+     * Create Grids for a Global Mercator Pyramid as defined by
+     * http://wiki.openstreetmap.org/wiki/Zoom_levels
+     * @param maxZoomLevel The max zoom level
+     * @return A List of Grids
+     */
+    static createGlobalMercatorGrids(int maxZoomLevel) {
+        (0..maxZoomLevel).collect { int z ->
+            int n = Math.pow(2, z)
+            double res = 156412.0 / n
+            new Grid(z, n, n, res, res)
+        }
+    }
 }
