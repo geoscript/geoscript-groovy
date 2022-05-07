@@ -5,3 +5,4 @@ geoscript.layer.TMS$Factory
 geoscript.layer.UTFGrid$Factory
 geoscript.layer.VectorTiles$Factory
 geoscript.layer.DBTiles$Factory
+geoscript.layer.USGSTileLayer$Factory
