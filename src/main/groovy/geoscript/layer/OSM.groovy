@@ -1,7 +1,7 @@
 package geoscript.layer
 
 /**
- * A Open Street Map TileLayer that is ready only.
+ * A Open Street Map TileLayer that is read only.
  * @author Jared Erickson
  */
 class OSM extends ImageTileLayer {
@@ -194,7 +194,7 @@ class OSM extends ImageTileLayer {
         OSM create(String paramsStr) {
             Map params = [:]
             if (paramsStr in ['stamen-toner', 'stamen-toner-lite', 'stamen-watercolor',
-                              'mapquest-street', 'mapquest-satellite', 'osm']) {
+                              'mapquest-street', 'mapquest-satellite', 'osm', 'wikimedia']) {
                 params["type"] = "osm"
                 params["name"] = paramsStr
                 create(params)
