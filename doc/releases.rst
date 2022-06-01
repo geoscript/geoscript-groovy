@@ -3,6 +3,53 @@
 GeoScript Groovy Releases
 =========================
 
+1.19.0
+------
+The 1.19 release of GeoScript is build on Groovy 3.0.11, GeoTools 27.0, and the Java Topology Suite 1.18.2 and requires Java 8.
+
+Add way to get the version::
+
+    println GeoScript.version
+
+Switch build to Java 11.
+
+Added GeoYaml support::
+
+    YamlWriter writer = new YamlWriter()
+    Point p = new Point(-122.23, 45.67)
+    println(writer.write(p))
+
+    ---
+    geometry:
+      type: "Point"
+      coordinates:
+      - -122.23
+      - 45.67
+
+Added equal earth project to the list of well known projection names.
+
+Added Projection constructor for creating auto projection centered at a Point::
+
+    Projection proj = new Projection(42001, new Point(-102.304688,39.250413))
+
+Added USGS National Map TileLayer::
+
+    USGSTileLayer usgs = USGSTileLayer.createImagery()
+
+Moved Grid creation for mercator and geodetic pyramids to static methods::
+
+    List<Grid> grids = Grid.createGlobalGeodeticGrids(5)
+
+    List<Grid> grids = Grid.createGlobalMercatorGrids(5)
+
+Allow MBTiles metadata bounds to be set.
+
+Added methods to the StyleRepository interface to get Styles.
+
+Allow Workspace to look up styles for a Layer.
+
+Allow Layers to use StyleRepository from the Workspace to look up a default style.
+
 1.18.0
 ------
 The 1.18 release of GeoScript is build on Groovy 3.0.9, GeoTools 26.0, and the Java Topology Suite 1.18.2 and requires Java 8.
