@@ -1,0 +1,13 @@
+Parameter = dbtype Type = java.lang.String Required? true
+Parameter = database Type = java.io.File Required? true
+Parameter = passwd Type = java.lang.String Required? false
+Parameter = namespace Type = java.lang.String Required? false
+Parameter = Expose primary keys Type = java.lang.Boolean Required? false
+Parameter = fetch size Type = java.lang.Integer Required? false
+Parameter = Batch insert size Type = java.lang.Integer Required? false
+Parameter = Primary key metadata table Type = java.lang.String Required? false
+Parameter = Session startup SQL Type = java.lang.String Required? false
+Parameter = Session close-up SQL Type = java.lang.String Required? false
+Parameter = Callback factory Type = java.lang.String Required? false
+Parameter = read_only Type = java.lang.Boolean Required? false
+Parameter = memory map size Type = java.lang.Integer Required? false

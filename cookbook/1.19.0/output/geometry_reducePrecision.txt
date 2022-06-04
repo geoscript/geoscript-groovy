@@ -1,0 +1,4 @@
+Original Geometry: POINT (5.19775390625 51.07421875)
+Floating Point Geometry: POINT (5.19775390625 51.07421875)              
+Fixed Point Geometry: POINT (5.2 51.07) 
+Floating Point Single Geometry: POINT (5.19775390625 51.07421875)

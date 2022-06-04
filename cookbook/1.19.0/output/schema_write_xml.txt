@@ -1,0 +1,20 @@
+<schema>
+  <name>cities</name>
+  <projection>EPSG:4326</projection>
+  <geometry>geom</geometry>
+  <fields>
+    <field>
+      <name>geom</name>
+      <type>Point</type>
+      <projection>EPSG:4326</projection>
+    </field>
+    <field>
+      <name>id</name>
+      <type>Integer</type>
+    </field>
+    <field>
+      <name>name</name>
+      <type>String</type>
+    </field>
+  </fields>
+</schema>

@@ -1,0 +1,8 @@
+
+Intersection Matrix = 212101212
+Contains = false
+Covered By = false
+Covers = false
+Disjoint = false
+Intersects = true
+Within = false

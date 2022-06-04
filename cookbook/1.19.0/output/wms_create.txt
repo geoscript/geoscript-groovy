@@ -1,0 +1,8 @@
+Name = WMS
+Title = GeoServer Web Map Service                                           
+Abstract = A compliant implementation of WMS plus most of the SLD extension (dynamic styling). Can also generate PDF, SVG, KML, GeoRSS
+Keywords = WFS, WMS, GEOSERVER
+Online Resource = http://geoserver.sourceforge.net/html/index.php
+Update Sequence = 35327
+Version = 1.3.0
+Map Formats = image/png, application/atom+xml, application/pdf, application/rss+xml, application/vnd.google-earth.kml+xml, application/vnd.google-earth.kml+xml;mode=networklink, application/vnd.google-earth.kmz, image/geotiff, image/geotiff8, image/gif, image/jpeg, image/png; mode=8bit, image/svg+xml, image/tiff, image/tiff8, text/html; subtype=openlayers

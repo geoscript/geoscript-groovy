@@ -1,0 +1,2 @@
+rivers_1 has 6 features
+rivers_2 has 7 features
