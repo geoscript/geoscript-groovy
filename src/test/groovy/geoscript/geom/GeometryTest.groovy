@@ -120,6 +120,13 @@ class GeometryTest {
                 "6.47554766980398 61.322508623025456, 6.559380488488829 61.37791668387934))", buffer.wkt
     }
 
+    @Test void offsetCurve() {
+        Geometry geometry = Geometry.fromWKT("LINESTRING (0 1, 2 3, 4 5)")
+        Geometry offsetCurveGeoemtry = geometry.offsetCurve(10)
+        assertEquals "LINESTRING (-7.071067811865475 8.071067811865476, " +
+                "-3.0710678118654746 12.071067811865476)", offsetCurveGeoemtry.wkt
+    }
+
     @Test void equals() {
         Geometry g1 = new Point(111, -47)
         Geometry g2 = new Point(111, -47)

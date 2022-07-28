@@ -13,6 +13,7 @@ import org.locationtech.jts.geom.util.GeometryFixer
 import org.locationtech.jts.operation.buffer.BufferParameters
 import org.locationtech.jts.operation.buffer.BufferOp
 import org.locationtech.jts.awt.FontGlyphReader
+import org.locationtech.jts.operation.buffer.OffsetCurve
 import org.locationtech.jts.operation.buffer.VariableBuffer
 import org.locationtech.jts.operation.overlay.snap.GeometrySnapper
 import geoscript.geom.io.Reader
@@ -54,17 +55,17 @@ class Geometry {
     /**
      * Round Buffer cap style
      */
-    static final int CAP_ROUND = org.locationtech.jts.operation.buffer.BufferOp.CAP_ROUND
+    static final int CAP_ROUND = org.locationtech.jts.operation.buffer.BufferParameters.CAP_ROUND
 
     /**
      * Butt Buffer cap style
      */
-    static final int CAP_BUTT = org.locationtech.jts.operation.buffer.BufferOp.CAP_BUTT
+    static final int CAP_BUTT = org.locationtech.jts.operation.buffer.BufferParameters.CAP_SQUARE
 
     /**
      * Square Buffer cap style
      */
-    static final int CAP_SQUARE = org.locationtech.jts.operation.buffer.BufferOp.CAP_SQUARE
+    static final int CAP_SQUARE = org.locationtech.jts.operation.buffer.BufferParameters.CAP_SQUARE
 
     /**
      * Buffer the Geometry by some distance.
@@ -105,6 +106,15 @@ class Geometry {
         }  else {
             Geometry.wrap(VariableBuffer.buffer(g, distances as double[]))
         }
+    }
+
+    /**
+     * Calculate an offset curve
+     * @param distance The distance to offset
+     * @return A Geometry
+     */
+    Geometry offsetCurve(double distance) {
+        Geometry.wrap(OffsetCurve.getCurve(g, distance))
     }
 
     /**
