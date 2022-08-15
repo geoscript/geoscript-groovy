@@ -3,6 +3,7 @@ package geoscript.geom
 import org.locationtech.jts.algorithm.construct.LargestEmptyCircle
 import org.locationtech.jts.algorithm.construct.MaximumInscribedCircle
 import org.locationtech.jts.algorithm.hull.ConcaveHull
+import org.locationtech.jts.algorithm.hull.ConcaveHullOfPolygons
 import org.locationtech.jts.geom.Geometry as JtsGeometry
 import org.locationtech.jts.geom.GeometryFactory
 import org.locationtech.jts.geom.Coordinate
@@ -142,6 +143,15 @@ class Geometry {
      */
     Geometry concaveHull(double maxLength = 0.0) {
         wrap(ConcaveHull.concaveHullByLength(g, maxLength))
+    }
+
+    /**
+     * Calculate the concave hull of polygons
+     * @param maxLength The max length
+     * @return A Geometry
+     */
+    Geometry concaveHullOfPolygons(double maxLength = 0.0) {
+        wrap(ConcaveHullOfPolygons.concaveHullByLength(g, maxLength))
     }
 
     /**
