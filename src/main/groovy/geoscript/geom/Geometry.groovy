@@ -24,6 +24,7 @@ import org.locationtech.jts.geom.PrecisionModel
 import org.locationtech.jts.precision.GeometryPrecisionReducer
 import org.geotools.geometry.jts.CurvedGeometries
 import org.geotools.geometry.jts.OffsetCurveBuilder
+import org.locationtech.jts.triangulate.polygon.ConstrainedDelaunayTriangulator
 
 /**
  * The base class for other Geometries.
@@ -152,6 +153,14 @@ class Geometry {
      */
     Geometry concaveHullOfPolygons(double maxLength = 0.0) {
         wrap(ConcaveHullOfPolygons.concaveHullByLength(g, maxLength))
+    }
+
+    /**
+     * Triangulate the Geometry
+     * @return A Geometry
+     */
+    Geometry triangulate() {
+        wrap(ConstrainedDelaunayTriangulator.triangulate(g))
     }
 
     /**
