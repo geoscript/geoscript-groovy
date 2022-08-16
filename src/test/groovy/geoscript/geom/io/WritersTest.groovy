@@ -19,6 +19,9 @@ class WritersTest {
         Writer writer = Writers.find("wkt")
         assertNotNull writer
 
+        writer = Writers.find("twkb")
+        assertNotNull writer
+
         writer = Writers.find("asdf")
         assertNull writer
     }

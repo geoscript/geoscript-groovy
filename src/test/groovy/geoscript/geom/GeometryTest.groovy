@@ -209,6 +209,26 @@ class GeometryTest {
         assertEquals "POINT (111 -47)", g.toString()
     }
 
+    @Test void fromTWKB() {
+        Geometry g = Geometry.fromTwkb("01000204")
+        assertEquals "POINT (1 2)", g.toString()
+    }
+
+    @Test void fromTWKBBytes() {
+        Geometry g = Geometry.fromTwkb([-31, 8, 1, -128, -122, -54, -94, 8, -1, -123, -99, -64, 3, 0] as byte[])
+        assertEquals "POINT (111 -47)", g.toString()
+    }
+
+    @Test void getTwkb() {
+        Geometry g = Geometry.fromWKT("POINT (111 -47)")
+        assertEquals "E108018086CAA208FF859DC00300", g.twkb
+    }
+
+    @Test void getTwkbBytes() {
+        Geometry g = Geometry.fromWKT("POINT (111 -47)")
+        assertArrayEquals([-31, 8, 1, -128, -122, -54, -94, 8, -1, -123, -99, -64, 3, 0] as byte[], g.twkbBytes)
+    }
+
     @Test void getGeoJSON() {
         Geometry g = Geometry.fromWKT("POINT (111 -47)")
         assertEquals """{"type":"Point","coordinates":[111,-47]}""", g.geoJSON

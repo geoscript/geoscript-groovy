@@ -39,6 +39,26 @@ class StaticGeometryExtensionModule {
     }
 
     /**
+     * Get a Geometry from TWKB byte array
+     * @param geometry The Geometry
+     * @param wkb The TWKB byte array
+     * @return A Geometry
+     */
+    static Geometry fromTwkb(Geometry geometry, byte[] twkb) {
+        new TWkbReader().read(twkb)
+    }
+
+    /**
+     * Get a Geometry from TWKB hex string
+     * @param geometry The Geometry
+     * @param wkb The TWKB hex string
+     * @return A Geometry
+     */
+    static Geometry fromTwkb(Geometry geometry, String twkb) {
+        new TWkbReader().read(twkb)
+    }
+
+    /**
      * Get a Geometry from a KML String
      * @param geometry The Geometry
      * @param kml A KML String

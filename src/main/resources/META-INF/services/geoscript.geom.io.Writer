@@ -10,3 +10,4 @@ geoscript.geom.io.WktWriter
 geoscript.geom.io.GeoPackageWriter
 geoscript.geom.io.GooglePolylineEncoder
 geoscript.geom.io.YamlWriter
+geoscript.geom.io.TWkbWriter

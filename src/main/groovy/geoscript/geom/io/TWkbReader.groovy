@@ -1,9 +1,9 @@
 package geoscript.geom.io
 
 import geoscript.geom.Geometry
-import org.geotools.data.postgis.TWKBReader
 import org.locationtech.jts.geom.GeometryFactory
 import org.locationtech.jts.io.WKBReader
+import org.locationtech.jts.io.twkb.TWKBReader
 
 /**
  * Read a {@link geoscript.geom.Geometry Geometry} from a TWKB hex String or byte array.

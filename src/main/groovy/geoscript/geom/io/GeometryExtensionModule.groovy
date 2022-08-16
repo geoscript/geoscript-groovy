@@ -36,6 +36,24 @@ class GeometryExtensionModule {
     }
 
     /**
+     * Get the TWKB of the Geometry
+     * @param geometry The Geometry
+     * @return The TWKB hex string of this Geometry
+     */
+    static String getTwkb(Geometry geometry) {
+        new TWkbWriter().write(geometry)
+    }
+
+    /**
+     * Get the WKB of the Geometry
+     * @param geometry The Geometry
+     * @return The WKB byte array of this Geometry
+     */
+    static byte[] getTwkbBytes(Geometry geometry) {
+        new TWkbWriter().writeBytes(geometry)
+    }
+
+    /**
      * Get a KML String for this Geometry
      * @param geometry The Geometry
      * @return The KML String
