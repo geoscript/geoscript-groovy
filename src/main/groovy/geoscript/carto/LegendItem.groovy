@@ -239,8 +239,9 @@ class LegendItem extends Item {
         }
         layer.style.gtStyle.featureTypeStyles().each { def fts ->
             fts.rules().each { def rule ->
+                String ruleName = rule.name
                 Filter filter = rule.filter
-                String title = numberOfRules > 1 ? CQL.toCQL(filter) : layer.name.capitalize()
+                String title = ruleName ?: numberOfRules > 1 ? CQL.toCQL(filter) : layer.name.capitalize()
                 Style style = SLDStyle.fromRule(rule)
                 if (legendEntryType == LegendEntryType.POINT) {
                     addPointEntry(title, style)

@@ -76,6 +76,31 @@ class Composite extends Symbolizer {
     }
 
     /**
+     * Set a title for this Composite
+     * @param title The title
+     * @return This Composite
+     */
+    @Override
+    Symbolizer title(String title) {
+        super.title(title)
+        parts.each{part -> part.title(title)}
+        this
+    }
+
+    /**
+     * Get the title.
+     * @return The title
+     */
+    @Override
+    String getTitle() {
+        if (!this.@title) {
+            parts.reverse().find { Symbolizer sym -> sym.title }?.title
+        } else {
+            this.@title
+        }
+    }
+
+    /**
      * The String representation
      * @return The string representation
      */

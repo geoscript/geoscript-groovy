@@ -86,7 +86,9 @@ class UniqueValues extends Composite {
             // Create the Symbolizer
             // name: "${field} = ${value}",
             // title: "${field} = ${value}",
-            Symbolizer.getDefault(layer.schema.geom.typ, color).where(new Filter(filterFactory.equals(filterFactory.property(field), filterFactory.literal(value))))
+            Symbolizer.getDefault(layer.schema.geom.typ, color)
+                    .where(new Filter(filterFactory.equals(filterFactory.property(field), filterFactory.literal(value))))
+                    .title("${value}")
         }
     }
 
