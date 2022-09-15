@@ -46,6 +46,11 @@ class Symbolizer implements Style, Cloneable {
     int z
 
     /**
+     * The title of the Symbolizer
+     */
+    protected String title
+
+    /**
      * A Map of Symbolizer options
      */ 
     Map options = [:]
@@ -126,6 +131,15 @@ class Symbolizer implements Style, Cloneable {
     Symbolizer zindex(int z) {
         this.z = z
         this
+    }
+
+    Symbolizer title(String title) {
+        this.title = title
+        this
+    }
+
+    String getTitle() {
+        this.title
     }
 
     /**
@@ -361,6 +375,7 @@ class Symbolizer implements Style, Cloneable {
                     rule.filter = fil.filter
 
                     syms.each {Symbolizer sym ->
+                        rule.name = sym.title
                         sym.prepare(fts, rule)
                         // Apply FeatureTypeStyle vendor options
                         if (!sym.styleOptions.isEmpty()) {

@@ -75,6 +75,29 @@ class SymbolizerTest {
         assertEquals 200, sym.scale[1], 0.1
 
     }
+
+    @Test void title() {
+        // Title on a Symbolizer
+        Symbolizer symbolizer = new Symbolizer().title("Outline")
+        assertEquals "Outline", symbolizer.title
+
+        // Title on the Composites parts not itself (should return the title of the last part)
+        Symbolizer composite = new Fill("red").title("Fill") + new Stroke("#ffffff").title("Stroke")
+        assertEquals "Stroke", composite.title
+
+        // Title on the Composites parts not itself (should return the title of the last part)
+        composite = new Fill("red").title("Fill") + new Stroke("#ffffff").title("Stroke") + new Label("NAME").title("Label")
+        assertEquals "Label", composite.title
+
+        // Title on the Composites parts not itself (should return the title of the last part that has a title)
+        composite = new Fill("red") + new Stroke("#ffffff").title("Stroke") + new Label("NAME")
+        assertEquals "Stroke", composite.title
+
+        // Title is on the Composite which is used instead of titles on it's parts
+        composite = new Fill("red") + new Stroke("#ffffff").title("Stroke") + new Label("NAME")
+        composite.title = "Outlines"
+        assertEquals "Outlines", composite.title
+    }
     
     @Test void plus() {
         def composite = new Fill("red") + new Stroke("#ffffff")
