@@ -348,9 +348,12 @@ class Java2DCartoBuilder implements CartoBuilder {
         int height = scaleBarItem.height
         int border = 5
         Font font = scaleBarItem.font
+        Color fontColor = scaleBarItem.textColor
         Color strokeColor = scaleBarItem.strokeColor
         Color fillColor = scaleBarItem.fillColor
         int strokeWidth = scaleBarItem.strokeWidth
+        Color barStrokeColor = scaleBarItem.barStrokeColor
+        float barStrokeWidth = scaleBarItem.barStrokeWidth
         int ticHeight = 10
 
         ScaleBarItem.ScaleBarInfo scaleBarInfo = scaleBarItem.calculateScaleBarInfo()
@@ -366,6 +369,7 @@ class Java2DCartoBuilder implements CartoBuilder {
         int lineXEnd = (int)(lineXStart + scaleBarInfo.widthInPixels)
         int lineY = y + height - border
 
+        // Outline
         if (fillColor) {
             graphics.color = fillColor
             graphics.fillRect(lineXStart - border, y, lineXEnd - lineXStart + border * 2, height)
@@ -374,9 +378,13 @@ class Java2DCartoBuilder implements CartoBuilder {
         graphics.stroke = new BasicStroke(strokeWidth)
         graphics.drawRect(lineXStart - border, y, lineXEnd - lineXStart + border * 2, height)
 
+        // Scale bar
+        graphics.color = barStrokeColor
+        graphics.stroke = new BasicStroke(barStrokeWidth)
         graphics.drawLine(lineXStart, lineY, lineXEnd, lineY)
         graphics.drawLine(lineXStart, y + height - border, lineXStart, y + height - border - ticHeight)
         graphics.drawLine(lineXEnd, y + height - border, lineXEnd, y + height - border - ticHeight)
+        graphics.color = fontColor
         graphics.font = font
         String scaleText = "${(int) scaleBarInfo.widthInUnits} ${scaleBarInfo.unitForScaleText}"
         drawString(scaleText, new Rectangle(

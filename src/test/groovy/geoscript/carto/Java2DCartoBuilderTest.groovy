@@ -54,6 +54,24 @@ class Java2DCartoBuilderTest {
     }
 
     @Test
+    void drawScaleBarWithOptions() {
+        File fileForShapefile = new File(getClass().getClassLoader().getResource("states.shp").toURI())
+        Shapefile shapefile = new Shapefile(fileForShapefile)
+        Map map = new Map(layers: [shapefile])
+        draw(new PageSize(400, 300), "scalebar_options.png", { PageSize pageSize, Java2DCartoBuilder builder ->
+            builder
+                .map(new MapItem(0,0,400,300).map(map))
+                .scaleBar(new ScaleBarItem(10,10,200,20)
+                    .map(map)
+                    .units(ScaleBarItem.Units.US)
+                    .barStrokeWidth(2.0f)
+                    .barStrokeColor(java.awt.Color.RED)
+                    .textColor(java.awt.Color.BLUE)
+                )
+        })
+    }
+
+    @Test
     void drawNorthArrow() {
         draw(new PageSize(80, 140), "northarrow.png", { PageSize pageSize, Java2DCartoBuilder builder ->
             builder.northArrow(new NorthArrowItem(0,0,pageSize.width, pageSize.height))

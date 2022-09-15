@@ -20,7 +20,13 @@ class ScaleBarItem extends Item {
 
     float strokeWidth = 1
 
+    float barStrokeWidth = 1
+
+    Color barStrokeColor = Color.BLACK
+
     Font font = new Font("Arial", Font.PLAIN, 12)
+
+    Color textColor = Color.BLACK
 
     int border = 5
 
@@ -89,6 +95,36 @@ class ScaleBarItem extends Item {
      */
     ScaleBarItem strokeWidth(float strokeWidth) {
         this.strokeWidth = strokeWidth
+        this
+    }
+
+    /**
+     * Set the bar stroke Color
+     * @param strokeColor The bar stroke Color
+     * @return The ScaleBarItem
+     */
+    ScaleBarItem barStrokeColor(Color strokeColor) {
+        this.barStrokeColor = strokeColor
+        this
+    }
+
+    /**
+     * Set the bar stroke width
+     * @param strokeWidth The bar stroke width
+     * @return The ScaleBarItem
+     */
+    ScaleBarItem barStrokeWidth(float strokeWidth) {
+        this.barStrokeWidth = strokeWidth
+        this
+    }
+
+    /**
+     * Set the text Color
+     * @param color The text Color
+     * @return The ScaleBarItem
+     */
+    ScaleBarItem textColor(Color color) {
+        this.textColor = color
         this
     }
 
