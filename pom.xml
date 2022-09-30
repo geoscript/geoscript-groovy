@@ -2,34 +2,17 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
+    <name>geoscript groovy</name>
+    <description>A groovy implementation of geoscript.</description>
+    <url>http://geoscript.net/</url>
     <groupId>org.geoscript</groupId>
     <artifactId>geoscript-groovy</artifactId>
     <packaging>jar</packaging>
     <version>1.20-SNAPSHOT</version>
-    <repositories>
-        <repository>
-            <id>osgeo-releases</id>
-            <name>OSGeo Nexus Release Repository</name>
-            <url>https://repo.osgeo.org/repository/release/</url>
-            <snapshots>
-                <enabled>false</enabled>
-            </snapshots>
-            <releases>
-                <enabled>true</enabled>
-            </releases>
-        </repository>
-        <repository>
-            <id>osgeo-snapshots</id>
-            <name>OSGeo Nexus Snapshot Repository</name>
-            <url>https://repo.osgeo.org/repository/snapshot/</url>
-            <snapshots>
-                <enabled>true</enabled>
-            </snapshots>
-            <releases>
-                <enabled>false</enabled>
-            </releases>
-        </repository>
-    </repositories>
+    <properties>
+        <gt.version>28-SNAPSHOT</gt.version>
+        <groovy.version>3.0.12</groovy.version>
+    </properties>
     <dependencies>
         <dependency>
             <groupId>no.ecc.vectortile</groupId>
@@ -342,13 +325,13 @@
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter</artifactId>
-            <version>5.8.2</version>
+            <version>5.9.1</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>com.squareup.okhttp3</groupId>
             <artifactId>mockwebserver</artifactId>
-            <version>4.4.1</version>
+            <version>4.10.0</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
@@ -366,6 +349,7 @@
         </pluginRepository>
     </pluginRepositories>
     <build>
+        <sourceDirectory>src/main/groovy</sourceDirectory>
         <resources>
             <resource>
                 <directory>src/main/resources</directory>
@@ -381,7 +365,7 @@
             </plugin>
             <plugin>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.8.1</version>
+                <version>3.10.1</version>
                 <configuration>
                     <source>1.8</source>
                     <target>1.8</target>
@@ -403,18 +387,37 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
-                <version>3.0.0-M5</version>
+                <version>3.0.0-M7</version>
                 <configuration>
                     <forkMode>once</forkMode>
-                    <argLine>-Xms512m -Xmx1024m -XX:PermSize=256m -XX:MaxPermSize=1024m</argLine>
+                    <argLine>@{argLine} -Xms512m -Xmx1024m -XX:PermSize=256m -XX:MaxPermSize=1024m</argLine>
                     <systemPropertyVariables>
                         <org.geotools.referencing.forceXY>true</org.geotools.referencing.forceXY>
                     </systemPropertyVariables>
                 </configuration>
             </plugin>
             <plugin>
+                <groupId>org.jacoco</groupId>
+                <artifactId>jacoco-maven-plugin</artifactId>
+                <version>0.8.8</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>prepare-agent</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>report</id>
+                        <phase>test</phase>
+                        <goals>
+                            <goal>report</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
                 <artifactId>maven-antrun-plugin</artifactId>
-                <version>3.0.0</version>
+                <version>3.1.0</version>
                 <executions>
                     <execution>
                         <phase>package</phase>
@@ -450,7 +453,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
-                <version>3.2.0</version>
+                <version>3.3.0</version>
                 <configuration>
                     <archive>
                         <manifest>
@@ -461,7 +464,7 @@
             </plugin>
             <plugin>
                 <artifactId>maven-assembly-plugin</artifactId>
-                <version>3.3.0</version>
+                <version>3.4.2</version>
                 <configuration>
                     <descriptors>
                         <descriptor>src/assembly/dir.xml</descriptor>
@@ -481,7 +484,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-shade-plugin</artifactId>
-                <version>3.2.4</version>
+                <version>3.4.0</version>
                 <executions>
                     <execution>
                         <phase>package</phase>
@@ -528,17 +531,10 @@
                     </execution>
                 </executions>
             </plugin>
-            <!-- Code quality: mvn codenarc:codenarc -->
             <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>codenarc-maven-plugin</artifactId>
-                <version>0.22-1</version>
-            </plugin>
-            <!-- Test coverage: mvn cobertura:cobertura -->
-            <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>cobertura-maven-plugin</artifactId>
-                <version>2.5.1</version>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-site-plugin</artifactId>
+                <version>3.12.1</version>
             </plugin>
         </plugins>
         <extensions>
@@ -553,40 +549,53 @@
         <!-- mvn site -->
         <plugins>
             <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>codenarc-maven-plugin</artifactId>
-                <version>0.22-1</version>
-            </plugin>
-            <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>cobertura-maven-plugin</artifactId>
-                <version>2.7</version>
-                <configuration>
-                    <formats>
-                        <format>html</format>
-                        <format>xml</format>
-                    </formats>
-                </configuration>
-            </plugin>
-            <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-report-plugin</artifactId>
-                <version>2.19.1</version>
+                <version>3.0.0-M7</version>
+            </plugin>
+            <plugin>
+                <groupId>org.jacoco</groupId>
+                <artifactId>jacoco-maven-plugin</artifactId>
+                <version>0.8.8</version>
+                <reportSets>
+                    <reportSet>
+                        <reports>
+                            <report>report</report>
+                        </reports>
+                    </reportSet>
+                </reportSets>
             </plugin>
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>versions-maven-plugin</artifactId>
-                <version>2.3</version>
+                <version>2.12.0</version>
             </plugin>
         </plugins>
     </reporting>
-    <properties>
-        <gt.version>28-SNAPSHOT</gt.version>
-        <groovy.version>3.0.12</groovy.version>
-    </properties>
-    <name>geoscript groovy</name>
-    <description>A groovy implementation of geoscript.</description>
-    <url>http://geoscript.org/</url>
+    <repositories>
+        <repository>
+            <id>osgeo-releases</id>
+            <name>OSGeo Nexus Release Repository</name>
+            <url>https://repo.osgeo.org/repository/release/</url>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+        </repository>
+        <repository>
+            <id>osgeo-snapshots</id>
+            <name>OSGeo Nexus Snapshot Repository</name>
+            <url>https://repo.osgeo.org/repository/snapshot/</url>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+            <releases>
+                <enabled>false</enabled>
+            </releases>
+        </repository>
+    </repositories>
     <licenses>
         <license>
             <name>MIT</name>
