@@ -133,11 +133,20 @@ class Symbolizer implements Style, Cloneable {
         this
     }
 
+    /**
+     * Set the title
+     * @param title The title
+     * @return This Symbolizer
+     */
     Symbolizer title(String title) {
         this.title = title
         this
     }
 
+    /**
+     * Get the title
+     * @return The title
+     */
     String getTitle() {
         this.title
     }

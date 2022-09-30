@@ -7,7 +7,7 @@ import org.geotools.util.factory.GeoTools
 import org.locationtech.jts.JTSVersion
 
 /**
- * The GeoScript Application that can run scripts, shell, or console.
+ * The GeoScript Application that can run script, shell, console or version.
  * @author Jared Erickson
  */
 class Application {
