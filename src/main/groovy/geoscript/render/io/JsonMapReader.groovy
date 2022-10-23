@@ -50,7 +50,7 @@ class JsonMapReader implements MapReader {
         GMap map = new GMap(
                 width: values.get("width", 600),
                 height: values.get("height", 400),
-                type: values.get("type", "png"),
+                type: values.get("imageType", "png"),
                 backgroundColor: values.get("backgroundColor"),
                 fixAspectRatio: values.get("fixAspectRation", true),
                 layers: Renderables.getRenderables(values.get("layers"))

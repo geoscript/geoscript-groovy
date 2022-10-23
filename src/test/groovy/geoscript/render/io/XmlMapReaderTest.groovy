@@ -18,7 +18,7 @@ class XmlMapReaderTest {
         Map map = mapReader.read("""<map>
             <width>400</width>
             <height>400</height>
-            <type>png</type>
+            <imageType>png</imageType>
             <proj>EPSG:4326</proj>
             <backgroundColor>blue</backgroundColor>
             <fixAspectRatio>true</fixAspectRatio>

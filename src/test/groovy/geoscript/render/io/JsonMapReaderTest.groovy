@@ -17,7 +17,7 @@ class JsonMapReaderTest {
         Map map = mapReader.read("""{
             "width": 400,
             "height": 400,
-            "type": "png",
+            "imageType": "png",
             "backgroundColor": "blue",
             "proj": "EPSG:4326",
             "bounds": {

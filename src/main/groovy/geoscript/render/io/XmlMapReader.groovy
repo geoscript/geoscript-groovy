@@ -52,7 +52,7 @@ class XmlMapReader implements MapReader {
         GMap map = new GMap(
                 width: getInt(xml.width?.text()?.toString(), 600),
                 height: getInt(xml.height?.text()?.toString(), 400),
-                type: xml.type?.text() ?: "png",
+                type: xml.imageType?.text() ?: "png",
                 backgroundColor: xml.backgroundColor?.text(),
                 fixAspectRatio: getBoolean(xml.fixAspectRatio?.text(), true),
                 layers: Renderables.getRenderables(getLayerMaps(xml.layers))
