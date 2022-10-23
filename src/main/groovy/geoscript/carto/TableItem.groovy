@@ -75,7 +75,7 @@ class TableItem extends Item {
         this
     }
 
-    private class RowStyle {
+    class RowStyle {
         Color backGroundColor = Color.WHITE
         Color textColor = Color.BLACK
         Font font = new Font("Arial", Font.PLAIN, 12)

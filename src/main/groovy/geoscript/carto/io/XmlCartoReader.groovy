@@ -120,7 +120,7 @@ class XmlCartoReader implements CartoReader {
             } else if (itemType.equalsIgnoreCase("northArrow")) {
                 NorthArrowItem northArrowItem = new NorthArrowItem(getInt(item.x.text()), getInt(item.y.text()), getInt(item.width.text()), getInt(item.height.text()))
                 if (!item.style.isEmpty()) {
-                    northArrowItem.style(NorthArrowStyle.valueOf(item.style.text().toUpperCase()))
+                    northArrowItem.style(NorthArrowStyle.valueOf(item.style.text().trim()))
                 }
                 if (!item.fillColor1.isEmpty()) {
                     northArrowItem.fillColor1(getColor(item.fillColor1.text()))
@@ -204,11 +204,20 @@ class XmlCartoReader implements CartoReader {
                 if (!item.fillColor.isEmpty()) {
                     scaleBarItem.fillColor(getColor(item.fillColor.text()))
                 }
+                if (!item.barStrokeColor.isEmpty()) {
+                    scaleBarItem.barStrokeColor(getColor(item.barStrokeColor.text()))
+                }
                 if (!item.font.isEmpty()) {
                     scaleBarItem.font(getFont(item.font))
                 }
+                if (!item.textColor.isEmpty()) {
+                    scaleBarItem.textColor(getColor(item.textColor.text()))
+                }
                 if (!item.strokeWidth.isEmpty()) {
                     scaleBarItem.strokeWidth(getFloat(item.strokeWidth.text()))
+                }
+                if (!item.barStrokeWidth.isEmpty()) {
+                    scaleBarItem.barStrokeWidth(getFloat(item.barStrokeWidth.text()))
                 }
                 if (!item.border.isEmpty()) {
                     scaleBarItem.border(getInt(item.border.text()))
@@ -236,6 +245,15 @@ class XmlCartoReader implements CartoReader {
                     Map row = [:]
                     rowResult.children().each { row[it.name()] = it.text() }
                     tableItem.row(row)
+                }
+                if (item.columnRowStyle) {
+                    setRowStyle(tableItem.columnRowStyle, item.columnRowStyle)
+                }
+                if (item.evenRowStyle) {
+                    setRowStyle(tableItem.evenRowStyle, item.evenRowStyle)
+                }
+                if (item.oddRowStyle) {
+                    setRowStyle(tableItem.oddRowStyle, item.oddRowStyle)
                 }
                 cartoBuilder.table(tableItem)
             } else if (itemType.equalsIgnoreCase("legend")) {
@@ -316,6 +334,21 @@ class XmlCartoReader implements CartoReader {
 
     private VerticalAlign getVerticalAlign(String str) {
         VerticalAlign.valueOf(str.toUpperCase())
+    }
+
+    private void setRowStyle(TableItem.RowStyle rowStyle, GPathResult item) {
+        if (!item.backgroundColor.isEmpty()) {
+            rowStyle.backGroundColor = new Color(item.backgroundColor.text()).asColor()
+        }
+        if (!item.font.isEmpty()) {
+            rowStyle.font = getFont(item.font)
+        }
+        if (!item.textColor.isEmpty()) {
+            rowStyle.textColor = new Color(item.textColor.text()).asColor()
+        }
+        if (!item.strokeColor.isEmpty()) {
+            rowStyle.strokeColor = new Color(item.strokeColor.text()).asColor()
+        }
     }
 
 }

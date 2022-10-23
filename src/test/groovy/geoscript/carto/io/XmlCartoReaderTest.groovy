@@ -203,6 +203,36 @@ class XmlCartoReaderTest {
                     <row><ID>2</ID><Name>Two</Name></row>
                     <row><ID>3</ID><Name>Three</Name></row>
                 </rows>
+                <columnRowStyle>
+                    <backgroundColor>#008B8B</backgroundColor>
+                    <font>
+                        <name>Arial</name>
+                        <style>Bold</style>
+                        <size>12</size>
+                    </font>
+                    <textColor>white</textColor>
+                    <strokeColor>#008B8B</strokeColor>
+                </columnRowStyle>
+                <evenRowStyle>
+                    <backgroundColor>FloralWhite</backgroundColor>
+                    <font>
+                        <name>Arial</name>
+                        <style>plain</style>
+                        <size>12</size>
+                    </font>
+                    <textColor>Black</textColor>
+                    <strokeColor>Black</strokeColor>
+                </evenRowStyle>
+                <oddRowStyle>
+                    <backgroundColor>#FAF0E6</backgroundColor>
+                    <font>
+                        <name>Arial</name>
+                        <style>plain</style>
+                        <size>12</size>
+                    </font>
+                    <textColor>Black</textColor>
+                    <strokeColor>Black</strokeColor>
+                </oddRowStyle>
             </item>
             <item>
                 <x>640</x>

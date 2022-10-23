@@ -204,8 +204,17 @@ class JsonCartoReader implements CartoReader {
                 if (item.fillColor) {
                     scaleBarItem.fillColor(new Color(item.fillColor).asColor())
                 }
+                if (item.barStrokeColor) {
+                    scaleBarItem.barStrokeColor(new Color(item.barStrokeColor).asColor())
+                }
                 if (item.font) {
                     scaleBarItem.font(getFont(item.font))
+                }
+                if (item.textColor) {
+                    scaleBarItem.textColor(new Color(item.textColor).asColor())
+                }
+                if (item.barStrokeWidth) {
+                    scaleBarItem.barStrokeWidth(item.barStrokeWidth as float)
                 }
                 if (item.strokeWidth) {
                     scaleBarItem.strokeWidth(item.strokeWidth as float)
@@ -234,6 +243,15 @@ class JsonCartoReader implements CartoReader {
                 tableItem.columns(item.columns.collect { it })
                 item.rows.each { Map row ->
                     tableItem.row(row)
+                }
+                if (item.columnRowStyle) {
+                    setRowStyle(tableItem.columnRowStyle, item.columnRowStyle)
+                }
+                if (item.evenRowStyle) {
+                    setRowStyle(tableItem.evenRowStyle, item.evenRowStyle)
+                }
+                if (item.oddRowStyle) {
+                    setRowStyle(tableItem.oddRowStyle, item.oddRowStyle)
                 }
                 cartoBuilder.table(tableItem)
             } else if (itemType.equalsIgnoreCase("legend")) {
@@ -285,6 +303,21 @@ class JsonCartoReader implements CartoReader {
         }
         int size = fontItem.size.toString().toInteger()
         new Font(name, style, size)
+    }
+
+    private void setRowStyle(TableItem.RowStyle rowStyle, Map item) {
+        if (item.backgroundColor) {
+            rowStyle.backGroundColor = new Color(item.backgroundColor).asColor()
+        }
+        if (item.font) {
+            rowStyle.font = getFont(item.font as Map)
+        }
+        if (item.textColor) {
+            rowStyle.textColor = new Color(item.textColor).asColor()
+        }
+        if (item.strokeColor) {
+            rowStyle.strokeColor = new Color(item.strokeColor).asColor()
+        }
     }
 
 }

@@ -189,7 +189,37 @@ class JsonCartoReaderTest {
                     {"ID": 1, "Name": "One"},
                     {"ID": 2, "Name": "Two"},
                     {"ID": 3, "Name": "Three"}
-                ]
+                ],
+                "columnRowStyle": {
+                    "backgroundColor": "#008B8B",
+                    "font": {
+                        "name": "Arial",
+                        "style": "bold",
+                        "size": 12
+                    },
+                    "textColor": "white",
+                    "strokeColor": "#008B8B"
+                },
+                "evenRowStyle": {
+                    "backgroundColor": "FloralWhite",
+                    "font": {
+                        "name": "Arial",
+                        "style": "plain",
+                        "size": 12
+                    },
+                    "textColor": "Black",
+                    "strokeColor": "Black"
+                },
+                "oddRowStyle": {
+                    "backgroundColor": "#FAF0E6",
+                    "font": {
+                        "name": "Arial",
+                        "style": "plain",
+                        "size": 12
+                    },
+                    "textColor": "Black",
+                    "strokeColor": "Black"
+                }
             },
             {
                 "x": 640,
