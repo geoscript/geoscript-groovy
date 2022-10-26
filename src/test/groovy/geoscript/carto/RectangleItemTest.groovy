@@ -6,7 +6,7 @@ import java.awt.*
 
 import static org.junit.jupiter.api.Assertions.assertEquals
 
-class RectangleItemTest {
+class RectangleItemTest extends AbstractCartoTest {
 
     @Test
     void create() {
@@ -29,5 +29,15 @@ class RectangleItemTest {
                 "stroke-width = 1.2)", item.toString())
     }
 
+    @Test
+    void draw() {
+        draw("rectangle", 50, 50, { CartoBuilder cartoBuilder ->
+            cartoBuilder.rectangle(new RectangleItem(10,10,30,30)
+                .fillColor(Color.WHITE)
+                .strokeColor(Color.BLUE)
+                .strokeWidth(1.2)
+            )
+        })
+    }
 
 }

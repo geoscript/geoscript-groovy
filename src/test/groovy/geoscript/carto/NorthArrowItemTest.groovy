@@ -6,7 +6,7 @@ import java.awt.*
 
 import static org.junit.jupiter.api.Assertions.*
 
-class NorthArrowItemTest {
+class NorthArrowItemTest extends AbstractCartoTest {
 
     @Test
     void create() {
@@ -38,5 +38,11 @@ class NorthArrowItemTest {
                 "stroke-width = 1.2"))
     }
 
+    @Test
+    void draw() {
+        draw("northarrow", 150, 150, { CartoBuilder cartoBuilder ->
+            cartoBuilder.northArrow(new NorthArrowItem(10,10,130,130))
+        })
+    }
 
 }

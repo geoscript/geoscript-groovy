@@ -3,7 +3,7 @@ package geoscript.carto
 import org.junit.jupiter.api.Test
 import static org.junit.jupiter.api.Assertions.*
 
-class TableItemTest {
+class TableItemTest extends AbstractCartoTest {
 
     @Test
     void create() {
@@ -23,5 +23,16 @@ class TableItemTest {
         assertTrue(item.toString().startsWith("TableItem(x = 10, y = 20, width = 300, height = 400, columns = [ID, Name], rows = [[ID:1, Name:One], [ID:2, Name:Two], [ID:3, Name:Three]], "))
     }
 
+    @Test
+    void draw() {
+        draw("table", 300, 100, { CartoBuilder cartoBuilder ->
+            cartoBuilder.table(new TableItem(10,10,280,80)
+                    .columns(["ID"]).column("Name")
+                    .row([[ID: 1, Name: "One"]])
+                    .row([[ID: 2, Name: "Two"]])
+                    .row([[ID: 3, Name: "Three"]])
+            )
+        })
+    }
 
 }

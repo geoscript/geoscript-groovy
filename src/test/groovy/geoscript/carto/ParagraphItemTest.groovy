@@ -6,7 +6,7 @@ import java.awt.*
 
 import static org.junit.jupiter.api.Assertions.*
 
-class ParagraphItemTest {
+class ParagraphItemTest extends AbstractCartoTest {
 
     @Test
     void create() {
@@ -30,5 +30,13 @@ class ParagraphItemTest {
         assertTrue(item.toString().endsWith("style=bold,size=14])"))
     }
 
+    @Test
+    void draw() {
+        draw("paragraph", 250, 150, { CartoBuilder cartoBuilder ->
+            cartoBuilder.paragraph(new ParagraphItem(10,10,240,140)
+                    .text("The Carto package contains classes for creating cartographic documents. All items are added to the document with x and y coordinates whose origin is the upper left and width and a height.")
+            )
+        })
+    }
 
 }

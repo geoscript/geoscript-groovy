@@ -9,7 +9,7 @@ import java.awt.*
 
 import static org.junit.jupiter.api.Assertions.assertEquals
 
-class ScaleBarItemTest {
+class ScaleBarItemTest extends AbstractCartoTest {
 
     @Test
     void create() {
@@ -86,5 +86,18 @@ class ScaleBarItemTest {
         assertEquals("miles", info.unitForScaleText)
     }
 
+    @Test
+    void draw() {
+        draw("scalebar", 400, 300, { CartoBuilder cartoBuilder ->
+            Map map = new Map(layers: [
+                    new Shapefile(new File(getClass().getClassLoader().getResource("states.shp").toURI()))
+            ])
+            cartoBuilder.map(new MapItem(10,10,380,280).map(map))
+            cartoBuilder.scaleBar(new ScaleBarItem(30,250,330,20)
+                    .units(ScaleBarItem.Units.US)
+                    .map(map)
+            )
+        })
+    }
 
 }

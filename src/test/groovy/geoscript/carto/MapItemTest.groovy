@@ -7,7 +7,7 @@ import org.junit.jupiter.api.Test
 import static org.junit.jupiter.api.Assertions.assertEquals
 import static org.junit.jupiter.api.Assertions.assertTrue
 
-class MapItemTest {
+class MapItemTest extends AbstractCartoTest {
 
     @Test
     void create() {
@@ -28,5 +28,14 @@ class MapItemTest {
         assertTrue(item.toString().endsWith(")"))
     }
 
+    @Test
+    void draw() {
+        draw("map_states", 400, 300, { CartoBuilder cartoBuilder ->
+            Map map = new Map(layers: [
+                    new Shapefile(new File(getClass().getClassLoader().getResource("states.shp").toURI()))
+            ])
+            cartoBuilder.map(new MapItem(10,10,380,280).map(map))
+        })
+    }
 
 }

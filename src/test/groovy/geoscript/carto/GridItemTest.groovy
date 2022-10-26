@@ -6,7 +6,7 @@ import java.awt.*
 
 import static org.junit.jupiter.api.Assertions.assertEquals
 
-class GridItemTest {
+class GridItemTest extends AbstractCartoTest {
 
     @Test
     void create() {
@@ -27,5 +27,15 @@ class GridItemTest {
                 "stroke-color = java.awt.Color[r=0,g=0,b=255], stroke-width = 2.0)", item.toString())
     }
 
+    @Test
+    void draw() {
+        draw("grid", 100, 100, { CartoBuilder cartoBuilder ->
+            cartoBuilder.grid(new GridItem(0,0,100,100)
+                .size(10)
+                .strokeColor(Color.BLUE)
+                .strokeWidth(0.5f)
+            )
+        })
+    }
 
 }

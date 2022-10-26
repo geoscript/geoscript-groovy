@@ -6,7 +6,7 @@ import java.awt.*
 
 import static org.junit.jupiter.api.Assertions.*
 
-class TextItemTest {
+class TextItemTest extends AbstractCartoTest {
 
     @Test
     void create() {
@@ -34,5 +34,14 @@ class TextItemTest {
         assertTrue(item.toString().endsWith("horizontal-align = CENTER, vertical-align = MIDDLE)"))
     }
 
-
+    @Test
+    void draw() {
+        draw("text", 150, 50, { CartoBuilder cartoBuilder ->
+            cartoBuilder.text(new TextItem(10,10,140,30)
+                    .text("Map Text")
+                    .verticalAlign(VerticalAlign.MIDDLE)
+                    .horizontalAlign(HorizontalAlign.CENTER)
+            )
+        })
+    }
 }

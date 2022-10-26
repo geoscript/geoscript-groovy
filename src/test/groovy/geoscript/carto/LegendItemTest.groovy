@@ -1,6 +1,5 @@
 package geoscript.carto
 
-import geoscript.layer.GeoTIFF
 import geoscript.layer.Shapefile
 import geoscript.render.Map
 import geoscript.style.ColorMap
@@ -8,7 +7,6 @@ import geoscript.style.Fill
 import geoscript.style.Shape
 import geoscript.style.Stroke
 import geoscript.style.UniqueValues
-import org.junit.jupiter.api.io.TempDir
 
 import java.awt.Color
 import org.junit.jupiter.api.Test
@@ -17,10 +15,7 @@ import java.awt.Font
 
 import static org.junit.jupiter.api.Assertions.*
 
-class LegendItemTest {
-
-    @TempDir
-    private File folder
+class LegendItemTest extends AbstractCartoTest {
 
     @Test
     void create() {
@@ -65,13 +60,10 @@ class LegendItemTest {
                 shapefile
         ])
 
-        File mapFile = new File("target/carto_legend_symbolizer_name.png")
-        mapFile.withOutputStream { OutputStream outputStream ->
-            new ImageCartoBuilder(PageSize.LETTER_LANDSCAPE, ImageCartoBuilder.ImageType.PNG)
-                    .map(new MapItem(30, 120, 742, 470).map(map))
-                    .legend(new LegendItem(640, 500, 180,80).addMap(map))
-                    .build(outputStream)
-        }
+        draw("legend_symbolizer_name", 792, 612, { CartoBuilder cartoBuilder ->
+            cartoBuilder.map(new MapItem(30, 120, 742, 470).map(map))
+            cartoBuilder.legend(new LegendItem(640, 500, 180,80).addMap(map))
+        })
     }
 
     @Test
@@ -84,13 +76,10 @@ class LegendItemTest {
                 shapefile
         ])
 
-        File mapFile = new File("target/carto_legend_symbolizer_unique_name.png")
-        mapFile.withOutputStream { OutputStream outputStream ->
-            new ImageCartoBuilder(PageSize.LETTER_LANDSCAPE, ImageCartoBuilder.ImageType.PNG)
-                    .map(new MapItem(240, 120, 542, 470).map(map))
-                    .legend(new LegendItem(10, 10, 220,600).addMap(map))
-                    .build(outputStream)
-        }
+        draw("legend_symbolizer_unique_name", 792, 612, { CartoBuilder cartoBuilder ->
+            cartoBuilder.map(new MapItem(240, 120, 542, 470).map(map))
+            cartoBuilder.legend(new LegendItem(10, 10, 220,600).addMap(map))
+        })
     }
 
 }

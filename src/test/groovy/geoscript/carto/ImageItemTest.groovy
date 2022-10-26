@@ -1,9 +1,10 @@
 package geoscript.carto
 
 import org.junit.jupiter.api.Test
+
 import static org.junit.jupiter.api.Assertions.*
 
-class ImageItemTest {
+class ImageItemTest extends AbstractCartoTest {
 
     @Test
     void create() {
@@ -20,5 +21,13 @@ class ImageItemTest {
         assertTrue(item.toString().endsWith("image.png)"))
     }
 
+    @Test
+    void draw() {
+        draw("image", 292, 295, { CartoBuilder cartoBuilder ->
+            cartoBuilder.image(new ImageItem(10,10,272,275)
+                    .path(new File(getClass().getClassLoader().getResource("image.png").toURI()))
+            )
+        })
+    }
 
 }

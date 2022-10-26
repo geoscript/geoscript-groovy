@@ -9,7 +9,7 @@ import org.junit.jupiter.api.Test
 import static org.junit.jupiter.api.Assertions.assertEquals
 import static org.junit.jupiter.api.Assertions.assertTrue
 
-class OverviewMapItemTest {
+class OverviewMapItemTest extends AbstractCartoTest {
 
     @Test
     void create() {
@@ -39,5 +39,24 @@ class OverviewMapItemTest {
         assertTrue(item.toString().endsWith(")"))
     }
 
+    @Test
+    void draw() {
+        draw("overviewmap", 400, 300, { CartoBuilder cartoBuilder ->
+            Map map = new Map(layers: [
+                    new Shapefile(new File(getClass().getClassLoader().getResource("states.shp").toURI()))
+            ])
+            Map overViewMap = new Map(layers: [
+                    new GeoTIFF(new File(getClass().getClassLoader().getResource("raster.tif").toURI())).read()
+            ])
+            cartoBuilder.map(new MapItem(10,10,380,280).map(map))
+            cartoBuilder.overViewMap(new OverviewMapItem(10,220,50,50)
+                    .linkedMap(map)
+                    .overviewMap(overViewMap)
+                    .areaStyle(new Fill("red",0.1) + new geoscript.style.Stroke("red",1))
+                    .zoomIntoBounds(true)
+                    .scaleFactor(3.0)
+            )
+        })
+    }
 
 }

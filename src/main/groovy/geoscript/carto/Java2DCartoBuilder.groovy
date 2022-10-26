@@ -485,6 +485,7 @@ class Java2DCartoBuilder implements CartoBuilder {
         int entryX = legendItem.x
         int entryY = legendItem.y + titleHeight + legendItem.gapBetweenEntries
         int maxTextWidth = -1
+        int maxHeight = legendItem.y + legendItem.height
 
         legendItem.entries.eachWithIndex { LegendItem.LegendEntry entry, int i ->
 
@@ -597,7 +598,7 @@ class Java2DCartoBuilder implements CartoBuilder {
             if (i < (legendItem.entries.size() - 1)) {
                 // Check to make sure the next entry can fit in the remaining space
                 int nextHeight = getLegendItemHeight(legendItem, legendItem.entries[i + 1])
-                if ((entryY + nextHeight) > legendItem.height) {
+                if ((entryY + nextHeight) > maxHeight) {
                     // Move the entry x over to the right to a separate column
                     entryX += legendItem.legendEntryWidth + legendItem.gapBetweenEntries + maxTextWidth
                     // Reset the entry y to the top

@@ -7,7 +7,7 @@ import java.awt.Font
 import java.text.SimpleDateFormat
 import static org.junit.jupiter.api.Assertions.*
 
-class DateTextItemTest {
+class DateTextItemTest extends AbstractCartoTest {
 
     @Test
     void create() {
@@ -42,5 +42,18 @@ class DateTextItemTest {
         assertTrue(itemString.endsWith("horizontal-align = CENTER, vertical-align = MIDDLE)"))
     }
 
+    @Test
+    void draw() {
+        draw("datetext", 150, 50, { CartoBuilder cartoBuilder ->
+            cartoBuilder.dateText(new DateTextItem(10, 10, 140, 30)
+                    .date(new Date())
+                    .format("MM/dd/yyy")
+                    .horizontalAlign(HorizontalAlign.CENTER)
+                    .verticalAlign(VerticalAlign.MIDDLE)
+                    .color(Color.BLACK)
+                    .font(new Font("Arial", Font.PLAIN, 14))
+            )
+        })
+    }
 
 }
