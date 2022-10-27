@@ -5,6 +5,7 @@ import geoscript.geom.Point
 import geoscript.layer.Raster
 import geoscript.layer.Renderable
 import geoscript.proj.Projection
+import org.geotools.referencing.operation.projection.MapProjection
 
 import javax.imageio.ImageIO
 import java.awt.Color
@@ -53,6 +54,8 @@ class MapCube {
 
     void render(List<Renderable> layers, OutputStream out) {
 
+        MapProjection.SKIP_SANITY_CHECKS = true
+
         BufferedImage image = new BufferedImage(1800, 1500, BufferedImage.TYPE_INT_ARGB)
         Graphics2D g2d = image.createGraphics()
         g2d.paint = java.awt.Color.WHITE
@@ -88,8 +91,8 @@ class MapCube {
                 [id: "5", image: [500, 940], center: new Point(-45, -90 + 0.1), bounds: new Bounds(-180.0, -45.0, 180.0, -90.0, "EPSG:4326")]
         ]
 
-        cubes.each { java.util.Map cube ->
-            if (preRaster) {
+        if (preRaster) {
+            cubes.each { java.util.Map cube ->
                 Point center = cube.center
                 Projection p = new Projection("AUTO:97001,9001,${center.x},${center.y}")
                 Bounds b = cube.bounds.reproject(p)
@@ -106,7 +109,10 @@ class MapCube {
                 BufferedImage img = map.renderToImage()
                 g2d.drawImage(img, cube.image[0], cube.image[1], null)
             }
-            if (drawOutline) {
+        }
+
+        if (drawOutline) {
+            cubes.each { java.util.Map cube ->
                 g2d.paint = new Color(0, 0, 0)
                 g2d.drawRect(cube.image[0], cube.image[1], 400, 400)
             }
@@ -142,6 +148,7 @@ class MapCube {
         ImageIO.write(image, imageType, out)
         out.close()
 
+        MapProjection.SKIP_SANITY_CHECKS = false
     }
 
     protected void drawTab(Graphics2D g, int x, int y, String side, int tab) {
