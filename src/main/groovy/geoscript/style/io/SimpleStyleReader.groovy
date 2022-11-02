@@ -1,5 +1,6 @@
 package geoscript.style.io
 
+import geoscript.filter.Color
 import geoscript.style.Composite
 import geoscript.style.Fill
 import geoscript.style.Font
@@ -102,7 +103,7 @@ class SimpleStyleReader implements Reader {
             )
             parts.add(icon)
         }
-        if (['label-size','label-style','label-weight','label-family'].any{ options.containsKey(it) }) {
+        if (['label', 'label-size','label-style','label-weight','label-family', 'label-color'].any{ options.containsKey(it) }) {
             Font font = new Font(
                     size: options.get('label-size',12),
                     style: options.get('label-style', 'normal'),
@@ -111,8 +112,37 @@ class SimpleStyleReader implements Reader {
             )
             Label label = new Label(
                     property: options.get('label'),
-                    font: font
+                    font: font,
+                    fill: new Fill(new Color(options.get("label-color", "black")))
             )
+            if (['label-halo-color','label-halo-radius'].any { options.containsKey(it)}) {
+                label.halo(new Fill(options.get("label-halo-color", "white")), options.get("label-halo-radius", 5))
+            }
+            String placement = options.get("label-placement", "point")
+            if (placement.equalsIgnoreCase("point")) {
+                // label-point-anchor, label-point-displace, label-point-rotate
+                Map params = [
+                    anchor: options.get("label-point-anchor","0.5,0.5")?.split(","),
+                    displace: options.get("label-point-displace","0,0")?.split(","),
+                    rotate: options.get("label-point-rotate",0) as double
+                ]
+                label.point(params)
+            } else if (placement.equalsIgnoreCase("line")) {
+                // label-line-offset, label-line-gap, label-line-igap, label-line-align, label-line-follow,
+                // label-line-group, label-line-displacement, label-line-repeat
+                Map params = [
+                    offset: options.get("label-line-offset", 0) as double,
+                    gap: options.get("label-line-gap"),
+                    igap: options.get("label-line-igap"),
+                    align: options.get("label-line-align", false) as boolean,
+                    follow: options.get("label-line-follow", false) as boolean,
+                    group: options.get("label-line-group", false) as boolean,
+                    displacement: options.get("label-line-displacement"),
+                    repeat: options.get("label-line-repeat")
+                ]
+                label.linear(params)
+            }
+
             parts.add(label)
         }
         new Composite(parts)

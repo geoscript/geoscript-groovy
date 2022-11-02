@@ -53,6 +53,36 @@ class SimpleStyleReaderTest {
         assertEquals("image/jpeg", icon.format)
     }
 
+    @Test void pointWithLabelWithHalo() {
+        SimpleStyleReader styleReader = new SimpleStyleReader()
+        Style style = styleReader.read("shape-type=triangle label=NAME label-size=12 label-halo-color=white label-halo-radius=7")
+        assertEquals style.toString(), "Composite (Shape(color = #7e7e7e, size = 6, type = triangle), Label(property = NAME))"
+    }
+
+    @Test void pointWithLabelWithPointPlacement() {
+        SimpleStyleReader styleReader = new SimpleStyleReader()
+        Style style = styleReader.read("shape-type=triangle label=NAME label-placement=point")
+        assertEquals style.toString(), "Composite (Shape(color = #7e7e7e, size = 6, type = triangle), Label(property = NAME))"
+    }
+
+    @Test void pointWithLabelWithComplexPointPlacement() {
+        SimpleStyleReader styleReader = new SimpleStyleReader()
+        Style style = styleReader.read("shape-type=triangle label=NAME label-placement=point label-point-anchor=5,6 label-point-displace=10,10 label-point-rotate=45")
+        assertEquals style.toString(), "Composite (Shape(color = #7e7e7e, size = 6, type = triangle), Label(property = NAME))"
+    }
+
+    @Test void pointWithLabelWithLinePlacement() {
+        SimpleStyleReader styleReader = new SimpleStyleReader()
+        Style style = styleReader.read("shape-type=triangle label=NAME label-placement=line")
+        assertEquals style.toString(), "Composite (Shape(color = #7e7e7e, size = 6, type = triangle), Label(property = NAME))"
+    }
+
+    @Test void pointWithLabelWithComplexLinePlacement() {
+        SimpleStyleReader styleReader = new SimpleStyleReader()
+        Style style = styleReader.read("shape-type=triangle label=NAME label-placement=line label-line-offset=4 label-line-gap=2 label-line-igap=3 label-line-align=true label-line-follow=true label-line-group=true label-line-displacement=12 label-line-repeat=true")
+        assertEquals style.toString(), "Composite (Shape(color = #7e7e7e, size = 6, type = triangle), Label(property = NAME))"
+    }
+
     @Test void readFromMap() {
         SimpleStyleReader styleReader = new SimpleStyleReader()
         Style style = styleReader.read([fill: 'wheat', 'stroke-width': 1.2])
