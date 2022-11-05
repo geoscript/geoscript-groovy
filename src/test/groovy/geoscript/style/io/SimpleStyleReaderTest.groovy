@@ -2,6 +2,7 @@ package geoscript.style.io
 
 import geoscript.style.Composite
 import geoscript.style.Icon
+import geoscript.style.Label
 import geoscript.style.Style
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
@@ -81,6 +82,23 @@ class SimpleStyleReaderTest {
         SimpleStyleReader styleReader = new SimpleStyleReader()
         Style style = styleReader.read("shape-type=triangle label=NAME label-placement=line label-line-offset=4 label-line-gap=2 label-line-igap=3 label-line-align=true label-line-follow=true label-line-group=true label-line-displacement=12 label-line-repeat=true")
         assertEquals style.toString(), "Composite (Shape(color = #7e7e7e, size = 6, type = triangle), Label(property = NAME))"
+    }
+
+    @Test void polygonWithAlign() {
+        SimpleStyleReader styleReader = new SimpleStyleReader()
+        Style style = styleReader.read("fill=#555555 fill-opacity=0.6 stroke=#555555 stroke-width=0.5 label=name label-polygonalign=mbr")
+        assertEquals style.toString(), "Composite (Fill(color = #555555, opacity = 0.6), Stroke(color = #555555, width = 0.5), Label(property = name))"
+        Composite composite = style as Composite
+        assertEquals("mbr", composite.parts[2].options["polygonAlign"])
+    }
+
+    @Test void labelMaxDisplacementAndMaxAngleDelta() {
+        SimpleStyleReader styleReader = new SimpleStyleReader()
+        Style style = styleReader.read("fill=#555555 fill-opacity=0.6 stroke=#555555 stroke-width=0.5 label=name label-maxdisplacement=10 label-maxangledelta=45")
+        assertEquals style.toString(), "Composite (Fill(color = #555555, opacity = 0.6), Stroke(color = #555555, width = 0.5), Label(property = name))"
+        Composite composite = style as Composite
+        assertEquals("45.0", composite.parts[2].options["maxAngleDelta"])
+        assertEquals("10.0", composite.parts[2].options["maxDisplacement"])
     }
 
     @Test void readFromMap() {

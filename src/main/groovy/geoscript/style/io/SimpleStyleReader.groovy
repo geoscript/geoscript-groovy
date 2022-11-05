@@ -120,7 +120,6 @@ class SimpleStyleReader implements Reader {
             }
             String placement = options.get("label-placement", "point")
             if (placement.equalsIgnoreCase("point")) {
-                // label-point-anchor, label-point-displace, label-point-rotate
                 Map params = [
                     anchor: options.get("label-point-anchor","0.5,0.5")?.split(","),
                     displace: options.get("label-point-displace","0,0")?.split(","),
@@ -128,8 +127,6 @@ class SimpleStyleReader implements Reader {
                 ]
                 label.point(params)
             } else if (placement.equalsIgnoreCase("line")) {
-                // label-line-offset, label-line-gap, label-line-igap, label-line-align, label-line-follow,
-                // label-line-group, label-line-displacement, label-line-repeat
                 Map params = [
                     offset: options.get("label-line-offset", 0) as double,
                     gap: options.get("label-line-gap"),
@@ -142,7 +139,15 @@ class SimpleStyleReader implements Reader {
                 ]
                 label.linear(params)
             }
-
+            if (options.containsKey("label-maxdisplacement")) {
+                label.maxDisplacement(options.get("label-maxdisplacement") as double)
+            }
+            if (options.containsKey("label-maxangledelta")) {
+                label.maxAngleDelta(options.get("label-maxangledelta") as float)
+            }
+            if (options.containsKey("label-polygonalign")) {
+                label.polygonAlign(options.get("label-polygonalign"))
+            }
             parts.add(label)
         }
         new Composite(parts)
