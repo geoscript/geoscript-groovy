@@ -9,8 +9,8 @@ import static geoscript.GeoScript.unzip
 // Download data from natural earth
 File dir = new File("naturalearth")
 [
-        [name: "countries", url: "http://www.naturalearthdata.com/http//www.naturalearthdata.com/download/110m/cultural/ne_110m_admin_0_countries.zip"],
-        [name: "ocean",     url: "http://www.naturalearthdata.com/http//www.naturalearthdata.com/download/110m/physical/ne_110m_ocean.zip"]
+        [name: "countries",  url: "https://www.naturalearthdata.com/http//www.naturalearthdata.com/download/110m/cultural/ne_110m_admin_0_countries.zip"],
+        [name: "ocean",      url: "https://www.naturalearthdata.com/http//www.naturalearthdata.com/download/110m/physical/ne_110m_ocean.zip"]
 ].each { Map item ->
     unzip(download(new URL(item.url), new File(dir, "${item.name}.zip"), overwrite: false))
 }
@@ -28,5 +28,3 @@ countries.style = styleReader.read("stroke=black stroke-width=0.5 fill=white")
 // Create a map cube
 MapCube mapCube = new MapCube(title: "The Earth Map Cube", source: "Natural Earth", drawOutline: true)
 mapCube.render([ocean, countries], new File("map_cube.png"))
-
-
