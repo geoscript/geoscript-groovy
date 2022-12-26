@@ -1,0 +1,4 @@
+
+# Features in circles = 10
+
+# Features in places = 10

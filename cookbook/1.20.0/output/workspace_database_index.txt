@@ -1,0 +1,4 @@
+Index name = PRIMARY_KEY_C, unique = true, attributes = [fid]
+Index name = name_idx, unique = true, attributes = [NAME]
+Index name = a3_idx, unique = false, attributes = [SOV_A3, ADM0_A3]
+Index name = megacity_idx, unique = false, attributes = [MEGACITY]

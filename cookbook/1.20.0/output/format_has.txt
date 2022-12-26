@@ -1,0 +1,2 @@
+Has raster named earth? true
+Has raster named world? false

@@ -1,0 +1,1 @@
+countries_area geom: Polygon(EPSG:4326), id: Integer, name: String, area: Double

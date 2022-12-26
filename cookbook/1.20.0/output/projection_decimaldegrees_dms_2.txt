@@ -1,0 +1,3 @@
+Degrees: 47
+Minutes: 12
+Seconds: 43.280000000006396

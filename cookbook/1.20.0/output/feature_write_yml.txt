@@ -1,0 +1,10 @@
+---
+type: "Feature"
+properties:
+  id: 1
+  name: "Seattle"
+geometry:
+  type: "Point"
+  coordinates:
+  - -122.3204
+  - 47.6024

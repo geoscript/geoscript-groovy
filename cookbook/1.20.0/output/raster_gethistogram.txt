@@ -1,0 +1,5 @@
+# of bands = 3
+# Counts = 256
+# Bins = 256
+Count 25 = 0
+Bin 45 = [45.0, 46.0]

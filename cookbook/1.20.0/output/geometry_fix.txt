@@ -1,0 +1,2 @@
+LineString with duplicated Points = LINESTRING (0 0, 0 0, 0 0, 0 0, 0 0, 1 1)
+Fixed LineString = LINESTRING (0 0, 1 1)

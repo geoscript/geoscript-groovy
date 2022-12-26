@@ -1,0 +1,18 @@
+
+Zoom Level: 12
+# of tiles: 9
+Bounds: (-1.1466140192049265E7,5674674.46239233,-1.1436790003844362E7,5704026.226852979,EPSG:3857)
+Width / # Columns: 3
+Height / # Rows: 3
+MinX: 876, MinY: 2628, MaxX: 878, MaxY: 2630
+
+Tiles:
+Tile(x:876, y:2628, z:12)
+Tile(x:877, y:2628, z:12)
+Tile(x:878, y:2628, z:12)
+Tile(x:876, y:2629, z:12)
+Tile(x:877, y:2629, z:12)
+Tile(x:878, y:2629, z:12)
+Tile(x:876, y:2630, z:12)
+Tile(x:877, y:2630, z:12)
+Tile(x:878, y:2630, z:12)

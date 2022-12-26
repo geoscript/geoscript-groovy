@@ -1,0 +1,2 @@
+Is POINT EMPTY empty? Yes
+Is POINT (-122.3437 47.754) empty? No

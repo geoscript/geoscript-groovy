@@ -1,0 +1,6 @@
+Zoom Level: 0
+Width / # Columns: 1
+Height / # Rows: 1
+Size / # Tiles: 1
+X Resolution: 156412.0
+Y Resolution: 156412.0

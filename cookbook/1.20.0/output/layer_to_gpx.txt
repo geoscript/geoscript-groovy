@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?><gpx xmlns="http://www.topografix.com/GPX/1/1" version="1.1" creator="geoscript">
+<wpt lat="47.6024" lon="-122.3204">
+<name>fid-26f1067c_1854f8f0c16_-6584</name>
+</wpt>
+<wpt lat="47.2619" lon="-122.48416">
+<name>fid-26f1067c_1854f8f0c16_-6582</name>
+</wpt>
+</gpx>

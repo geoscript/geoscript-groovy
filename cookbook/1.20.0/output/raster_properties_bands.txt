@@ -1,0 +1,4 @@
+Band:
+  RED_BAND
+  GREEN_BAND
+  BLUE_BAND
