@@ -3,6 +3,32 @@
 GeoScript Groovy Releases
 =========================
 
+1.20.0
+------
+The 1.20 release of GeoScript is build on Groovy 3.0.13, GeoTools 28.0, and the Java Topology Suite 1.90.0 and requires Java 8.
+
+Add offset curve method to Geometry.
+
+Add concave hull method to Geometry.
+
+Add triangulate method to Geometry.
+
+Add TKWB Writer.
+
+Add title to Symbolizer.
+
+Add new properties to the ScaleBarItem (barStrokeWidth, barStrokeColor, and textColor).
+
+Change the type property to imageType for the Json and Xml MapReaders.
+
+Enable more table and scale bar styles in the Json and Xml CartoReaders.
+
+Fix MapCube drawing by disabling map project sanity checks.
+
+Add halo, point, line placement for labels in SimpleStyleReader.
+
+Fix uber jar by adding JAI to appeders.
+
 1.19.0
 ------
 The 1.19 release of GeoScript is build on Groovy 3.0.11, GeoTools 27.0, and the Java Topology Suite 1.18.2 and requires Java 8.

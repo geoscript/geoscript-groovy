@@ -127,7 +127,7 @@ and then include the GeoScript Groovy dependency::
     <dependency>
         <groupId>org.geoscript</groupId>
         <artifactId>geoscript-groovy</artifactId>
-        <version>1.19.0</version>
+        <version>1.20.0</version>
     </dependency>
 
 Docker
@@ -151,7 +151,7 @@ Versions
 +-----------+----------+-----------+--------+----------+
 | GeoScript | GeoTools | GeoServer | JTS    | Groovy   |
 +-----------+----------+-----------+--------+----------+
-| 1.20      | 28       | 2.22      | 1.18.2 | 3.0.12   |
+| 1.20      | 28       | 2.22      | 1.19.0 | 3.0.13   |
 +-----------+----------+-----------+--------+----------+
 | 1.19      | 27       | 2.21      | 1.18.2 | 3.0.11   |
 +-----------+----------+-----------+--------+----------+
@@ -197,7 +197,7 @@ Versions
 API Groovy Docs
 ---------------
 
-`1.20-SNAPSHOT <http://geoscript.github.io/geoscript-groovy/api/1.20-SNAPSHOT/index.html>`_
+`1.20.0 <http://geoscript.github.io/geoscript-groovy/api/1.20.0/index.html>`_
 
 `1.19.0 <http://geoscript.github.io/geoscript-groovy/api/1.19.0/index.html>`_
 
