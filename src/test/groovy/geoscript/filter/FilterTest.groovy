@@ -69,7 +69,7 @@ class FilterTest {
 </ogc:PropertyIsEqualTo>
 </ogc:Filter>
 """
-        AssertUtil.assertStringsEqual expected, actual, removeXmlNS: true
+        AssertUtil.assertStringsEqual expected, actual, removeXmlNS: true, trim: true
 
         actual = f.getXml(false, 1.1)
         expected = """<ogc:Filter xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:gml="http://www.opengis.net/gml" xmlns:ogc="http://www.opengis.net/ogc"><ogc:PropertyIsEqualTo matchCase="true"><ogc:PropertyName>name</ogc:PropertyName><ogc:Literal>foobar</ogc:Literal></ogc:PropertyIsEqualTo></ogc:Filter>"""

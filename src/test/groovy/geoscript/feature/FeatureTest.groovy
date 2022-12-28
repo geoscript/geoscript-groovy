@@ -235,7 +235,7 @@ class FeatureTest {
 </gsf:geom>
 <gsf:price>12.5</gsf:price>
 </gsf:houses>
-""", f1.gml, removeXmlNS: true
+""", f1.gml, removeXmlNS: true, trim: true
     }
 
     @Test void fromGml() {
