@@ -101,7 +101,6 @@ class Workspace {
         new Layer(this, ds.getFeatureSource(name))
     }
 
-
     /**
      * Another way to get a Layer by name.
      * <p><code>Layer layer = workspace["hospitals"]</code><p>

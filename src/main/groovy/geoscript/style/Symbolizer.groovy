@@ -3,6 +3,7 @@ package geoscript.style
 import geoscript.feature.Field
 import geoscript.filter.Filter
 import geoscript.style.io.SLDWriter
+import groovy.transform.AutoClone
 import org.geotools.styling.Style as GtStyle
 import org.geotools.styling.Rule
 import org.geotools.factory.CommonFactoryFinder
@@ -28,6 +29,7 @@ import org.geotools.styling.FeatureTypeStyle
  * </pre></blockquote></p>
  * @author Jared Erickson
  */
+@AutoClone
 class Symbolizer implements Style, Cloneable {
 
     /**

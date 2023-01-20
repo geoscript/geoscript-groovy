@@ -1,6 +1,7 @@
 package geoscript.geom.io
 
 import geoscript.geom.*
+import groovy.xml.XmlParser
 
 /**
  * Read a {@link geoscript.geom.Geometry Geometry} from a GML Version 2 String.

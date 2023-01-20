@@ -27,8 +27,7 @@ package geoscript.geom.io
 import org.junit.jupiter.api.Test
 import static org.junit.jupiter.api.Assertions.*
 import geoscript.geom.*
-
-import static org.junit.jupiter.api.Assertions.assertNull
+import groovy.xml.XmlParser
 
 /**
  * The GeoRSSReader UnitTest

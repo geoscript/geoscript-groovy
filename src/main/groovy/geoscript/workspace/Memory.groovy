@@ -57,7 +57,7 @@ class Memory extends Workspace {
 
         @Override
         Memory create(Map params) {
-            if (params.type && params.type.equalsIgnoreCase("memory")) {
+            if (params.type && params.type.toString().equalsIgnoreCase("memory")) {
                 create(new org.geotools.data.memory.MemoryDataStore())
             } else {
                 super.create(params)

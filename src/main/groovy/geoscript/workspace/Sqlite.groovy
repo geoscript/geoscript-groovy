@@ -195,7 +195,7 @@ class Sqlite extends Database {
 
         @Override
         protected void setupParameters(Map parameters) {
-            super.setupParameters(parameters);
+            super.setupParameters(parameters)
             parameters.remove(HOST.key)
             parameters.remove(PORT.key)
             parameters.remove(SCHEMA.key)
