@@ -3,14 +3,12 @@ package geoscript.layer.io
 import geoscript.feature.Feature
 import geoscript.feature.Field
 import geoscript.feature.Schema
-import geoscript.geom.LineString
-import geoscript.geom.MultiLineString
 import geoscript.geom.Point
 import geoscript.layer.Layer
 import geoscript.proj.Projection
 import geoscript.workspace.Memory
 import geoscript.workspace.Workspace
-
+import groovy.xml.XmlParser
 import java.nio.charset.Charset
 
 /**

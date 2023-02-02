@@ -2,6 +2,7 @@ package geoscript.feature.io
 
 import geoscript.feature.Field
 import geoscript.feature.Schema
+import groovy.xml.XmlSlurper
 
 /**
  * Read a Schema from an XML String.

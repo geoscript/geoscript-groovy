@@ -25,6 +25,7 @@
 package geoscript.geom.io
 
 import geoscript.geom.*
+import groovy.xml.XmlParser
 
 /**
  * A GeoRSS Simple Reader. See the <a href="http://www.georss.org/simple">GeoRSS spec</a> for more details.

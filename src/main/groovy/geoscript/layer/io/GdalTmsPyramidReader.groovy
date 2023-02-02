@@ -5,6 +5,7 @@ import geoscript.layer.Grid
 import geoscript.layer.Pyramid
 import geoscript.layer.TMS
 import geoscript.proj.Projection
+import groovy.xml.XmlParser
 
 /**
  * Read a Pyramid from a GDAL MiniDriver XML File

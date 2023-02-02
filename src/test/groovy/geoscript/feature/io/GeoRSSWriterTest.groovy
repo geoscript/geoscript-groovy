@@ -7,6 +7,7 @@ import geoscript.feature.Schema
 import geoscript.geom.Point
 import org.junit.jupiter.api.Test
 import static org.junit.jupiter.api.Assertions.*
+import groovy.xml.XmlSlurper
 
 /**
  * The GeoRSSWriter Unit Test

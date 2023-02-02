@@ -4,6 +4,7 @@ import geoscript.geom.Geometry
 import geoscript.geom.LineString
 import geoscript.geom.MultiLineString
 import geoscript.geom.Point
+import groovy.xml.XmlParser
 
 /**
  * Read a Geometry from a GPX String

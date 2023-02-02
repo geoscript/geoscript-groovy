@@ -12,7 +12,7 @@
     <properties>
         <gt.version>29-SNAPSHOT</gt.version>
         <jts.version>1.19.0</jts.version>
-        <groovy.version>3.0.14</groovy.version>
+        <groovy.version>4.0.7</groovy.version>
     </properties>
     <dependencies>
         <dependency>
@@ -254,42 +254,53 @@
             <version>${gt.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.codehaus.groovy</groupId>
+            <groupId>org.apache.groovy</groupId>
             <artifactId>groovy</artifactId>
             <version>${groovy.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.codehaus.groovy</groupId>
+            <groupId>org.apache.groovy</groupId>
             <artifactId>groovy-sql</artifactId>
             <version>${groovy.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.codehaus.groovy</groupId>
+            <groupId>org.apache.groovy</groupId>
             <artifactId>groovy-xml</artifactId>
             <version>${groovy.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.codehaus.groovy</groupId>
+            <groupId>org.apache.groovy</groupId>
             <artifactId>groovy-json</artifactId>
             <version>${groovy.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.codehaus.groovy</groupId>
+            <groupId>org.apache.groovy</groupId>
             <artifactId>groovy-yaml</artifactId>
             <version>${groovy.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>com.fasterxml.jackson.dataformat</groupId>
+                    <artifactId>jackson-dataformat-yaml</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
-            <groupId>org.codehaus.groovy</groupId>
+            <groupId>com.fasterxml.jackson.dataformat</groupId>
+            <artifactId>jackson-dataformat-yaml</artifactId>
+            <version>2.13.3</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.groovy</groupId>
             <artifactId>groovy-swing</artifactId>
             <version>${groovy.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.codehaus.groovy</groupId>
+            <groupId>org.apache.groovy</groupId>
             <artifactId>groovy-groovysh</artifactId>
             <version>${groovy.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.codehaus.groovy</groupId>
+            <groupId>org.apache.groovy</groupId>
             <artifactId>groovy-console</artifactId>
             <version>${groovy.version}</version>
         </dependency>
@@ -348,6 +359,10 @@
                 <enabled>false</enabled>
             </snapshots>
         </pluginRepository>
+        <pluginRepository>
+            <id>groovy-plugins-release</id>
+            <url>https://groovy.jfrog.io/artifactory/plugins-release</url>
+        </pluginRepository>
     </pluginRepositories>
     <build>
         <sourceDirectory>src/main/groovy</sourceDirectory>
@@ -361,7 +376,7 @@
             <plugin>
                 <groupId>org.codehaus.groovy</groupId>
                 <artifactId>groovy-eclipse-compiler</artifactId>
-                <version>3.7.0</version>
+                <version>3.8.0</version>
                 <extensions>true</extensions>
             </plugin>
             <plugin>
@@ -376,12 +391,12 @@
                     <dependency>
                         <groupId>org.codehaus.groovy</groupId>
                         <artifactId>groovy-eclipse-compiler</artifactId>
-                        <version>3.7.0</version>
+                        <version>3.8.0</version>
                     </dependency>
                     <dependency>
                         <groupId>org.codehaus.groovy</groupId>
                         <artifactId>groovy-eclipse-batch</artifactId>
-                        <version>3.0.8-01</version>
+                        <version>4.0.7-02</version>
                     </dependency>
                 </dependencies>
             </plugin>
@@ -440,12 +455,12 @@
                 </executions>
                 <dependencies>
                     <dependency>
-                        <groupId>org.codehaus.groovy</groupId>
+                        <groupId>org.apache.groovy</groupId>
                         <artifactId>groovy-ant</artifactId>
                         <version>${groovy.version}</version>
                     </dependency>
                     <dependency>
-                        <groupId>org.codehaus.groovy</groupId>
+                        <groupId>org.apache.groovy</groupId>
                         <artifactId>groovy-groovydoc</artifactId>
                         <version>${groovy.version}</version>
                     </dependency>

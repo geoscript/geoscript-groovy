@@ -6,6 +6,8 @@ import geoscript.feature.Schema
 import geoscript.geom.LineString
 import geoscript.geom.MultiLineString
 import geoscript.geom.Point
+import groovy.xml.XmlNodePrinter
+import groovy.xml.XmlParser
 
 /**
  * Read a Feature from a GPX document

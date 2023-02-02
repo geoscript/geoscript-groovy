@@ -6,7 +6,7 @@ import geoscript.layer.Layer
 import geoscript.proj.Projection
 import geoscript.workspace.Memory
 import geoscript.workspace.Workspace
-
+import groovy.xml.XmlParser
 import java.nio.charset.Charset
 
 /**

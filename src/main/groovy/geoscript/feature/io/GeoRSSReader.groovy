@@ -4,6 +4,8 @@ import geoscript.feature.Feature
 import geoscript.feature.Field
 import geoscript.feature.Schema
 import geoscript.geom.Point
+import groovy.xml.XmlNodePrinter
+import groovy.xml.XmlParser
 
 /**
  * Read a Feature from a GeoRSS String
