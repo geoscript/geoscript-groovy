@@ -427,13 +427,13 @@ class LayerTest {
         layer1.add(new Feature([new Point(-122.444,47.2528), "House", 12.5], "house1", s1))
 
         String expected = """---
-type: "FeatureCollection"
+type: FeatureCollection
 features:
 - properties:
-    name: "House"
+    name: House
     price: 12.5
   geometry:
-    type: "Point"
+    type: Point
     coordinates:
     - -122.444
     - 47.2528

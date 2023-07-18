@@ -5,7 +5,7 @@ import geoscript.feature.Field
 import geoscript.feature.Schema
 import geoscript.layer.Layer
 import geoscript.feature.io.YamlReader as FeatureYamlReader
-import groovy.yaml.YamlSlurper
+import org.yaml.snakeyaml.Yaml
 
 /**
  * Read a Layer from a GeoYaml String, File, or InputStream
@@ -17,8 +17,8 @@ class YamlReader implements Reader {
 
     @Override
     Layer read(InputStream input) {
-        YamlSlurper yamlSlurper = new YamlSlurper()
-        readLayer(yamlSlurper.parse(input))
+        Yaml yaml = new Yaml()
+        readLayer(yaml.load(input))
     }
 
     @Override
@@ -32,8 +32,8 @@ class YamlReader implements Reader {
 
     @Override
     Layer read(String str) {
-        YamlSlurper yamlSlurper = new YamlSlurper()
-        readLayer(yamlSlurper.parseText(str))
+        Yaml yaml = new Yaml()
+        readLayer(yaml.load(str))
     }
 
     private Layer readLayer(def obj) {

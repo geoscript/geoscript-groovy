@@ -8,7 +8,8 @@ import geoscript.geom.MultiPoint
 import geoscript.geom.MultiPolygon
 import geoscript.geom.Point
 import geoscript.geom.Polygon
-import groovy.yaml.YamlBuilder
+import org.yaml.snakeyaml.DumperOptions
+import org.yaml.snakeyaml.Yaml
 
 /**
  * Write a Geometry to a GeoYaml String.
@@ -18,12 +19,16 @@ class YamlWriter implements Writer {
 
     @Override
     String write(Geometry g) {
-        YamlBuilder builder = new YamlBuilder()
-        Map yaml = [
+        DumperOptions options = new DumperOptions()
+        options.indent = 2
+        options.prettyFlow = true
+        options.defaultFlowStyle = DumperOptions.FlowStyle.BLOCK
+        options.explicitStart = true
+        Yaml yaml = new Yaml(options)
+        Map data = [
             geometry: build(g)
         ]
-        builder(yaml)
-        builder.toString()
+        yaml.dump(data)
     }
 
     Map build(Geometry g) {

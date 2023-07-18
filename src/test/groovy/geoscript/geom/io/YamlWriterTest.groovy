@@ -18,7 +18,7 @@ class YamlWriterTest {
         Point p = new Point(-122.23, 45.67)
         assertEquals("""---
 geometry:
-  type: "Point"
+  type: Point
   coordinates:
   - -122.23
   - 45.67
@@ -30,7 +30,7 @@ geometry:
         LineString l = new LineString([[111.0, -47], [123.0, -48], [110.0, -47]])
         assertEquals """---
 geometry:
-  type: "LineString"
+  type: LineString
   coordinates:
   - - 111.0
     - -47.0
@@ -51,7 +51,7 @@ geometry:
         )
         String expected = """---
 geometry:
-  type: "Polygon"
+  type: Polygon
   coordinates:
   - - - 1.0
       - 1.0
@@ -93,7 +93,7 @@ geometry:
         MultiPoint p = new MultiPoint([111, -47],[110, -46.5])
         String expected = """---
 geometry:
-  type: "MultiPoint"
+  type: MultiPoint
   coordinates:
   - - 111.0
     - -47.0
@@ -109,7 +109,7 @@ geometry:
         MultiLineString m = new MultiLineString(new LineString([1, 2],[3, 4]), new LineString([5, 6],[7, 8]))
         String expected = """---
 geometry:
-  type: "MultiLineString"
+  type: MultiLineString
   coordinates:
   - - - 1.0
       - 2.0
@@ -129,7 +129,7 @@ geometry:
         MultiPolygon mp = new MultiPolygon([[[[1, 2], [3, 4], [5, 6], [1, 2]]], [[[7, 8], [9, 10], [11, 12], [7, 8]]]])
         String expected = """---
 geometry:
-  type: "MultiPolygon"
+  type: MultiPolygon
   coordinates:
   - - - - 1.0
         - 2.0
@@ -157,13 +157,13 @@ geometry:
         GeometryCollection gc = new GeometryCollection(new Point(100.0, 0.0), new LineString([101.0, 0.0], [102.0, 1.0]))
         String expected = """---
 geometry:
-  type: "GeometryCollection"
+  type: GeometryCollection
   geometries:
-  - type: "Point"
+  - type: Point
     coordinates:
     - 100.0
     - 0.0
-  - type: "LineString"
+  - type: LineString
     coordinates:
     - - 101.0
       - 0.0

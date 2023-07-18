@@ -324,12 +324,12 @@ class FeatureTest {
         Schema s1 = new Schema("houses", [new Field("geom","Point"), new Field("name","string"), new Field("price","float")])
         Feature f1 = new Feature([new Point(111,-47), "House", 12.5], "house1", s1)
         assertEquals("""---
-type: "Feature"
+type: Feature
 properties:
-  name: "House"
+  name: House
   price: 12.5
 geometry:
-  type: "Point"
+  type: Point
   coordinates:
   - 111.0
   - -47.0

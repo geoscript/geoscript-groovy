@@ -3,7 +3,7 @@ package geoscript.feature.io
 import geoscript.geom.Geometry
 import geoscript.geom.io.YamlReader as GeometryYamlReader
 import geoscript.feature.Feature
-import groovy.yaml.YamlSlurper
+import org.yaml.snakeyaml.Yaml
 
 /**
  * Read a Feature from a GeoYaml String
@@ -15,8 +15,8 @@ class YamlReader implements Reader {
 
     @Override
     Feature read(String str) {
-        YamlSlurper yamlSlurper = new YamlSlurper()
-        def obj = yamlSlurper.parseText(str)
+        Yaml yaml = new Yaml()
+        def obj = yaml.load(str)
         readFeature(obj)
     }
 

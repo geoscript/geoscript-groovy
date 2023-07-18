@@ -1,8 +1,9 @@
 package geoscript.feature.io
 
 import geoscript.feature.Feature
-import groovy.yaml.YamlBuilder
 import geoscript.geom.io.YamlWriter as GeometryYamlWriter
+import org.yaml.snakeyaml.DumperOptions
+import org.yaml.snakeyaml.Yaml
 
 /**
  * Write a Feature to a GeoYaml String
@@ -14,11 +15,15 @@ class YamlWriter implements Writer {
 
     @Override
     String write(Feature feature) {
-        YamlBuilder builder = new YamlBuilder()
-        Map yaml = [type: "Feature"]
-        yaml.putAll(build(feature))
-        builder(yaml)
-        builder.toString()
+        DumperOptions options = new DumperOptions()
+        options.indent = 2
+        options.prettyFlow = true
+        options.defaultFlowStyle = DumperOptions.FlowStyle.BLOCK
+        options.explicitStart = true
+        Yaml yaml = new Yaml(options)
+        Map data = [type: "Feature"]
+        data.putAll(build(feature))
+        yaml.dump(data)
     }
 
     Map build(Feature feature) {

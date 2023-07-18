@@ -291,7 +291,7 @@ class GeometryTest {
         Geometry g = Geometry.fromWKT("POINT (111 -47)")
         assertEquals """---
 geometry:
-  type: "Point"
+  type: Point
   coordinates:
   - 111.0
   - -47.0

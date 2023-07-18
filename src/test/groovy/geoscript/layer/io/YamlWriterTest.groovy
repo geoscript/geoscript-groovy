@@ -28,21 +28,21 @@ class YamlWriterTest {
         layer.add(new Feature([new Point(121,-45), "School", 22.7], "house2", schema))
 
         String expected = """---
-type: "FeatureCollection"
+type: FeatureCollection
 features:
 - properties:
-    name: "House"
+    name: House
     price: 12.5
   geometry:
-    type: "Point"
+    type: Point
     coordinates:
     - 111.0
     - -47.0
 - properties:
-    name: "School"
+    name: School
     price: 22.7
   geometry:
-    type: "Point"
+    type: Point
     coordinates:
     - 121.0
     - -45.0

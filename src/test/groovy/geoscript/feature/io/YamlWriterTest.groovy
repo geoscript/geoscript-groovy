@@ -15,12 +15,12 @@ class YamlWriterTest {
         Feature feature = new Feature([new Point(111,-47), "House", 12.5], "house1", schema)
         YamlWriter writer = new YamlWriter()
         String expected = """---
-type: "Feature"
+type: Feature
 properties:
-  name: "House"
+  name: House
   price: 12.5
 geometry:
-  type: "Point"
+  type: Point
   coordinates:
   - 111.0
   - -47.0

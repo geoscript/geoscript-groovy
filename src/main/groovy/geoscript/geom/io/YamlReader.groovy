@@ -8,7 +8,7 @@ import geoscript.geom.MultiPoint
 import geoscript.geom.MultiPolygon
 import geoscript.geom.Point
 import geoscript.geom.Polygon
-import groovy.yaml.YamlSlurper
+import org.yaml.snakeyaml.Yaml
 
 /**
  * Read a Geometry from a GeoYaml String
@@ -18,8 +18,8 @@ class YamlReader implements Reader {
 
     @Override
     Geometry read(String str) {
-        YamlSlurper yamlSlurper = new YamlSlurper()
-        def obj = yamlSlurper.parseText(str)
+        Yaml yaml = new Yaml()
+        def obj = yaml.load(str)
         readGeometry(obj?.geometry)
     }
 
