@@ -35,4 +35,17 @@ class GridItemReaderTest extends AbstractCartoReaderTest {
         createCartoFragment("xml", "grid", fragment, 100, 100)
     }
 
+    @Test
+    void gridYaml() {
+        String fragment = """- x: 0
+  y: 0
+  width: 100
+  height: 100
+  type: grid
+  size: 10
+  strokeColor: black
+  strokeWidth: 0.5
+"""
+        createCartoFragment("yaml", "grid", fragment, 100, 100)
+    }
 }

@@ -33,4 +33,16 @@ class LineItemReaderTest extends AbstractCartoReaderTest {
         createCartoFragment("xml", "line", fragment, 200, 50)
     }
 
+    @Test
+    void lineYaml() {
+        String fragment = """- x: 10
+  y: 10
+  width: 180
+  height: 0
+  type: line
+  strokeColor: black
+  strokeWidth: 2"""
+        createCartoFragment("yaml", "line", fragment, 200, 50)
+    }
+
 }

@@ -33,4 +33,17 @@ class RectangleItemReaderTest extends AbstractCartoReaderTest {
         createCartoFragment("xml", "rectangle", fragment, 50, 50)
     }
 
+    @Test
+    void rectangleYaml() {
+        String fragment = """- x: 10
+  y: 10
+  width: 30
+  height: 30
+  type: rectangle
+  fillColor: white
+  strokeColor: black
+"""
+        createCartoFragment("yaml", "rectangle", fragment, 50, 50)
+    }
+
 }

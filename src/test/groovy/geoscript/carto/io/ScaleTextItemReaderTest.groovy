@@ -76,4 +76,36 @@ class ScaleTextItemReaderTest extends AbstractCartoReaderTest {
 """
         createCartoFragment("xml", "scaletext", fragment, 400, 300)
     }
+
+    @Test
+    void scaleTextYaml() {
+        String fragment = """- x: 10
+  y: 10
+  width: 380
+  height: 280
+  type: map
+  name: mainMap
+  layers:
+  - layertype: layer
+    file: src/test/resources/states.shp
+    layername: states
+    style: src/test/resources/states.sld
+- x: 10
+  y: 250
+  width: 380
+  height: 40
+  type: scaletext
+  map: mainMap
+  format: "#"
+  prefixText: 'Scale: '
+  horizontalAlign: center
+  verticalAlign: middle
+  color: black
+  font:
+    name: Arial
+    style: plain
+    size: 14
+"""
+        createCartoFragment("yaml", "scaletext", fragment, 400, 300)
+    }
 }

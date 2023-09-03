@@ -1,2 +1,3 @@
 geoscript.carto.io.JsonCartoReader
 geoscript.carto.io.XmlCartoReader
+geoscript.carto.io.YamlCartoReader

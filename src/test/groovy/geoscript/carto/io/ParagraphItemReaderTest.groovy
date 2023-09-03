@@ -42,4 +42,23 @@ class ParagraphItemReaderTest extends AbstractCartoReaderTest {
         createCartoFragment("xml", "paragraph", fragment, 250, 150)
     }
 
+    @Test
+    void paragraphYaml() {
+        String fragment = """- x: 10
+  y: 10
+  width: 240
+  height: 140
+  type: paragraph
+  text: The Carto package contains classes for creating cartographic documents. All
+    items are added to the document with x and y coordinates whose origin is the upper
+    left and width and a height.
+  color: black
+  font:
+    name: Arial
+    style: plain
+    size: 14
+"""
+        createCartoFragment("yaml", "paragraph", fragment, 250, 150)
+    }
+
 }

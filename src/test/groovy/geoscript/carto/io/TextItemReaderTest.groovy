@@ -46,4 +46,23 @@ class TextItemReaderTest extends AbstractCartoReaderTest {
         createCartoFragment("xml", "text", fragment, 150, 50)
     }
 
+    @Test
+    void textYaml() {
+        String fragment = """- x: 10
+  y: 10
+  width: 140
+  height: 30
+  type: text
+  text: Map Text
+  horizontalAlign: center
+  verticalAlign: middle
+  color: black
+  font:
+    name: Arial
+    style: plain
+    size: 14
+"""
+        createCartoFragment("yaml", "text", fragment, 150, 50)
+    }
+
 }

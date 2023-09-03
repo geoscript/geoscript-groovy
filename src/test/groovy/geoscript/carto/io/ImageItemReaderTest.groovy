@@ -31,4 +31,15 @@ class ImageItemReaderTest extends AbstractCartoReaderTest {
         createCartoFragment("xml", "image", fragment, 292, 295)
     }
 
+    @Test
+    void imageYaml() {
+        String fragment = """- x: 10
+  y: 10
+  width: 272
+  height: 275
+  type: image
+  path: src/test/resources/image.png"""
+        createCartoFragment("yaml", "image", fragment, 292, 295)
+    }
+
 }

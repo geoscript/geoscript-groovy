@@ -90,4 +90,40 @@ class OverviewMapItemReaderTest extends AbstractCartoReaderTest {
 </item>"""
         createCartoFragment("xml", "overviewMap", fragment, 600, 510)
     }
+
+    @Test
+    void overviewMapYaml() {
+        String fragment = """- x: 10
+  y: 10
+  width: 580
+  height: 240
+  type: map
+  name: mainMap
+  fixAspectRatio: false
+  bounds:
+    minX: -108.917446
+    minY: 43.51982
+    maxX: -89.229946
+    maxY: 50.137433
+  layers:
+  - layertype: layer
+    file: src/test/resources/states.shp
+    layername: states
+    style: src/test/resources/states.sld
+- x: 10
+  y: 260
+  width: 580
+  height: 240
+  type: overViewMap
+  zoomIntoBounds: false
+  scaleFactor: 2
+  linkedMap: mainMap
+  layers:
+  - layertype: layer
+    file: src/test/resources/states.shp
+    layername: states
+    style: src/test/resources/states.sld
+"""
+        createCartoFragment("yaml", "overViewMap", fragment, 600, 510)
+    }
 }

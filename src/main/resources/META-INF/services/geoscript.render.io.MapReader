@@ -1,2 +1,3 @@
 geoscript.render.io.XmlMapReader
 geoscript.render.io.JsonMapReader
+geoscript.render.io.YamlMapReader

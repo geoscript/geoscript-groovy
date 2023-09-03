@@ -57,4 +57,29 @@ class TableItemReaderTest extends AbstractCartoReaderTest {
         createCartoFragment("xml", "table", fragment, 300, 100)
     }
 
+    @Test
+    void tableYaml() {
+        String fragment = """- x: 10
+  y: 10
+  width: 280
+  height: 80
+  type: table
+  columns:
+  - ID
+  - Name
+  - Abbreviation
+  rows:
+  - ID: 1
+    Name: Washington
+    Abbreviation: WA
+  - ID: 2
+    Name: Oregon
+    Abbreviation: OR
+  - ID: 3
+    Name: California
+    Abbreviation: CA
+"""
+        createCartoFragment("yaml", "table", fragment, 300, 100)
+    }
+
 }

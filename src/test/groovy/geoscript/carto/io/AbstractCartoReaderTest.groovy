@@ -19,6 +19,9 @@ class AbstractCartoReaderTest {
         } else if (type.equalsIgnoreCase("xml")) {
             cartoReader = new XmlCartoReader()
             document = createXmlDocument(fragment, width, height)
+        } else if (type.equalsIgnoreCase("yaml")) {
+            cartoReader = new YamlCartoReader()
+            document = createYamlDocument(fragment, width, height)
         } else {
             throw new IllegalArgumentException("Unknown CartoReader ${type}!")
         }
@@ -54,6 +57,16 @@ class AbstractCartoReaderTest {
             </items>
         </carto>  
         """.stripMargin().trim()
+    }
+
+    private String createYamlDocument(String fragment, int width, int height) {
+        """---
+type: png
+width: ${width}
+height: ${height}
+items:
+${fragment}
+""".stripMargin().trim()
     }
 
 }

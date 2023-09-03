@@ -54,4 +54,27 @@ class NorthArrowItemReaderTest extends AbstractCartoReaderTest {
         createCartoFragment("xml", "northarrow", fragment, 150, 150)
     }
 
+    @Test
+    void northArrowYaml() {
+        String fragment = """- x: 10
+  y: 10
+  width: 130
+  height: 130
+  type: northarrow
+  style: North
+  fillColor1: black
+  fillColor2: white
+  strokeColor1: black
+  strokeColor2: black
+  strokeWidth: 1
+  drawText: true
+  textColor: black
+  font:
+    name: Arial
+    style: plain
+    size: 24
+"""
+        createCartoFragment("yaml", "northarrow", fragment, 150, 150)
+    }
+
 }

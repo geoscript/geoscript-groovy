@@ -34,7 +34,7 @@ class JsonCartoReaderTest {
                 "type": "grid",
                 "strokeWidth": 1,
                 "strokeColor": "gray",
-                "size": 10,
+                "size": 10
             },
             {
                 "x": 10,
@@ -114,7 +114,7 @@ class JsonCartoReaderTest {
                 "width": 60,
                 "height": 60,
                 "type": "image",
-                "path": "${new File(getClass().getClassLoader().getResource("image.png").toURI()).absolutePath}"
+                "path": "${new File(getClass().getClassLoader().getResource('image.png').toURI()).absolutePath}"
             },
             {
                 "x": 720,
@@ -151,7 +151,7 @@ class JsonCartoReaderTest {
                 "type": "map",
                 "name": "mainMap",
                 "layers": [
-                    {"layertype": "layer", "file": "${new File("src/test/resources/states.shp").absolutePath}"}
+                    {"layertype": "layer", "file": "${new File('src/test/resources/states.shp').absolutePath}"}
                 ]
             },
             {
@@ -162,7 +162,7 @@ class JsonCartoReaderTest {
                 "type": "overViewMap",
                 "linkedMap": "mainMap",
                 "layers": [
-                    {"layertype": "raster", "source": "${new File("src/test/resources/raster.tif").absolutePath}"}
+                    {"layertype": "raster", "source": "${new File('src/test/resources/raster.tif').absolutePath}"}
                 ]
             },
             {
@@ -175,7 +175,7 @@ class JsonCartoReaderTest {
                 "zoomIntoBounds": true,
                 "scaleFactor": 3.0,
                 "layers": [
-                    {"layertype": "raster", "source": "${new File("src/test/resources/raster.tif").absolutePath}"}
+                    {"layertype": "raster", "source": "${new File('src/test/resources/raster.tif').absolutePath}"}
                 ]
             },
             {

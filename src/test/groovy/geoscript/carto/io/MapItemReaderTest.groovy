@@ -62,4 +62,30 @@ class MapItemReaderTest extends AbstractCartoReaderTest {
         createCartoFragment("xml", "map", fragment, 400, 300)
     }
 
+    @Test
+    void mapYaml() {
+        String fragment = """- x: 10
+  y: 10
+  width: 380
+  height: 280
+  type: map
+  name: mainMap
+  imageType: png
+  backgroundColor: white
+  fixAspectRatio: true
+  proj: EPSG:4326
+  bounds:
+    minX: -180
+    minY: -90
+    maxX: 180
+    maxY: 90
+  layers:
+  - layertype: layer
+    file: src/test/resources/states.shp
+    layername: states
+    style: src/test/resources/states.sld
+"""
+        createCartoFragment("yaml", "map", fragment, 400, 300)
+    }
+
 }

@@ -76,4 +76,36 @@ class ScaleBarItemReaderTest extends AbstractCartoReaderTest {
 """
         createCartoFragment("xml", "scalebar", fragment, 400, 300)
     }
+
+    @Test
+    void scaleBarYaml() {
+        String fragment = """- x: 10
+  y: 10
+  width: 380
+  height: 280
+  type: map
+  name: mainMap
+  layers:
+  - layertype: layer
+    file: src/test/resources/states.shp
+    layername: states
+    style: src/test/resources/states.sld
+- x: 10
+  y: 250
+  width: 380
+  height: 40
+  type: scalebar
+  map: mainMap
+  strokeColor: black
+  strokeWidth: 1
+  border: 5
+  units: METRIC
+  fillColor: white
+  font:
+    name: Arial
+    style: plain
+    size: 14
+"""
+        createCartoFragment("yaml", "scalebar", fragment, 400, 300)
+    }
 }

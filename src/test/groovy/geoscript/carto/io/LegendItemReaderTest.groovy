@@ -93,4 +93,43 @@ class LegendItemReaderTest extends AbstractCartoReaderTest {
         createCartoFragment("xml", "legend", fragment, 400, 300)
     }
 
+    @Test
+    void legendYaml() {
+        String fragment = """- x: 10
+  y: 10
+  width: 380
+  height: 190
+  type: map
+  name: mainMap
+  layers:
+  - layertype: layer
+    file: src/test/resources/states.shp
+    layername: states
+    style: src/test/resources/states.sld
+- x: 10
+  y: 210
+  width: 380
+  height: 70
+  type: legend
+  map: mainMap
+  backgroundColor: white
+  title: Legend
+  titleFont:
+    name: Arial
+    style: bold
+    size: 18
+  titleColor: black
+  textColor: black
+  textFont:
+    name: Arial
+    style: plain
+    size: 12
+  numberFormat: "#.##"
+  legendEntryWidth: '50'
+  legendEntryHeight: '30'
+  gapBetweenEntries: '10'
+"""
+        createCartoFragment("yaml", "legend", fragment, 400, 300)
+    }
+
 }

@@ -8,6 +8,7 @@ class CartoReadersTest {
     @Test void find() {
         assertNotNull(CartoReaders.find("xml"))
         assertNotNull(CartoReaders.find("json"))
+        assertNotNull(CartoReaders.find("yaml"))
         assertNull(CartoReaders.find("asdf"))
     }
 
