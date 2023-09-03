@@ -7,7 +7,7 @@ import groovy.json.JsonSlurper
 import org.yaml.snakeyaml.Yaml
 
 /**
- * Read a Map from a JSON String.
+ * Read a Map from a Yaml String.
  * <pre>
  * ---
  * width: 400
@@ -16,10 +16,10 @@ import org.yaml.snakeyaml.Yaml
  * backgroundColor: blue
  * proj: EPSG:4326
  * bounds:
- * minX: -135.911779
- * minY: 36.993573
- * maxX: -96.536779
- * maxY: 51.405899
+ *  minX: -135.911779
+ *  minY: 36.993573
+ *  maxX: -96.536779
+ *  maxY: 51.405899
  * layers:
  * - layertype: layer
  *   file: "states.shp"
