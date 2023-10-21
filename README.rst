@@ -127,7 +127,7 @@ and then include the GeoScript Groovy dependency::
     <dependency>
         <groupId>org.geoscript</groupId>
         <artifactId>geoscript-groovy</artifactId>
-        <version>1.20.0</version>
+        <version>1.21.0</version>
     </dependency>
 
 Docker
@@ -198,6 +198,8 @@ Versions
 
 API Groovy Docs
 ---------------
+
+`1.21.0 <http://geoscript.github.io/geoscript-groovy/api/1.21.0/index.html>`_
 
 `1.20.0 <http://geoscript.github.io/geoscript-groovy/api/1.20.0/index.html>`_
 
