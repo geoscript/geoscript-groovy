@@ -1,0 +1,1 @@
+Values neighboring pixel 7,9 = [nw:103.0, n:104.0, ne:109.0, e:109.0, se:111.0, s:110.0, sw:110.0, w:108.0]

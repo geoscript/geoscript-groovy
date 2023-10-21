@@ -1,0 +1,6 @@
+Zoom Level: 8
+Width / # Columns: 256
+Height / # Rows: 256
+Size / # Tiles: 65536
+X Resolution: 610.984375
+Y Resolution: 610.984375

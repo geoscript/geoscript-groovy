@@ -1,0 +1,1 @@
+georss.fid-68bb6f38_18b4a6db06a_-5cf0 title: city.1, summary: [geom:POINT (-122.3204 47.6024), id:1, name:Seattle], updated: Sat Jan 28 15:51:47 PST 2017, geom: POINT (-122.3204 47.6024)

@@ -1,0 +1,19 @@
+---
+type: FeatureCollection
+features:
+- properties:
+    id: 1
+    name: Seattle
+  geometry:
+    type: Point
+    coordinates:
+    - -122.3204
+    - 47.6024
+- properties:
+    id: 2
+    name: Tacoma
+  geometry:
+    type: Point
+    coordinates:
+    - -122.48416
+    - 47.2619

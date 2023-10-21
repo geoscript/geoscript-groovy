@@ -1,0 +1,2 @@
+cities.city.1 geom: POINT (-122.3204 47.6024), id: 1, name: Seattle
+cities.city.1 geom: POINT (-122.3204 47.6024), id: 1, name: Seattle

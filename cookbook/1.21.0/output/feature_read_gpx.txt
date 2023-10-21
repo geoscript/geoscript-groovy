@@ -1,0 +1,1 @@
+gpx.fid-68bb6f38_18b4a6db06a_-5cef geom: POINT (-122.3204 47.6024), name: city.1

@@ -1,0 +1,2 @@
+Original Raster Min Max values = -23.0 - 4370.0
+Convolved Raster Min Max values = -32767.0 - 32767.0

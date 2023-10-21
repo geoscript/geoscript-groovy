@@ -1,0 +1,15 @@
+FlatGeobuf
+MBTiles with vector tiles
+MySQL
+MySQL (JNDI)
+H2
+H2 (JNDI)
+PostGIS (JNDI)
+SQLite
+GeoPackage
+PostGIS
+Properties
+Directory of spatial files (shapefiles)
+Geobuf
+Shapefile
+Web Feature Server (NG)

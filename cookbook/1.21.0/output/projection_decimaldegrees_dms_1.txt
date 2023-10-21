@@ -1,0 +1,3 @@
+Degrees: -122
+Minutes: 31
+Seconds: 32.22999999998388
