@@ -9,7 +9,7 @@ import geoscript.workspace.Workspace
 import org.apache.commons.io.IOUtils
 import org.geotools.feature.FeatureCollection
 import org.geotools.geojson.feature.FeatureJSON
-import org.opengis.feature.simple.SimpleFeatureType
+import org.geotools.api.feature.simple.SimpleFeatureType
 
 /**
  * Read a {@link geoscript.layer.Layer Layer} from a GeoJSON InputStream, File, or String.

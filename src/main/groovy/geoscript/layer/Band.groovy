@@ -2,10 +2,10 @@ package geoscript.layer
 
 import org.geotools.coverage.GridSampleDimension
 import org.geotools.coverage.TypeMap
-import org.opengis.coverage.SampleDimensionType
+import org.geotools.api.coverage.SampleDimensionType
 import javax.measure.Unit
 import java.awt.image.DataBuffer
-import org.opengis.coverage.SampleDimension
+import org.geotools.api.coverage.SampleDimension
 
 /**
  * A Band of Raster Data that represents a single band/channel/layer.

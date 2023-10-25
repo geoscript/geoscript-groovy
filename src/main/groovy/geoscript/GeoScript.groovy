@@ -168,12 +168,12 @@ class GeoScript {
      */
     static Object wrap(Object obj) {
         // SimpleFeature -> Feature
-        if (obj instanceof org.opengis.feature.simple.SimpleFeature) {
-            return new Feature(obj as org.opengis.feature.simple.SimpleFeature)
+        if (obj instanceof org.geotools.api.feature.simple.SimpleFeature) {
+            return new Feature(obj as org.geotools.api.feature.simple.SimpleFeature)
         }
         // SimpleFeatureType -> Schema
-        else if (obj instanceof org.opengis.feature.simple.SimpleFeatureType) {
-            return new Schema(obj as org.opengis.feature.simple.SimpleFeatureType)
+        else if (obj instanceof org.geotools.api.feature.simple.SimpleFeatureType) {
+            return new Schema(obj as org.geotools.api.feature.simple.SimpleFeatureType)
         }
         // JTS Geometry -> Geometry
         else if (obj instanceof org.locationtech.jts.geom.Geometry) {
@@ -184,40 +184,40 @@ class GeoScript {
             return new Bounds(obj as org.geotools.geometry.jts.ReferencedEnvelope)
         }
         // GeoTools Expression -> Expression
-        else if (obj instanceof org.opengis.filter.expression.Expression) {
-            return new Expression(obj as org.opengis.filter.expression.Expression)
+        else if (obj instanceof org.geotools.api.filter.expression.Expression) {
+            return new Expression(obj as org.geotools.api.filter.expression.Expression)
         }
         // GeoTools Filter -> Filter
-        else if (obj instanceof org.opengis.filter.Filter) {
-            return new Filter(obj as org.opengis.filter.Filter)
+        else if (obj instanceof org.geotools.api.filter.Filter) {
+            return new Filter(obj as org.geotools.api.filter.Filter)
         }
         // FeatureCollection -> Cursor
         else if (obj instanceof org.geotools.feature.FeatureCollection) {
             return new Cursor(obj as org.geotools.feature.FeatureCollection)
         }
         // FeatureSource -> Layer
-        else if (obj instanceof org.geotools.data.FeatureSource) {
-            return new Layer(obj as org.geotools.data.FeatureSource)
+        else if (obj instanceof org.geotools.api.data.FeatureSource) {
+            return new Layer(obj as org.geotools.api.data.FeatureSource)
         }
         /*// GeoTools Process -> Process
         else if (obj instanceof org.geotools.process.Process) {
             return new Process((obj as org.geotools.process.Process)
         }*/
         // CoordinateReferenceSystem -> Projection
-        else if (obj instanceof org.opengis.referencing.crs.CoordinateReferenceSystem) {
-            return new Projection(obj as org.opengis.referencing.crs.CoordinateReferenceSystem)
+        else if (obj instanceof org.geotools.api.referencing.crs.CoordinateReferenceSystem) {
+            return new Projection(obj as org.geotools.api.referencing.crs.CoordinateReferenceSystem)
         }
         // DefaultEllipsoid -> Geodetic
         else if (obj instanceof org.geotools.referencing.datum.DefaultEllipsoid) {
             return new Geodetic(obj as org.geotools.referencing.datum.DefaultEllipsoid)
         }
         // DataStore -> Workspace
-        else if (obj instanceof org.geotools.data.DataStore) {
-            return new Workspace(obj as org.geotools.data.DataStore)
+        else if (obj instanceof org.geotools.api.data.DataStore) {
+            return new Workspace(obj as org.geotools.api.data.DataStore)
         }
         // GridCoverage -> Raster
-        else if (obj instanceof org.opengis.coverage.grid.GridCoverage) {
-            def grid = obj as org.opengis.coverage.grid.GridCoverage
+        else if (obj instanceof org.geotools.api.coverage.grid.GridCoverage) {
+            def grid = obj as org.geotools.api.coverage.grid.GridCoverage
             return new Raster(grid)
         }
         // GridFormat -> Format

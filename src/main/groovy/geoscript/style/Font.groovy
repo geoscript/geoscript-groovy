@@ -1,9 +1,9 @@
 package geoscript.style
 
 import geoscript.filter.Expression
-import org.geotools.styling.Rule
-import org.geotools.styling.TextSymbolizer
-import org.geotools.styling.Symbolizer as GtSymbolizer
+import org.geotools.api.style.Rule
+import org.geotools.api.style.TextSymbolizer
+import org.geotools.api.style.Symbolizer as GtSymbolizer
 
 /**
  * A Symbolizer for a Label Font.

@@ -14,12 +14,12 @@ class PropertyTest {
     @Test void constructors() {
         // Create a Property from a String
         Property p = new Property("NAME")
-        assertTrue p.expr instanceof org.opengis.filter.expression.PropertyName
+        assertTrue p.expr instanceof org.geotools.api.filter.expression.PropertyName
         assertEquals "NAME", p.toString()
 
         // Create a Property from a Field
         p = new Property(new Field("NAME","String"))
-        assertTrue p.expr instanceof org.opengis.filter.expression.PropertyName
+        assertTrue p.expr instanceof org.geotools.api.filter.expression.PropertyName
         assertEquals "NAME", p.toString()
     }
 

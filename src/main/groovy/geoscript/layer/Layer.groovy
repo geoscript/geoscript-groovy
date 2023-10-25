@@ -14,10 +14,10 @@ import geoscript.workspace.Memory
 import geoscript.filter.Filter
 import geoscript.style.Style
 import geoscript.style.Symbolizer
-import org.geotools.data.FeatureSource
-import org.geotools.data.Query
-import org.geotools.data.Transaction
-import org.geotools.data.FeatureStore
+import org.geotools.api.data.FeatureSource
+import org.geotools.api.data.Query
+import org.geotools.api.data.Transaction
+import org.geotools.api.data.FeatureStore
 import org.geotools.data.DefaultTransaction
 import org.geotools.data.transform.Definition
 import org.geotools.data.transform.TransformFactory
@@ -27,13 +27,13 @@ import org.geotools.feature.FeatureIterator
 import org.geotools.map.FeatureLayer
 import org.geotools.process.vector.VectorToRasterProcess
 import org.locationtech.jts.geom.TopologyException
-import org.opengis.filter.sort.SortOrder
-import org.opengis.feature.simple.SimpleFeatureType
-import org.opengis.feature.simple.SimpleFeature
-import org.opengis.referencing.crs.CoordinateReferenceSystem
-import org.opengis.feature.type.AttributeDescriptor
+import org.geotools.api.filter.sort.SortOrder
+import org.geotools.api.feature.simple.SimpleFeatureType
+import org.geotools.api.feature.simple.SimpleFeature
+import org.geotools.api.referencing.crs.CoordinateReferenceSystem
+import org.geotools.api.feature.type.AttributeDescriptor
 import org.locationtech.jts.geom.Envelope
-import org.opengis.filter.FilterFactory2
+import org.geotools.api.filter.FilterFactory
 import org.geotools.data.collection.ListFeatureCollection
 
 import java.awt.Dimension
@@ -92,9 +92,9 @@ class Layer implements Renderable {
     private static int id = 0
 
     /**
-     * The FilterFactory2 for creating Filters
+     * The FilterFactory for creating Filters
      */
-    protected final static FilterFactory2 filterFactory = org.geotools.factory.CommonFactoryFinder.getFilterFactory2(org.geotools.util.factory.GeoTools.getDefaultHints())
+    protected final static FilterFactory filterFactory = org.geotools.factory.CommonFactoryFinder.getFilterFactory(org.geotools.util.factory.GeoTools.getDefaultHints())
 
     /**
      * Create a new Layer from a GeoTools FeatureSource

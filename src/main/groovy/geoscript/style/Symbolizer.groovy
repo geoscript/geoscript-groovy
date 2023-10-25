@@ -4,20 +4,20 @@ import geoscript.feature.Field
 import geoscript.filter.Filter
 import geoscript.style.io.SLDWriter
 import groovy.transform.AutoClone
-import org.geotools.styling.Style as GtStyle
-import org.geotools.styling.Rule
+import org.geotools.api.style.Style as GtStyle
+import org.geotools.api.style.Rule
 import org.geotools.factory.CommonFactoryFinder
 import org.geotools.styling.StyleFactoryImpl
 import org.geotools.styling.StyleBuilder
-import org.opengis.filter.FilterFactory
-import org.geotools.styling.Symbolizer as GtSymbolizer
-import org.geotools.styling.PointSymbolizer
-import org.geotools.styling.LineSymbolizer
-import org.geotools.styling.PolygonSymbolizer
-import org.geotools.styling.TextSymbolizer
-import org.geotools.styling.RasterSymbolizer
+import org.geotools.api.filter.FilterFactory
+import org.geotools.api.style.Symbolizer as GtSymbolizer
+import org.geotools.api.style.PointSymbolizer
+import org.geotools.api.style.LineSymbolizer
+import org.geotools.api.style.PolygonSymbolizer
+import org.geotools.api.style.TextSymbolizer
+import org.geotools.api.style.RasterSymbolizer
 import geoscript.filter.Color
-import org.geotools.styling.FeatureTypeStyle
+import org.geotools.api.style.FeatureTypeStyle
 
 /**
  * A Base class for all Symbolizers.   All Symbolizers can have a Filter, min and max scales, and a z-index.

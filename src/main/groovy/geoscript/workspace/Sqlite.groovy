@@ -23,8 +23,8 @@ import org.locationtech.jts.io.WKTWriter
 import geoscript.proj.Projection
 import groovy.sql.Sql
 import org.apache.commons.dbcp.BasicDataSource
-import org.geotools.data.DataAccessFactory
-import org.geotools.data.DataStore
+import org.geotools.api.data.DataAccessFactory
+import org.geotools.api.data.DataStore
 import org.geotools.util.factory.Hints
 import org.geotools.geometry.jts.Geometries
 import org.geotools.jdbc.JDBCDataStore
@@ -32,10 +32,10 @@ import org.geotools.jdbc.JDBCDataStoreFactory
 import org.geotools.jdbc.PreparedStatementSQLDialect
 import org.geotools.jdbc.SQLDialect
 import org.geotools.referencing.CRS
-import org.opengis.feature.simple.SimpleFeatureType
-import org.opengis.feature.type.GeometryDescriptor
-import org.opengis.referencing.FactoryException
-import org.opengis.referencing.crs.CoordinateReferenceSystem
+import org.geotools.api.feature.simple.SimpleFeatureType
+import org.geotools.api.feature.type.GeometryDescriptor
+import org.geotools.api.referencing.FactoryException
+import org.geotools.api.referencing.crs.CoordinateReferenceSystem
 
 import java.sql.Connection
 import java.sql.PreparedStatement

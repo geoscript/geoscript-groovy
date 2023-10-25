@@ -8,7 +8,7 @@ import geoscript.workspace.Workspace
 import geoscript.workspace.Memory
 import org.geotools.xsd.Parser
 import org.geotools.kml.KMLConfiguration
-import org.opengis.feature.simple.SimpleFeature
+import org.geotools.api.feature.simple.SimpleFeature
 
 /**
  * Read a GeoScript {@link geoscript.layer.Layer Layer} from a KML InputStream, File, or String.

@@ -1,9 +1,9 @@
 package geoscript.style
 
-import org.geotools.styling.Rule
-import org.geotools.styling.RasterSymbolizer
-import org.geotools.styling.Symbolizer as GtSymbolizer
-import org.geotools.styling.SelectedChannelType
+import org.geotools.api.style.Rule
+import org.geotools.api.style.RasterSymbolizer
+import org.geotools.api.style.Symbolizer as GtSymbolizer
+import org.geotools.api.style.SelectedChannelType
 
 /**
  * The ChannelSelection Symbolizer is used to style multi-spectral Rasters

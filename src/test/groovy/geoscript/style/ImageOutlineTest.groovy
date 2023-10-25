@@ -1,6 +1,6 @@
 package geoscript.style
 
-import org.geotools.styling.PolygonSymbolizer
+import org.geotools.api.style.PolygonSymbolizer
 import org.junit.jupiter.api.Test
 import static org.junit.jupiter.api.Assertions.*
 

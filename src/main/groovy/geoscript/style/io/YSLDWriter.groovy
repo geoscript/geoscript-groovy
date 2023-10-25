@@ -2,9 +2,9 @@ package geoscript.style.io
 
 import geoscript.style.Style
 import org.geotools.factory.CommonFactoryFinder
-import org.geotools.styling.StyleFactory
-import org.geotools.styling.StyledLayerDescriptor
-import org.geotools.styling.UserLayer
+import org.geotools.api.style.StyleFactory
+import org.geotools.api.style.StyledLayerDescriptor
+import org.geotools.api.style.UserLayer
 import org.geotools.ysld.Ysld
 
 /**
@@ -50,7 +50,7 @@ class YSLDWriter implements Writer {
         out.toString()
     }
 
-    private StyledLayerDescriptor getStyleLayeredDescriptor(org.geotools.styling.Style style) {
+    private StyledLayerDescriptor getStyleLayeredDescriptor(org.geotools.api.style.Style style) {
         StyleFactory sf = CommonFactoryFinder.getStyleFactory(null)
         UserLayer userLayer = sf.createUserLayer()
         userLayer.addUserStyle(style)

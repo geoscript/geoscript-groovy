@@ -1,11 +1,11 @@
 package geoscript.style
 
 import geoscript.filter.Expression
-import org.opengis.filter.expression.Expression as GtExpression
-import org.geotools.styling.Rule
-import org.geotools.styling.Stroke as GtStroke
-import org.geotools.styling.LineSymbolizer
-import org.geotools.styling.Symbolizer as GtSymbolizer
+import org.geotools.api.filter.expression.Expression as GtExpression
+import org.geotools.api.style.Rule
+import org.geotools.api.style.Stroke as GtStroke
+import org.geotools.api.style.LineSymbolizer
+import org.geotools.api.style.Symbolizer as GtSymbolizer
 import geoscript.filter.Color
 
 /**

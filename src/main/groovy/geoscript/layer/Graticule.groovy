@@ -5,8 +5,8 @@ import geoscript.feature.Schema
 import geoscript.geom.Bounds
 import geoscript.workspace.Memory
 import geoscript.workspace.Workspace
-import org.geotools.data.FeatureSource
-import org.geotools.data.simple.SimpleFeatureSource
+import org.geotools.api.data.FeatureSource
+import org.geotools.api.data.SimpleFeatureSource
 import org.geotools.grid.GridElement
 import org.geotools.grid.GridFeatureBuilder
 import org.geotools.grid.Grids

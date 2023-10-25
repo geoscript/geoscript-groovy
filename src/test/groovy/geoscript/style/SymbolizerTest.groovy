@@ -9,13 +9,13 @@ import org.junit.jupiter.api.io.TempDir
 import static org.junit.jupiter.api.Assertions.*
 import geoscript.filter.Filter
 
-import org.geotools.styling.Style
-import org.opengis.filter.Filter as GTFilter
-import org.geotools.styling.LineSymbolizer
-import org.geotools.styling.PointSymbolizer
+import org.geotools.api.style.Style
+import org.geotools.api.filter.Filter as GTFilter
+import org.geotools.api.style.LineSymbolizer
+import org.geotools.api.style.PointSymbolizer
 import org.geotools.styling.PointSymbolizerImpl
-import org.geotools.styling.PolygonSymbolizer
-import org.geotools.styling.TextSymbolizer
+import org.geotools.api.style.PolygonSymbolizer
+import org.geotools.api.style.TextSymbolizer
 
 /**
  * The Symbolizer Unit Test
@@ -189,7 +189,7 @@ class SymbolizerTest {
         assertEquals 1, style.featureTypeStyles()[0].rules()[0].symbolizers().size()
 
         PolygonSymbolizer polygonSym = style.featureTypeStyles()[0].rules()[0].symbolizers()[0]
-        assertTrue polygonSym instanceof org.geotools.styling.PolygonSymbolizer
+        assertTrue polygonSym instanceof org.geotools.api.style.PolygonSymbolizer
         assertEquals "#008080", polygonSym.fill.color.value
         assertEquals 1.0, polygonSym.fill.opacity.value, 0.01
 
@@ -205,7 +205,7 @@ class SymbolizerTest {
         assertEquals 1, style.featureTypeStyles()[0].rules()[0].symbolizers().size()
 
         polygonSym = style.featureTypeStyles()[0].rules()[0].symbolizers()[0]
-        assertTrue polygonSym instanceof org.geotools.styling.PolygonSymbolizer
+        assertTrue polygonSym instanceof org.geotools.api.style.PolygonSymbolizer
         assertEquals "#008080", polygonSym.fill.color.value
         assertEquals 1.0, polygonSym.fill.opacity.value, 0.01
 
@@ -226,12 +226,12 @@ class SymbolizerTest {
         assertEquals 2, style.featureTypeStyles()[0].rules()[0].symbolizers().size()
 
         polygonSym = style.featureTypeStyles()[0].rules()[0].symbolizers()[0]
-        assertTrue polygonSym instanceof org.geotools.styling.PolygonSymbolizer
+        assertTrue polygonSym instanceof org.geotools.api.style.PolygonSymbolizer
         assertEquals "#008080", polygonSym.fill.color.value
         assertEquals 1.0, polygonSym.fill.opacity.value, 0.01
 
         LineSymbolizer lineSym = style.featureTypeStyles()[0].rules()[0].symbolizers()[1]
-        assertTrue lineSym instanceof org.geotools.styling.LineSymbolizer
+        assertTrue lineSym instanceof org.geotools.api.style.LineSymbolizer
         assertEquals "#000080", lineSym.stroke.color.value
         assertEquals 1.0, lineSym.stroke.width.value, 0.1
     }

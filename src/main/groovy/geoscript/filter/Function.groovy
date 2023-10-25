@@ -1,16 +1,16 @@
 package geoscript.filter
 
-import org.opengis.filter.expression.Function as GtFunction
-import org.opengis.filter.expression.Expression as GtExpression
+import org.geotools.api.filter.expression.Function as GtFunction
+import org.geotools.api.filter.expression.Expression as GtExpression
 import org.geotools.factory.CommonFactoryFinder
 import org.geotools.util.factory.FactoryIteratorProvider
 import org.geotools.util.factory.GeoTools
 import org.geotools.filter.FunctionExpressionImpl
 import org.geotools.filter.FunctionFactory
-import org.opengis.feature.type.Name
-import org.opengis.filter.expression.Literal
+import org.geotools.api.feature.type.Name
+import org.geotools.api.filter.expression.Literal
 import org.geotools.feature.NameImpl
-import org.opengis.filter.capability.FunctionName
+import org.geotools.api.filter.capability.FunctionName
 
 /**
  * A GeoScript Function either wraps an existing GeoTools Function or an CQL String.
@@ -31,7 +31,7 @@ class Function extends Expression {
     /**
      * The GeoTools CommonFactoryFinder for finding GeoTools Functions
      */
-    private static def ff = CommonFactoryFinder.getFilterFactory2(null)
+    private static def ff = CommonFactoryFinder.getFilterFactory(null)
 
     /**
      * The GeoTools Function

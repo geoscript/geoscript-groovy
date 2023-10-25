@@ -7,10 +7,10 @@ import geoscript.layer.Cursor
 import geoscript.layer.Layer
 import geoscript.style.Style
 import geoscript.style.Symbolizer
-import org.geotools.data.DataStore
+import org.geotools.api.data.DataStore
 import org.geotools.feature.FeatureCollection
 import org.geotools.data.collection.ListFeatureCollection
-import org.geotools.data.DataStoreFinder
+import org.geotools.api.data.DataStoreFinder
 import org.geotools.util.URLs
 
 /**

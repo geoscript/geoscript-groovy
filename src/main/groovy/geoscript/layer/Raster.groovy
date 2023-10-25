@@ -16,7 +16,7 @@ import org.geotools.coverage.grid.GridGeometry2D
 import org.geotools.coverage.processing.CoverageProcessor
 import org.geotools.coverage.processing.OperationJAI
 import org.geotools.coverage.processing.Operations
-import org.geotools.geometry.DirectPosition2D
+import org.geotools.geometry.Position2D
 import org.geotools.map.GridCoverageLayer
 import org.geotools.process.raster.AffineProcess
 import org.geotools.process.raster.BandMergeProcess
@@ -38,8 +38,8 @@ import org.jaitools.imageutils.iterator.SimpleIterator
 import org.jaitools.imageutils.iterator.WindowIterator
 import org.jaitools.numeric.Range
 import org.geotools.coverage.grid.GridCoverageFactory
-import org.opengis.coverage.SampleDimension
-import org.opengis.coverage.grid.GridCoverage
+import org.geotools.api.coverage.SampleDimension
+import org.geotools.api.coverage.grid.GridCoverage
 
 import javax.media.jai.Interpolation
 import javax.media.jai.RasterFactory
@@ -370,7 +370,7 @@ class Raster implements Renderable {
      * @return A value
      */
     List eval(Point point, String type = "double") {
-        def dp = new DirectPosition2D(coverage.coordinateReferenceSystem, point.x, point.y)
+        def dp = new Position2D(coverage.coordinateReferenceSystem, point.x, point.y)
         if (type.equalsIgnoreCase("double")) {
             coverage.evaluate(dp, (double[]) null)
         } else if (type.equalsIgnoreCase("float")) {
@@ -679,7 +679,7 @@ class Raster implements Renderable {
      */
     Point getPoint(int x, int y) {
         GridGeometry2D gg = coverage.gridGeometry
-        DirectPosition2D dp = gg.gridToWorld(new GridCoordinates2D(x,y))
+        Position2D dp = gg.gridToWorld(new GridCoordinates2D(x,y))
         new Point(dp.x, dp.y)
     }
 
@@ -690,7 +690,7 @@ class Raster implements Renderable {
      */
     List getPixel(Point p) {
         GridGeometry2D gg = coverage.gridGeometry
-        GridCoordinates2D gc = gg.worldToGrid(new DirectPosition2D(p.x, p.y))
+        GridCoordinates2D gc = gg.worldToGrid(new Position2D(p.x, p.y))
         [gc.x, gc.y]
     }
 
@@ -703,7 +703,7 @@ class Raster implements Renderable {
         def processor = new CoverageProcessor()
         def params = processor.getOperation("CoverageCrop").parameters
         params.parameter("Source").value = coverage
-        params.parameter("Envelope").value = new org.geotools.geometry.GeneralEnvelope(bounds.env)
+        params.parameter("Envelope").value = new org.geotools.geometry.GeneralBounds(bounds.env)
         def newCoverage = processor.doOperation(params)
         new Raster(newCoverage)
     }

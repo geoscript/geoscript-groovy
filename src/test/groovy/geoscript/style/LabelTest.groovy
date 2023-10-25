@@ -31,7 +31,7 @@ class LabelTest {
 
         // Add point placement
         assertTrue label.point([0.75,0.25], [5,2], 0.25) instanceof Label
-        assertTrue label.placement instanceof org.geotools.styling.PointPlacement
+        assertTrue label.placement instanceof org.geotools.api.style.PointPlacement
         assertEquals 0.75, label.placement.anchorPoint.anchorPointX.value, 0.1
         assertEquals 0.25, label.placement.anchorPoint.anchorPointY.value, 0.1
         assertEquals 5, label.placement.displacement.displacementX.value, 0.1
@@ -40,7 +40,7 @@ class LabelTest {
 
         // Switch to line placement
         assertTrue label.linear() instanceof Label
-        assertTrue label.placement instanceof org.geotools.styling.LinePlacement
+        assertTrue label.placement instanceof org.geotools.api.style.LinePlacement
         assertEquals 0, label.placement.perpendicularOffset.value, 0.1
         assertNull label.placement.gap
         assertNull label.placement.initialGap
@@ -52,7 +52,7 @@ class LabelTest {
 
         // Switch back to point placement using named parameters
         assertTrue label.point(displace: [1,2], anchor: [1,0], rotate: 45) instanceof Label
-        assertTrue label.placement instanceof org.geotools.styling.PointPlacement
+        assertTrue label.placement instanceof org.geotools.api.style.PointPlacement
         assertEquals 1, label.placement.anchorPoint.anchorPointX.value, 0.1
         assertEquals 0, label.placement.anchorPoint.anchorPointY.value, 0.1
         assertEquals 1, label.placement.displacement.displacementX.value, 0.1
@@ -61,7 +61,7 @@ class LabelTest {
 
         // Switch to line placement using named parameters
         assertTrue label.linear(follow: true, repeat: 15, offset: 2) instanceof Label
-        assertTrue label.placement instanceof org.geotools.styling.LinePlacement
+        assertTrue label.placement instanceof org.geotools.api.style.LinePlacement
         assertEquals 2, label.placement.perpendicularOffset.value, 0.1
         assertNull label.placement.gap
         assertNull label.placement.initialGap
@@ -73,7 +73,7 @@ class LabelTest {
 
         // Switch to a more complicate line placement
         assertTrue label.linear(3.4, 1.2, 1, true, true, true, 1.4, 5.1) instanceof Label
-        assertTrue label.placement instanceof org.geotools.styling.LinePlacement
+        assertTrue label.placement instanceof org.geotools.api.style.LinePlacement
         assertEquals 3.4, label.placement.perpendicularOffset.value, 0.1
         assertEquals 1.2, label.placement.gap.value, 0.1
         assertEquals 1, label.placement.initialGap.value, 0.1
@@ -137,17 +137,17 @@ class LabelTest {
 
         Label label = new Label(new Property("NAME"))
         assertTrue label.property instanceof Property
-        assertTrue label.property.expr instanceof org.opengis.filter.expression.PropertyName
+        assertTrue label.property.expr instanceof org.geotools.api.filter.expression.PropertyName
         assertEquals "NAME", label.property.value
 
         label = new Label(new Expression("&#x2192;"))
         assertTrue label.property instanceof Expression
-        assertTrue label.property.expr instanceof org.opengis.filter.expression.Literal
+        assertTrue label.property.expr instanceof org.geotools.api.filter.expression.Literal
         assertEquals "&#x2192;", label.property.value
 
         label = new Label("NAME")
         assertTrue label.property instanceof Expression
-        assertTrue label.property.expr instanceof org.opengis.filter.expression.PropertyName
+        assertTrue label.property.expr instanceof org.geotools.api.filter.expression.PropertyName
         assertEquals "NAME", label.property.value
     }
 

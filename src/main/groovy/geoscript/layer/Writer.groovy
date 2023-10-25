@@ -2,8 +2,8 @@ package geoscript.layer
 
 import geoscript.feature.Feature
 import org.geotools.data.DefaultTransaction
-import org.geotools.data.FeatureStore
-import org.geotools.data.Transaction
+import org.geotools.api.data.FeatureStore
+import org.geotools.api.data.Transaction
 import org.geotools.data.collection.ListFeatureCollection
 
 /**

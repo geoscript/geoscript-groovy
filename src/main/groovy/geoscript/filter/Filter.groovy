@@ -4,7 +4,7 @@ import geoscript.geom.Bounds
 import geoscript.geom.Geometry
 import geoscript.feature.Feature
 import org.geotools.filter.visitor.SimplifyingFilterVisitor
-import org.opengis.filter.Filter as GTFilter
+import org.geotools.api.filter.Filter as GTFilter
 import org.geotools.filter.text.ecql.ECQL
 import org.geotools.xsd.Parser
 import org.geotools.xsd.Encoder
@@ -14,7 +14,7 @@ import org.geotools.filter.v1_1.OGCConfiguration as OGCConfiguration11
 import org.geotools.filter.v1_1.OGC as OGC11 
 import org.geotools.factory.CommonFactoryFinder
 import org.geotools.util.factory.GeoTools
-import org.opengis.filter.FilterFactory2
+import org.geotools.api.filter.FilterFactory
 
 /**
  * A Filter is a predicate or constraint used to match or filter {@link geoscript.feature.Feature Feature} objects.
@@ -38,11 +38,11 @@ class Filter {
     /**
      * The GeoTools FilterFactory
      */
-    FilterFactory2 factory = CommonFactoryFinder.getFilterFactory2(GeoTools.defaultHints)
+    FilterFactory factory = CommonFactoryFinder.getFilterFactory(GeoTools.defaultHints)
 
     /**
      * Create a new Filter wrapping a GeoTools Filter
-     * @param filter The org.opengis.filter.Filter
+     * @param filter The org.geotools.api.filter.Filter
      */
     Filter(GTFilter filter) {
         this.filter = filter
@@ -227,7 +227,7 @@ class Filter {
      * @return A Filter
      */
     static Filter equals(String field, Object value) {
-        FilterFactory2 factory = CommonFactoryFinder.getFilterFactory2(GeoTools.defaultHints)
+        FilterFactory factory = CommonFactoryFinder.getFilterFactory(GeoTools.defaultHints)
         new Filter(factory.equals(factory.property(field), factory.literal(value)))
     }
 
@@ -291,7 +291,7 @@ class Filter {
      * @return A Filter
      */
     static Filter id(String id) {
-        FilterFactory2 factory = CommonFactoryFinder.getFilterFactory2(GeoTools.defaultHints)
+        FilterFactory factory = CommonFactoryFinder.getFilterFactory(GeoTools.defaultHints)
         new Filter(factory.id(factory.featureId(id)))
     }
 
@@ -301,7 +301,7 @@ class Filter {
      * @return A Filter
      */
     static Filter ids(List ids) {
-        FilterFactory2 factory = CommonFactoryFinder.getFilterFactory2(GeoTools.defaultHints)
+        FilterFactory factory = CommonFactoryFinder.getFilterFactory(GeoTools.defaultHints)
         new Filter(factory.id(ids.collect{ factory.featureId(it) } as Set))
     }
 

@@ -3,7 +3,7 @@ package geoscript.workspace
 import geoscript.feature.Schema
 import geoscript.layer.Cursor
 import geoscript.layer.Layer
-import org.geotools.data.DataStore
+import org.geotools.api.data.DataStore
 import org.geotools.data.ogr.OGRDataStore
 
 /**

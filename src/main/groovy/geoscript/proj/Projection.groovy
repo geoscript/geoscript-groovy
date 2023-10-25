@@ -7,8 +7,8 @@ import org.geotools.geometry.jts.GeometryCoordinateSequenceTransformer
 import org.geotools.metadata.iso.citation.Citations
 import org.geotools.referencing.CRS
 import org.geotools.renderer.lite.RendererUtilities
-import org.opengis.referencing.crs.CoordinateReferenceSystem
-import org.opengis.referencing.operation.MathTransform
+import org.geotools.api.referencing.crs.CoordinateReferenceSystem
+import org.geotools.api.referencing.operation.MathTransform
 
 /**
  * A Projection is a cartographic projection or coordinate reference system.

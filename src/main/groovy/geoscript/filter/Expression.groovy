@@ -1,9 +1,9 @@
 package geoscript.filter
 
 import geoscript.GeoScript
-import org.opengis.filter.expression.Expression as GtExpression
+import org.geotools.api.filter.expression.Expression as GtExpression
 import org.geotools.factory.CommonFactoryFinder
-import org.opengis.filter.FilterFactory
+import org.geotools.api.filter.FilterFactory
 import org.geotools.filter.text.cql2.CQL
 
 /**
@@ -55,12 +55,12 @@ class Expression {
      * @return The value
      */
     def getValue() {
-        if (expr instanceof org.opengis.filter.expression.Literal) {
-            return (expr as org.opengis.filter.expression.Literal).value
-        } else if (expr instanceof org.opengis.filter.expression.Function) {
-            return new Function(expr as org.opengis.filter.expression.Function)
-        } else if (expr instanceof org.opengis.filter.expression.PropertyName) {
-            return (expr as org.opengis.filter.expression.PropertyName).propertyName
+        if (expr instanceof org.geotools.api.filter.expression.Literal) {
+            return (expr as org.geotools.api.filter.expression.Literal).value
+        } else if (expr instanceof org.geotools.api.filter.expression.Function) {
+            return new Function(expr as org.geotools.api.filter.expression.Function)
+        } else if (expr instanceof org.geotools.api.filter.expression.PropertyName) {
+            return (expr as org.geotools.api.filter.expression.PropertyName).propertyName
         } else {
             return expr
         }
@@ -90,11 +90,11 @@ class Expression {
      */
     static Expression fromCQL(String cql) {
         def e = CQL.toExpression(cql)
-        if (e instanceof org.opengis.filter.expression.Literal) {
+        if (e instanceof org.geotools.api.filter.expression.Literal) {
             return new Expression(e)
-        } else if (e instanceof org.opengis.filter.expression.Function) {
+        } else if (e instanceof org.geotools.api.filter.expression.Function) {
             return new Function(e)
-        } else if (e instanceof org.opengis.filter.expression.PropertyName) {
+        } else if (e instanceof org.geotools.api.filter.expression.PropertyName) {
             return new Property(e)
         } else {
             return new Expression(e)

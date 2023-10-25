@@ -7,7 +7,7 @@ import static org.junit.jupiter.api.Assertions.*
 import geoscript.geom.*
 import geoscript.layer.*
 import org.geotools.process.Processors
-import org.opengis.feature.type.Name
+import org.geotools.api.feature.type.Name
 import org.geotools.feature.NameImpl
 import org.geotools.process.ProcessFactory
 
@@ -185,7 +185,7 @@ class ProcessTest {
         assertEquals 1, paramInfo.size()
         assertTrue paramInfo.containsKey("features")
         def param = paramInfo.get("features")
-        assertTrue param instanceof org.geotools.data.Parameter
+        assertTrue param instanceof org.geotools.api.data.Parameter
         assertTrue org.geotools.feature.FeatureCollection.isAssignableFrom(param.type)
 
         // The ResultInfo should be GeoTools types
@@ -193,7 +193,7 @@ class ProcessTest {
         assertEquals 1, resultInfo.size()
         assertTrue resultInfo.containsKey("result")
         param = resultInfo.get("result")
-        assertTrue param instanceof org.geotools.data.Parameter
+        assertTrue param instanceof org.geotools.api.data.Parameter
         assertTrue org.geotools.feature.FeatureCollection.isAssignableFrom(param.type)
     }
 

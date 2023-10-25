@@ -1,6 +1,6 @@
 package geoscript.style
 
-import org.geotools.styling.Style as GtStyle
+import org.geotools.api.style.Style as GtStyle
 
 /**
  * The Style interface

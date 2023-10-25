@@ -3,9 +3,9 @@ package geoscript.style
 import geoscript.filter.Property
 import geoscript.filter.Expression
 import geoscript.filter.Function
-import org.geotools.styling.Rule
-import org.geotools.styling.TextSymbolizer
-import org.geotools.styling.Symbolizer as GtSymbolizer
+import org.geotools.api.style.Rule
+import org.geotools.api.style.TextSymbolizer
+import org.geotools.api.style.Symbolizer as GtSymbolizer
 
 /**
  * A Symbolizer for labeling a geometry.

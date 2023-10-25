@@ -5,7 +5,7 @@ import geoscript.style.DirectoryStyleRepository
 import geoscript.style.Style
 import geoscript.style.StyleRepository
 import geoscript.style.io.Readers
-import org.geotools.data.DataStore
+import org.geotools.api.data.DataStore
 import org.geotools.data.property.PropertyDataStore
 import org.geotools.data.property.PropertyDataStoreFactory
 

@@ -8,11 +8,11 @@
     <groupId>org.geoscript</groupId>
     <artifactId>geoscript-groovy</artifactId>
     <packaging>jar</packaging>
-    <version>1.21.0</version>
+    <version>1.22.0-SNAPSHOT</version>
     <properties>
-        <gt.version>29.2</gt.version>
+        <gt.version>30.0</gt.version>
         <jts.version>1.19.0</jts.version>
-        <groovy.version>4.0.13</groovy.version>
+        <groovy.version>4.0.15</groovy.version>
     </properties>
     <dependencies>
         <dependency>

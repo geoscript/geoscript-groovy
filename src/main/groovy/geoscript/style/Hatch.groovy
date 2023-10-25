@@ -1,11 +1,11 @@
 package geoscript.style
 
 import geoscript.filter.Expression
-import org.geotools.styling.Rule
-import org.geotools.styling.LineSymbolizer
-import org.geotools.styling.Symbolizer as GtSymbolizer
-import org.geotools.styling.Graphic
-import org.geotools.styling.Mark
+import org.geotools.api.style.Rule
+import org.geotools.api.style.LineSymbolizer
+import org.geotools.api.style.Symbolizer as GtSymbolizer
+import org.geotools.api.style.Graphic
+import org.geotools.api.style.Mark
 
 /**
  * A Symbolizer that repeats a pattern. A hatch can be applied to linear and area

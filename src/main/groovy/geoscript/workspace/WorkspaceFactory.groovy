@@ -1,7 +1,7 @@
 package geoscript.workspace
 
-import org.geotools.data.DataStore
-import org.geotools.data.DataStoreFinder
+import org.geotools.api.data.DataStore
+import org.geotools.api.data.DataStoreFinder
 
 /**
  * A WorkspaceFactory creates Workspaces from connection parameters

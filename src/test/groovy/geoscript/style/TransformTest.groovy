@@ -50,12 +50,12 @@ class TransformTest {
         def pointSym = Symbolizer.styleFactory.createPointSymbolizer();
         Transform centroidTransform = new Transform(new Function("myCentroid(the_geom)", {g -> g.centroid}))
         centroidTransform.apply(pointSym)
-        assertTrue pointSym.geometry instanceof org.opengis.filter.expression.Function
+        assertTrue pointSym.geometry instanceof org.geotools.api.filter.expression.Function
 
         def textSym = Symbolizer.styleFactory.createTextSymbolizer()
         Transform upperCaseTransform = new Transform(new Function("myUpperCase(NAME)", {str -> str.toUpperCase()}))
         upperCaseTransform.apply(textSym)
-        assertTrue textSym.label instanceof org.opengis.filter.expression.Function
+        assertTrue textSym.label instanceof org.geotools.api.filter.expression.Function
     }
 
     @Test void prepare() {
@@ -68,7 +68,7 @@ class TransformTest {
         centroidTransform.prepare(rule)
         upperCaseTransform.prepare(rule)
 
-        assertTrue rule.symbolizers()[0].geometry instanceof org.opengis.filter.expression.Function
-        assertTrue rule.symbolizers()[1].label instanceof org.opengis.filter.expression.Function
+        assertTrue rule.symbolizers()[0].geometry instanceof org.geotools.api.filter.expression.Function
+        assertTrue rule.symbolizers()[1].label instanceof org.geotools.api.filter.expression.Function
     }
 }

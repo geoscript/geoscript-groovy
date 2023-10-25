@@ -1,9 +1,9 @@
 package geoscript.style
 
 import geoscript.filter.Expression
-import org.geotools.styling.Rule
-import org.geotools.styling.RasterSymbolizer
-import org.geotools.styling.Symbolizer as GtSymbolizer
+import org.geotools.api.style.Rule
+import org.geotools.api.style.RasterSymbolizer
+import org.geotools.api.style.Symbolizer as GtSymbolizer
 
 /**
  * Symbolize a Raster with a ShadedRelief or hill shading.

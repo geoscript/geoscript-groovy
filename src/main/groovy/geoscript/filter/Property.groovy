@@ -1,7 +1,7 @@
 package geoscript.filter
 
 import geoscript.feature.Field
-import org.opengis.filter.expression.PropertyName
+import org.geotools.api.filter.expression.PropertyName
 
 /**
  * Property is an {@link Expression} that is a {@link geoscript.feature.Field Field} value

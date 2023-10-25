@@ -1,6 +1,6 @@
 package geoscript.workspace
 
-import org.geotools.data.DataStore
+import org.geotools.api.data.DataStore
 import org.geotools.data.memory.MemoryDataStore
 
 /**

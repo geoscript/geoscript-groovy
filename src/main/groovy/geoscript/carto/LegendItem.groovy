@@ -6,10 +6,10 @@ import geoscript.layer.Renderable
 import geoscript.style.ColorMap
 import geoscript.style.Style
 import org.geotools.filter.text.cql2.CQL
-import org.geotools.styling.Rule
-import org.geotools.styling.StyleFactory
+import org.geotools.api.style.Rule
+import org.geotools.api.style.StyleFactory
 import org.geotools.styling.StyleFactoryImpl
-import org.opengis.filter.Filter
+import org.geotools.api.filter.Filter
 
 import java.awt.Color
 import java.awt.Font
@@ -286,7 +286,7 @@ class LegendItem extends Item {
         this
     }
 
-    private int countRules(org.opengis.style.Style style) {
+    private int countRules(org.geotools.api.style.Style style) {
         int numberOfRules = 0
         style.featureTypeStyles().each { def fts ->
             fts.rules().each { def rule ->
@@ -297,12 +297,12 @@ class LegendItem extends Item {
     }
 
     private static class SLDStyle implements Style {
-        private final org.geotools.styling.Style style
+        private final org.geotools.api.style.Style style
         private final static StyleFactory styleFactory = new StyleFactoryImpl()
-        SLDStyle(org.geotools.styling.Style style) {
+        SLDStyle(org.geotools.api.style.Style style) {
             this.style = style
         }
-        org.geotools.styling.Style getGtStyle() {
+        org.geotools.api.style.Style getGtStyle() {
             style
         }
         static SLDStyle fromRule(Rule rule) {

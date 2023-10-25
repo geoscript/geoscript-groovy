@@ -23,7 +23,7 @@ class ProcessFunction extends Function {
      * @param process The GeoScript Process
      * @param functions A variable List of Functions
      */
-    private static org.opengis.filter.expression.Function createProcessFunction(geoscript.process.Process process, Function... functions) {
+    private static org.geotools.api.filter.expression.Function createProcessFunction(geoscript.process.Process process, Function... functions) {
         def pff = new org.geotools.process.function.ProcessFunctionFactory()
         def names = process.name.split(":")
         def nm = new NameImpl(names[0], names[1])

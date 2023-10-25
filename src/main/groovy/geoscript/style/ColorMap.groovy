@@ -3,9 +3,9 @@ package geoscript.style
 import geoscript.filter.Color
 import geoscript.filter.Expression
 import geoscript.layer.Raster
-import org.geotools.styling.Rule
-import org.geotools.styling.RasterSymbolizer
-import org.geotools.styling.Symbolizer as GtSymbolizer
+import org.geotools.api.style.Rule
+import org.geotools.api.style.RasterSymbolizer
+import org.geotools.api.style.Symbolizer as GtSymbolizer
 
 /**
  * A ColorMap is a Symbolizer used to style Rasters by mapping pixel values to colors.
@@ -152,15 +152,15 @@ class ColorMap extends geoscript.style.RasterSymbolizer {
      * @param values A List of Maps
      * @return A GeoTool's ColorMap
      */
-    protected org.geotools.styling.ColorMap generateColorMap(List<Map> values, String type, boolean extended) {
+    protected org.geotools.api.style.ColorMap generateColorMap(List<Map> values, String type, boolean extended) {
         def colorMap = styleFactory.createColorMap();
         colorMap.extendedColors = extended
         if (type.equalsIgnoreCase("ramp")) {
-            colorMap.type = org.geotools.styling.ColorMap.TYPE_RAMP
+            colorMap.type = org.geotools.api.style.ColorMap.TYPE_RAMP
         } else if (type.equalsIgnoreCase("intervals")) {
-            colorMap.type = org.geotools.styling.ColorMap.TYPE_INTERVALS
+            colorMap.type = org.geotools.api.style.ColorMap.TYPE_INTERVALS
         } else if (type.equalsIgnoreCase("values")) {
-            colorMap.type = org.geotools.styling.ColorMap.TYPE_VALUES
+            colorMap.type = org.geotools.api.style.ColorMap.TYPE_VALUES
         }
         values.each {value ->
             def entry = styleFactory.createColorMapEntry()

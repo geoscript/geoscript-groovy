@@ -4,9 +4,7 @@ import geoscript.layer.Layer
 import geoscript.style.DirectoryStyleRepository
 import geoscript.style.Style
 import geoscript.style.StyleRepository
-import geoscript.style.io.Reader
-import geoscript.style.io.Readers
-import org.geotools.data.DataStore
+import org.geotools.api.data.DataStore
 import org.geotools.data.flatgeobuf.FlatGeobufDataStoreFactory
 import org.geotools.data.flatgeobuf.FlatGeobufDirectoryDataStore
 import org.geotools.util.URLs

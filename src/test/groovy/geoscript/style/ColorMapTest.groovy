@@ -84,7 +84,7 @@ class ColorMapTest {
         def sym = Symbolizer.styleFactory.createRasterSymbolizer()
         colorMap.apply(sym)
 
-        sym.colorMap.type = org.geotools.styling.ColorMap.TYPE_RAMP
+        sym.colorMap.type = org.geotools.api.style.ColorMap.TYPE_RAMP
         assertEquals colorMap.values.size(), sym.colorMap.colorMapEntries.length
         assertEquals colorMap.values[0].color, sym.colorMap.colorMapEntries[0].color.value
         assertEquals colorMap.values[0].quantity, sym.colorMap.colorMapEntries[0].quantity.value
@@ -99,7 +99,7 @@ class ColorMapTest {
         colorMap.prepare(rule)
         def sym = rule.symbolizers[0]
 
-        sym.colorMap.type = org.geotools.styling.ColorMap.TYPE_RAMP
+        sym.colorMap.type = org.geotools.api.style.ColorMap.TYPE_RAMP
         assertEquals colorMap.values.size(), sym.colorMap.colorMapEntries.length
         assertEquals colorMap.values[0].color, sym.colorMap.colorMapEntries[0].color.value
         assertEquals colorMap.values[0].quantity, sym.colorMap.colorMapEntries[0].quantity.value

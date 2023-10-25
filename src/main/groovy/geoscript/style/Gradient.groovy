@@ -5,8 +5,8 @@ import geoscript.filter.Filter
 import geoscript.filter.Color
 import geoscript.layer.Layer
 import geoscript.feature.Field
-import org.geotools.styling.LineSymbolizer
-import org.geotools.styling.PointSymbolizer
+import org.geotools.api.style.LineSymbolizer
+import org.geotools.api.style.PointSymbolizer
 
 /**
  * The Gradient Composite Symbolizer creates gradients between a series of values and symbolizers or from
@@ -68,8 +68,8 @@ class Gradient extends Composite {
      */
     static List createGraduatedSymbolizer(Layer layer, String field, String method, int number, def colors, String elseMode = "ignore") {
 
-        org.opengis.filter.FilterFactory2 ff = org.geotools.factory.CommonFactoryFinder.getFilterFactory2(null)
-        org.opengis.filter.expression.Function function = ff.function(method, ff.property(field), ff.literal(number))
+        org.geotools.api.filter.FilterFactory ff = org.geotools.factory.CommonFactoryFinder.getFilterFactory(null)
+        org.geotools.api.filter.expression.Function function = ff.function(method, ff.property(field), ff.literal(number))
         org.geotools.filter.function.Classifier classifier = (org.geotools.filter.function.Classifier) function.evaluate(layer.fs.features)
 
         int elseModeInt
@@ -93,7 +93,7 @@ class Gradient extends Composite {
         }
 
         // Generate the FeatureTypeStyle
-        org.geotools.styling.FeatureTypeStyle featureTypeStyle = org.geotools.brewer.color.StyleGenerator.createFeatureTypeStyle(
+        org.geotools.api.style.FeatureTypeStyle featureTypeStyle = org.geotools.brewer.color.StyleGenerator.createFeatureTypeStyle(
             classifier,
             ff.property(field),
             colors,
@@ -113,7 +113,7 @@ class Gradient extends Composite {
                 return new Stroke(lineSym.stroke.color.value).where(new Filter(rule.filter))
             }  else if (geometryType.equalsIgnoreCase("point") || geometryType.equalsIgnoreCase("multipoint")) {
                 def ptSym = sym as PointSymbolizer
-                def size = ptSym.graphic.size != org.opengis.filter.expression.Expression.NIL ? ptSym.graphic.size : 8
+                def size = ptSym.graphic.size != org.geotools.api.filter.expression.Expression.NIL ? ptSym.graphic.size : 8
                 return new Shape(ptSym.graphic.graphicalSymbols()[0].fill.color.value, size, ptSym.graphic.graphicalSymbols()[0].wellKnownName.value).where(new Filter(rule.filter))
             } else {
                 null

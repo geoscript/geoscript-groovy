@@ -20,7 +20,7 @@ import geoscript.proj.Projection
 import geoscript.workspace.Memory
 import org.geotools.renderer.crs.ProjectionHandler
 import org.geotools.renderer.crs.ProjectionHandlerFinder
-import org.opengis.referencing.operation.MathTransform
+import org.geotools.api.referencing.operation.MathTransform
 
 import java.awt.Rectangle
 

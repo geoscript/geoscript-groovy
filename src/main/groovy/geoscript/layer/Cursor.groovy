@@ -5,12 +5,12 @@ import org.geotools.data.store.ReprojectingFeatureIterator
 import org.geotools.feature.FeatureIterator
 import org.geotools.feature.FeatureTypes
 import org.geotools.geometry.jts.GeometryCoordinateSequenceTransformer
-import org.opengis.feature.simple.SimpleFeature
-import org.opengis.feature.simple.SimpleFeatureType
+import org.geotools.api.feature.simple.SimpleFeature
+import org.geotools.api.feature.simple.SimpleFeatureType
 import org.geotools.feature.FeatureCollection
 import org.geotools.data.store.MaxFeaturesIterator
 import org.geotools.data.sort.SortedFeatureIterator
-import org.opengis.filter.sort.SortBy
+import org.geotools.api.filter.sort.SortBy
 
 /**
  * A Cursor is a Iterator over a Feature objects.
@@ -84,7 +84,7 @@ class Cursor implements Iterator {
            long max = options.max as long
            if (!options.containsKey("sort")
                && layer
-               && layer.workspace.format in ['Directory', 'org.geotools.data.shapefile.ShapefileDataStore', 'org.geotools.data.directory.DirectoryDataStore']) {
+               && layer.workspace.format in ['Directory', 'org.geotools.api.data.shapefile.ShapefileDataStore', 'org.geotools.api.data.directory.DirectoryDataStore']) {
                this.iter = new SortedFeatureIterator(this.iter, col.schema, [SortBy.NATURAL_ORDER] as SortBy[], Integer.MAX_VALUE)
            }
            this.iter = new MaxFeaturesIterator<SimpleFeature>(this.iter, start, max)

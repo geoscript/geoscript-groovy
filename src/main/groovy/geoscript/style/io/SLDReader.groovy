@@ -1,8 +1,8 @@
 package geoscript.style.io
 
 import geoscript.style.Style
-import org.geotools.styling.Style as GtStyle
-import org.geotools.styling.StyleFactory
+import org.geotools.api.style.Style as GtStyle
+import org.geotools.api.style.StyleFactory
 import org.geotools.styling.StyleFactoryImpl
 import org.geotools.xml.styling.SLDParser
 

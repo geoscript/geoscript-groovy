@@ -1,9 +1,9 @@
 package geoscript.feature
 
 import org.geotools.feature.simple.SimpleFeatureBuilder
-import org.opengis.feature.simple.SimpleFeatureType
-import org.opengis.feature.type.AttributeDescriptor
-import org.opengis.feature.type.GeometryDescriptor
+import org.geotools.api.feature.simple.SimpleFeatureType
+import org.geotools.api.feature.type.AttributeDescriptor
+import org.geotools.api.feature.type.GeometryDescriptor
 import org.geotools.feature.NameImpl
 import org.geotools.feature.simple.SimpleFeatureTypeBuilder
 import org.geotools.data.DataUtilities

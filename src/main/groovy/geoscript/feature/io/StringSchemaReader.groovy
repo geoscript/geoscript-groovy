@@ -2,7 +2,7 @@ package geoscript.feature.io
 
 import geoscript.feature.Schema
 import org.geotools.data.DataUtilities
-import org.opengis.feature.simple.SimpleFeatureType
+import org.geotools.api.feature.simple.SimpleFeatureType
 
 /**
  * Read a Schema from a simple String.  This implementation uses GeoTools

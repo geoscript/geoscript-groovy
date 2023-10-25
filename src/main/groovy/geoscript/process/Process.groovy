@@ -4,14 +4,14 @@ import geoscript.layer.Raster
 import org.geotools.process.Process as GtProcess
 import org.geotools.process.ProcessFactory
 import org.geotools.feature.NameImpl
-import org.opengis.util.InternationalString
-import org.opengis.feature.type.Name
+import org.geotools.api.util.InternationalString
+import org.geotools.api.feature.type.Name
 import org.geotools.process.Processors
 import org.geotools.util.SimpleInternationalString
 import org.geotools.util.factory.FactoryIteratorProvider
-import org.geotools.data.Parameter
+import org.geotools.api.data.Parameter
 import java.awt.RenderingHints
-import org.opengis.util.ProgressListener
+import org.geotools.api.util.ProgressListener
 import org.geotools.util.factory.GeoTools
 import geoscript.layer.Layer
 import geoscript.geom.Bounds
@@ -483,7 +483,7 @@ class Process {
         } else if (geoscript.layer.Cursor.isAssignableFrom(geoScriptClass)) {
             return org.geotools.feature.FeatureCollection
         } else if (Raster.isAssignableFrom(geoScriptClass)) {
-            return org.opengis.coverage.grid.GridCoverage
+            return org.geotools.api.coverage.grid.GridCoverage
         } else {
             return geoScriptClass
         }
@@ -495,15 +495,16 @@ class Process {
      * @return The Class
      */
     static Class convertGeoToolsToGeoScriptClass(Class geoToolsClass) {
+        println geoToolsClass
         if (org.locationtech.jts.geom.Geometry.isAssignableFrom(geoToolsClass)) {
             return geoscript.geom.Geometry
         } else if (org.geotools.geometry.jts.ReferencedEnvelope.isAssignableFrom(geoToolsClass)) {
             return geoscript.geom.Bounds
-        } else if (org.opengis.geometry.Envelope.isAssignableFrom(geoToolsClass)) {
+        } else if (org.geotools.api.geometry.Bounds.isAssignableFrom(geoToolsClass)) {
             return geoscript.geom.Bounds
         } else if (org.geotools.feature.FeatureCollection.isAssignableFrom(geoToolsClass)) {
             return geoscript.layer.Cursor
-        } else if (org.opengis.coverage.grid.GridCoverage.isAssignableFrom(geoToolsClass)) {
+        } else if (org.geotools.api.coverage.grid.GridCoverage.isAssignableFrom(geoToolsClass)) {
             return Raster
         } else {
             return geoToolsClass
@@ -532,12 +533,12 @@ class Process {
         else if (geoscript.geom.Bounds.isAssignableFrom(target) && org.geotools.geometry.jts.ReferencedEnvelope.isInstance(source)) {
             return new Bounds(source as org.geotools.geometry.jts.ReferencedEnvelope)
         }
-        // org.opengis.geometry.Envelope and Bounds
-        else if (org.opengis.geometry.Envelope.isAssignableFrom(target) && geoscript.geom.Bounds.isInstance(source)) {
+        // org.geotools.api.geometry.Envelope and Bounds
+        else if (org.geotools.api.geometry.Bounds.isAssignableFrom(target) && geoscript.geom.Bounds.isInstance(source)) {
             return (source as geoscript.geom.Bounds).env
         }
-        else if (geoscript.geom.Bounds.isAssignableFrom(target) && org.opengis.geometry.Envelope.isInstance(source)) {
-            def env = source as org.opengis.geometry.Envelope
+        else if (geoscript.geom.Bounds.isAssignableFrom(target) && org.geotools.api.geometry.Bounds.isInstance(source)) {
+            def env = source as org.geotools.api.geometry.Bounds
             return new Bounds(env.getMinimum(1), env.getMinimum(0), env.getMaximum(1), env.getMaximum(0))
         }
         // FeatureCollection and Layer
@@ -555,7 +556,7 @@ class Process {
             return new geoscript.layer.Cursor(source as org.geotools.feature.FeatureCollection)
         }
         // GridCoverage and Raster
-        else if (org.opengis.coverage.grid.GridCoverage.isAssignableFrom(target) && Raster.isInstance(source)) {
+        else if (org.geotools.api.coverage.grid.GridCoverage.isAssignableFrom(target) && Raster.isInstance(source)) {
             return (source as Raster).coverage
         }
         else if (Raster.isAssignableFrom(target) && org.geotools.coverage.grid.GridCoverage2D.isInstance(source)) {

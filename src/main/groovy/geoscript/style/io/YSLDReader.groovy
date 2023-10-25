@@ -47,11 +47,11 @@ class YSLDReader implements Reader {
      * A simple GeoScript Style that wraps a GeoTools Style
      */
     private static class YsldStyle implements Style {
-        private final org.geotools.styling.Style style
-        YsldStyle(org.geotools.styling.Style style) {
+        private final org.geotools.api.style.Style style
+        YsldStyle(org.geotools.api.style.Style style) {
             this.style = style
         }
-        org.geotools.styling.Style getGtStyle() {
+        org.geotools.api.style.Style getGtStyle() {
             style
         }
     }

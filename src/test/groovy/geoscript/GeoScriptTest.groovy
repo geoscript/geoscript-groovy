@@ -63,15 +63,15 @@ class GeoScriptTest {
 
     @Test void unwrap() {
         assertTrue GeoScript.unwrap(new Point(111,-47)) instanceof org.locationtech.jts.geom.Point
-        assertTrue GeoScript.unwrap(new Feature([the_geom: "POINT (1 1)"],"pt")) instanceof org.opengis.feature.simple.SimpleFeature
-        assertTrue GeoScript.unwrap(new Schema("widgets", "geom:Point:srid=4326")) instanceof org.opengis.feature.simple.SimpleFeatureType
+        assertTrue GeoScript.unwrap(new Feature([the_geom: "POINT (1 1)"],"pt")) instanceof org.geotools.api.feature.simple.SimpleFeature
+        assertTrue GeoScript.unwrap(new Schema("widgets", "geom:Point:srid=4326")) instanceof org.geotools.api.feature.simple.SimpleFeatureType
         assertTrue GeoScript.unwrap(new Bounds(0,0,10,10)) instanceof org.geotools.geometry.jts.ReferencedEnvelope
-        assertTrue GeoScript.unwrap(new Expression(12)) instanceof org.opengis.filter.expression.Expression
+        assertTrue GeoScript.unwrap(new Expression(12)) instanceof org.geotools.api.filter.expression.Expression
         assertTrue GeoScript.unwrap(new Layer().getCursor()) instanceof org.geotools.feature.FeatureCollection
-        assertTrue GeoScript.unwrap(new Layer()) instanceof org.geotools.data.FeatureSource
-        assertTrue GeoScript.unwrap(new Projection("EPSG:4326")) instanceof org.opengis.referencing.crs.CoordinateReferenceSystem
+        assertTrue GeoScript.unwrap(new Layer()) instanceof org.geotools.api.data.FeatureSource
+        assertTrue GeoScript.unwrap(new Projection("EPSG:4326")) instanceof org.geotools.api.referencing.crs.CoordinateReferenceSystem
         assertTrue GeoScript.unwrap(new Geodetic("clrk66")) instanceof org.geotools.referencing.datum.DefaultEllipsoid
-        assertTrue GeoScript.unwrap(new Memory()) instanceof org.geotools.data.DataStore
+        assertTrue GeoScript.unwrap(new Memory()) instanceof org.geotools.api.data.DataStore
         List data = [
                 [0,0,0,0,0,0,0],
                 [0,1,1,1,1,1,0],

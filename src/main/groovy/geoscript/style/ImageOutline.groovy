@@ -1,8 +1,8 @@
 package geoscript.style
 
-import org.geotools.styling.Rule
-import org.geotools.styling.RasterSymbolizer
-import org.geotools.styling.Symbolizer as GtSymbolizer
+import org.geotools.api.style.Rule
+import org.geotools.api.style.RasterSymbolizer
+import org.geotools.api.style.Symbolizer as GtSymbolizer
 
 /**
  * An ImageOutline Symbolizer applies a Stroke or Fill Symbolizer

@@ -9,9 +9,9 @@ import org.geotools.coverage.grid.io.GridFormatFinder
 import org.geotools.coverage.grid.io.UnknownFormat
 import org.geotools.util.factory.GeoTools
 import org.geotools.util.factory.Hints
-import org.opengis.coverage.grid.GridCoverageReader
-import org.opengis.parameter.GeneralParameterValue
-import org.opengis.parameter.ParameterValueGroup
+import org.geotools.api.coverage.grid.GridCoverageReader
+import org.geotools.api.parameter.GeneralParameterValue
+import org.geotools.api.parameter.ParameterValueGroup
 
 import java.awt.*
 import java.util.List

@@ -5,7 +5,7 @@ import geoscript.layer.Layer
 import geoscript.style.DirectoryStyleRepository
 import geoscript.style.Style
 import geoscript.style.StyleRepository
-import org.geotools.data.DataStore
+import org.geotools.api.data.DataStore
 import org.geotools.data.directory.DirectoryDataStore
 import org.geotools.data.shapefile.ShapefileDataStore
 import org.geotools.data.shapefile.ShapefileDataStoreFactory

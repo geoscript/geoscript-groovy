@@ -5,7 +5,7 @@ import geoscript.style.DatabaseStyleRepository
 import geoscript.style.Style
 import geoscript.style.StyleRepository
 import geoscript.style.io.Readers
-import org.geotools.data.DataStore
+import org.geotools.api.data.DataStore
 import org.geotools.data.h2.H2DataStoreFactory
 import org.geotools.data.h2.H2JNDIDataStoreFactory
 import org.geotools.jdbc.JDBCDataStore

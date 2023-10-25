@@ -4,7 +4,7 @@ import geoscript.layer.Layer
 import geoscript.style.DatabaseStyleRepository
 import geoscript.style.Style
 import geoscript.style.StyleRepository
-import org.geotools.data.DataStore
+import org.geotools.api.data.DataStore
 import org.geotools.geopkg.GeoPkgDataStoreFactory
 import org.geotools.jdbc.JDBCDataStore
 

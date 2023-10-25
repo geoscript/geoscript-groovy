@@ -1,10 +1,10 @@
 package geoscript.style
 
 import geoscript.filter.Expression
-import org.geotools.styling.Fill as GtFill
-import org.geotools.styling.Rule
-import org.geotools.styling.PolygonSymbolizer
-import org.geotools.styling.Symbolizer as GtSymbolizer
+import org.geotools.api.style.Fill as GtFill
+import org.geotools.api.style.Rule
+import org.geotools.api.style.PolygonSymbolizer
+import org.geotools.api.style.Symbolizer as GtSymbolizer
 import geoscript.filter.Color
 
 /**

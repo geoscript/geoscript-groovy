@@ -1,12 +1,12 @@
 package geoscript.style
 
-import org.geotools.styling.Symbolizer as GtSymbolizer
-import org.geotools.styling.ContrastEnhancement as GtContrastEnhancement
+import org.geotools.api.style.Symbolizer as GtSymbolizer
+import org.geotools.api.style.ContrastEnhancement as GtContrastEnhancement
 
 import geoscript.filter.Expression
-import org.geotools.styling.RasterSymbolizer
-import org.geotools.styling.Rule
-import org.opengis.style.ContrastMethod
+import org.geotools.api.style.RasterSymbolizer
+import org.geotools.api.style.Rule
+import org.geotools.api.style.ContrastMethod
 
 /**
  * A ContrastEnhancement is a Symbolizer used to style Rasters by modifying the contrast.

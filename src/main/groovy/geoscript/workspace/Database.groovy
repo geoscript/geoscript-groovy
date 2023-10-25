@@ -1,7 +1,7 @@
 package geoscript.workspace
 
 import groovy.sql.Sql
-import org.geotools.data.DataStore
+import org.geotools.api.data.DataStore
 import org.geotools.jdbc.JDBCDataStore
 import org.geotools.jdbc.VirtualTable
 import geoscript.feature.Field

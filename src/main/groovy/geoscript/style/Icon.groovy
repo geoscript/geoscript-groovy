@@ -1,9 +1,9 @@
 package geoscript.style
 
-import org.geotools.styling.Rule
-import org.geotools.styling.PointSymbolizer
-import org.geotools.styling.PolygonSymbolizer
-import org.geotools.styling.Symbolizer as GtSymbolizer
+import org.geotools.api.style.Rule
+import org.geotools.api.style.PointSymbolizer
+import org.geotools.api.style.PolygonSymbolizer
+import org.geotools.api.style.Symbolizer as GtSymbolizer
 import geoscript.filter.Expression
 
 /**

@@ -5,7 +5,7 @@ import geoscript.geom.Bounds
 import geoscript.geom.Geometry
 import geoscript.layer.Layer
 import org.geotools.feature.simple.SimpleFeatureBuilder
-import org.opengis.feature.simple.SimpleFeature
+import org.geotools.api.feature.simple.SimpleFeature
 
 /**
  * A Feature contains a set of named attributes with values.

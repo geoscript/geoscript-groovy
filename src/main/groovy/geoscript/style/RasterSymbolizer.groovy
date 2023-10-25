@@ -1,8 +1,8 @@
 package geoscript.style
 
 import geoscript.filter.Expression
-import org.geotools.styling.Rule
-import org.geotools.styling.Symbolizer as GtSymbolizer
+import org.geotools.api.style.Rule
+import org.geotools.api.style.Symbolizer as GtSymbolizer
 
 /**
  * A Raster Symbolizer is used to style Rasters. It is also a base class for all other Raster Symbolizers.
@@ -123,7 +123,7 @@ class RasterSymbolizer extends Symbolizer {
     @Override
     protected void prepare(Rule rule) {
         super.prepare(rule)
-        getGeoToolsSymbolizers(rule, org.geotools.styling.RasterSymbolizer.class).each{s ->
+        getGeoToolsSymbolizers(rule, org.geotools.api.style.RasterSymbolizer.class).each{s ->
             apply(s)
         }
     }

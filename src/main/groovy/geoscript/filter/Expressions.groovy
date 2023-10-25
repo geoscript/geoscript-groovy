@@ -1,8 +1,8 @@
 package geoscript.filter
 
 import geoscript.feature.Field
-import org.opengis.filter.expression.Function as GtFunction
-import org.opengis.filter.expression.Expression as GtExpression
+import org.geotools.api.filter.expression.Function as GtFunction
+import org.geotools.api.filter.expression.Expression as GtExpression
 
 /**
  * The Expressions class holds static methods for creating new Expressions ({@link Expression}, {@link Color}, {@link Function}, {@link Property}).

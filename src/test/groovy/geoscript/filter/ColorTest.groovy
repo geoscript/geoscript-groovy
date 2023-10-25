@@ -23,27 +23,27 @@ class ColorTest {
     @Test void constructors() {
 
         Color color = new Color("black")
-        assertTrue color.expr instanceof org.opengis.filter.expression.Literal
+        assertTrue color.expr instanceof org.geotools.api.filter.expression.Literal
         assertEquals "#000000", color.toString()
 
         color = new Color(color)
-        assertTrue color.expr instanceof org.opengis.filter.expression.Literal
+        assertTrue color.expr instanceof org.geotools.api.filter.expression.Literal
         assertEquals "#000000", color.toString()
 
         color = new Color("#000000")
-        assertTrue color.expr instanceof org.opengis.filter.expression.Literal
+        assertTrue color.expr instanceof org.geotools.api.filter.expression.Literal
         assertEquals "#000000", color.toString()
 
         color = new Color([0,0,0])
-        assertTrue color.expr instanceof org.opengis.filter.expression.Literal
+        assertTrue color.expr instanceof org.geotools.api.filter.expression.Literal
         assertEquals "#000000", color.toString()
 
         color = new Color("rgb(255,0,255)")
-        assertTrue color.expr instanceof org.opengis.filter.expression.Literal
+        assertTrue color.expr instanceof org.geotools.api.filter.expression.Literal
         assertEquals "#ff00ff", color.toString()
 
         color = new Color("hsl(0,1,0.5)")
-        assertTrue color.expr instanceof org.opengis.filter.expression.Literal
+        assertTrue color.expr instanceof org.geotools.api.filter.expression.Literal
         assertEquals "#ff0000", color.toString()
 
         // Make sure HSL run trips

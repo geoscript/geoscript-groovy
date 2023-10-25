@@ -13,17 +13,17 @@ class ExpressionTest {
 
         // Create an Expression from a value
         Expression e = new Expression(12)
-        assertTrue e.expr instanceof org.opengis.filter.expression.Literal
+        assertTrue e.expr instanceof org.geotools.api.filter.expression.Literal
         assertEquals "12", e.toString()
 
         // Create an Expression from another Expression
         e = new Expression(e)
-        assertTrue e.expr instanceof org.opengis.filter.expression.Literal
+        assertTrue e.expr instanceof org.geotools.api.filter.expression.Literal
         assertEquals "12", e.toString()
 
         // Create an Expression from a GeoTools Expression
         e = new Expression(Expression.filterFactory.literal(12))
-        assertTrue e.expr instanceof org.opengis.filter.expression.Literal
+        assertTrue e.expr instanceof org.geotools.api.filter.expression.Literal
         assertEquals "12", e.toString()
     }
 
@@ -35,11 +35,11 @@ class ExpressionTest {
     @Test void fromCQL() {
         // Literal Number
         Expression e = Expression.fromCQL("12")
-        assertTrue e.expr instanceof org.opengis.filter.expression.Literal
+        assertTrue e.expr instanceof org.geotools.api.filter.expression.Literal
         assertEquals "12", e.toString()
         // Literal String
         e = Expression.fromCQL("'A String'")
-        assertTrue e.expr instanceof org.opengis.filter.expression.Literal
+        assertTrue e.expr instanceof org.geotools.api.filter.expression.Literal
         assertEquals "A String", e.toString()
         // Property
         e = Expression.fromCQL("NAME")

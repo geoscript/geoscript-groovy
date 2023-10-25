@@ -3,7 +3,7 @@ package geoscript.filter
 import org.geotools.factory.CommonFactoryFinder
 import org.geotools.util.factory.GeoTools
 import org.junit.jupiter.api.Test
-import org.opengis.filter.FilterFactory2
+import org.geotools.api.filter.FilterFactory
 
 import static org.junit.jupiter.api.Assertions.*
 import geoscript.geom.*
@@ -13,7 +13,7 @@ import geoscript.AssertUtil
 
 class FilterTest {
 
-    private static FilterFactory2 factory = CommonFactoryFinder.getFilterFactory2(GeoTools.defaultHints)
+    private static FilterFactory factory = CommonFactoryFinder.getFilterFactory(GeoTools.defaultHints)
 
     @Test void constructors() {
         Filter f1 = new Filter("name='foobar'")
