@@ -495,7 +495,6 @@ class Process {
      * @return The Class
      */
     static Class convertGeoToolsToGeoScriptClass(Class geoToolsClass) {
-        println geoToolsClass
         if (org.locationtech.jts.geom.Geometry.isAssignableFrom(geoToolsClass)) {
             return geoscript.geom.Geometry
         } else if (org.geotools.geometry.jts.ReferencedEnvelope.isAssignableFrom(geoToolsClass)) {
