@@ -33,9 +33,9 @@ Install GeoScript
 
 #. Unpack the GeoScript tarball::
 
-     unzip geoscript-groovy-1.21.0.zip
+     unzip geoscript-groovy-1.22.0.zip
 
-#. Add the geoscript-groovy-1.21.0/bin directory to your path::
+#. Add the geoscript-groovy-1.22.0/bin directory to your path::
 
      export PATH=$(cd bin; pwd):$PATH
 
