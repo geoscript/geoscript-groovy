@@ -1,0 +1,1 @@
+business geom: Point(EPSG:4326), id1: Integer, name1: String, id2: Integer, name2: String, address2: String

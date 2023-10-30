@@ -1,0 +1,116 @@
+
+<?xml version="1.0" encoding="UTF-8"?>
+<sld:StyledLayerDescriptor xmlns="http://www.opengis.net/sld" xmlns:sld="http://www.opengis.net/sld" xmlns:ogc="http://www.opengis.net/ogc" xmlns:gml="http://www.opengis.net/gml" version="1.0.0">
+  <sld:UserLayer>
+    <sld:LayerFeatureConstraints>
+      <sld:FeatureTypeConstraint/>
+    </sld:LayerFeatureConstraints>
+    <sld:UserStyle>
+      <sld:Name>States</sld:Name>
+      <sld:FeatureTypeStyle>
+        <sld:Name>name</sld:Name>
+        <sld:Rule>
+          <sld:LineSymbolizer>
+              <sld:Stroke>
+                <sld:CssParameter name="stroke">#A9A9A9</sld:CssParameter>
+                <sld:CssParameter name="stroke-width">0.5</sld:CssParameter>
+              </sld:Stroke>
+          </sld:LineSymbolizer>
+        </sld:Rule>
+      </sld:FeatureTypeStyle>
+    </sld:UserStyle>
+  </sld:UserLayer>
+</sld:StyledLayerDescriptor>
+
+
+[[layerName:states, styleName:states, style:geoscript.style.io.SLDReader$SLDStyle@78e913a, styleStr:<?xml version="1.0" encoding="UTF-8"?>
+<sld:StyledLayerDescriptor xmlns="http://www.opengis.net/sld" xmlns:sld="http://www.opengis.net/sld" xmlns:ogc="http://www.opengis.net/ogc" xmlns:gml="http://www.opengis.net/gml" version="1.0.0">
+  <sld:UserLayer>
+    <sld:LayerFeatureConstraints>
+      <sld:FeatureTypeConstraint/>
+    </sld:LayerFeatureConstraints>
+    <sld:UserStyle>
+      <sld:Name>States</sld:Name>
+      <sld:FeatureTypeStyle>
+        <sld:Name>name</sld:Name>
+        <sld:Rule>
+          <sld:LineSymbolizer>
+              <sld:Stroke>
+                <sld:CssParameter name="stroke">#A9A9A9</sld:CssParameter>
+                <sld:CssParameter name="stroke-width">0.5</sld:CssParameter>
+              </sld:Stroke>
+          </sld:LineSymbolizer>
+        </sld:Rule>
+      </sld:FeatureTypeStyle>
+    </sld:UserStyle>
+  </sld:UserLayer>
+</sld:StyledLayerDescriptor>
+, id:1, f_table_catalog:, f_table_schema:public, f_table_name:states, f_geometry_column:, styleQML:, styleSLD:<?xml version="1.0" encoding="UTF-8"?>
+<sld:StyledLayerDescriptor xmlns="http://www.opengis.net/sld" xmlns:sld="http://www.opengis.net/sld" xmlns:ogc="http://www.opengis.net/ogc" xmlns:gml="http://www.opengis.net/gml" version="1.0.0">
+  <sld:UserLayer>
+    <sld:LayerFeatureConstraints>
+      <sld:FeatureTypeConstraint/>
+    </sld:LayerFeatureConstraints>
+    <sld:UserStyle>
+      <sld:Name>States</sld:Name>
+      <sld:FeatureTypeStyle>
+        <sld:Name>name</sld:Name>
+        <sld:Rule>
+          <sld:LineSymbolizer>
+              <sld:Stroke>
+                <sld:CssParameter name="stroke">#A9A9A9</sld:CssParameter>
+                <sld:CssParameter name="stroke-width">0.5</sld:CssParameter>
+              </sld:Stroke>
+          </sld:LineSymbolizer>
+        </sld:Rule>
+      </sld:FeatureTypeStyle>
+    </sld:UserStyle>
+  </sld:UserLayer>
+</sld:StyledLayerDescriptor>
+, useAsDefault:1, description:Style states for Layer states, owner:jericks, ui:, update_time:2023-10-30 23:36:31]]
+
+[[layerName:states, styleName:states, style:geoscript.style.io.SLDReader$SLDStyle@3c4965d8, styleStr:<?xml version="1.0" encoding="UTF-8"?>
+<sld:StyledLayerDescriptor xmlns="http://www.opengis.net/sld" xmlns:sld="http://www.opengis.net/sld" xmlns:ogc="http://www.opengis.net/ogc" xmlns:gml="http://www.opengis.net/gml" version="1.0.0">
+  <sld:UserLayer>
+    <sld:LayerFeatureConstraints>
+      <sld:FeatureTypeConstraint/>
+    </sld:LayerFeatureConstraints>
+    <sld:UserStyle>
+      <sld:Name>States</sld:Name>
+      <sld:FeatureTypeStyle>
+        <sld:Name>name</sld:Name>
+        <sld:Rule>
+          <sld:LineSymbolizer>
+              <sld:Stroke>
+                <sld:CssParameter name="stroke">#A9A9A9</sld:CssParameter>
+                <sld:CssParameter name="stroke-width">0.5</sld:CssParameter>
+              </sld:Stroke>
+          </sld:LineSymbolizer>
+        </sld:Rule>
+      </sld:FeatureTypeStyle>
+    </sld:UserStyle>
+  </sld:UserLayer>
+</sld:StyledLayerDescriptor>
+, id:1, f_table_catalog:, f_table_schema:public, f_table_name:states, f_geometry_column:, styleQML:, styleSLD:<?xml version="1.0" encoding="UTF-8"?>
+<sld:StyledLayerDescriptor xmlns="http://www.opengis.net/sld" xmlns:sld="http://www.opengis.net/sld" xmlns:ogc="http://www.opengis.net/ogc" xmlns:gml="http://www.opengis.net/gml" version="1.0.0">
+  <sld:UserLayer>
+    <sld:LayerFeatureConstraints>
+      <sld:FeatureTypeConstraint/>
+    </sld:LayerFeatureConstraints>
+    <sld:UserStyle>
+      <sld:Name>States</sld:Name>
+      <sld:FeatureTypeStyle>
+        <sld:Name>name</sld:Name>
+        <sld:Rule>
+          <sld:LineSymbolizer>
+              <sld:Stroke>
+                <sld:CssParameter name="stroke">#A9A9A9</sld:CssParameter>
+                <sld:CssParameter name="stroke-width">0.5</sld:CssParameter>
+              </sld:Stroke>
+          </sld:LineSymbolizer>
+        </sld:Rule>
+      </sld:FeatureTypeStyle>
+    </sld:UserStyle>
+  </sld:UserLayer>
+</sld:StyledLayerDescriptor>
+, useAsDefault:1, description:Style states for Layer states, owner:jericks, ui:, update_time:2023-10-30 23:36:31]]

@@ -1,0 +1,3 @@
+Mininum Elevation = 0.0
+Maximum Elevation = 2320.0
+Average Elevation = 30.085889570552148 

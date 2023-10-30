@@ -1,0 +1,66 @@
+<wfs:FeatureCollection xmlns:wfs="http://www.opengis.net/wfs">
+  <gml:boundedBy xmlns:gml="http://www.opengis.net/gml">
+    <gml:Box srsName="http://www.opengis.net/gml/srs/epsg.xml#4326">
+      <gml:coord>
+        <gml:X>
+          -122.48416
+        </gml:X>
+        <gml:Y>
+          47.2619
+        </gml:Y>
+      </gml:coord>
+      <gml:coord>
+        <gml:X>
+          -122.3204
+        </gml:X>
+        <gml:Y>
+          47.6024
+        </gml:Y>
+      </gml:coord>
+    </gml:Box>
+  </gml:boundedBy>
+  <gml:featureMember xmlns:gml="http://www.opengis.net/gml">
+    <gsf:cities xmlns:gsf="http://geoscript.org/feature" fid="fid-5c38dcc0_18b82f0ec42_-6562">
+      <gml:name>
+        Seattle
+      </gml:name>
+      <gsf:geom>
+        <gml:Point>
+          <gml:coord>
+            <gml:X>
+              -122.3204
+            </gml:X>
+            <gml:Y>
+              47.6024
+            </gml:Y>
+          </gml:coord>
+        </gml:Point>
+      </gsf:geom>
+      <gsf:id>
+        1
+      </gsf:id>
+    </gsf:cities>
+  </gml:featureMember>
+  <gml:featureMember xmlns:gml="http://www.opengis.net/gml">
+    <gsf:cities xmlns:gsf="http://geoscript.org/feature" fid="fid-5c38dcc0_18b82f0ec42_-6560">
+      <gml:name>
+        Tacoma
+      </gml:name>
+      <gsf:geom>
+        <gml:Point>
+          <gml:coord>
+            <gml:X>
+              -122.48416
+            </gml:X>
+            <gml:Y>
+              47.2619
+            </gml:Y>
+          </gml:coord>
+        </gml:Point>
+      </gsf:geom>
+      <gsf:id>
+        2
+      </gsf:id>
+    </gsf:cities>
+  </gml:featureMember>
+</wfs:FeatureCollection>

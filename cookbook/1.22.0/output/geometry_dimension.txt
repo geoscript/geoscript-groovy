@@ -1,0 +1,4 @@
+           
+Point Dimension = 0
+LineString Dimension = 1
+Polygon Dimension = 2

@@ -1,0 +1,1 @@
+Min values: 56.0 Max values: 255.0

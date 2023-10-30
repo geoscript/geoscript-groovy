@@ -1,0 +1,1 @@
+geom:Point:srid=4326,id:Integer,name:String
