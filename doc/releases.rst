@@ -3,6 +3,12 @@
 GeoScript Groovy Releases
 =========================
 
+1.23.0 (In Progress)
+--------------------
+The 1.23 release of GeoScript is build on Groovy 4.0.15, GeoTools 31.0, and the Java Topology Suite 1.90.0 and requires Java 11.
+
+Remove Stamen Tiles from the OSM Tile Layer.
+
 1.22.0
 ------
 The 1.22 release of GeoScript is build on Groovy 4.0.15, GeoTools 30.0, and the Java Topology Suite 1.90.0 and requires Java 11.

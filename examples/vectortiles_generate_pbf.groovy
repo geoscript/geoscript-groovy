@@ -45,11 +45,10 @@ generator.generate(vectorTiles, renderer, 0, 6)
 
 // Render
 
-OSM osm = new OSM("Stamen Toner", [
-        "http://a.tile.stamen.com/toner",
-        "http://b.tile.stamen.com/toner",
-        "http://c.tile.stamen.com/toner",
-        "http://d.tile.stamen.com/toner"
+OSM osm = new OSM("OSM", [
+        "http://a.tile.openstreetmap.org",
+        "http://b.tile.openstreetmap.org",
+        "http://c.tile.openstreetmap.org"
 ])
 
 ["North Dakota", "Oregon", "Washington"].each { String name ->

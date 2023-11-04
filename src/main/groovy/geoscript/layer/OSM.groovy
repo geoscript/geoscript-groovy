@@ -17,6 +17,11 @@ class OSM extends ImageTileLayer {
     String imageType = "png"
 
     /**
+     * @2x
+     */
+    String preImageTypePrefix = "";
+
+    /**
      * The global web mercator Pyramid
      */
     private Pyramid pyramid
@@ -74,7 +79,8 @@ class OSM extends ImageTileLayer {
     ImageTile get(long z, long x, long y) {
         ImageTile tile = new ImageTile(z, x, y)
         String baseUrl = getBaseUrl()
-        URL url = new URL("${baseUrl}${baseUrl.endsWith("/") ? '' : '/'}${z}/${x}/${y}.${imageType}")
+        URL url = new URL("${baseUrl}${baseUrl.endsWith("/") ? '' : '/'}${z}/${x}/${y}${preImageTypePrefix}.${imageType}")
+        println url
         URLConnection urlConnection = url.openConnection()
         urlConnection.setRequestProperty("User-Agent", "GeoScript Groovy")
         InputStream inputStream = urlConnection.inputStream
@@ -127,57 +133,18 @@ class OSM extends ImageTileLayer {
 
     /**
      * Get a well known OSM Layer.
-     * @param name The name of the well known OSM Layer (stamen-toner, stamen-toner-lite, stamen-watercolor, mapquest-street,
-     * mapquest-satellite, or osm)
+     * @param name The name of the well known OSM Layer (osm or wikimedia)
      * @return An OSM Tile Layer
      */
     static OSM getWellKnownOSM(String name) {
         if (!name) {
             null
-        } else if (name.equalsIgnoreCase("stamen-toner")) {
-            new OSM("Stamen Toner", [
-                    "http://a.tile.stamen.com/toner",
-                    "http://b.tile.stamen.com/toner",
-                    "http://c.tile.stamen.com/toner",
-                    "http://d.tile.stamen.com/toner"
-            ])
-        } else if (name.equalsIgnoreCase("stamen-toner-lite")) {
-            new OSM("Stamen Toner Lite", [
-                    "http://a.tile.stamen.com/toner-lite",
-                    "http://b.tile.stamen.com/toner-lite",
-                    "http://c.tile.stamen.com/toner-lite",
-                    "http://d.tile.stamen.com/toner-lite"
-            ])
-        } else if (name.equalsIgnoreCase("stamen-watercolor")) {
-            new OSM("Stamen Watercolor", [
-                    "http://a.tile.stamen.com/watercolor",
-                    "http://b.tile.stamen.com/watercolor",
-                    "http://c.tile.stamen.com/watercolor",
-                    "http://d.tile.stamen.com/watercolor"
-            ])
-        } else if (name.equalsIgnoreCase("stamen-terrain")) {
-            new OSM("Stamen Terrain", [
-                    "http://a.tile.stamen.com/terrain",
-                    "http://b.tile.stamen.com/terrain",
-                    "http://c.tile.stamen.com/terrain",
-                    "http://d.tile.stamen.com/terrain"
-            ])
-        } else if (name.equalsIgnoreCase("mapquest-street")) {
-            new OSM("MapQuest Street", [
-                    "http://otile1.mqcdn.com/tiles/1.0.0/map",
-                    "http://otile2.mqcdn.com/tiles/1.0.0/map",
-                    "http://otile3.mqcdn.com/tiles/1.0.0/map",
-                    "http://otile4.mqcdn.com/tiles/1.0.0/map"
-            ])
-        } else if (name.equalsIgnoreCase("mapquest-satellite")) {
-            new OSM("MapQuest Satellite", [
-                    "http://otile1.mqcdn.com/tiles/1.0.0/sat",
-                    "http://otile2.mqcdn.com/tiles/1.0.0/sat",
-                    "http://otile3.mqcdn.com/tiles/1.0.0/sat",
-                    "http://otile4.mqcdn.com/tiles/1.0.0/sat"
-            ])
         } else if (name.equalsIgnoreCase("wikimedia")) {
-            new OSM("WikiMedia", ["https://maps.wikimedia.org/osm-intl"])
+            OSM osm = new OSM("WikiMedia", ["https://maps.wikimedia.org/osm-intl/"])
+            osm.preImageTypePrefix = "@2x"
+            osm.pyramid.tileWidth = 512
+            osm.pyramid.tileHeight = 512
+            osm
         } else if (name.equalsIgnoreCase("osm")) {
             new OSM()
         } else {
@@ -193,8 +160,7 @@ class OSM extends ImageTileLayer {
         @Override
         OSM create(String paramsStr) {
             Map params = [:]
-            if (paramsStr in ['stamen-toner', 'stamen-toner-lite', 'stamen-watercolor',
-                              'mapquest-street', 'mapquest-satellite', 'osm', 'wikimedia']) {
+            if (paramsStr in ['osm', 'wikimedia']) {
                 params["type"] = "osm"
                 params["name"] = paramsStr
                 create(params)

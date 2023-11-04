@@ -9,11 +9,10 @@ import javax.imageio.ImageIO
 File dir = new File("osm")
 dir.mkdir()
 
-OSM osm = new OSM("Stamen Terrain", [
-        "http://a.tile.stamen.com/terrain",
-        "http://b.tile.stamen.com/terrain",
-        "http://c.tile.stamen.com/terrain",
-        "http://d.tile.stamen.com/terrain"
+OSM osm = new OSM("OSM", [
+        "http://a.tile.openstreetmap.org",
+        "http://b.tile.openstreetmap.org",
+        "http://c.tile.openstreetmap.org"
 ])
 
 Shapefile shp = new Shapefile("states.shp")
